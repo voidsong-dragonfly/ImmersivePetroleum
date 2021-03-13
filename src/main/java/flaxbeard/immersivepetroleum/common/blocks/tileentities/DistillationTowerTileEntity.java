@@ -406,7 +406,12 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 	
 	@Override
 	public boolean additionalCanProcessCheck(MultiblockProcess<DistillationRecipe> process){
-		return true;
+		int outputAmount = 0;
+		for (FluidStack outputFluid : process.recipe.getFluidOutputs()){
+			outputAmount += outputFluid.getAmount();
+		}
+
+		return (this.tanks[1].getCapacity() >= this.tanks[1].getFluidAmount() + outputAmount);
 	}
 	
 	@Override
