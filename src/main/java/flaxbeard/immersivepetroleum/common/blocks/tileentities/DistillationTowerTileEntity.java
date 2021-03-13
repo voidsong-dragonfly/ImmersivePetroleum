@@ -411,7 +411,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 			outputAmount += outputFluid.getAmount();
 		}
 
-		return (this.tanks[1].getCapacity() >= this.tanks[1].getFluidAmount() + outputAmount);
+		return (this.tanks[TANK_OUTPUT].getCapacity() >= this.tanks[TANK_OUTPUT].getFluidAmount() + outputAmount);
 	}
 	
 	@Override
