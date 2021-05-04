@@ -113,27 +113,32 @@ public class ClientProxy extends CommonProxy
 						}
 					});
 					boolean isMD = block == IPContent.blockMetalDevice;
-					for (int meta = isMD ? 1 : 0; meta < ieMetaBlock.getMetaEnums().length; meta++)
-					{
-						String location = loc.toString();
-						String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
-						if (ieMetaBlock.useCustomStateMapper())
-						{
-							String custom = ieMetaBlock.getCustomStateMapping(meta, true);
-							if (custom != null)
-								location += "_" + custom;
-						}
-						try
-						{
-							ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
-						} catch (NullPointerException npe)
-						{
-							throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
+					if (block != IPContent.blockMetalMultiblock) {
+						for (int meta = isMD ? 1 : 0; meta < ieMetaBlock.getMetaEnums().length; meta++) {
+							String location = loc.toString();
+							String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)) : null;
+							if (ieMetaBlock.useCustomStateMapper()) {
+								String custom = ieMetaBlock.getCustomStateMapping(meta, true);
+								if (custom != null)
+									location += "_" + custom;
+							}
+							try {
+								ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
+							} catch (NullPointerException npe) {
+								throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
+							}
 						}
 					}
 					if (isMD)
 					{
 						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "auto_lube"), "inventory"));
+					}
+					if (block == IPContent.blockMetalMultiblock)
+					{
+						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "distillation_tower"), "inventory"));
+						ModelLoader.setCustomModelResourceLocation(blockItem, 1, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "distillation_tower"), "inventory"));
+						ModelLoader.setCustomModelResourceLocation(blockItem, 2, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "pumpjack"), "inventory"));
+						ModelLoader.setCustomModelResourceLocation(blockItem, 3, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "pumpjack"), "inventory"));
 					}
 				}
 				else if (block instanceof BlockIPFluid)
@@ -279,6 +284,10 @@ public class ClientProxy extends CommonProxy
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, TileEntityAutoLubricator.class);
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 0, TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 1, TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 2, TileEntityPumpjack.TileEntityPumpjackParent.class);
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 3, TileEntityPumpjack.TileEntityPumpjackParent.class);
 
 	}
 

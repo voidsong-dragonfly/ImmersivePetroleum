@@ -30,8 +30,7 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 	@Override
 	public void render(TileEntityDistillationTower.TileEntityDistillationTowerParent te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
-		if (te != null)
-		{
+		if (te != null) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y - 1, z);
 
@@ -77,6 +76,19 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 
 			GlStateManager.popMatrix();
 
+		} else {
+			GlStateManager.pushMatrix();
+
+			GlStateManager.translate(x, y - 1, z);
+			GlStateManager.rotate(90F, 0, 1, 0);
+			GlStateManager.translate(-4, 0, 0);
+
+			ClientUtils.bindTexture(texture);
+			model.render(null, 0, 0, 0, 0, 0, 0.0625F);
+			ClientUtils.bindTexture(texture);
+			model.renderFurnace(null, 0, 0, 0, 0, 0, 0.0625F);
+
+			GlStateManager.popMatrix();
 		}
 	}
 
