@@ -29,16 +29,6 @@
         }
       }
     ],
-    "type": {
-      "distillation_tower": {
-      },
-      "pumpjack": {
-      },
-      "pumpjack_parent": {
-      },
-      "distillation_tower_parent": {
-      }
-    },
     "facing": {
       "north": {
         "transform": {
