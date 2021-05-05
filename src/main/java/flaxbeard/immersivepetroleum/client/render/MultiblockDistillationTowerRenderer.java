@@ -34,6 +34,8 @@ public class MultiblockDistillationTowerRenderer extends TileEntitySpecialRender
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y - 1, z);
 
+			GlStateManager.enableBlend();
+			GlStateManager.enableAlpha();
 
 			EnumFacing rotation = te.facing;
 			if (rotation == EnumFacing.NORTH)
