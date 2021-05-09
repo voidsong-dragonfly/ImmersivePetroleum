@@ -32,6 +32,9 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.ForgeRegistries;
 
+/**
+ * @deprecated Will be nuked as part of a complete rewrite.
+ */
 public class PumpjackHandler{
 	public static Map<ResourceLocation, ReservoirType> reservoirs = new HashMap<>();
 	
@@ -244,6 +247,9 @@ public class PumpjackHandler{
 		totalWeightMap.clear();
 	}
 	
+	/**
+	 * @deprecated See {@link PumpjackHandler}
+	 */
 	public static class ReservoirType extends IESerializableRecipe{
 		public static final IRecipeType<ReservoirType> TYPE = IRecipeType.register(ImmersivePetroleum.MODID + ":reservoirtype");
 		

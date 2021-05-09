@@ -11,6 +11,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTower
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilDerickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -29,6 +30,7 @@ public class IPTileTypes{
 	public static final RegistryObject<TileEntityType<PumpjackTileEntity>> PUMP = register("pumpjack", PumpjackTileEntity::new, IPContent.Multiblock.pumpjack);
 	public static final RegistryObject<TileEntityType<FlarestackTileEntity>> FLARE = register("flarestack", FlarestackTileEntity::new, IPContent.Blocks.flarestack);
 	public static final RegistryObject<TileEntityType<GasGeneratorTileEntity>> GENERATOR = register("gasgenerator", GasGeneratorTileEntity::new, IPContent.Blocks.gas_generator);
+	public static final RegistryObject<TileEntityType<OilDerickTileEntity>> DERICK = register("oilderick", OilDerickTileEntity::new, IPContent.Multiblock.oilderick);
 	
 	private static <T extends TileEntity> RegistryObject<TileEntityType<T>> register(String name, Supplier<T> factory, Block... valid){
 		return REGISTER.register(name, () -> new TileEntityType<>(factory, ImmutableSet.copyOf(valid), null));

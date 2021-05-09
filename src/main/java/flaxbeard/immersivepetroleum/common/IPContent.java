@@ -28,6 +28,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.HydrotreaterBlock;
+import flaxbeard.immersivepetroleum.common.blocks.metal.OilDerickBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.PetcokeBlock;
@@ -51,6 +52,7 @@ import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandl
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.OilDerickMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import net.minecraft.block.Block;
@@ -77,6 +79,7 @@ public class IPContent{
 		public static Block pumpjack;
 		public static Block cokerunit;
 		public static Block hydrotreater;
+		public static Block oilderick;
 	}
 	
 	public static class Fluids{
@@ -146,6 +149,7 @@ public class IPContent{
 		Multiblock.pumpjack = new PumpjackBlock();
 		Multiblock.cokerunit = new CokerUnitBlock();
 		Multiblock.hydrotreater = new HydrotreaterBlock();
+		Multiblock.oilderick = new OilDerickBlock();
 		
 		Items.bitumen = new IPItemBase("bitumen");
 		Items.oil_can = new OilCanItem("oil_can");
@@ -193,6 +197,7 @@ public class IPContent{
 		MultiblockHandler.registerMultiblock(PumpjackMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(CokerUnitMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(HydroTreaterMultiblock.INSTANCE);
+		MultiblockHandler.registerMultiblock(OilDerickMultiblock.INSTANCE);
 		
 		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
 		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
