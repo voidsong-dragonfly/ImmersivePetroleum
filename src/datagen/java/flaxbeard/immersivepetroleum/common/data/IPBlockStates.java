@@ -20,6 +20,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
@@ -84,6 +85,7 @@ public class IPBlockStates extends BlockStateProvider{
 		pumpjack();
 		cokerunit();
 		hydrotreater();
+		derick();
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.petcoke);
@@ -178,6 +180,17 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.hydrotreater, modelMirrored, texture, "_mirrored", HydroTreaterMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.hydrotreater, normal, mirrored, texture);
+	}
+	
+	private void derick(){
+		ResourceLocation texture = modLoc("multiblock/derrick");
+		ResourceLocation modelNormal = modLoc("models/multiblock/obj/derrick.obj");
+		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/derrick_mirrored.obj");
+		
+		BlockModelBuilder normal = multiblockModel(IPContent.Multiblock.derrick, modelNormal, texture, "", DerrickMultiblock.INSTANCE, false);
+		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.derrick, modelMirrored, texture, "_mirrored", DerrickMultiblock.INSTANCE, true);
+		
+		createMultiblock(IPContent.Multiblock.derrick, normal, mirrored, texture);
 	}
 	
 	private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){

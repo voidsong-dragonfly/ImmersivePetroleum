@@ -14,7 +14,7 @@ public class DerrickMultiblock extends IETemplateMultiblock{
 	
 	public DerrickMultiblock(){
 		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/derick"),
-				new BlockPos(2, 0, 2), new BlockPos(4, 1, 2), new BlockPos(5, 17, 5), () -> IPContent.Multiblock.derrick.getDefaultState());
+				new BlockPos(2, 0, 2), new BlockPos(2, 1, 4), new BlockPos(5, 17, 5), () -> IPContent.Multiblock.derrick.getDefaultState());
 	}
 	
 	@Override
