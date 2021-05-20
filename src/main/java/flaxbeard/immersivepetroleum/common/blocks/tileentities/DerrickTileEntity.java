@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
-import flaxbeard.immersivepetroleum.common.multiblocks.OilDerickMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
@@ -19,14 +19,14 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
-public class OilDerickTileEntity extends PoweredMultiblockTileEntity<OilDerickTileEntity, MultiblockRecipe> implements IBlockBounds{
-	public OilDerickTileEntity(){
-		super(OilDerickMultiblock.INSTANCE, 16000, true, null);
+public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IBlockBounds{
+	public DerrickTileEntity(){
+		super(DerrickMultiblock.INSTANCE, 16000, true, null);
 	}
 	
 	@Override
 	public TileEntityType<?> getType(){
-		return IPTileTypes.DERICK.get();
+		return IPTileTypes.DERRICK.get();
 	}
 	
 	@Override
