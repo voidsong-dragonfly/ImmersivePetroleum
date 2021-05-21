@@ -43,6 +43,7 @@ import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
+import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
@@ -212,6 +213,7 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.bindTileEntityRenderer(IPTileTypes.TOWER.get(), MultiblockDistillationTowerRenderer::new);
 		ClientRegistry.bindTileEntityRenderer(IPTileTypes.PUMP.get(), MultiblockPumpjackRenderer::new);
 		ClientRegistry.bindTileEntityRenderer(IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(IPTileTypes.OILTANK.get(), OilTankRenderer::new);
 	}
 	
 	/** ImmersivePetroleum's Manual Category */

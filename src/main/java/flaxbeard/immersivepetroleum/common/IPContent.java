@@ -24,11 +24,12 @@ import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.CokerUnitBlock;
+import flaxbeard.immersivepetroleum.common.blocks.metal.DerickBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.HydrotreaterBlock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DerickBlock;
+import flaxbeard.immersivepetroleum.common.blocks.metal.OilTankBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
@@ -52,9 +53,10 @@ import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandle
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
-import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import net.minecraft.block.Block;
@@ -82,6 +84,7 @@ public class IPContent{
 		public static Block cokerunit;
 		public static Block hydrotreater;
 		public static Block derrick;
+		public static Block oiltank;
 	}
 	
 	public static class Fluids{
@@ -158,6 +161,7 @@ public class IPContent{
 		Multiblock.cokerunit = new CokerUnitBlock();
 		Multiblock.hydrotreater = new HydrotreaterBlock();
 		Multiblock.derrick = new DerickBlock();
+		Multiblock.oiltank = new OilTankBlock();
 		
 		Items.bitumen = new IPItemBase("bitumen");
 		Items.oil_can = new OilCanItem("oil_can");
@@ -206,6 +210,7 @@ public class IPContent{
 		MultiblockHandler.registerMultiblock(CokerUnitMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(HydroTreaterMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(DerrickMultiblock.INSTANCE);
+		MultiblockHandler.registerMultiblock(OilTankMultiblock.INSTANCE);
 		
 		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
 		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());

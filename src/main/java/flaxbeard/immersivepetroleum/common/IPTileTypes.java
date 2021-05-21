@@ -7,11 +7,12 @@ import com.google.common.collect.ImmutableSet;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -29,6 +30,7 @@ public class IPTileTypes{
 	public static final RegistryObject<TileEntityType<CokerUnitTileEntity>> COKER = register("cokerunit", CokerUnitTileEntity::new, IPContent.Multiblock.cokerunit);
 	public static final RegistryObject<TileEntityType<HydrotreaterTileEntity>> TREATER = register("hydrotreater", HydrotreaterTileEntity::new, IPContent.Multiblock.hydrotreater);
 	public static final RegistryObject<TileEntityType<DerrickTileEntity>> DERRICK = register("derrick", DerrickTileEntity::new, IPContent.Multiblock.derrick);
+	public static final RegistryObject<TileEntityType<OilTankTileEntity>> OILTANK = register("oiltank", OilTankTileEntity::new, IPContent.Multiblock.oiltank);
 	
 	// Normal Blocks
 	public static final RegistryObject<TileEntityType<GasGeneratorTileEntity>> GENERATOR = register("gasgenerator", GasGeneratorTileEntity::new, IPContent.Blocks.gas_generator);

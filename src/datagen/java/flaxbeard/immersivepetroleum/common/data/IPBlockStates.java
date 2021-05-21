@@ -23,6 +23,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
@@ -85,7 +86,8 @@ public class IPBlockStates extends BlockStateProvider{
 		pumpjack();
 		cokerunit();
 		hydrotreater();
-		derick();
+		derrick();
+		oiltank();
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.petcoke);
@@ -182,7 +184,7 @@ public class IPBlockStates extends BlockStateProvider{
 		createMultiblock(IPContent.Multiblock.hydrotreater, normal, mirrored, texture);
 	}
 	
-	private void derick(){
+	private void derrick(){
 		ResourceLocation texture = modLoc("multiblock/derrick");
 		ResourceLocation modelNormal = modLoc("models/multiblock/obj/derrick.obj");
 		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/derrick_mirrored.obj");
@@ -191,6 +193,17 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.derrick, modelMirrored, texture, "_mirrored", DerrickMultiblock.INSTANCE, true);
 		
 		createMultiblock(IPContent.Multiblock.derrick, normal, mirrored, texture);
+	}
+	
+	private void oiltank(){
+		ResourceLocation texture = modLoc("multiblock/oiltank");
+		ResourceLocation modelNormal = modLoc("models/multiblock/obj/oiltank.obj");
+		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/oiltank_mirrored.obj");
+		
+		BlockModelBuilder normal = multiblockModel(IPContent.Multiblock.oiltank, modelNormal, texture, "", OilTankMultiblock.INSTANCE, false);
+		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.oiltank, modelMirrored, texture, "_mirrored", OilTankMultiblock.INSTANCE, true);
+		
+		createMultiblock(IPContent.Multiblock.oiltank, normal, mirrored, texture);
 	}
 	
 	private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){
