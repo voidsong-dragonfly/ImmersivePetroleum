@@ -19,8 +19,10 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
@@ -200,6 +202,16 @@ public class DebugItem extends IPItemBase{
 				
 				if(te instanceof CokerUnitTileEntity){
 					CokerUnitTileEntity.updateShapes = true;
+					return ActionResultType.SUCCESS;
+				}
+				
+				if(te instanceof DerrickTileEntity){
+					DerrickTileEntity.updateShapes = true;
+					return ActionResultType.SUCCESS;
+				}
+				
+				if(te instanceof OilTankTileEntity){
+					OilTankTileEntity.updateShapes = true;
 					return ActionResultType.SUCCESS;
 				}
 				

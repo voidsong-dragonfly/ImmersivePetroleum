@@ -183,9 +183,9 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	}
 	
 	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
-		int bX = posInMultiblock.getX();
-		int bY = posInMultiblock.getY();
-		int bZ = posInMultiblock.getZ();
+		int x = posInMultiblock.getX();
+		int y = posInMultiblock.getY();
+		int z = posInMultiblock.getZ();
 		
 		List<AxisAlignedBB> main = new ArrayList<>();
 		

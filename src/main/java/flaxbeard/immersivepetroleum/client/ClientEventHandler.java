@@ -37,8 +37,10 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.block.BlockState;
@@ -391,6 +393,17 @@ public class ClientEventHandler{
 								debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 							}
 						}
+					}else if(te instanceof DerrickTileEntity){
+						// TODO
+					}else if(te instanceof OilTankTileEntity){
+						OilTankTileEntity tower = (OilTankTileEntity) te;
+						if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
+							tower = tower.master();
+						}
+						
+						debugOut.add(toText("Oil Tank").mergeStyle(TextFormatting.GOLD)
+								.appendSibling(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED)));
+						
 					}
 					
 					if(!debugOut.isEmpty()){
