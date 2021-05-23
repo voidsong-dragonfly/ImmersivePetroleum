@@ -14,7 +14,7 @@ public class OilTankMultiblock extends IETemplateMultiblock{
 	
 	public OilTankMultiblock(){
 		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/oiltank"),
-				new BlockPos(2, 0, 2), new BlockPos(2, 1, 4), new BlockPos(6, 4, 5), () -> IPContent.Multiblock.oiltank.getDefaultState());
+				new BlockPos(2, 0, 3), new BlockPos(2, 1, 5), new BlockPos(5, 4, 6), () -> IPContent.Multiblock.oiltank.getDefaultState());
 	}
 
 	@Override

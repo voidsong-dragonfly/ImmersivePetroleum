@@ -65,6 +65,9 @@
 	"desc.immersiveengineering.info.multiblock.IE:Derrick": "Oil Derrick",
 	"desc.immersiveengineering.info.multiblock.IE:OilTank": "Oil Tank",
 	
+	"desc.immersivepetroleum.info.oiltank.input": "Input",
+	"desc.immersivepetroleum.info.oiltank.output": "Output",
+	
 	"desc.immersivepetroleum.info.reservoir.oil": "Oil Reservoir",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "Aquifer",
 	"desc.immersivepetroleum.info.reservoir.lava": "Magma Chamber",

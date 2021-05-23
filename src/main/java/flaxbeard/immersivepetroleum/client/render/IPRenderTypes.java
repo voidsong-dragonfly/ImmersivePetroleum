@@ -17,14 +17,18 @@ import net.minecraft.util.ResourceLocation;
 
 public class IPRenderTypes{
 	static final ResourceLocation activeTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/distillation_tower_active.png");
+	static final ResourceLocation oilTankTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/oiltank.png");
 	
 	/**
 	 * Intended to only be used by {@link MultiblockDistillationTowerRenderer}
 	 */
 	public static final RenderType DISTILLATION_TOWER_ACTIVE;
+	public static final RenderType OIL_TANK;
 	public static final RenderType TRANSLUCENT_LINES;
-	
+	public static final RenderType TRANSLUCENT_POSITION_COLOR;
+
 	static final RenderState.TextureState TEXTURE_ACTIVE_TOWER = new RenderState.TextureState(activeTexture, false, false);
+	static final RenderState.TextureState TEXTURE_OIL_TANK = new RenderState.TextureState(oilTankTexture, false, false);
 	static final RenderState.ShadeModelState SHADE_ENABLED = new RenderState.ShadeModelState(true);
 	static final RenderState.LightmapState LIGHTMAP_ENABLED = new RenderState.LightmapState(true);
 	static final RenderState.OverlayState OVERLAY_ENABLED = new RenderState.OverlayState(true);
@@ -52,7 +56,7 @@ public class IPRenderTypes{
 					.depthTest(DEPTH_ALWAYS)
 					.build(false)
 		);
-		
+
 		DISTILLATION_TOWER_ACTIVE = RenderType.makeType(
 				ImmersivePetroleum.MODID+":distillation_tower_active",
 				DefaultVertexFormats.BLOCK,
@@ -65,6 +69,33 @@ public class IPRenderTypes{
 					.shadeModel(SHADE_ENABLED)
 					.lightmap(LIGHTMAP_ENABLED)
 					.overlay(OVERLAY_DISABLED)
+					.build(false)
+		);
+		
+		OIL_TANK = RenderType.makeType(
+				ImmersivePetroleum.MODID+":oil_tank",
+				DefaultVertexFormats.BLOCK,
+				GL11.GL_QUADS,
+				256,
+				true,
+				false,
+				RenderType.State.getBuilder()
+					.texture(TEXTURE_OIL_TANK)
+					.transparency(TRANSLUCENT_TRANSPARENCY)
+					.shadeModel(SHADE_ENABLED)
+					.lightmap(LIGHTMAP_ENABLED)
+					.overlay(OVERLAY_DISABLED)
+					.build(false)
+		);
+		
+		TRANSLUCENT_POSITION_COLOR = RenderType.makeType(
+				ImmersivePetroleum.MODID+":translucent_pos_color",
+				DefaultVertexFormats.POSITION_COLOR,
+				GL11.GL_QUADS,
+				256,
+				RenderType.State.getBuilder()
+					.transparency(TRANSLUCENT_TRANSPARENCY)
+					.texture(new TextureState())
 					.build(false)
 		);
 	}

@@ -41,6 +41,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.Port;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.block.BlockState;
@@ -393,25 +394,54 @@ public class ClientEventHandler{
 								debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 							}
 						}
+						
 					}else if(te instanceof DerrickTileEntity){
-						// TODO
+						DerrickTileEntity derrick = (DerrickTileEntity) te;
+						if(!derrick.offsetToMaster.equals(BlockPos.ZERO)){
+							derrick = derrick.master();
+						}
+						
+						debugOut.add(toText("Derrick").mergeStyle(TextFormatting.GOLD)
+								.appendSibling(toText(derrick.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED))
+								.appendSibling(toText(derrick.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN)));
+						debugOut.add(toText(derrick.energyStorage.getEnergyStored() + "/" + derrick.energyStorage.getMaxEnergyStored() + "RF"));
+						
 					}else if(te instanceof OilTankTileEntity){
-						OilTankTileEntity tower = (OilTankTileEntity) te;
-						if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-							tower = tower.master();
+						OilTankTileEntity master = (OilTankTileEntity) te;
+						if(!master.offsetToMaster.equals(BlockPos.ZERO)){
+							master = master.master();
 						}
 						
 						debugOut.add(toText("Oil Tank").mergeStyle(TextFormatting.GOLD)
-								.appendSibling(toText(tower.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED)));
-						
+								.appendSibling(toText(master.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED)));
+						{
+							BlockPos mbpos = ((OilTankTileEntity)te).posInMultiblock;
+							Port port = null;
+							for(Port p:Port.values()){
+								if(p.matches(mbpos)){
+									port = p;
+									break;
+								}
+							}
+							
+							if(port != null){
+								OilTankTileEntity.DynPortState portState = master.portConfig.get(port);
+								boolean isInput = portState == OilTankTileEntity.DynPortState.INPUT;
+								debugOut.add(toText("Port: ")
+										.appendSibling(toText(port != null ? port.getString() : "None"))
+										.appendSibling(toText(" " + portState.getString())
+												.mergeStyle(isInput ? TextFormatting.AQUA : TextFormatting.GOLD)));
+							}
+						}
 					}
 					
 					if(!debugOut.isEmpty()){
 						if(te instanceof MultiblockPartTileEntity){
 							BlockPos pos = ((MultiblockPartTileEntity<?>)te).posInMultiblock;
 							BlockPos hit = result.getPos();
-							debugOut.add(0, toText("World XYZ: "+hit.getX()+", "+hit.getY()+", "+hit.getZ()));
-							debugOut.add(1, toText("Template XYZ: "+pos.getX()+", "+pos.getY()+", "+pos.getZ()));
+							debugOut.add(0, toText("Facing: "+((MultiblockPartTileEntity<?>)te).getFacing()));
+							debugOut.add(1, toText("World XYZ: "+hit.getX()+", "+hit.getY()+", "+hit.getZ()));
+							debugOut.add(2, toText("Template XYZ: "+pos.getX()+", "+pos.getY()+", "+pos.getZ()));
 						}
 						
 						MatrixStack matrix = event.getMatrixStack();

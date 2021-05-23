@@ -356,7 +356,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 					FluidStack fs = copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 100);
 					int accepted = out.fill(fs, FluidAction.SIMULATE);
 					if(accepted > 0){
-						int drained = out.fill(copyFluid(fs, Math.min(fs.getAmount(), accepted)), FluidAction.EXECUTE);
+						int drained = out.fill(copyFluid(fs, Math.min(accepted, fs.getAmount())), FluidAction.EXECUTE);
 						this.bufferTanks[TANK_OUTPUT].drain(copyFluid(fs, drained), FluidAction.EXECUTE);
 						return true;
 					}
