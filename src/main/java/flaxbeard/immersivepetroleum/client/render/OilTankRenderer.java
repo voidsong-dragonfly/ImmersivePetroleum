@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.DynPortState;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.PortState;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.Port;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -153,11 +153,11 @@ public class OilTankRenderer extends TileEntityRenderer<OilTankTileEntity>{
 		}
 	}
 	
-	public void quad(MatrixStack matrix, IRenderTypeBuffer buffer, DynPortState portState, boolean flip, int combinedLight, int combinedOverlay){
+	public void quad(MatrixStack matrix, IRenderTypeBuffer buffer, PortState portState, boolean flip, int combinedLight, int combinedOverlay){
 		Matrix4f mat = matrix.getLast().getMatrix();
 		IVertexBuilder builder = buffer.getBuffer(IPRenderTypes.OIL_TANK);
 		
-		boolean input = portState == DynPortState.INPUT;
+		boolean input = portState == PortState.INPUT;
 		float u0 = input ? 0.0F : 0.1F, v0 = 0.5F;
 		float u1 = u0 + 0.1F, v1 = v0 + 0.1F;
 		if(flip){

@@ -425,14 +425,17 @@ public class ClientEventHandler{
 							}
 							
 							if(port != null){
-								OilTankTileEntity.DynPortState portState = master.portConfig.get(port);
-								boolean isInput = portState == OilTankTileEntity.DynPortState.INPUT;
+								OilTankTileEntity.PortState portState = master.portConfig.get(port);
+								boolean isInput = portState == OilTankTileEntity.PortState.INPUT;
 								debugOut.add(toText("Port: ")
 										.appendSibling(toText(port != null ? port.getString() : "None"))
 										.appendSibling(toText(" " + portState.getString())
 												.mergeStyle(isInput ? TextFormatting.AQUA : TextFormatting.GOLD)));
 							}
 						}
+						
+						FluidStack fs = master.tank.getFluid();
+						debugOut.add(toText("Fluid: " + (fs.getAmount() + "/" + master.tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 					}
 					
 					if(!debugOut.isEmpty()){
