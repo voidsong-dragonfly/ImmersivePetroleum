@@ -19,7 +19,7 @@ public class DerrickMultiblock extends IETemplateMultiblock{
 	
 	@Override
 	public float getManualScale(){
-		return 12.0F;
+		return 6.0F;
 	}
 	
 	@Override

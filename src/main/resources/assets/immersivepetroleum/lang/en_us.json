@@ -22,7 +22,7 @@
 	"block.immersivepetroleum.distillationtower": "Distillation Tower",
 	"block.immersivepetroleum.cokerunit": "Coker",
 	"block.immersivepetroleum.hydrotreater": "Sulfur Recovery Unit",
-	"block.immersivepetroleum.derrick": "Oil Derrick",
+	"block.immersivepetroleum.derrick": "Derrick",
 	"block.immersivepetroleum.oiltank": "Oil Tank",
 	
 	"fluid.immersivepetroleum.diesel": "Diesel",
@@ -62,7 +62,7 @@
 	"desc.immersiveengineering.info.multiblock.IE:Pumpjack": "Pumpjack",
 	"desc.immersiveengineering.info.multiblock.IE:CokerUnit": "Coker",
 	"desc.immersiveengineering.info.multiblock.IE:HydroTreater": "Sulfur Recovery Unit",
-	"desc.immersiveengineering.info.multiblock.IE:Derrick": "Oil Derrick",
+	"desc.immersiveengineering.info.multiblock.IE:Derrick": "Derrick",
 	"desc.immersiveengineering.info.multiblock.IE:OilTank": "Oil Tank",
 	
 	"desc.immersivepetroleum.info.oiltank.input": "Input",
