@@ -208,20 +208,19 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 					BlockPos pos = getBlockPosForPos(port.posInMultiblock).offset(facing);
 					final boolean isSameTEType = getWorld().getTileEntity(pos) instanceof OilTankTileEntity;
 					
-					if(!isSameTEType)
-						FluidUtil.getFluidHandler(this.world, pos, facing.getOpposite()).map(out -> {
-							if(this.tank.getFluidAmount() > 0){
-								FluidStack fs = copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432), !isSameTEType);
-								int accepted = out.fill(fs, FluidAction.SIMULATE);
-								if(accepted > 0){
-									int drained = out.fill(copyFluid(fs, Math.min(fs.getAmount(), accepted), !isSameTEType), FluidAction.EXECUTE);
-									this.tank.drain(Utils.copyFluidStackWithAmount(this.tank.getFluid(), drained, true), FluidAction.EXECUTE);
-									this.markContainingBlockForUpdate(null);
-									return true;
-								}
+					FluidUtil.getFluidHandler(this.world, pos, facing.getOpposite()).map(out -> {
+						if(this.tank.getFluidAmount() > 0){
+							FluidStack fs = copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432), !isSameTEType);
+							int accepted = out.fill(fs, FluidAction.SIMULATE);
+							if(accepted > 0){
+								int drained = out.fill(copyFluid(fs, Math.min(fs.getAmount(), accepted), !isSameTEType), FluidAction.EXECUTE);
+								this.tank.drain(Utils.copyFluidStackWithAmount(this.tank.getFluid(), drained, true), FluidAction.EXECUTE);
+								this.markContainingBlockForUpdate(null);
+								return true;
 							}
-							return false;
-						}).orElse(false);
+						}
+						return false;
+					}).orElse(false);
 				}
 			}
 		}
