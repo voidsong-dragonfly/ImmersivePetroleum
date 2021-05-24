@@ -158,17 +158,16 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		if(isDummy() || world.isRemote){
 			return;
 		}
+		int threshold = 10;
+		int maxTransfer = FluidAttributes.BUCKET_VOLUME;
 		
-		PortState portStateA = getPortStateFor(Port.DYNAMIC_A);
-		PortState portStateB = getPortStateFor(Port.DYNAMIC_B);
-		PortState portStateC = getPortStateFor(Port.DYNAMIC_C);
-		PortState portStateD = getPortStateFor(Port.DYNAMIC_D);
+		PortState portStateA = getPortStateFor(Port.DYNAMIC_A),
+				portStateB = getPortStateFor(Port.DYNAMIC_B),
+				portStateC = getPortStateFor(Port.DYNAMIC_C),
+				portStateD = getPortStateFor(Port.DYNAMIC_D);
 		
 		boolean b0 = (portStateA == PortState.OUTPUT && portStateC == PortState.INPUT) || (portStateA == PortState.INPUT && portStateC == PortState.OUTPUT);
 		boolean b1 = (portStateB == PortState.OUTPUT && portStateD == PortState.INPUT) || (portStateB == PortState.INPUT && portStateD == PortState.OUTPUT);
-		int threshold = 100;
-		int rate = 100;
-		
 		boolean balancingMode = false;
 		
 		if(b0){
@@ -178,9 +177,10 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 			
 			if(te instanceof OilTankTileEntity){
 				OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
-				
 				int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
-				if((diff < -threshold && transfer(this, otherMaster, Math.max(rate, diff))) || (diff > threshold && transfer(otherMaster, this, Math.min(diff, rate)))){
+				int amount = Math.min(diff, maxTransfer);
+				
+				if((diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount))){
 					balancingMode = true;
 				}
 			}
@@ -193,9 +193,10 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 			
 			if(te instanceof OilTankTileEntity){
 				OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
-				
 				int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
-				if((diff < -threshold && transfer(this, otherMaster, Math.max(rate, diff))) || (diff > threshold && transfer(otherMaster, this, Math.min(diff, rate)))){
+				int amount = Math.min(diff, maxTransfer);
+				
+				if((diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount))){
 					balancingMode = true;
 				}
 			}
