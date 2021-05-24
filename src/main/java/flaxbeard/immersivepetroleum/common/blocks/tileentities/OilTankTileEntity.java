@@ -98,7 +98,7 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		}
 	}
 	
-	/** Template-Location of the Redstone Input Port. (0 0 0)<br> */
+	/** Template-Location of the Redstone Input Port. (0 0 0)<br>*/
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(2, 2, 5));
 	
 	public FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME);
@@ -135,30 +135,13 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		}
 	}
 	
-	
-	private boolean transfer(OilTankTileEntity src, OilTankTileEntity dst, int amount){
-		FluidStack fs = new FluidStack(src.tank.getFluid(), amount);
-		int accepted = dst.tank.fill(fs, FluidAction.SIMULATE);
-		if(accepted > 0){
-			fs = new FluidStack(src.tank.getFluid(), accepted);
-			dst.tank.fill(fs, FluidAction.EXECUTE);
-			src.tank.drain(fs, FluidAction.EXECUTE);
-			
-			src.markContainingBlockForUpdate(null);
-			dst.markContainingBlockForUpdate(null);
-			return true;
-		}
-		
-		return false;
-	}
-	
 	@Override
 	public void tick(){
 		checkForNeedlessTicking();
 		if(isDummy() || world.isRemote){
 			return;
 		}
-		int threshold = 10;
+		int threshold = 5;
 		int maxTransfer = FluidAttributes.BUCKET_VOLUME;
 		
 		PortState portStateA = getPortStateFor(Port.DYNAMIC_A),
@@ -166,45 +149,18 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 				portStateC = getPortStateFor(Port.DYNAMIC_C),
 				portStateD = getPortStateFor(Port.DYNAMIC_D);
 		
-		boolean b0 = (portStateA == PortState.OUTPUT && portStateC == PortState.INPUT) || (portStateA == PortState.INPUT && portStateC == PortState.OUTPUT);
-		boolean b1 = (portStateB == PortState.OUTPUT && portStateD == PortState.INPUT) || (portStateB == PortState.INPUT && portStateD == PortState.OUTPUT);
-		boolean balancingMode = false;
-		
-		if(b0){
-			Direction facing = getPortDirection(Port.DYNAMIC_A);
-			BlockPos pos = getBlockPosForPos(Port.DYNAMIC_A.posInMultiblock).offset(facing);
-			TileEntity te = getWorld().getTileEntity(pos);
-			
-			if(te instanceof OilTankTileEntity){
-				OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
-				int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
-				int amount = Math.min(diff, maxTransfer);
-				
-				if((diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount))){
-					balancingMode = true;
-				}
-			}
+		boolean wasBalancing = false;
+		if((portStateA == PortState.OUTPUT && portStateC == PortState.INPUT) || (portStateA == PortState.INPUT && portStateC == PortState.OUTPUT)){
+			wasBalancing |= equalize(Port.DYNAMIC_A, threshold, maxTransfer);
 		}
 		
-		if(b1){
-			Direction facing = getPortDirection(Port.DYNAMIC_B);
-			BlockPos pos = getBlockPosForPos(Port.DYNAMIC_B.posInMultiblock).offset(facing);
-			TileEntity te = getWorld().getTileEntity(pos);
-			
-			if(te instanceof OilTankTileEntity){
-				OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
-				int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
-				int amount = Math.min(diff, maxTransfer);
-				
-				if((diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount))){
-					balancingMode = true;
-				}
-			}
+		if((portStateB == PortState.OUTPUT && portStateD == PortState.INPUT) || (portStateB == PortState.INPUT && portStateD == PortState.OUTPUT)){
+			wasBalancing |= equalize(Port.DYNAMIC_B, threshold, maxTransfer);
 		}
 		
 		if(!isRSDisabled()){
 			for(Port port:Port.values()){
-				if((!balancingMode && getPortStateFor(port) == PortState.OUTPUT) || (balancingMode && port == Port.BOTTOM)){
+				if((!wasBalancing && getPortStateFor(port) == PortState.OUTPUT) || (wasBalancing && port == Port.BOTTOM)){
 					Direction facing = getPortDirection(port);
 					BlockPos pos = getBlockPosForPos(port.posInMultiblock).offset(facing);
 					final boolean isSameTEType = getWorld().getTileEntity(pos) instanceof OilTankTileEntity;
@@ -225,6 +181,40 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 				}
 			}
 		}
+	}
+	
+	private boolean equalize(Port port, int threshold, int maxTransfer){
+		Direction facing = getPortDirection(port);
+		BlockPos pos = getBlockPosForPos(port.posInMultiblock).offset(facing);
+		TileEntity te = getWorld().getTileEntity(pos);
+		
+		if(te instanceof OilTankTileEntity){
+			OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
+			int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
+			int amount = Math.min(Math.abs(diff) / 2, maxTransfer);
+			
+			if((diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount))){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean transfer(OilTankTileEntity src, OilTankTileEntity dst, int amount){
+		FluidStack fs = new FluidStack(src.tank.getFluid(), amount);
+		int accepted = dst.tank.fill(fs, FluidAction.SIMULATE);
+		if(accepted > 0){
+			fs = new FluidStack(src.tank.getFluid(), accepted);
+			dst.tank.fill(fs, FluidAction.EXECUTE);
+			src.tank.drain(fs, FluidAction.EXECUTE);
+			
+			src.markContainingBlockForUpdate(null);
+			dst.markContainingBlockForUpdate(null);
+			return true;
+		}
+		
+		return false;
 	}
 	
 	private FluidStack copyFluid(FluidStack fluid, int amount, boolean pressurize){
