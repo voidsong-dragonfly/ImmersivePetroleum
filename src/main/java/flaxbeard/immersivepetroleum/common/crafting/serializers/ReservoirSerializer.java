@@ -9,15 +9,15 @@ import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 
-public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
+public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 	@Override
-	public ReservoirType readFromJson(ResourceLocation recipeId, JsonObject json){
+	public Reservoir readFromJson(ResourceLocation recipeId, JsonObject json){
 		String name = JSONUtils.getString(json, "name");
 		ResourceLocation fluid = new ResourceLocation(JSONUtils.getString(json, "fluid"));
 		int min = JSONUtils.getInt(json, "fluidminimum");
@@ -25,7 +25,7 @@ public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
 		int trace = JSONUtils.getInt(json, "fluidtrace");
 		int weight = JSONUtils.getInt(json, "weight");
 		
-		ReservoirType type = new ReservoirType(name, recipeId, fluid, min, max, trace, weight);
+		Reservoir reservoir = new Reservoir(name, recipeId, fluid, min, max, trace, weight);
 		
 		ImmersivePetroleum.log.debug(String.format("Loaded reservoir %s as %s, with %smB to %smB of %s and %smB trace, with %s of weight.",
 				recipeId, name, min, max, fluid, trace, weight));
@@ -53,11 +53,11 @@ public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
 			if(whitelist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to dimension-whitelist for {} -", name);
 				whitelist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
-				type.addDimension(false, whitelist);
+				reservoir.addDimension(false, whitelist);
 			}else if(blacklist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to dimension-blacklist for {} -", name);
 				blacklist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
-				type.addDimension(true, blacklist);
+				reservoir.addDimension(true, blacklist);
 			}
 		}
 		
@@ -84,24 +84,24 @@ public class ReservoirTypeSerializer extends IERecipeSerializer<ReservoirType>{
 			if(whitelist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to biome-whitelist for {} -", name);
 				whitelist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
-				type.addBiome(false, whitelist);
+				reservoir.addBiome(false, whitelist);
 			}else if(blacklist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to biome-blacklist for {} -", name);
 				blacklist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
-				type.addBiome(true, blacklist);
+				reservoir.addBiome(true, blacklist);
 			}
 		}
 		
-		return type;
+		return reservoir;
 	}
 	
 	@Override
-	public ReservoirType read(ResourceLocation recipeId, PacketBuffer buffer){
-		return new ReservoirType(buffer.readCompoundTag()); // Very convenient having the NBT stuff already.
+	public Reservoir read(ResourceLocation recipeId, PacketBuffer buffer){
+		return new Reservoir(buffer.readCompoundTag()); // Very convenient having the NBT stuff already.
 	}
 	
 	@Override
-	public void write(PacketBuffer buffer, ReservoirType recipe){
+	public void write(PacketBuffer buffer, Reservoir recipe){
 		buffer.writeCompoundTag(recipe.writeToNBT());
 	}
 	

@@ -8,8 +8,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
@@ -53,7 +52,7 @@ public class RecipeReloadListener implements IResourceManagerReloadListener{
 		DistillationRecipe.recipes = filterRecipes(recipes, DistillationRecipe.class, DistillationRecipe.TYPE);
 		
 		ImmersivePetroleum.log.info("Loading Reservoirs.");
-		PumpjackHandler.reservoirs = filterRecipes(recipes, ReservoirType.class, ReservoirType.TYPE);
+		Reservoir.map = filterRecipes(recipes, Reservoir.class, Reservoir.TYPE);
 		
 		ImmersivePetroleum.log.info("Loading Coker-Unit Recipes.");
 		CokerUnitRecipe.recipes = filterRecipes(recipes, CokerUnitRecipe.class, CokerUnitRecipe.TYPE);

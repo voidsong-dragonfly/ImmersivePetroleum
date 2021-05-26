@@ -20,7 +20,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;

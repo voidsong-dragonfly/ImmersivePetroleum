@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.storage.WorldSavedData;

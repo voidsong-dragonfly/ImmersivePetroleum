@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.commands.ReservoirCommand;
 import flaxbeard.immersivepetroleum.common.util.loot.IPLootFunctions;
+import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.item.ItemGroup;
@@ -30,6 +31,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -72,12 +74,16 @@ public class ImmersivePetroleum{
 		MinecraftForge.EVENT_BUS.addListener(this::registerCommand);
 		MinecraftForge.EVENT_BUS.addListener(this::addReloadListeners);
 		
-		Serializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+		IEventBus eBus = FMLJavaModLoadingContext.get().getModEventBus();
+		Serializers.RECIPE_SERIALIZERS.register(eBus);
 		
 		IPContent.populate();
 		IPLootFunctions.modConstruction();
 		
-		IPTileTypes.REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+		IPTileTypes.REGISTER.register(eBus);
+		
+		MinecraftForge.EVENT_BUS.register(new IPWorldGen());
+		IPWorldGen.init(eBus);
 		
 		proxy.registerContainersAndScreens();
 	}
@@ -96,7 +102,7 @@ public class ImmersivePetroleum{
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
 		
-		IPContent.init();
+		IPContent.init(event);
 		
 		MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
 		

@@ -8,8 +8,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.command.CommandSource;
@@ -80,7 +80,7 @@ public class ReservoirCommand{
 	static LiteralArgumentBuilder<CommandSource> setReservoir(){
 		RequiredArgumentBuilder<CommandSource, String> nameArg = Commands.argument("name", StringArgumentType.string());
 		nameArg.suggests((context, builder) -> {
-			return ISuggestionProvider.suggest(PumpjackHandler.reservoirs.values().stream().map(type -> type.name), builder);
+			return ISuggestionProvider.suggest(Reservoir.map.values().stream().map(type -> type.name), builder);
 		}).executes(command -> {
 			ServerPlayerEntity player = command.getSource().asPlayer();
 			setReservoir(command, player.getPosition().getX() >> 4, player.getPosition().getZ() >> 4);
@@ -102,8 +102,8 @@ public class ReservoirCommand{
 		ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(sender.getWorld(), xChunk, zChunk);
 		
 		String name = context.getArgument("name", String.class);
-		ReservoirType reservoir = null;
-		for(ReservoirType res:PumpjackHandler.reservoirs.values())
+		Reservoir reservoir = null;
+		for(Reservoir res:Reservoir.map.values())
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 			
@@ -120,8 +120,8 @@ public class ReservoirCommand{
 	static int set(ServerPlayerEntity playerEntity, String name){
 		ReservoirWorldInfo info = getOilWorldInfo(playerEntity);
 		
-		ReservoirType reservoir = null;
-		for(ReservoirType res:PumpjackHandler.reservoirs.values())
+		Reservoir reservoir = null;
+		for(Reservoir res:Reservoir.map.values())
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 			

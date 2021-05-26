@@ -22,7 +22,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
-import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirTypeBuilder;
+import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.SulfurRecoveryRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
@@ -73,15 +73,15 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void reservoirs(){
-		ReservoirTypeBuilder.builder("aquifer", Fluids.WATER, 5000.000, 10000.000, 0.006, 30)
+		ReservoirBuilder.builder("aquifer", Fluids.WATER, 5000.000, 10000.000, 0.006, 30)
 			.addDimensions(false, DimensionType.OVERWORLD.getLocation())
 			.build(this.out, rl("reservoirs/aquifer"));
 		
-		ReservoirTypeBuilder.builder("oil", IPContent.Fluids.crudeOil, 2500.000, 15000.000, 0.006, 40)
+		ReservoirBuilder.builder("oil", IPContent.Fluids.crudeOil, 2500.000, 15000.000, 0.006, 40)
 			.addDimensions(true, DimensionType.THE_END.getLocation())
 			.build(this.out, rl("reservoirs/oil"));
 		
-		ReservoirTypeBuilder.builder("lava", Fluids.LAVA, 250.000, 1000.000, 0.0, 30)
+		ReservoirBuilder.builder("lava", Fluids.LAVA, 250.000, 1000.000, 0.0, 30)
 			.addDimensions(true, DimensionType.THE_END.getLocation())
 			.build(this.out, rl("reservoirs/lava"));
 	}

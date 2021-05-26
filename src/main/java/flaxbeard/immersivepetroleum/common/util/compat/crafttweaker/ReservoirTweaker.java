@@ -13,7 +13,7 @@ import com.blamejared.crafttweaker.api.annotations.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 
@@ -23,7 +23,7 @@ public class ReservoirTweaker{
 	
 	@Method
 	public static boolean remove(String recipeName){
-		List<ResourceLocation> test = PumpjackHandler.reservoirs.keySet().stream()
+		List<ResourceLocation> test = Reservoir.map.keySet().stream()
 				.filter(loc -> loc.getPath().contains(recipeName))
 				.collect(Collectors.toList());
 		
@@ -31,8 +31,8 @@ public class ReservoirTweaker{
 			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", recipeName);
 		}else if(test.size() == 1){
 			ResourceLocation id = test.get(0);
-			if(PumpjackHandler.reservoirs.containsKey(id)){
-				PumpjackHandler.reservoirs.remove(id);
+			if(Reservoir.map.containsKey(id)){
+				Reservoir.map.remove(id);
 				return true;
 			}else{
 				CraftTweakerAPI.logError("§c%s does not exist, or was already removed.§r", id);
@@ -46,7 +46,7 @@ public class ReservoirTweaker{
 	
 	@Method
 	public static void removeAll(){
-		PumpjackHandler.reservoirs.clear();
+		Reservoir.map.clear();
 	}
 	
 	@ZenRegister
@@ -141,24 +141,24 @@ public class ReservoirTweaker{
 			if(this.isValid){
 				ResourceLocation id = TweakerUtils.ctLoc(name);
 				
-				if(!PumpjackHandler.reservoirs.containsKey(id)){
-					ReservoirType type = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
+				if(!Reservoir.map.containsKey(id)){
+					Reservoir reservoir = new Reservoir(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
 					
 					if(!this.dimWhitelist.isEmpty()){
-						type.addDimension(false, this.dimWhitelist);
+						reservoir.addDimension(false, this.dimWhitelist);
 					}
 					if(!this.dimBlacklist.isEmpty()){
-						type.addDimension(true, this.dimBlacklist);
+						reservoir.addDimension(true, this.dimBlacklist);
 					}
 					
 					if(!this.bioWhitelist.isEmpty()){
-						type.addBiome(false, this.bioWhitelist);
+						reservoir.addBiome(false, this.bioWhitelist);
 					}
 					if(!this.bioBlacklist.isEmpty()){
-						type.addBiome(true, this.bioBlacklist);
+						reservoir.addBiome(true, this.bioBlacklist);
 					}
 					
-					PumpjackHandler.addReservoir(id, type);
+					PumpjackHandler.addReservoir(id, reservoir);
 				}else{
 					CraftTweakerAPI.logError("§cReservoir %s already exists!§r", name);
 				}

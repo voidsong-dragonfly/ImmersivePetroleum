@@ -30,8 +30,9 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
@@ -57,6 +58,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -64,9 +66,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -76,6 +80,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -94,7 +99,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 public class ClientEventHandler{
 	@SubscribeEvent
 	public void renderLast(RenderWorldLastEvent event){
-		MatrixStack transform=event.getMatrixStack();
+		MatrixStack matrix = event.getMatrixStack();
 		Minecraft mc = Minecraft.getInstance();
 		
 		/*
@@ -131,7 +136,7 @@ public class ClientEventHandler{
 		}
 		*/
 		
-		transform.push();
+		matrix.push();
 		{
 			if(mc.player != null){
 				ItemStack mainItem = mc.player.getHeldItemMainhand();
@@ -146,7 +151,7 @@ public class ClientEventHandler{
 					
 					// Anti-Jiggle when moving
 					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
-					transform.translate(-renderView.x, -renderView.y, -renderView.z);
+					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
 					BlockPos base = mc.player.getPosition();
 					for(int x = -16;x <= 16;x++){
@@ -166,16 +171,16 @@ public class ClientEventHandler{
 											BlockState targetStateUp = mc.player.world.getBlockState(targetPos.up());
 											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
 												IVertexBuilder vBuilder = buffer.getBuffer(RenderType.getTranslucent());
-												transform.push();
+												matrix.push();
 												{
-													transform.translate(targetPos.getX(), targetPos.getY() - 1, targetPos.getZ());
+													matrix.translate(targetPos.getX(), targetPos.getY() - 1, targetPos.getZ());
 													
 													BlockState state = IPContent.Blocks.auto_lubricator.getDefaultState().with(AutoLubricatorBlock.FACING, targetFacing);
 													IBakedModel model = blockDispatcher.getModelForState(state);
-													blockDispatcher.getBlockModelRenderer().renderModel(transform.getLast(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+													blockDispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
 													
 												}
-												transform.pop();
+												matrix.pop();
 												
 												ShaderUtil.alpha_static(0.5f, mc.player.ticksExisted);
 												buffer.finish();
@@ -190,10 +195,10 @@ public class ClientEventHandler{
 				}
 			}
 		}
-		transform.pop();
+		matrix.pop();
 	}
 	
-	public void renderChunkBorder(MatrixStack transform, int chunkX, int chunkZ){
+	public void renderChunkBorder(MatrixStack matrix, int chunkX, int chunkZ){
 		PlayerEntity player = ClientUtils.mc().player;
 		
 		double px = player.getPosX();
@@ -207,7 +212,7 @@ public class ClientEventHandler{
 		float r = Lib.COLOUR_F_ImmersiveOrange[0];
 		float g = Lib.COLOUR_F_ImmersiveOrange[1];
 		float b = Lib.COLOUR_F_ImmersiveOrange[2];
-		transform.translate(chunkX - px, y + 2 - py, chunkZ - pz);
+		matrix.translate(chunkX - px, y + 2 - py, chunkZ - pz);
 		// transform.lineWidth(5f);
 		vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 		vertexbuffer.pos(0, 0, 0).color(r, g, b, .375f).endVertex();
@@ -242,10 +247,10 @@ public class ClientEventHandler{
 					resName = "";
 				}
 				
-				ReservoirType res = null;
-				for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-					if(resName.equalsIgnoreCase(type.name)){
-						res = type;
+				Reservoir reservoir = null;
+				for(Reservoir res:Reservoir.map.values()){
+					if(resName.equalsIgnoreCase(res.name)){
+						reservoir = res;
 					}
 				}
 				
@@ -253,9 +258,9 @@ public class ClientEventHandler{
 				int amnt = ItemNBTHelper.getInt(stack, "resAmount");
 				int tipPos = Math.max(0, tooltip.size() - 5);
 				
-				if(res != null && amnt > 0){
+				if(reservoir != null && amnt > 0){
 					int est = (amnt / 1000) * 1000;
-					ITextComponent fluidName = new FluidStack(res.getFluid(), 1).getDisplayName();
+					ITextComponent fluidName = new FluidStack(reservoir.getFluid(), 1).getDisplayName();
 					
 					ITextComponent header = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName).mergeStyle(TextFormatting.GRAY);
 					
@@ -264,12 +269,12 @@ public class ClientEventHandler{
 					tooltip.add(tipPos, header);
 					tooltip.add(tipPos + 1, info);
 				}else{
-					if(res != null && res.replenishRate > 0){
-						String fluidName = new FluidStack(res.getFluid(), 1).getDisplayName().getUnformattedComponentText();
+					if(reservoir != null && reservoir.replenishRate > 0){
+						String fluidName = new FluidStack(reservoir.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 						
 						ITextComponent header = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName).mergeStyle(TextFormatting.GRAY);
 						
-						ITextComponent info = new StringTextComponent("  " + I18n.format("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName)).mergeStyle(TextFormatting.GRAY);
+						ITextComponent info = new StringTextComponent("  " + I18n.format("chat.immersivepetroleum.info.coresample.oilRep", reservoir.replenishRate, fluidName)).mergeStyle(TextFormatting.GRAY);
 						
 						tooltip.add(tipPos, header);
 						tooltip.add(tipPos + 1, info);
@@ -282,7 +287,114 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void renderDebuggingOverlay(RenderGameOverlayEvent.Post event){
+	public void reservoirDebuggingRenderLast(RenderWorldLastEvent event){
+		if(ReservoirHandler.generator == null){
+			return;
+		}
+		
+		PlayerEntity player = ClientUtils.mc().player;
+		
+		ItemStack main = player.getHeldItem(Hand.MAIN_HAND);
+		ItemStack off = player.getHeldItem(Hand.OFF_HAND);
+		
+		if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
+			if(!((main != null && DebugItem.getMode(main) == DebugItem.Modes.SEEDBASED_RESERVOIR) || (off != null && DebugItem.getMode(off) == DebugItem.Modes.SEEDBASED_RESERVOIR))){
+				return;
+			}
+			
+			MatrixStack matrix = event.getMatrixStack();
+			World world = player.getEntityWorld();
+			
+			double scale = 0.015625;
+			BlockPos playerPos = player.getPosition();
+			
+			IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+			matrix.push();
+			{
+				// Anti-Jiggle when moving
+				Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
+				matrix.translate(-renderView.x, -renderView.y, -renderView.z);
+				
+				int radius = 9;
+				for(int i = -radius;i <= radius;i++){
+					for(int j = -radius;j <= radius;j++){
+						ChunkPos cPos = new ChunkPos(playerPos.add(16*i, 0, 16*j));
+						int chunkX = cPos.getXStart();
+						int chunkZ = cPos.getZStart();
+						
+						for(int cX = 0;cX < 16;cX++){
+							for(int cZ = 0;cZ < 16;cZ++){
+								int x = (chunkX + cX);
+								int z = (chunkZ + cZ);
+								
+								double noise = ReservoirHandler.generator.noiseAt(x * scale, z * scale, scale, cX * scale);
+								noise = Math.abs(noise) / .55;
+								
+								matrix.push();
+								{
+									DyeColor color = DyeColor.BLACK;
+									double d0 = 3 / 9D;
+									double d1 = 6 / 9D;
+									if(noise > d1){
+										double test = (noise - d1) / d0;
+										int c = (int) MathHelper.lerp(test, 0, 9);
+										
+										if(c <= 0){
+											color = DyeColor.BLACK;
+										}else if(c == 1){
+											color = DyeColor.BLUE;
+										}else if(c == 2){
+											color = DyeColor.CYAN;
+										}else if(c == 3){
+											color = DyeColor.GREEN;
+										}else if(c == 4){
+											color = DyeColor.LIME;
+										}else if(c == 5){
+											color = DyeColor.YELLOW;
+										}else if(c == 6){
+											color = DyeColor.ORANGE;
+										}else if(c == 7){
+											color = DyeColor.RED;
+										}else if(c >= 8){
+											color = DyeColor.WHITE;
+										}
+										
+										int r = (color.getTextColor() & 0xFF0000) >> 16;
+										int g = (color.getTextColor() & 0x00FF00) >> 8;
+										int b = (color.getTextColor() & 0x0000FF);
+										
+										int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
+										
+										matrix.translate(x, height + 0.0625, z);
+										
+										IVertexBuilder builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_POSITION_COLOR);
+										Matrix4f mat = matrix.getLast().getMatrix();
+										builder.pos(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
+										builder.pos(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
+										builder.pos(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
+										builder.pos(mat, 1, 0, 0).color(r, g, b, 255).endVertex();
+										
+//										float f = (float)test;
+//										builder.pos(mat, 0, 0.0625F, 0).color(f, f, f, 1.0F).endVertex();
+//										builder.pos(mat, 0, 0.0625F, 1).color(f, f, f, 1.0F).endVertex();
+//										builder.pos(mat, 1, 0.0625F, 1).color(f, f, f, 1.0F).endVertex();
+//										builder.pos(mat, 1, 0.0625F, 0).color(f, f, f, 1.0F).endVertex();
+									}
+								}
+								matrix.pop();
+							}
+						}
+					}
+				}
+				
+			}
+			matrix.pop();
+			buffer.finish();
+		}
+	}
+	
+	@SubscribeEvent
+	public void debuggingOverlayText(RenderGameOverlayEvent.Post event){
 		if(ClientUtils.mc().player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
 			PlayerEntity player = ClientUtils.mc().player;
 			
@@ -456,7 +568,6 @@ public class ClientEventHandler{
 							
 							matrix.push();
 							matrix.translate(0, 0, 1);
-							// TODO Great, there goes the background for the text lol
 							GuiHelper.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_000000, buffer, matrix);
 							buffer.finish();
 							// Draw string without shadow
@@ -499,10 +610,10 @@ public class ClientEventHandler{
 										int amnt = ItemNBTHelper.getInt(coresample, "resAmount");
 										int i = text.length;
 										
-										ReservoirType res = null;
-										for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-											if(resName.equals(type.name)){
-												res = type;
+										Reservoir reservoir = null;
+										for(Reservoir res:Reservoir.map.values()){
+											if(resName.equals(res.name)){
+												reservoir = res;
 											}
 										}
 										
@@ -510,12 +621,12 @@ public class ClientEventHandler{
 										
 										ITextComponent display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.noOil");
 										
-										if(res != null && amnt > 0){
-											ITextComponent fluidName = new FluidStack(res.getFluid(), 1).getDisplayName();
+										if(reservoir != null && amnt > 0){
+											ITextComponent fluidName = new FluidStack(reservoir.getFluid(), 1).getDisplayName();
 											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName);
-										}else if(res != null && res.replenishRate > 0){
-											ITextComponent fluidName = new FluidStack(res.getFluid(), 1).getDisplayName();
-											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oilRep", res.replenishRate, fluidName);
+										}else if(reservoir != null && reservoir.replenishRate > 0){
+											ITextComponent fluidName = new FluidStack(reservoir.getFluid(), 1).getDisplayName();
+											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oilRep", reservoir.replenishRate, fluidName);
 										}
 										
 										int fx = event.getWindow().getScaledWidth() / 2 + 8;

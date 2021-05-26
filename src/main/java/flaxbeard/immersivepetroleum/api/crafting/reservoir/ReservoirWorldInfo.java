@@ -1,15 +1,14 @@
-package flaxbeard.immersivepetroleum.api.crafting.pumpjack;
+package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
 import net.minecraft.nbt.CompoundNBT;
 
 public class ReservoirWorldInfo{
-	public ReservoirType type;
-	public ReservoirType overrideType;
+	public Reservoir type;
+	public Reservoir overrideType;
 	public int capacity;
 	public int current;
 	
-	public ReservoirType getType(){
+	public Reservoir getType(){
 		return (overrideType == null) ? type : overrideType;
 	}
 	
@@ -33,12 +32,12 @@ public class ReservoirWorldInfo{
 		
 		if(tag.contains("type")){
 			String s = tag.getString("type");
-			for(ReservoirType res:PumpjackHandler.reservoirs.values()){
+			for(Reservoir res:Reservoir.map.values()){
 				if(s.equalsIgnoreCase(res.name))
 					info.type = res;
 			}
 		}else if(info.current > 0){
-			for(ReservoirType res:PumpjackHandler.reservoirs.values()){
+			for(Reservoir res:Reservoir.map.values()){
 				if(res.name.equalsIgnoreCase("resAmount"))
 					info.type = res;
 			}
@@ -50,7 +49,7 @@ public class ReservoirWorldInfo{
 		
 		if(tag.contains("overrideType")){
 			String s = tag.getString("overrideType");
-			for(ReservoirType res:PumpjackHandler.reservoirs.values()){
+			for(Reservoir res:Reservoir.map.values()){
 				if(s.equalsIgnoreCase(res.name))
 					info.overrideType = res;
 			}

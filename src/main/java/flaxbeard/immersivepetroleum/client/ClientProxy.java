@@ -33,8 +33,7 @@ import blusunrize.lib.manual.Tree.InnerNode;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
@@ -152,10 +151,10 @@ public class ClientProxy extends CommonProxy{
 				case "pumpjack_days":{
 					int oil_min = 1000000;
 					int oil_max = 5000000;
-					for(ReservoirType type:PumpjackHandler.reservoirs.values()){
-						if(type.name.equals("oil")){
-							oil_min = type.minSize;
-							oil_max = type.maxSize;
+					for(Reservoir reservoir:Reservoir.map.values()){
+						if(reservoir.name.equals("oil")){
+							oil_min = reservoir.minSize;
+							oil_max = reservoir.maxSize;
 							break;
 						}
 					}
@@ -462,36 +461,36 @@ public class ClientProxy extends CommonProxy{
 	static ManualEntry entry;
 	protected static EntryData createContent(TextSplitter splitter){
 		ArrayList<ItemStack> list = new ArrayList<>();
-		final ReservoirType[] reservoirs = PumpjackHandler.reservoirs.values().toArray(new ReservoirType[0]);
+		final Reservoir[] reservoirs = Reservoir.map.values().toArray(new Reservoir[0]);
 		
 		StringBuilder contentBuilder = new StringBuilder();
 		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil0"));
 		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil1"));
 		
 		for(int i = 0;i < reservoirs.length;i++){
-			ReservoirType type = reservoirs[i];
+			Reservoir reservoir = reservoirs[i];
 			
-			ImmersivePetroleum.log.debug("Creating entry for " + type);
+			ImmersivePetroleum.log.debug("Creating entry for " + reservoir);
 			
-			String name = "desc.immersivepetroleum.info.reservoir." + type.name;
+			String name = "desc.immersivepetroleum.info.reservoir." + reservoir.name;
 			String localizedName = I18n.format(name);
 			if(localizedName.equalsIgnoreCase(name))
-				localizedName = type.name;
+				localizedName = reservoir.name;
 			
 			char c = localizedName.toLowerCase().charAt(0);
 			boolean isVowel = (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
 			String aOrAn = I18n.format(isVowel ? "ie.manual.entry.reservoirs.vowel" : "ie.manual.entry.reservoirs.consonant");
 			
 			String dimBLWL = "";
-			if(type.dimWhitelist != null && type.dimWhitelist.size() > 0){
+			if(reservoir.dimWhitelist != null && reservoir.dimWhitelist.size() > 0){
 				String validDims = "";
-				for(ResourceLocation rl:type.dimWhitelist){
+				for(ResourceLocation rl:reservoir.dimWhitelist){
 					validDims += (!validDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
 				}
 				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.valid", localizedName, validDims, aOrAn);
-			}else if(type.dimBlacklist != null && type.dimBlacklist.size() > 0){
+			}else if(reservoir.dimBlacklist != null && reservoir.dimBlacklist.size() > 0){
 				String invalidDims = "";
-				for(ResourceLocation rl:type.dimBlacklist){
+				for(ResourceLocation rl:reservoir.dimBlacklist){
 					invalidDims += (!invalidDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
 				}
 				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.invalid", localizedName, invalidDims, aOrAn);
@@ -500,16 +499,16 @@ public class ClientProxy extends CommonProxy{
 			}
 			
 			String bioBLWL = "";
-			if(type.bioWhitelist != null && type.bioWhitelist.size() > 0){
+			if(reservoir.bioWhitelist != null && reservoir.bioWhitelist.size() > 0){
 				String validBiomes = "";
-				for(ResourceLocation rl:type.bioWhitelist){
+				for(ResourceLocation rl:reservoir.bioWhitelist){
 					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
 					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
 				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.valid", validBiomes);
-			}else if(type.bioBlacklist != null && type.bioBlacklist.size() > 0){
+			}else if(reservoir.bioBlacklist != null && reservoir.bioBlacklist.size() > 0){
 				String invalidBiomes = "";
-				for(ResourceLocation rl:type.bioBlacklist){
+				for(ResourceLocation rl:reservoir.bioBlacklist){
 					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
 					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
@@ -519,16 +518,16 @@ public class ClientProxy extends CommonProxy{
 			}
 			
 			String fluidName = "";
-			Fluid fluid = type.getFluid();
+			Fluid fluid = reservoir.getFluid();
 			if(fluid != null){
 				fluidName = new FluidStack(fluid, 1).getDisplayName().getString();
 			}
 			
 			String repRate = "";
-			if(type.replenishRate > 0){
-				repRate = I18n.format("ie.manual.entry.reservoirs.replenish", type.replenishRate, fluidName);
+			if(reservoir.replenishRate > 0){
+				repRate = I18n.format("ie.manual.entry.reservoirs.replenish", reservoir.replenishRate, fluidName);
 			}
-			contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(type.minSize), FORMATTER.format(type.maxSize), repRate, bioBLWL));
+			contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(reservoir.minSize), FORMATTER.format(reservoir.maxSize), repRate, bioBLWL));
 			
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");

@@ -2,26 +2,22 @@ package flaxbeard.immersivepetroleum.common.items;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.lwjgl.glfw.GLFW;
 
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler.ReservoirType;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
@@ -39,14 +35,18 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.PerlinNoiseGenerator;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -54,7 +54,30 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 
+@SuppressWarnings("deprecation")
 public class DebugItem extends IPItemBase{
+	public static enum Modes{
+		DISABLED("Disabled"),
+		INFO_SPEEDBOAT("Info: Speedboat"),
+		
+		// TODO Chunk-Based Reservoir: Nuke this aswell then
+		CHUNKBASED_RESERVOIR("Chunk-Based Reservoir: Create/Get"),
+		CHUNKBASED_RESERVOIR_BIG_SCAN("Chunk-Based Reservoir: Scan 5 Chunk Radius Area"),
+		CHUNKBASED_RESERVOIR_CLEAR_CACHE("Chunk-Based Reservoir: Clear Cache"),
+		
+		SEEDBASED_RESERVOIR("Seed-Based Reservoir: Heatmap"),
+		
+		REFRESH_ALL_IPMODELS("Refresh all IPModels"),
+		UPDATE_SHAPES("Does nothing without Debugging Enviroment"),
+		GENERAL_TEST("This one could be dangerous to trigger!")
+		;
+		
+		public final String display;
+		private Modes(String display){
+			this.display = display;
+		}
+	}
+	
 	public DebugItem(){
 		super("debug");
 	}
@@ -96,48 +119,7 @@ public class DebugItem extends IPItemBase{
 					
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
-				case RESERVOIR_BIG_SCAN:{
-					BlockPos pos = playerIn.getPosition();
-					int r = 5;
-					int cx = (pos.getX() >> 4);
-					int cz = (pos.getZ() >> 4);
-					ImmersivePetroleum.log.info(worldIn.getDimensionKey());
-					for(int i = -r;i <= r;i++){
-						for(int j = -r;j <= r;j++){
-							int x = cx + i;
-							int z = cz + j;
-							
-							DimensionChunkCoords coords = new DimensionChunkCoords(worldIn.getDimensionKey(), x, z);
-							
-							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
-							if(info != null && info.getType() != null){
-								ReservoirType type = info.getType();
-								
-								int cap = info.capacity;
-								int cur = info.current;
-								
-								String out = String.format(Locale.ENGLISH, "%s %s:\t%.3f/%.3f Buckets of %s", coords.x, coords.z, cur / 1000D, cap / 1000D, type.name);
-								
-								ImmersivePetroleum.log.info(out);
-							}
-						}
-					}
-					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
-				}
-				case CLEAR_RESERVOIR_CACHE:{
-					int contentSize = PumpjackHandler.reservoirsCache.size();
-					
-					PumpjackHandler.reservoirsCache.clear();
-					PumpjackHandler.recalculateChances();
-					
-					IPSaveData.setDirty();
-					
-					playerIn.sendStatusMessage(new StringTextComponent("Cleared Oil Cache. (Removed " + contentSize + ")"), true);
-					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
-				}
-				case RESERVOIR:{
+				case CHUNKBASED_RESERVOIR:{
 					BlockPos pos = playerIn.getPosition();
 					DimensionChunkCoords coords = new DimensionChunkCoords(worldIn.getDimensionKey(), (pos.getX() >> 4), (pos.getZ() >> 4));
 					
@@ -148,7 +130,7 @@ public class DebugItem extends IPItemBase{
 					if(info != null){
 						int cap = info.capacity;
 						int cur = info.current;
-						ReservoirType type = info.getType();
+						Reservoir type = info.getType();
 						
 						if(type!=null){
 							String out = String.format(Locale.ENGLISH,
@@ -169,6 +151,78 @@ public class DebugItem extends IPItemBase{
 					}
 					
 					playerIn.sendStatusMessage(new StringTextComponent(String.format(Locale.ENGLISH, "%s %s: Nothing.", coords.x, coords.z)), true);
+					
+					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+				}
+				case CHUNKBASED_RESERVOIR_BIG_SCAN:{
+					BlockPos pos = playerIn.getPosition();
+					int r = 5;
+					int cx = (pos.getX() >> 4);
+					int cz = (pos.getZ() >> 4);
+					ImmersivePetroleum.log.info(worldIn.getDimensionKey());
+					for(int i = -r;i <= r;i++){
+						for(int j = -r;j <= r;j++){
+							int x = cx + i;
+							int z = cz + j;
+							
+							DimensionChunkCoords coords = new DimensionChunkCoords(worldIn.getDimensionKey(), x, z);
+							
+							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
+							if(info != null && info.getType() != null){
+								Reservoir reservoir = info.getType();
+								
+								int cap = info.capacity;
+								int cur = info.current;
+								
+								String out = String.format(Locale.ENGLISH, "%s %s:\t%.3f/%.3f Buckets of %s", coords.x, coords.z, cur / 1000D, cap / 1000D, reservoir.name);
+								
+								ImmersivePetroleum.log.info(out);
+							}
+						}
+					}
+					
+					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+				}
+				case CHUNKBASED_RESERVOIR_CLEAR_CACHE:{
+					int contentSize = PumpjackHandler.reservoirsCache.size();
+					
+					PumpjackHandler.reservoirsCache.clear();
+					PumpjackHandler.recalculateChances();
+					
+					IPSaveData.setDirty();
+					
+					playerIn.sendStatusMessage(new StringTextComponent("Cleared Oil Cache. (Removed " + contentSize + ")"), true);
+					
+					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+				}
+				case SEEDBASED_RESERVOIR:{
+					if(worldIn instanceof ServerWorld){
+						if(ReservoirHandler.generator == null){
+							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
+						}
+					}
+					
+					double scale = 0.015625;
+					BlockPos playerPos = playerIn.getPosition();
+					
+					ChunkPos cPos = new ChunkPos(playerPos);
+					int chunkX = cPos.getXStart();
+					int chunkZ = cPos.getZStart();
+					
+					int x = playerPos.getX() - cPos.getXStart();
+					int z = playerPos.getZ() - cPos.getZStart();
+					
+					double noise = ReservoirHandler.generator.noiseAt((chunkX + x) * scale, (chunkZ + z) * scale, scale, x * scale);
+					noise = Math.abs(noise) / .55;
+					
+					double test = 0.0D;
+					double d0 = 3 / 9D;
+					double d1 = 6 / 9D;
+					if(noise > d1){
+						test = (noise - d1) / (d0);
+					}
+					
+					playerIn.sendStatusMessage(new StringTextComponent((chunkX + " " + chunkZ) + ": " + noise + " " + test), true);
 					
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
@@ -200,6 +254,9 @@ public class DebugItem extends IPItemBase{
 					// Server
 				}
 				
+				return ActionResultType.PASS;
+			}
+			case UPDATE_SHAPES:{
 				if(te instanceof CokerUnitTileEntity){
 					CokerUnitTileEntity.updateShapes = true;
 					return ActionResultType.SUCCESS;
@@ -216,121 +273,6 @@ public class DebugItem extends IPItemBase{
 				}
 				
 				return ActionResultType.PASS;
-			}
-			case INFO_TE_DISTILLATION_TOWER:{
-				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
-					DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
-					if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-						tower = tower.master();
-					}
-					
-					IFormattableTextComponent tankInText = new StringTextComponent("\nInputFluids: ");
-					{
-						MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_OUTPUT];
-						for(int i = 0;i < tank.fluids.size();i++){
-							FluidStack fstack = tank.fluids.get(i);
-							tankInText.appendString(" ").appendSibling(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
-						}
-					}
-					
-					IFormattableTextComponent tankOutText = new StringTextComponent("\nOutputFluids: ");
-					{
-						MultiFluidTank tank = tower.tanks[DistillationTowerTileEntity.TANK_INPUT];
-						for(int i = 0;i < tank.fluids.size();i++){
-							FluidStack fstack = tank.fluids.get(i);
-							tankOutText.appendString(" ").appendSibling(fstack.getDisplayName()).appendString(" " + fstack.getAmount() + "mB,");
-						}
-					}
-					
-					player.sendMessage(new StringTextComponent("DistillationTower:\n").appendSibling(tankInText).appendSibling(tankOutText), Util.DUMMY_UUID);
-				}
-				return ActionResultType.PASS;
-			}
-			case INFO_TE_DISTILLATION_TOWER_STEP:{
-				if(te instanceof DistillationTowerTileEntity && !context.getWorld().isRemote){
-					DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
-					if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-						tower = tower.master();
-					}
-					
-					if(!tower.enableStepping){
-						tower.enableStepping = true;
-						player.sendMessage(new StringTextComponent("Enabled Stepping."), Util.DUMMY_UUID);
-					}else{
-						tower.step++;
-						player.sendMessage(new StringTextComponent("Ticked."), Util.DUMMY_UUID);
-					}
-				}
-				return ActionResultType.PASS;
-			}
-			case INFO_TE_MULTIBLOCK:{
-				if(te instanceof PoweredMultiblockTileEntity && !context.getWorld().isRemote){ // Generic
-					PoweredMultiblockTileEntity<?, ?> poweredMultiblock = (PoweredMultiblockTileEntity<?, ?>) te;
-					
-					Vector3i loc = poweredMultiblock.posInMultiblock;
-					Set<BlockPos> energyInputs = poweredMultiblock.getEnergyPos();
-					Set<BlockPos> redstoneInputs = poweredMultiblock.getRedstonePos();
-					
-					IFormattableTextComponent out = new StringTextComponent("[" + loc.getX() + " " + loc.getY() + " " + loc.getZ() + "]: ");
-					
-					for(BlockPos pos:energyInputs){
-						if(pos.equals(loc)){
-							out.appendString("Energy Port.");
-						}
-					}
-					
-					for(BlockPos pos:redstoneInputs){
-						if(pos.equals(loc)){
-							out.appendString("Redstone Port.");
-						}
-					}
-					
-					if(poweredMultiblock.offsetToMaster.equals(BlockPos.ZERO)){
-						out.appendString("Master.");
-					}
-					
-					out.appendString(" (Facing: " + poweredMultiblock.getFacing() + ", Block-Face: " + context.getFace() + ")");
-					
-					player.sendStatusMessage(out, true);
-					return ActionResultType.SUCCESS;
-				}
-				break;
-			}
-			case INFO_TE_AUTOLUBE:{
-				if(te instanceof AutoLubricatorTileEntity){
-					AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) te;
-					
-					IFormattableTextComponent out = new StringTextComponent(context.getWorld().isRemote ? "CLIENT: " : "SERVER: ");
-					out.appendString(lube.facing + ", ");
-					out.appendString((lube.isActive ? "Active" : "Inactive") + ", ");
-					out.appendString((lube.isSlave ? "Slave" : "Master") + ", ");
-					out.appendString((lube.predictablyDraining ? "Predictably Draining, " : ""));
-					if(!lube.tank.isEmpty()){
-						out.appendSibling(lube.tank.getFluid().getDisplayName()).appendString(" " + lube.tank.getFluidAmount() + "/" + lube.tank.getCapacity() + "mB");
-					}else{
-						out.appendString("Empty");
-					}
-					
-					player.sendMessage(out, Util.DUMMY_UUID);
-					
-					return ActionResultType.SUCCESS;
-				}
-				break;
-			}
-			case INFO_TE_GASGEN:{
-				if(te instanceof GasGeneratorTileEntity){
-					GasGeneratorTileEntity gas = (GasGeneratorTileEntity) te;
-					
-					IFormattableTextComponent out = new StringTextComponent(context.getWorld().isRemote ? "CLIENT: " : "SERVER: ");
-					out.appendString(gas.getFacing() + ", ");
-					out.appendString(gas.getEnergyStored(null) + ", ");
-					out.appendString(gas.getMaxEnergyStored(null) + ", ");
-					
-					player.sendMessage(out, Util.DUMMY_UUID);
-					
-					return ActionResultType.SUCCESS;
-				}
-				break;
 			}
 			default:
 				break;
@@ -449,27 +391,6 @@ public class DebugItem extends IPItemBase{
 					}
 				}
 			}
-		}
-	}
-	
-	protected static enum Modes{
-		DISABLED("Disabled"),
-		INFO_SPEEDBOAT("Info: Speedboat."),
-		INFO_TE_AUTOLUBE("Info: AutoLubricator."),
-		INFO_TE_GASGEN("Info: Portable Generator."),
-		INFO_TE_MULTIBLOCK("Info: Powered Multiblock."),
-		INFO_TE_DISTILLATION_TOWER("Info: Distillation Tower."),
-		INFO_TE_DISTILLATION_TOWER_STEP("Info: Manual DT Ticking."),
-		RESERVOIR("Create/Get Reservoir"),
-		RESERVOIR_BIG_SCAN("Scan 5 Block Radius Area"),
-		CLEAR_RESERVOIR_CACHE("Clear Reservoir Cache"),
-		REFRESH_ALL_IPMODELS("Refresh all IPModels"),
-		GENERAL_TEST("You may not want to trigger this.")
-		;
-		
-		public final String display;
-		private Modes(String display){
-			this.display = display;
 		}
 	}
 }

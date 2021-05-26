@@ -9,7 +9,7 @@ import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 
-public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>{
+public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	private String fluid;
 	private int fluidMinimum;
 	private int fluidMaximum;
@@ -19,7 +19,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	private final JsonArray dimBlacklist = new JsonArray();
 	private final JsonArray bioWhitelist = new JsonArray();
 	private final JsonArray bioBlacklist = new JsonArray();
-	private ReservoirTypeBuilder(){
+	private ReservoirBuilder(){
 		super(Serializers.RESERVOIR_SERIALIZER.get());
 		addWriter(writer -> writer.addProperty("fluid", this.fluid));
 		addWriter(writer -> writer.addProperty("fluidminimum", this.fluidMinimum));
@@ -48,8 +48,8 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @param name The name of the reservoir
 	 * @return new builder instance
 	 */
-	public static ReservoirTypeBuilder builder(String name){
-		return new ReservoirTypeBuilder().addWriter(writer -> writer.addProperty("name", name));
+	public static ReservoirBuilder builder(String name){
+		return new ReservoirBuilder().addWriter(writer -> writer.addProperty("name", name));
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @param weight chance for this reservoir to spawn
 	 * @return
 	 */
-	public static ReservoirTypeBuilder builder(String name, Fluid fluid, double min, double max, double trace, int weight){
+	public static ReservoirBuilder builder(String name, Fluid fluid, double min, double max, double trace, int weight){
 		return builder(name).setFluid(fluid).min(min).max(max).trace(trace).weight(weight);
 	}
 	
@@ -73,7 +73,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @param fluid The fluid to set.
 	 * @return self
 	 */
-	public ReservoirTypeBuilder setFluid(Fluid fluid){
+	public ReservoirBuilder setFluid(Fluid fluid){
 		this.fluid = fluid.getRegistryName().toString();
 		return this;
 	}
@@ -87,7 +87,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @param amount The amount to set.
 	 * @return self
 	 */
-	public ReservoirTypeBuilder min(double amount){
+	public ReservoirBuilder min(double amount){
 		this.fluidMinimum = (int) Math.floor(amount * 1000D);
 		return this;
 	}
@@ -102,7 +102,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @param amount The amount to set.
 	 * @return self
 	 */
-	public ReservoirTypeBuilder max(double amount){
+	public ReservoirBuilder max(double amount){
 		this.fluidMaximum = (int) Math.floor(amount * 1000D);
 		return this;
 	}
@@ -116,7 +116,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @param amount The amount to set.
 	 * @return self
 	 */
-	public ReservoirTypeBuilder trace(double amount){
+	public ReservoirBuilder trace(double amount){
 		this.fluidTrace = (int) Math.floor(amount * 1000D);
 		return this;
 	}
@@ -127,7 +127,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @param amount
 	 * @return
 	 */
-	public ReservoirTypeBuilder weight(int amount){
+	public ReservoirBuilder weight(int amount){
 		this.weight = amount;
 		return this;
 	}
@@ -143,7 +143,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @throws IllegalArgumentException when attempting to add a blacklist and
 	 *         whitelist in the same instance.
 	 */
-	public ReservoirTypeBuilder addDimensions(boolean isBlacklist, ResourceLocation... dimensions){
+	public ReservoirBuilder addDimensions(boolean isBlacklist, ResourceLocation... dimensions){
 		if(isBlacklist){
 			if(dimensions != null && dimensions.length > 0){
 				if(this.dimWhitelist.size() > 0)
@@ -183,7 +183,7 @@ public class ReservoirTypeBuilder extends IEFinishedRecipe<ReservoirTypeBuilder>
 	 * @throws IllegalArgumentException when attempting to add a blacklist and
 	 *         whitelist in the same instance.
 	 */
-	public ReservoirTypeBuilder addBiomes(boolean isBlacklist, ResourceLocation... biomes){
+	public ReservoirBuilder addBiomes(boolean isBlacklist, ResourceLocation... biomes){
 		if(isBlacklist){
 			if(biomes != null && biomes.length > 0){
 				if(this.bioWhitelist.size() > 0)
