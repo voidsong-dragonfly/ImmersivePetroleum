@@ -212,7 +212,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 				lastFluidOut = null;
 				if (targetFluidStack != null)
 				{
-					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 100), false);
+					FluidStack out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 200), false);
 					int accepted = output.fill(out, false);
 					if (accepted > 0)
 					{
@@ -227,7 +227,7 @@ public class TileEntityDistillationTower extends TileEntityMultiblockMetal<TileE
 						while (iterator.hasNext())
 						{
 							targetFluidStack = iterator.next();
-							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 100), false);
+							out = Utils.copyFluidStackWithAmount(targetFluidStack, Math.min(targetFluidStack.amount, 200), false);
 							accepted = output.fill(out, false);
 							if (accepted > 0)
 							{
