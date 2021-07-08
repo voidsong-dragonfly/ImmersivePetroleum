@@ -2,7 +2,9 @@ package flaxbeard.immersivepetroleum.client;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
+import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
+import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.IManualPage;
@@ -15,7 +17,6 @@ import flaxbeard.immersivepetroleum.api.crafting.PumpjackHandler.ReservoirType;
 import flaxbeard.immersivepetroleum.client.model.ModelCoresampleExtended;
 import flaxbeard.immersivepetroleum.client.page.ManualPageBigMultiblock;
 import flaxbeard.immersivepetroleum.client.page.ManualPageSchematicCrafting;
-import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.RenderSpeedboat;
 import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
@@ -23,7 +24,6 @@ import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
-import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityPumpjack;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockDistillationTower;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.MultiblockPumpjack;
@@ -52,7 +52,10 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -79,8 +82,13 @@ public class ClientProxy extends CommonProxy
 	public static final String CAT_IP = "ip";
 
 	@Override
-	public void preInit()
-	{
+	public void preInit() {
+		ClientUtils.mc().getFramebuffer().enableStencil();
+		ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
+		OBJLoader.INSTANCE.addDomain(ImmersivePetroleum.MODID);
+		IEOBJLoader.instance.addDomain(ImmersivePetroleum.MODID);
+		MinecraftForge.EVENT_BUS.register(this);
+
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpeedboat.class, RenderSpeedboat::new);
 	}
 
@@ -135,8 +143,8 @@ public class ClientProxy extends CommonProxy
 					}
 					if (block == IPContent.blockMetalMultiblock)
 					{
-						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "distillation_tower"), "inventory"));
-						ModelLoader.setCustomModelResourceLocation(blockItem, 1, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "distillation_tower"), "inventory"));
+						ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "metal_multiblock_distillationtowerparent"), "inventory"));
+						ModelLoader.setCustomModelResourceLocation(blockItem, 1, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "metal_multiblock_distillationtowerparent"), "inventory"));
 						ModelLoader.setCustomModelResourceLocation(blockItem, 2, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "pumpjack"), "inventory"));
 						ModelLoader.setCustomModelResourceLocation(blockItem, 3, new ModelResourceLocation(new ResourceLocation("immersivepetroleum", "pumpjack"), "inventory"));
 					}
@@ -280,12 +288,9 @@ public class ClientProxy extends CommonProxy
 				new ManualPages.Crafting(ManualHelper.getManual(), "automaticLubricator0", new ItemStack(IPContent.blockMetalDevice, 1, 0)),
 				new ManualPages.Text(ManualHelper.getManual(), "automaticLubricator1"));
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDistillationTower.TileEntityDistillationTowerParent.class, new MultiblockDistillationTowerRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPumpjack.TileEntityPumpjackParent.class, new MultiblockPumpjackRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAutoLubricator.class, new TileAutoLubricatorRenderer());
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalDevice), 0, TileEntityAutoLubricator.class);
-		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 0, TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
-		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 1, TileEntityDistillationTower.TileEntityDistillationTowerParent.class);
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 2, TileEntityPumpjack.TileEntityPumpjackParent.class);
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(IPContent.blockMetalMultiblock), 3, TileEntityPumpjack.TileEntityPumpjackParent.class);
 
