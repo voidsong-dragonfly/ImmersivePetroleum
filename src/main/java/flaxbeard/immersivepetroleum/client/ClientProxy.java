@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.RenderSpeedboat;
 import flaxbeard.immersivepetroleum.client.render.TileAutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
+import flaxbeard.immersivepetroleum.common.Config;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.BlockIPFluid;
 import flaxbeard.immersivepetroleum.common.blocks.metal.TileEntityAutoLubricator;
@@ -229,7 +230,7 @@ public class ClientProxy extends CommonProxy
 
 		ManualHelper.addEntry("pumpjack", CAT_IP,
 				new ManualPageMultiblock(ManualHelper.getManual(), "pumpjack0", MultiblockPumpjack.instance),
-				new ManualPages.Text(ManualHelper.getManual(), "pumpjack1"));
+				new ManualPages.Text(ManualHelper.getManual(), Config.IPConfig.Extraction.req_pipes ? "pumpjack1alt" : "pumpjack1"));
 
 
 		ArrayList<DistillationRecipe> recipeList = DistillationRecipe.recipeList;
