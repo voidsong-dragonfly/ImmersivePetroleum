@@ -49,6 +49,13 @@ public class BlockIPMetalMultiblocks extends BlockIPMultiblock<BlockTypes_IPMeta
 	}
 
 	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		state = super.getActualState(state, world, pos);
+		return state;
+	}
+
+	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
 		switch (BlockTypes_IPMetalMultiblock.values()[meta])
