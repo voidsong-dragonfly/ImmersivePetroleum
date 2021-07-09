@@ -23,14 +23,15 @@ public class ReservoirHandler{
 		{
 			int chunkX = chunkPos.getXStart();
 			int chunkZ = chunkPos.getZStart();
-			double scale = 0.015625;
 			double maxNoise = 0;
-			for(int z = 0;z < 16;z++){
-				for(int x = 0;x < 16;x++){
-					double noise = generator.noiseAt((chunkX + x) * scale, (chunkZ + z) * scale, scale, x * scale);
-					double chance = Math.abs(noise) / .55;
+			for(int j = 0;j < 16;j++){
+				for(int i = 0;i < 16;i++){
+					int x = chunkX + i;
+					int z = chunkZ + j;
+					
+					double chance = noiseFor(x, z);
 					if(chance > noiseThreshold && chance > maxNoise){
-						pos = new ColumnPos(chunkX + x, chunkZ + z);
+						pos = new ColumnPos(x, z);
 						maxNoise = chance;
 					}
 				}
@@ -42,5 +43,29 @@ public class ReservoirHandler{
 				
 			}
 		}
+	}
+	
+	static final double scale = 0.015625D;
+	static final double d0 = 0.6666666666666667;
+	static final double d1 = 0.3333333333333333D;
+	
+	/**
+	 * @param x Block Position
+	 * @param z Block Position
+	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
+	 */
+	public static double noiseFor(int x, int z){
+		if(generator == null){
+			return -1D;
+		}
+		
+		double noise = Math.abs(generator.noiseAt(x * scale, z * scale, scale, x * scale)) / .55;
+		
+		double ret = -1D;
+		if(noise > d0){
+			ret = (noise - d0) / d1;
+		}
+		
+		return ret;
 	}
 }

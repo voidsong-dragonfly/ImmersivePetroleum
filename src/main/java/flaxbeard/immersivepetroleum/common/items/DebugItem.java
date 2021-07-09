@@ -1,7 +1,10 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.lwjgl.glfw.GLFW;
@@ -10,6 +13,7 @@ import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.Island;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
@@ -24,6 +28,7 @@ import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
@@ -39,6 +44,7 @@ import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -64,8 +70,9 @@ public class DebugItem extends IPItemBase{
 		CHUNKBASED_RESERVOIR("Chunk-Based Reservoir: Create/Get"),
 		CHUNKBASED_RESERVOIR_BIG_SCAN("Chunk-Based Reservoir: Scan 5 Chunk Radius Area"),
 		CHUNKBASED_RESERVOIR_CLEAR_CACHE("Chunk-Based Reservoir: Clear Cache"),
-		
+
 		SEEDBASED_RESERVOIR("Seed-Based Reservoir: Heatmap"),
+		SEEDBASED_RESERVOIR_AREA_TEST("Seed-Based Reservoir: Island Testing"),
 		
 		REFRESH_ALL_IPMODELS("Refresh all IPModels"),
 		UPDATE_SHAPES("Does nothing without Debugging Enviroment"),
@@ -202,27 +209,122 @@ public class DebugItem extends IPItemBase{
 						}
 					}
 					
-					double scale = 0.015625;
 					BlockPos playerPos = playerIn.getPosition();
 					
 					ChunkPos cPos = new ChunkPos(playerPos);
 					int chunkX = cPos.getXStart();
 					int chunkZ = cPos.getZStart();
 					
+					// Does the whole 0-15 local chunk block thing
 					int x = playerPos.getX() - cPos.getXStart();
 					int z = playerPos.getZ() - cPos.getZStart();
 					
-					double noise = ReservoirHandler.generator.noiseAt((chunkX + x) * scale, (chunkZ + z) * scale, scale, x * scale);
-					noise = Math.abs(noise) / .55;
+					double noise = ReservoirHandler.noiseFor((chunkX + x), (chunkZ + z));
 					
-					double test = 0.0D;
-					double d0 = 3 / 9D;
-					double d1 = 6 / 9D;
-					if(noise > d1){
-						test = (noise - d1) / (d0);
+					playerIn.sendStatusMessage(new StringTextComponent((chunkX + " " + chunkZ) + ": " + noise), true);
+					
+					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+				}
+				case SEEDBASED_RESERVOIR_AREA_TEST:{
+					if(worldIn instanceof ServerWorld){
+						if(ReservoirHandler.generator == null){
+							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
+						}
 					}
 					
-					playerIn.sendStatusMessage(new StringTextComponent((chunkX + " " + chunkZ) + ": " + noise + " " + test), true);
+					BlockPos playerPos = playerIn.getPosition();
+					ColumnPos playerColumn = new ColumnPos(playerPos);
+					
+					ChunkPos cPos = new ChunkPos(playerPos);
+					int cx = cPos.getXStart();
+					int cz = cPos.getZStart();
+					
+					ColumnPos current = Island.getFirst(cx, cz);
+					if(current != null){
+						long timer = System.currentTimeMillis();
+						List<ColumnPos> list = new ArrayList<>();
+						
+						Island.next(list, current.x, current.z);
+						
+						// Keep edges/corners and dump the rest
+						{
+							list = list.stream().filter(pos -> {
+								boolean b0 = ReservoirHandler.noiseFor(pos.x + 1, pos.z) == -1;
+								boolean b1 = ReservoirHandler.noiseFor(pos.x - 1, pos.z) == -1;
+								boolean b2 = ReservoirHandler.noiseFor(pos.x, pos.z + 1) == -1;
+								boolean b3 = ReservoirHandler.noiseFor(pos.x, pos.z - 1) == -1;
+								
+								return b0 || b1 || b2 || b3;
+							}).collect(Collectors.toList());
+							
+							// Just Debugging, do not include in final!
+							for(int i = 0;i < list.size();i++){
+								ColumnPos pos = list.get(i);
+								worldIn.setBlockState(new BlockPos(pos.x, 128, pos.z), Blocks.WHITE_CONCRETE.getDefaultState());
+							}
+						}
+						
+						// Give this some direction
+						// Result can end up being either clockwise or counter-clockwise!
+						{
+							List<ColumnPos> ll = new ArrayList<>();
+							ll.add(list.remove(0));
+							int a = 0;
+							while(list.size() > 0){
+								final ColumnPos col = ll.get(a);
+								
+								check: {
+									for(int j = -1;j <= 1;j++){
+										for(int i = -1;i <= 1;i++){
+											ColumnPos p = new ColumnPos(col.x + i, col.z + j);
+											
+											if(list.remove(p) && ll.add(p)){
+												a++;
+												break check;
+											}
+										}
+									}
+									
+									ImmersivePetroleum.log.info("This should not happen, but it did..");
+									break;
+								}
+							}
+							list = ll;
+						}
+						
+						// Straight Line Optimizations (Cut down on number of Points)
+						// Avoid things like XXXX and turn them into X--X
+						// Where X is a Block, and - is just an imaginary connection.
+						{
+							// X Optimization
+							{
+								for(int i = 0;i < list.size();i++){
+									ColumnPos pos0 = list.get(i);
+								}
+							}
+							
+							// Z Optimization
+							{
+							}
+						}
+						
+						/*
+						 * After this point the list would be stored inside the
+						 * Island class and everything below would be there
+						 * instead
+						 */
+						
+						// Point inside Polygon Test
+						{
+							boolean inside = inPoly(playerColumn, list);
+							playerIn.sendStatusMessage(new StringTextComponent("Inside: " + inside), true);
+						}
+						
+						timer = System.currentTimeMillis() - timer;
+						ImmersivePetroleum.log.info("Time: {}ms", timer);
+					}else{
+						ImmersivePetroleum.log.info("Nothing here.");
+					}
 					
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
@@ -233,6 +335,35 @@ public class DebugItem extends IPItemBase{
 		}
 		
 		return super.onItemRightClick(worldIn, playerIn, handIn);
+	}
+	
+	// TODO Move to Island class
+	// Based on http://www.alienryderflex.com/polygon/
+	boolean inPoly(ColumnPos vec, List<ColumnPos> poly){
+		float x = vec.x;
+		float y = vec.z;
+		
+		boolean ret = false;
+		int j = poly.size() - 1;
+		for(int i = 0;i < poly.size();i++){
+			ColumnPos a = poly.get(i);
+			ColumnPos b = poly.get(j);
+			
+			float ax = a.x, az = a.z;
+			float bx = b.x, bz = b.z;
+			
+			if(((az < y && bz >= y) || (bz < y && az >= y)) && (ax <= x || bx <= x)){
+				ret ^= (ax + (y - az) / (bz - az) * (bx - ax) < x);
+			}
+			
+			j = i;
+		}
+		
+		return ret;
+	}
+	
+	boolean pointInPolygon(int polyCorners, float[] polyX, float[] polyY, float x, float y){
+		return false;
 	}
 	
 	@Override

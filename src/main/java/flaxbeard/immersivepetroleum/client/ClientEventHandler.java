@@ -287,7 +287,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void reservoirDebuggingRenderLast(RenderWorldLastEvent event){
+	public void reservoirDebuggingOverlayText(RenderGameOverlayEvent.Post event){
 		if(ReservoirHandler.generator == null){
 			return;
 		}
@@ -302,94 +302,127 @@ public class ClientEventHandler{
 				return;
 			}
 			
-			MatrixStack matrix = event.getMatrixStack();
-			World world = player.getEntityWorld();
+			List<ITextComponent> debugOut = new ArrayList<>();
 			
-			double scale = 0.015625;
-			BlockPos playerPos = player.getPosition();
+			if(!debugOut.isEmpty()){
+				MatrixStack matrix = event.getMatrixStack();
+				matrix.push();
+				IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+				for(int i = 0;i < debugOut.size();i++){
+					int w = ClientUtils.font().getStringWidth(debugOut.get(i).getString());
+					int yOff = i * (ClientUtils.font().FONT_HEIGHT + 2);
+					
+					matrix.push();
+					matrix.translate(0, 0, 1);
+					GuiHelper.drawColouredRect(1, 1 + yOff, w+1, 10, 0xAF_000000, buffer, matrix);
+					buffer.finish();
+					// Draw string without shadow
+					ClientUtils.font().drawText(matrix, debugOut.get(i), 2, 2 + yOff, -1);
+					matrix.pop();
+				}
+				matrix.pop();
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void reservoirDebuggingRenderLast(RenderWorldLastEvent event){
+		if(ReservoirHandler.generator == null){
+			return;
+		}
+		
+		PlayerEntity player = ClientUtils.mc().player;
+		
+		ItemStack main = player.getHeldItem(Hand.MAIN_HAND);
+		ItemStack off = player.getHeldItem(Hand.OFF_HAND);
+		
+		if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
+			DebugItem.Modes mode = null;
+			if(main != null){
+				mode = DebugItem.getMode(main);
+			}else if(off != null){
+				mode = DebugItem.getMode(off);
+			}
 			
-			IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-			matrix.push();
-			{
-				// Anti-Jiggle when moving
-				Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
-				matrix.translate(-renderView.x, -renderView.y, -renderView.z);
+			if(mode == DebugItem.Modes.SEEDBASED_RESERVOIR || mode == DebugItem.Modes.SEEDBASED_RESERVOIR_AREA_TEST){
+				MatrixStack matrix = event.getMatrixStack();
+				World world = player.getEntityWorld();
+				BlockPos playerPos = player.getPosition();
 				
-				int radius = 9;
-				for(int i = -radius;i <= radius;i++){
-					for(int j = -radius;j <= radius;j++){
-						ChunkPos cPos = new ChunkPos(playerPos.add(16*i, 0, 16*j));
-						int chunkX = cPos.getXStart();
-						int chunkZ = cPos.getZStart();
-						
-						for(int cX = 0;cX < 16;cX++){
-							for(int cZ = 0;cZ < 16;cZ++){
-								int x = (chunkX + cX);
-								int z = (chunkZ + cZ);
-								
-								double noise = ReservoirHandler.generator.noiseAt(x * scale, z * scale, scale, cX * scale);
-								noise = Math.abs(noise) / .55;
-								
-								matrix.push();
-								{
-									DyeColor color = DyeColor.BLACK;
-									double d0 = 3 / 9D;
-									double d1 = 6 / 9D;
-									if(noise > d1){
-										double test = (noise - d1) / d0;
-										int c = (int) MathHelper.lerp(test, 0, 9);
+				IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+				matrix.push();
+				{
+					// Anti-Jiggle when moving
+					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
+					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
+					
+					int radius = 9;
+					for(int i = -radius;i <= radius;i++){
+						for(int j = -radius;j <= radius;j++){
+							ChunkPos cPos = new ChunkPos(playerPos.add(16*i, 0, 16*j));
+							int chunkX = cPos.getXStart();
+							int chunkZ = cPos.getZStart();
+							
+							for(int cX = 0;cX < 16;cX++){
+								for(int cZ = 0;cZ < 16;cZ++){
+									int x = chunkX + cX;
+									int z = chunkZ + cZ;
+									
+									matrix.push();
+									{
+										DyeColor color = DyeColor.BLACK;
 										
-										if(c <= 0){
-											color = DyeColor.BLACK;
-										}else if(c == 1){
-											color = DyeColor.BLUE;
-										}else if(c == 2){
-											color = DyeColor.CYAN;
-										}else if(c == 3){
-											color = DyeColor.GREEN;
-										}else if(c == 4){
-											color = DyeColor.LIME;
-										}else if(c == 5){
-											color = DyeColor.YELLOW;
-										}else if(c == 6){
-											color = DyeColor.ORANGE;
-										}else if(c == 7){
-											color = DyeColor.RED;
-										}else if(c >= 8){
-											color = DyeColor.WHITE;
+										double n = ReservoirHandler.noiseFor(x, z);
+										if(n > 0.0D){
+											int c = (int) Math.round(9 * n);
+											
+											if(c <= 0){
+												color = DyeColor.BLACK;
+											}else if(c == 1){
+												color = DyeColor.BLUE;
+											}else if(c == 2){
+												color = DyeColor.CYAN;
+											}else if(c == 3){
+												color = DyeColor.GREEN;
+											}else if(c == 4){
+												color = DyeColor.LIME;
+											}else if(c == 5){
+												color = DyeColor.YELLOW;
+											}else if(c == 6){
+												color = DyeColor.ORANGE;
+											}else if(c == 7){
+												color = DyeColor.RED;
+											}else if(c > 7){
+												color = DyeColor.WHITE;
+											}
+											
+											int r = (color.getTextColor() & 0xFF0000) >> 16;
+											int g = (color.getTextColor() & 0x00FF00) >> 8;
+											int b = (color.getTextColor() & 0x0000FF);
+											
+											int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
+											
+											matrix.translate(x, Math.max(128, height) + 0.0625, z);
+											
+											Matrix4f mat = matrix.getLast().getMatrix();
+											
+											IVertexBuilder builder = buffer.getBuffer(IPRenderTypes.ISLAND_DEBUGGING_POSITION_COLOR);
+											builder.pos(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
+											builder.pos(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
+											builder.pos(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
+											builder.pos(mat, 1, 0, 0).color(r, g, b, 255).endVertex();
 										}
-										
-										int r = (color.getTextColor() & 0xFF0000) >> 16;
-										int g = (color.getTextColor() & 0x00FF00) >> 8;
-										int b = (color.getTextColor() & 0x0000FF);
-										
-										int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
-										
-										matrix.translate(x, height + 0.0625, z);
-										
-										IVertexBuilder builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_POSITION_COLOR);
-										Matrix4f mat = matrix.getLast().getMatrix();
-										builder.pos(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
-										builder.pos(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
-										builder.pos(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
-										builder.pos(mat, 1, 0, 0).color(r, g, b, 255).endVertex();
-										
-//										float f = (float)test;
-//										builder.pos(mat, 0, 0.0625F, 0).color(f, f, f, 1.0F).endVertex();
-//										builder.pos(mat, 0, 0.0625F, 1).color(f, f, f, 1.0F).endVertex();
-//										builder.pos(mat, 1, 0.0625F, 1).color(f, f, f, 1.0F).endVertex();
-//										builder.pos(mat, 1, 0.0625F, 0).color(f, f, f, 1.0F).endVertex();
 									}
+									matrix.pop();
 								}
-								matrix.pop();
 							}
 						}
 					}
+					
 				}
-				
+				matrix.pop();
+				buffer.finish();
 			}
-			matrix.pop();
-			buffer.finish();
 		}
 	}
 	

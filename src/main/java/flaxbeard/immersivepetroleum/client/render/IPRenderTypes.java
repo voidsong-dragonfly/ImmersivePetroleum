@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.RenderState.CullState;
 import net.minecraft.client.renderer.RenderState.LineState;
 import net.minecraft.client.renderer.RenderState.TextureState;
 import net.minecraft.client.renderer.RenderType;
@@ -26,6 +27,7 @@ public class IPRenderTypes{
 	public static final RenderType OIL_TANK;
 	public static final RenderType TRANSLUCENT_LINES;
 	public static final RenderType TRANSLUCENT_POSITION_COLOR;
+	public static final RenderType ISLAND_DEBUGGING_POSITION_COLOR;
 
 	static final RenderState.TextureState TEXTURE_ACTIVE_TOWER = new RenderState.TextureState(activeTexture, false, false);
 	static final RenderState.TextureState TEXTURE_OIL_TANK = new RenderState.TextureState(oilTankTexture, false, false);
@@ -95,6 +97,17 @@ public class IPRenderTypes{
 				256,
 				RenderType.State.getBuilder()
 					.transparency(TRANSLUCENT_TRANSPARENCY)
+					.texture(new TextureState())
+					.build(false)
+		);
+		
+		ISLAND_DEBUGGING_POSITION_COLOR = RenderType.makeType(
+				ImmersivePetroleum.MODID+":translucent_pos_color",
+				DefaultVertexFormats.POSITION_COLOR,
+				GL11.GL_QUADS,
+				256,
+				RenderType.State.getBuilder()
+					.cull(new CullState(false))
 					.texture(new TextureState())
 					.build(false)
 		);
