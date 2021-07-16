@@ -1,10 +1,8 @@
 package flaxbeard.immersivepetroleum.common.items;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.lwjgl.glfw.GLFW;
@@ -242,71 +240,20 @@ public class DebugItem extends IPItemBase{
 					ColumnPos current = Island.getFirst(cx, cz);
 					if(current != null){
 						long timer = System.currentTimeMillis();
-						List<ColumnPos> list = new ArrayList<>();
 						
-						Island.next(list, current.x, current.z);
+						List<ColumnPos> poly = new ArrayList<>();
 						
-						// Keep edges/corners and dump the rest
-						{
-							list = list.stream().filter(pos -> {
-								boolean b0 = ReservoirHandler.noiseFor(pos.x + 1, pos.z) == -1;
-								boolean b1 = ReservoirHandler.noiseFor(pos.x - 1, pos.z) == -1;
-								boolean b2 = ReservoirHandler.noiseFor(pos.x, pos.z + 1) == -1;
-								boolean b3 = ReservoirHandler.noiseFor(pos.x, pos.z - 1) == -1;
-								
-								return b0 || b1 || b2 || b3;
-							}).collect(Collectors.toList());
-							
-							// Just Debugging, do not include in final!
-							for(int i = 0;i < list.size();i++){
-								ColumnPos pos = list.get(i);
-								worldIn.setBlockState(new BlockPos(pos.x, 128, pos.z), Blocks.WHITE_CONCRETE.getDefaultState());
-							}
-						}
+						Island.next(poly, current.x, current.z);
 						
-						// Give this some direction
-						// Result can end up being either clockwise or counter-clockwise!
-						{
-							List<ColumnPos> ll = new ArrayList<>();
-							ll.add(list.remove(0));
-							int a = 0;
-							while(list.size() > 0){
-								final ColumnPos col = ll.get(a);
-								
-								check: {
-									for(int j = -1;j <= 1;j++){
-										for(int i = -1;i <= 1;i++){
-											ColumnPos p = new ColumnPos(col.x + i, col.z + j);
-											
-											if(list.remove(p) && ll.add(p)){
-												a++;
-												break check;
-											}
-										}
-									}
-									
-									ImmersivePetroleum.log.info("This should not happen, but it did..");
-									break;
-								}
-							}
-							list = ll;
-						}
+						poly = edgy(poly);
 						
-						// Straight Line Optimizations (Cut down on number of Points)
-						// Avoid things like XXXX and turn them into X--X
-						// Where X is a Block, and - is just an imaginary connection.
-						{
-							// X Optimization
-							{
-								for(int i = 0;i < list.size();i++){
-									ColumnPos pos0 = list.get(i);
-								}
-							}
-							
-							// Z Optimization
-							{
-							}
-						}
+						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.WHITE_CONCRETE.getDefaultState()));
+						
+						poly = direction(poly);
+						
+						poly = optimizeLines(poly);
+						
+						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.ORANGE_CONCRETE.getDefaultState()));
 						
 						/*
 						 * After this point the list would be stored inside the
@@ -316,12 +263,18 @@ public class DebugItem extends IPItemBase{
 						
 						// Point inside Polygon Test
 						{
-							boolean inside = inPoly(playerColumn, list);
-							playerIn.sendStatusMessage(new StringTextComponent("Inside: " + inside), true);
+							Island island = new Island(poly);
+							
+							long t = System.nanoTime();
+							boolean insideOld = island.isInside(playerColumn);
+							t = System.nanoTime() - t;
+							
+							String out = insideOld + " (" + (t/1000000F) + "ms)";
+							playerIn.sendStatusMessage(new StringTextComponent(out), true);
 						}
 						
 						timer = System.currentTimeMillis() - timer;
-						ImmersivePetroleum.log.info("Time: {}ms", timer);
+						ImmersivePetroleum.log.info("Time: {}ms, Points: {}", timer, poly.size());
 					}else{
 						ImmersivePetroleum.log.info("Nothing here.");
 					}
@@ -337,32 +290,176 @@ public class DebugItem extends IPItemBase{
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
-	// TODO Move to Island class
-	// Based on http://www.alienryderflex.com/polygon/
-	boolean inPoly(ColumnPos vec, List<ColumnPos> poly){
-		float x = vec.x;
-		float y = vec.z;
-		
-		boolean ret = false;
-		int j = poly.size() - 1;
-		for(int i = 0;i < poly.size();i++){
-			ColumnPos a = poly.get(i);
-			ColumnPos b = poly.get(j);
-			
-			float ax = a.x, az = a.z;
-			float bx = b.x, bz = b.z;
-			
-			if(((az < y && bz >= y) || (bz < y && az >= y)) && (ax <= x || bx <= x)){
-				ret ^= (ax + (y - az) / (bz - az) * (bx - ax) < x);
+	/** Keep edges/corners and dump the rest */
+	List<ColumnPos> edgy(List<ColumnPos> poly){
+		final List<ColumnPos> list = new ArrayList<>();
+		poly.forEach(pos -> {
+			for(int z = -1;z <= 1;z++){
+				for(int x = -1;x <= 1;x++){
+					if(ReservoirHandler.noiseFor(pos.x + 1, pos.z) == -1){
+						ColumnPos p = new ColumnPos(pos.x + 1, pos.z);
+						if(!list.contains(p)){
+							list.add(p);
+						}
+					}
+					if(ReservoirHandler.noiseFor(pos.x - 1, pos.z) == -1){
+						ColumnPos p = new ColumnPos(pos.x - 1, pos.z);
+						if(!list.contains(p)){
+							list.add(p);
+						}
+					}
+					if(ReservoirHandler.noiseFor(pos.x, pos.z + 1) == -1){
+						ColumnPos p = new ColumnPos(pos.x, pos.z + 1);
+						if(!list.contains(p)){
+							list.add(p);
+						}
+					}
+					if(ReservoirHandler.noiseFor(pos.x, pos.z - 1) == -1){
+						ColumnPos p = new ColumnPos(pos.x, pos.z - 1);
+						if(!list.contains(p)){
+							list.add(p);
+						}
+					}
+				}
 			}
-			
-			j = i;
-		}
+		});
 		
-		return ret;
+		return list;
 	}
 	
-	boolean pointInPolygon(int polyCorners, float[] polyX, float[] polyY, float x, float y){
+	/**
+	 * Give this some direction. Result can end up being either clockwise or
+	 * counter-clockwise!
+	 */
+	List<ColumnPos> direction(List<ColumnPos> poly){
+		List<ColumnPos> list = new ArrayList<>();
+		list.add(poly.remove(0));
+		int a = 0;
+		while(poly.size() > 0){
+			final ColumnPos col = list.get(a);
+			
+			if(moveNext(col, poly, list)){
+				a++;
+			}else{
+				ImmersivePetroleum.log.info("This should not happen, but it did..");
+				break;
+			}
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * <pre>
+	 * Straight Line Optimizations (Cut down on number of Points)
+	 * to avoid things like #### and turn them into #--#
+	 * Where # is a Point, and - is just an imaginary line between.
+	 * 
+	 * For X and Z
+	 * </pre>
+	 */
+	ArrayList<ColumnPos> optimizeLines(List<ColumnPos> poly){
+		ArrayList<ColumnPos> list = new ArrayList<>(poly);
+		
+		int endIndex = 0;
+		ColumnPos startPos = null, endPos = null;
+		for(int startIndex = 0;startIndex < list.size();startIndex++){
+			startPos = list.get(startIndex);
+			
+			// Find the end of the current line on X
+			{
+				for(int j = 1;j < 64;j++){
+					int index = (startIndex + j) % list.size();
+					ColumnPos pos = list.get(index);
+					
+					if(startPos.z != pos.z){
+						break;
+					}
+					
+					endIndex = index;
+					endPos = pos;
+				}
+			}
+			
+			// Find the end the current line on Z
+			{
+				for(int j = 1;j < 64;j++){
+					int index = (startIndex + j) % list.size();
+					ColumnPos pos = list.get(index);
+					
+					if(startPos.x != pos.x){
+						break;
+					}
+					
+					endIndex = index;
+					endPos = pos;
+				}
+			}
+			
+			// Diagonal lines?
+			boolean debug = false;
+			if(debug){
+				for(int j = 1;j < 64;j++){
+					int index = (startIndex + j) % list.size();
+					ColumnPos pos = list.get(index);
+
+					int dx = Math.abs(pos.x - startPos.x);
+					int dz = Math.abs(pos.z - startPos.z);
+					
+					if(dx != dz){
+						break;
+					}
+					
+					endIndex = index;
+					endPos = pos;
+				}
+			}
+			
+			// Commence culling
+			if(startPos != null && endPos != null){
+				int len = (endIndex - startIndex);
+				if(len > 1){
+					int index = startIndex + 1;
+					for(int j = index;j < endIndex;j++){
+						list.remove(index % list.size());
+					}
+				}else if(len < 0){
+					// Start and End cross the 
+					len = len + list.size() - 1;
+					
+					if(len>1){
+						int index = startIndex + 1;
+						for(int j = 0;j < len;j++){
+							list.remove(index % list.size());
+						}
+					}
+				}
+				
+				startPos = endPos = null;
+			}
+		}
+		
+		return list;
+	}
+	
+	boolean moveNext(ColumnPos pos, List<ColumnPos> list0, List<ColumnPos> list1){
+		ColumnPos p0 = new ColumnPos(pos.x + 1, pos.z);
+		ColumnPos p1 = new ColumnPos(pos.x - 1, pos.z);
+		ColumnPos p2 = new ColumnPos(pos.x, pos.z + 1);
+		ColumnPos p3 = new ColumnPos(pos.x, pos.z - 1);
+		ColumnPos p4 = new ColumnPos(pos.x - 1, pos.z - 1);
+		ColumnPos p5 = new ColumnPos(pos.x - 1, pos.z + 1);
+		ColumnPos p6 = new ColumnPos(pos.x + 1, pos.z - 1);
+		ColumnPos p7 = new ColumnPos(pos.x + 1, pos.z + 1);
+		
+		if((list0.remove(p0) && list1.add(p0)) || (list0.remove(p1) && list1.add(p1)) || (list0.remove(p2) && list1.add(p2)) || (list0.remove(p3) && list1.add(p3))){
+			return true;
+		}
+		
+		if((list0.remove(p4) && list1.add(p4)) || (list0.remove(p5) && list1.add(p5)) || (list0.remove(p6) && list1.add(p6)) || (list0.remove(p7) && list1.add(p7))){
+			return true;
+		}
+		
 		return false;
 	}
 	

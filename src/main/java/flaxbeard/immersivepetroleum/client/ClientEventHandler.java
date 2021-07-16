@@ -338,9 +338,10 @@ public class ClientEventHandler{
 		
 		if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
 			DebugItem.Modes mode = null;
-			if(main != null){
+			if(main != ItemStack.EMPTY){
 				mode = DebugItem.getMode(main);
-			}else if(off != null){
+			}
+			if(off != ItemStack.EMPTY){
 				mode = DebugItem.getMode(off);
 			}
 			
