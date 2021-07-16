@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -13,41 +15,86 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 
-public class Island{
-	public static final Multimap<RegistryKey<World>, Island> ALL = ArrayListMultimap.create();
+public class ReservoirIsland{
+	public static final Multimap<RegistryKey<World>, ReservoirIsland> ALL = ArrayListMultimap.create();
 	
+	@Nonnull
+	private Reservoir reservoir;
+	@Nonnull
 	private List<ColumnPos> poly;
-	public Island(List<ColumnPos> poly){
+	private int amount;
+	private int capacity;
+	
+	public ReservoirIsland(@Nonnull List<ColumnPos> poly){
 		this.poly = poly;
 	}
 	
+	/**
+	 * Sets the reservoirs current fluid amount
+	 * 
+	 * @param amount
+	 * @return previous amount
+	 */
+	public int setAmount(int amount){
+		int old = this.amount;
+		this.amount = amount;
+		return old;
+	}
+	
+	/**
+	 * Sets the reservoirs capacity
+	 * 
+	 * @param amount
+	 * @return previous capacity
+	 */
+	public int setCapacity(int amount){
+		int old = this.capacity;
+		this.capacity = amount;
+		return old;
+	}
+	
+	public Reservoir setReservoirType(@Nonnull Reservoir reservoir){
+		Reservoir old = this.reservoir;
+		this.reservoir = reservoir;
+		return old;
+	}
+	
+	public int getAmount(){
+		return this.amount;
+	}
+	
+	public int getCapacity(){
+		return this.capacity;
+	}
+	
+	@Nonnull
+	public Reservoir getType(){
+		return this.reservoir;
+	}
+	
 	public CompoundNBT writeToNBT(CompoundNBT nbt){
-		if(this.poly != null && !this.poly.isEmpty()){
-			final ListNBT points = new ListNBT();
-			this.poly.forEach(pos -> {
-				CompoundNBT point = new CompoundNBT();
-				point.putInt("x", pos.x);
-				point.putInt("z", pos.z);
-				points.add(point);
-			});
-			nbt.put("poly_points", points);
-		}
+		final ListNBT points = new ListNBT();
+		this.poly.forEach(pos -> {
+			CompoundNBT point = new CompoundNBT();
+			point.putInt("x", pos.x);
+			point.putInt("z", pos.z);
+			points.add(point);
+		});
+		nbt.put("poly_points", points);
 		
 		return nbt;
 	}
 	
 	public void readFromNBT(CompoundNBT nbt){
-		if(nbt.contains("poly_points", NBT.TAG_LIST)){
-			final List<ColumnPos> points = new ArrayList<>();
-			final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
-			list.forEach(tag -> {
-				CompoundNBT point = (CompoundNBT) tag;
-				int x = point.getInt("x");
-				int z = point.getInt("z");
-				points.add(new ColumnPos(x, z));
-			});
-			this.poly = points;
-		}
+		final List<ColumnPos> points = new ArrayList<>();
+		final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
+		list.forEach(tag -> {
+			CompoundNBT point = (CompoundNBT) tag;
+			int x = point.getInt("x");
+			int z = point.getInt("z");
+			points.add(new ColumnPos(x, z));
+		});
+		this.poly = points;
 	}
 	
 	public boolean isInside(ColumnPos pos){
