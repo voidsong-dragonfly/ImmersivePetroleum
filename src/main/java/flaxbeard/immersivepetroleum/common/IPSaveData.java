@@ -1,15 +1,19 @@
 package flaxbeard.immersivepetroleum.common;
 
-import java.util.Map;
+import java.util.stream.Collectors;
 
-import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants.NBT;
 
 public class IPSaveData extends WorldSavedData{
 	private static IPSaveData INSTANCE;
@@ -21,7 +25,20 @@ public class IPSaveData extends WorldSavedData{
 	
 	@Override
 	public void read(CompoundNBT nbt){
-		ListNBT oilList = nbt.getList("oilInfo", 10);
+		ListNBT reservoirs = nbt.getList("reservoirs", NBT.TAG_COMPOUND);
+		synchronized(ReservoirHandler.getReservoirIslandList()){
+			ReservoirHandler.getReservoirIslandList().clear();
+			for(int i = 0;i < reservoirs.size();i++){
+				CompoundNBT dim = reservoirs.getCompound(i);
+				ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
+				RegistryKey<World> dimType = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, rl);
+				ListNBT islands = dim.getList("islands", NBT.TAG_COMPOUND);
+				ReservoirHandler.getReservoirIslandList().putAll(dimType, islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).collect(Collectors.toList()));
+			}
+		}
+		
+		/*
+		ListNBT oilList = nbt.getList("oilInfo", NBT.TAG_COMPOUND);
 		PumpjackHandler.reservoirsCache.clear();
 		for(int i = 0;i < oilList.size();i++){
 			CompoundNBT tag = oilList.getCompound(i);
@@ -31,8 +48,9 @@ public class IPSaveData extends WorldSavedData{
 				PumpjackHandler.reservoirsCache.put(coords, info);
 			}
 		}
+		*/
 		
-		ListNBT lubricatedList = nbt.getList("lubricated", 10);
+		ListNBT lubricatedList = nbt.getList("lubricated", NBT.TAG_COMPOUND);
 		LubricatedHandler.lubricatedTiles.clear();
 		for(int i = 0;i < lubricatedList.size();i++){
 			CompoundNBT tag = lubricatedList.getCompound(i);
@@ -43,6 +61,24 @@ public class IPSaveData extends WorldSavedData{
 	
 	@Override
 	public CompoundNBT write(CompoundNBT nbt){
+		ListNBT reservoirs = new ListNBT();
+		synchronized(ReservoirHandler.getReservoirIslandList()){
+			for(RegistryKey<World> dimension:ReservoirHandler.getReservoirIslandList().keySet()){
+				CompoundNBT dim = new CompoundNBT();
+				dim.putString("dimension", dimension.getLocation().toString());
+				
+				ListNBT islands = new ListNBT();
+				for(ReservoirIsland island:ReservoirHandler.getReservoirIslandList().get(dimension)){
+					islands.add(island.writeToNBT());
+				}
+				dim.put("islands", islands);
+				
+				reservoirs.add(dim);
+			}
+		}
+		nbt.put("reservoirs", reservoirs);
+		
+		/*
 		ListNBT oilList = new ListNBT();
 		for(Map.Entry<DimensionChunkCoords, ReservoirWorldInfo> e:PumpjackHandler.reservoirsCache.entrySet()){
 			if(e.getKey() != null && e.getValue() != null){
@@ -52,6 +88,7 @@ public class IPSaveData extends WorldSavedData{
 			}
 		}
 		nbt.put("oilInfo", oilList);
+		*/
 		
 		ListNBT lubricatedList = new ListNBT();
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
@@ -66,7 +103,9 @@ public class IPSaveData extends WorldSavedData{
 	}
 	
 	public static void setDirty(){
-		INSTANCE.markDirty();
+		if(INSTANCE != null){
+			INSTANCE.markDirty();
+		}
 	}
 	
 	public static void setInstance(IPSaveData in){

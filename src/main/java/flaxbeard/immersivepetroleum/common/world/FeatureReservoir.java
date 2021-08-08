@@ -36,7 +36,7 @@ public class FeatureReservoir extends Feature<NoFeatureConfig>{
 		if(!generatedReservoirChunks.containsEntry(dimension, chunk.getPos())){
 			generatedReservoirChunks.put(dimension, chunk.getPos());
 			
-			ReservoirHandler.generatePotentialReservoir(reader.getWorld(), chunk.getPos(), rand);
+			ReservoirHandler.scanChunkForNewReservoirs(reader.getWorld(), chunk.getPos(), rand);
 			return true;
 		}
 		return false;

@@ -37,6 +37,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
@@ -262,7 +263,7 @@ public class DebugItem extends IPItemBase{
 						
 						// Point inside Polygon Test
 						{
-							ReservoirIsland island = new ReservoirIsland(poly);
+							ReservoirIsland island = new ReservoirIsland(poly, new ResourceLocation(ImmersivePetroleum.MODID, "oil"));
 							
 							long t = System.nanoTime();
 							boolean inside = island.contains(playerColumn);

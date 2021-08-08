@@ -1,6 +1,10 @@
 package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -13,35 +17,52 @@ import net.minecraft.world.gen.INoiseGenerator;
 import net.minecraft.world.server.ServerWorld;
 
 public class ReservoirHandler{
-	private static final Multimap<RegistryKey<World>, ReservoirVein> RESERVOIR_VEIN_LIST = ArrayListMultimap.create();
+	private static final Multimap<RegistryKey<World>, ReservoirIsland> RESERVOIR_ISLAND_LIST = ArrayListMultimap.create();
+	private static final Map<Pair<RegistryKey<World>, ColumnPos>, ReservoirIsland> CACHE = new HashMap<>();
 	
 	public static INoiseGenerator generator;
 	public static double noiseThreshold = 0;
 	
-	public static void generatePotentialReservoir(ServerWorld world, ChunkPos chunkPos, Random random){
-		ColumnPos pos = null;
-		{
-			int chunkX = chunkPos.getXStart();
-			int chunkZ = chunkPos.getZStart();
-			double maxNoise = 0;
-			for(int j = 0;j < 16;j++){
-				for(int i = 0;i < 16;i++){
-					int x = chunkX + i;
-					int z = chunkZ + j;
-					
-					double chance = noiseFor(x, z);
-					if(chance > noiseThreshold && chance > maxNoise){
-						pos = new ColumnPos(x, z);
-						maxNoise = chance;
-					}
+	public static void scanChunkForNewReservoirs(ServerWorld world, ChunkPos chunkPos, Random random){
+		int chunkX = chunkPos.getXStart();
+		int chunkZ = chunkPos.getZStart();
+		for(int j = 0;j < 16;j++){
+			for(int i = 0;i < 16;i++){
+				int x = chunkX + i;
+				int z = chunkZ + j;
+				
+				if(ReservoirHandler.noiseFor(x, z) > -1){
+					ColumnPos pos = new ColumnPos(x, z);
+					// TODO
 				}
 			}
 		}
+	}
+	
+	public static ReservoirIsland getIsland(World world, ColumnPos pos){
+		if(world.isRemote){
+			return null;
+		}
 		
-		if(pos != null){
-			synchronized(RESERVOIR_VEIN_LIST){
-				
+		RegistryKey<World> dimension = world.getDimensionKey();
+		Pair<RegistryKey<World>, ColumnPos> cacheKey = Pair.of(dimension, pos);
+		synchronized(RESERVOIR_ISLAND_LIST){
+			ReservoirIsland ret = CACHE.get(cacheKey);
+			if(ret == null){
+				// TODO Maybe do this better somehow? It'll do for testing, but not for real-world stuff
+				for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
+					if(island.contains(pos)){
+						/*
+						 * There's no such thing as overlapping islands, so just
+						 * return what was found directly (After putting it into
+						 * the cache)
+						 */
+						CACHE.put(cacheKey, island);
+						return island;
+					}
+				}
 			}
+			return ret;
 		}
 	}
 	
@@ -67,5 +88,15 @@ public class ReservoirHandler{
 		}
 		
 		return ret;
+	}
+	
+	public static void clearCache(){
+		synchronized(RESERVOIR_ISLAND_LIST){
+			CACHE.clear();
+		}
+	}
+	
+	public static Multimap<RegistryKey<World>, ReservoirIsland> getReservoirIslandList(){
+		return RESERVOIR_ISLAND_LIST;
 	}
 }

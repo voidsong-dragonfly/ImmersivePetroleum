@@ -5,29 +5,29 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.ColumnPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.Lazy;
 
 public class ReservoirIsland{
-	public static final Multimap<RegistryKey<World>, ReservoirIsland> ALL = ArrayListMultimap.create();
-	
-	@Nonnull
-	private Reservoir reservoir;
-	@Nonnull
+	private ResourceLocation reservoirName;
+	private Lazy<Reservoir> reservoir;
 	private List<ColumnPos> poly;
+	// TODO Stored in Special block? Stored in ReservoirIsland? Stored Somewhere else?
+	private List<ColumnPos> wells;
 	private IslandAxisAlignedBB islandAABB;
 	private int amount;
 	private int capacity;
 	
-	public ReservoirIsland(@Nonnull List<ColumnPos> poly){
+	public ReservoirIsland(List<ColumnPos> poly, ResourceLocation reservoirName){
 		this.poly = poly;
+		this.reservoirName = reservoirName;
+		this.reservoir = Lazy.of(() -> Reservoir.map.get(reservoirName));
+		
 		createBoundingBox();
 	}
 	
@@ -51,38 +51,27 @@ public class ReservoirIsland{
 	
 	/**
 	 * Sets the reservoirs current fluid amount
-	 * 
-	 * @param amount
-	 * @return previous amount
 	 */
-	public int setAmount(int amount){
-		int old = this.amount;
+	public ReservoirIsland setAmount(int amount){
 		this.amount = amount;
-		return old;
+		return this;
 	}
 	
 	/**
 	 * Sets the reservoirs capacity
-	 * 
-	 * @param amount
-	 * @return previous capacity
 	 */
-	public int setCapacity(int amount){
-		int old = this.capacity;
+	public ReservoirIsland setCapacity(int amount){
 		this.capacity = amount;
-		return old;
+		return this;
 	}
 	
 	/**
 	 * Sets the Reservoir Type
-	 * 
-	 * @param reservoir
-	 * @return previous type value
 	 */
-	public Reservoir setReservoirType(@Nonnull Reservoir reservoir){
-		Reservoir old = this.reservoir;
-		this.reservoir = reservoir;
-		return old;
+	public ReservoirIsland setReservoirType(@Nonnull ResourceLocation name){
+		this.reservoirName = name;
+		this.reservoir = Lazy.of(() -> Reservoir.map.get(name));
+		return this;
 	}
 	
 	public int getAmount(){
@@ -95,10 +84,19 @@ public class ReservoirIsland{
 	
 	@Nonnull
 	public Reservoir getType(){
-		return this.reservoir;
+		return this.reservoir.get();
 	}
 	
-	public CompoundNBT writeToNBT(CompoundNBT nbt){
+	public IslandAxisAlignedBB getBoundingBox(){
+		return this.islandAABB;
+	}
+	
+	public CompoundNBT writeToNBT(){
+		CompoundNBT nbt = new CompoundNBT();
+		nbt.putString("reservoir", this.reservoirName.toString());
+		nbt.putInt("amount", this.getAmount());
+		nbt.putInt("capacity", this.getCapacity());
+		
 		final ListNBT points = new ListNBT();
 		this.poly.forEach(pos -> {
 			CompoundNBT point = new CompoundNBT();
@@ -111,7 +109,30 @@ public class ReservoirIsland{
 		return nbt;
 	}
 	
-	public void readFromNBT(CompoundNBT nbt){
+	public static ReservoirIsland readFromNBT(CompoundNBT nbt){
+		try{
+			ResourceLocation reservoirType = new ResourceLocation(nbt.getString("reservoir"));
+			
+			final List<ColumnPos> points = new ArrayList<>();
+			final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
+			list.forEach(tag -> {
+				CompoundNBT point = (CompoundNBT) tag;
+				int x = point.getInt("x");
+				int z = point.getInt("z");
+				points.add(new ColumnPos(x, z));
+			});
+			
+			ReservoirIsland island = new ReservoirIsland(points, reservoirType);
+			island.amount = nbt.getInt("amount");
+			island.capacity = nbt.getInt("capacity");
+			
+			return island;
+		}catch(ResourceLocationException e){
+			return null;
+		}
+	}
+	
+	public void readFromNBTOld(CompoundNBT nbt){
 		final List<ColumnPos> points = new ArrayList<>();
 		final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
 		list.forEach(tag -> {
@@ -128,6 +149,15 @@ public class ReservoirIsland{
 		return contains(pos.x, pos.z);
 	}
 	
+	/**
+	 * Tests wether the given point lies within the island by checking the
+	 * bounding box first to safe time and then doing the actualy
+	 * Point-In-Polygon check, if both succeed it'll return true.
+	 * 
+	 * @param x
+	 * @param z
+	 * @return true when X and Z lie inside this island
+	 */
 	public boolean contains(int x, int z){
 		if(!this.islandAABB.contains(x, z)){
 			return false;
@@ -189,37 +219,5 @@ public class ReservoirIsland{
 			next(list, x, z + 1);
 			next(list, x, z - 1);
 		}
-	}
-	
-	boolean inPoly(int x, int z, List<ColumnPos> poly){
-		boolean ret = false;
-		int j = poly.size() - 1;
-		for(int i = 0;i < poly.size();i++){
-			ColumnPos a = poly.get(i);
-			ColumnPos b = poly.get(j);
-			
-			// They need to be floats or it wont work for some reason
-			float ax = a.x, az = a.z;
-			float bx = b.x, bz = b.z;
-			
-			// Any point directly on the edge is considered "outside"
-			if((ax == x && az == z)){
-				return false;
-			}else if((ax == x && bx == x) && ((z > bz && z < az) || (z > az && z < bz))){
-				return false;
-			}else if((az == z && bz == z) && ((x > ax && x < bx) || (x > bx && x < ax))){
-				return false;
-			}
-			
-			// Voodoo Magic for Point-In-Polygon
-			if(((az < z && bz >= z) || (bz < z && az >= z)) && (ax <= x || bx <= x)){
-				float f0 = ax + (z - az) / (bz - az) * (bx - ax);
-				ret ^= (f0 < x);
-			}
-			
-			j = i;
-		}
-		
-		return ret;
 	}
 }
