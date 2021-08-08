@@ -22,11 +22,31 @@ public class ReservoirIsland{
 	private Reservoir reservoir;
 	@Nonnull
 	private List<ColumnPos> poly;
+	private IslandAxisAlignedBB islandAABB;
 	private int amount;
 	private int capacity;
 	
 	public ReservoirIsland(@Nonnull List<ColumnPos> poly){
 		this.poly = poly;
+		createBoundingBox();
+	}
+	
+	void createBoundingBox(){
+		int minX = Integer.MAX_VALUE;
+		int minZ = Integer.MAX_VALUE;
+		
+		int maxX = Integer.MIN_VALUE;
+		int maxZ = Integer.MIN_VALUE;
+		
+		for(ColumnPos p:this.poly){
+			if(p.x < minX) minX = p.x;
+			if(p.z < minZ) minZ = p.z;
+			
+			if(p.x > maxX) maxX = p.x;
+			if(p.z > maxZ) maxZ = p.z;
+		}
+		
+		this.islandAABB = new IslandAxisAlignedBB(minX, minZ, maxX, maxZ);
 	}
 	
 	/**
@@ -53,6 +73,12 @@ public class ReservoirIsland{
 		return old;
 	}
 	
+	/**
+	 * Sets the Reservoir Type
+	 * 
+	 * @param reservoir
+	 * @return previous type value
+	 */
 	public Reservoir setReservoirType(@Nonnull Reservoir reservoir){
 		Reservoir old = this.reservoir;
 		this.reservoir = reservoir;
@@ -95,13 +121,18 @@ public class ReservoirIsland{
 			points.add(new ColumnPos(x, z));
 		});
 		this.poly = points;
+		createBoundingBox();
 	}
 	
-	public boolean isInside(ColumnPos pos){
-		return isInside(pos.x, pos.z);
+	public boolean contains(ColumnPos pos){
+		return contains(pos.x, pos.z);
 	}
 	
-	public boolean isInside(int x, int z){
+	public boolean contains(int x, int z){
+		if(!this.islandAABB.contains(x, z)){
+			return false;
+		}
+		
 		boolean ret = false;
 		int j = this.poly.size() - 1;
 		for(int i = 0;i < this.poly.size();i++){

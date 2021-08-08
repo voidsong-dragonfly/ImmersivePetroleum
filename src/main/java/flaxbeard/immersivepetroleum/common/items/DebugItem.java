@@ -265,10 +265,10 @@ public class DebugItem extends IPItemBase{
 							ReservoirIsland island = new ReservoirIsland(poly);
 							
 							long t = System.nanoTime();
-							boolean insideOld = island.isInside(playerColumn);
+							boolean inside = island.contains(playerColumn);
 							t = System.nanoTime() - t;
 							
-							String out = insideOld + " (" + (t/1000000F) + "ms)";
+							String out = inside + " (" + (t/1000000F) + "ms)";
 							playerIn.sendStatusMessage(new StringTextComponent(out), true);
 						}
 						
