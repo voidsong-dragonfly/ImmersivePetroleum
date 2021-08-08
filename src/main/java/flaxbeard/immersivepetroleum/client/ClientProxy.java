@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +42,7 @@ import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
+import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
@@ -167,16 +167,7 @@ public class ClientProxy extends CommonProxy{
 					return Double.valueOf(1.25D);
 				}
 				case "portablegenerator_flux":{
-					Map<ResourceLocation, Integer> map = FuelHandler.getFuelFluxesPerTick();
-					if(map.size() > 0){
-						for(ResourceLocation loc:map.keySet()){
-							if(loc.toString().contains("gasoline")){
-								return map.get(loc);
-							}
-						}
-					}
-					
-					return Integer.valueOf(-1);
+					return FuelHandler.getFluxGeneratedPerTick(IPContent.Fluids.gasoline.getFluid());
 				}
 				default:
 					break;
@@ -205,6 +196,8 @@ public class ClientProxy extends CommonProxy{
 	public void init(){
 		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 		MinecraftForge.EVENT_BUS.register(new RecipeReloadListener(null));
+		
+		MinecraftForge.EVENT_BUS.register(new DebugRenderHandler());
 		
 		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);

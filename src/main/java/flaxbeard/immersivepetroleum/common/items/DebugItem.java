@@ -11,9 +11,9 @@ import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Island;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -26,7 +26,6 @@ import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
@@ -237,13 +236,13 @@ public class DebugItem extends IPItemBase{
 					int cx = cPos.getXStart();
 					int cz = cPos.getZStart();
 					
-					ColumnPos current = Island.getFirst(cx, cz);
+					ColumnPos current = ReservoirIsland.getFirst(cx, cz);
 					if(current != null){
 						long timer = System.currentTimeMillis();
 						
 						List<ColumnPos> poly = new ArrayList<>();
 						
-						Island.next(poly, current.x, current.z);
+						ReservoirIsland.next(poly, current.x, current.z);
 						
 						poly = edgy(poly);
 						
@@ -263,7 +262,7 @@ public class DebugItem extends IPItemBase{
 						
 						// Point inside Polygon Test
 						{
-							Island island = new Island(poly);
+							ReservoirIsland island = new ReservoirIsland(poly);
 							
 							long t = System.nanoTime();
 							boolean insideOld = island.isInside(playerColumn);
