@@ -30,7 +30,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
@@ -49,7 +48,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -57,11 +55,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -69,8 +65,6 @@ import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -309,108 +303,6 @@ public class ClientEventHandler{
 					matrix.pop();
 				}
 				matrix.pop();
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void reservoirDebuggingRenderLast(RenderWorldLastEvent event){
-		if(ReservoirHandler.generator == null){
-			return;
-		}
-		
-		PlayerEntity player = ClientUtils.mc().player;
-		
-		ItemStack main = player.getHeldItem(Hand.MAIN_HAND);
-		ItemStack off = player.getHeldItem(Hand.OFF_HAND);
-		
-		if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
-			DebugItem.Modes mode = null;
-			if(main != ItemStack.EMPTY){
-				mode = DebugItem.getMode(main);
-			}
-			if(off != ItemStack.EMPTY){
-				mode = DebugItem.getMode(off);
-			}
-			
-			if(mode == DebugItem.Modes.SEEDBASED_RESERVOIR || mode == DebugItem.Modes.SEEDBASED_RESERVOIR_AREA_TEST){
-				MatrixStack matrix = event.getMatrixStack();
-				World world = player.getEntityWorld();
-				BlockPos playerPos = player.getPosition();
-				
-				IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-				matrix.push();
-				{
-					// Anti-Jiggle when moving
-					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
-					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
-					
-					int radius = 9;
-					for(int i = -radius;i <= radius;i++){
-						for(int j = -radius;j <= radius;j++){
-							ChunkPos cPos = new ChunkPos(playerPos.add(16*i, 0, 16*j));
-							int chunkX = cPos.getXStart();
-							int chunkZ = cPos.getZStart();
-							
-							for(int cX = 0;cX < 16;cX++){
-								for(int cZ = 0;cZ < 16;cZ++){
-									int x = chunkX + cX;
-									int z = chunkZ + cZ;
-									
-									matrix.push();
-									{
-										DyeColor color = DyeColor.BLACK;
-										
-										double n = ReservoirHandler.noiseFor(x, z);
-										if(n > 0.0D){
-											int c = (int) Math.round(9 * n);
-											
-											if(c <= 0){
-												color = DyeColor.BLACK;
-											}else if(c == 1){
-												color = DyeColor.BLUE;
-											}else if(c == 2){
-												color = DyeColor.CYAN;
-											}else if(c == 3){
-												color = DyeColor.GREEN;
-											}else if(c == 4){
-												color = DyeColor.LIME;
-											}else if(c == 5){
-												color = DyeColor.YELLOW;
-											}else if(c == 6){
-												color = DyeColor.ORANGE;
-											}else if(c == 7){
-												color = DyeColor.RED;
-											}else if(c > 7){
-												color = DyeColor.WHITE;
-											}
-											
-											int r = (color.getTextColor() & 0xFF0000) >> 16;
-											int g = (color.getTextColor() & 0x00FF00) >> 8;
-											int b = (color.getTextColor() & 0x0000FF);
-											
-											int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
-											
-											matrix.translate(x, Math.max(128, height) + 0.0625, z);
-											
-											Matrix4f mat = matrix.getLast().getMatrix();
-											
-											IVertexBuilder builder = buffer.getBuffer(IPRenderTypes.ISLAND_DEBUGGING_POSITION_COLOR);
-											builder.pos(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
-											builder.pos(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
-											builder.pos(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
-											builder.pos(mat, 1, 0, 0).color(r, g, b, 255).endVertex();
-										}
-									}
-									matrix.pop();
-								}
-							}
-						}
-					}
-					
-				}
-				matrix.pop();
-				buffer.finish();
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -11,22 +12,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.Lazy;
 
 public class ReservoirIsland{
-	private ResourceLocation reservoirName;
-	private Lazy<Reservoir> reservoir;
+	private Reservoir reservoir;
 	private List<ColumnPos> poly;
-	// TODO Stored in Special block? Stored in ReservoirIsland? Stored Somewhere else?
+	/** TODO Stored in Special block? Stored in ReservoirIsland? Stored Somewhere else? */
 	private List<ColumnPos> wells;
 	private IslandAxisAlignedBB islandAABB;
 	private int amount;
-	private int capacity;
 	
-	public ReservoirIsland(List<ColumnPos> poly, ResourceLocation reservoirName){
+	public ReservoirIsland(List<ColumnPos> poly, Reservoir reservoir, int amount){
 		this.poly = poly;
-		this.reservoirName = reservoirName;
-		this.reservoir = Lazy.of(() -> Reservoir.map.get(reservoirName));
+		this.reservoir = reservoir;
+		this.amount = amount;
 		
 		createBoundingBox();
 	}
@@ -58,19 +56,10 @@ public class ReservoirIsland{
 	}
 	
 	/**
-	 * Sets the reservoirs capacity
-	 */
-	public ReservoirIsland setCapacity(int amount){
-		this.capacity = amount;
-		return this;
-	}
-	
-	/**
 	 * Sets the Reservoir Type
 	 */
-	public ReservoirIsland setReservoirType(@Nonnull ResourceLocation name){
-		this.reservoirName = name;
-		this.reservoir = Lazy.of(() -> Reservoir.map.get(name));
+	public ReservoirIsland setReservoirType(@Nonnull Reservoir reservoir){
+		this.reservoir = reservoir;
 		return this;
 	}
 	
@@ -78,24 +67,23 @@ public class ReservoirIsland{
 		return this.amount;
 	}
 	
-	public int getCapacity(){
-		return this.capacity;
-	}
-	
 	@Nonnull
 	public Reservoir getType(){
-		return this.reservoir.get();
+		return this.reservoir;
 	}
 	
 	public IslandAxisAlignedBB getBoundingBox(){
 		return this.islandAABB;
 	}
 	
+	public List<ColumnPos> getPolygon(){
+		return Collections.unmodifiableList(this.poly);
+	}
+	
 	public CompoundNBT writeToNBT(){
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.putString("reservoir", this.reservoirName.toString());
+		nbt.putString("reservoir", this.reservoir.getId().toString());
 		nbt.putInt("amount", this.getAmount());
-		nbt.putInt("capacity", this.getCapacity());
 		
 		final ListNBT points = new ListNBT();
 		this.poly.forEach(pos -> {
@@ -111,25 +99,25 @@ public class ReservoirIsland{
 	
 	public static ReservoirIsland readFromNBT(CompoundNBT nbt){
 		try{
-			ResourceLocation reservoirType = new ResourceLocation(nbt.getString("reservoir"));
-			
-			final List<ColumnPos> points = new ArrayList<>();
-			final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
-			list.forEach(tag -> {
-				CompoundNBT point = (CompoundNBT) tag;
-				int x = point.getInt("x");
-				int z = point.getInt("z");
-				points.add(new ColumnPos(x, z));
-			});
-			
-			ReservoirIsland island = new ReservoirIsland(points, reservoirType);
-			island.amount = nbt.getInt("amount");
-			island.capacity = nbt.getInt("capacity");
-			
-			return island;
+			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
+			if(reservoir != null){
+				final List<ColumnPos> points = new ArrayList<>();
+				final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
+				list.forEach(tag -> {
+					CompoundNBT point = (CompoundNBT) tag;
+					int x = point.getInt("x");
+					int z = point.getInt("z");
+					points.add(new ColumnPos(x, z));
+				});
+				
+				int amount = nbt.getInt("amount");
+				return new ReservoirIsland(points, reservoir, amount);
+			}
 		}catch(ResourceLocationException e){
-			return null;
+			// Dont care, if it doesnt exist just move on
 		}
+		
+		return null;
 	}
 	
 	public void readFromNBTOld(CompoundNBT nbt){
@@ -150,19 +138,32 @@ public class ReservoirIsland{
 	}
 	
 	/**
-	 * Tests wether the given point lies within the island by checking the
-	 * bounding box first to safe time and then doing the actualy
-	 * Point-In-Polygon check, if both succeed it'll return true.
+	 * Same as {@link #polygonContains(int, int)} but with the Bounds as the first check.
 	 * 
 	 * @param x
 	 * @param z
-	 * @return true when X and Z lie inside this island
+	 * @return
 	 */
 	public boolean contains(int x, int z){
 		if(!this.islandAABB.contains(x, z)){
 			return false;
 		}
 		
+		return polygonContains(x, z);
+	}
+	
+	public boolean polygonContains(ColumnPos pos){
+		return polygonContains(pos.x, pos.z);
+	}
+	
+	/**
+	 * Test wether or not the given XZ coordinates are within the islands polygon.
+	 * 
+	 * @param x
+	 * @param z
+	 * @return true if the coordinates are inside, false otherwise
+	 */
+	public boolean polygonContains(int x, int z){
 		boolean ret = false;
 		int j = this.poly.size() - 1;
 		for(int i = 0;i < this.poly.size();i++){
@@ -207,17 +208,5 @@ public class ReservoirIsland{
 		}
 		
 		return null;
-	}
-	
-	/** Recursively discover the whole island */
-	public static void next(List<ColumnPos> list, int x, int z){
-		if(ReservoirHandler.noiseFor(x, z) > -1 && !list.contains(new ColumnPos(x, z))){
-			list.add(new ColumnPos(x, z));
-			
-			next(list, x + 1, z);
-			next(list, x - 1, z);
-			next(list, x, z + 1);
-			next(list, x, z - 1);
-		}
 	}
 }

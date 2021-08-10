@@ -13,7 +13,6 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -37,7 +36,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
@@ -224,60 +222,60 @@ public class DebugItem extends IPItemBase{
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
 				case SEEDBASED_RESERVOIR_AREA_TEST:{
-					if(worldIn instanceof ServerWorld){
-						if(ReservoirHandler.generator == null){
-							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
-						}
-					}
-					
-					BlockPos playerPos = playerIn.getPosition();
-					ColumnPos playerColumn = new ColumnPos(playerPos);
-					
-					ChunkPos cPos = new ChunkPos(playerPos);
-					int cx = cPos.getXStart();
-					int cz = cPos.getZStart();
-					
-					ColumnPos current = ReservoirIsland.getFirst(cx, cz);
-					if(current != null){
-						long timer = System.currentTimeMillis();
-						
-						List<ColumnPos> poly = new ArrayList<>();
-						
-						ReservoirIsland.next(poly, current.x, current.z);
-						
-						poly = edgy(poly);
-						
-						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.WHITE_CONCRETE.getDefaultState()));
-						
-						poly = direction(poly);
-						
-						poly = optimizeLines(poly);
-						
-						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.ORANGE_CONCRETE.getDefaultState()));
-						
-						/*
-						 * After this point the list would be stored inside the
-						 * Island class and everything below would be there
-						 * instead
-						 */
-						
-						// Point inside Polygon Test
-						{
-							ReservoirIsland island = new ReservoirIsland(poly, new ResourceLocation(ImmersivePetroleum.MODID, "oil"));
-							
-							long t = System.nanoTime();
-							boolean inside = island.contains(playerColumn);
-							t = System.nanoTime() - t;
-							
-							String out = inside + " (" + (t/1000000F) + "ms)";
-							playerIn.sendStatusMessage(new StringTextComponent(out), true);
-						}
-						
-						timer = System.currentTimeMillis() - timer;
-						ImmersivePetroleum.log.info("Time: {}ms, Points: {}", timer, poly.size());
-					}else{
-						ImmersivePetroleum.log.info("Nothing here.");
-					}
+//					if(worldIn instanceof ServerWorld){
+//						if(ReservoirHandler.generator == null){
+//							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
+//						}
+//					}
+//					
+//					BlockPos playerPos = playerIn.getPosition();
+//					ColumnPos playerColumn = new ColumnPos(playerPos);
+//					
+//					ChunkPos cPos = new ChunkPos(playerPos);
+//					int cx = cPos.getXStart();
+//					int cz = cPos.getZStart();
+//					
+//					ColumnPos current = ReservoirIsland.getFirst(cx, cz);
+//					if(current != null){
+//						long timer = System.currentTimeMillis();
+//						
+//						List<ColumnPos> poly = new ArrayList<>();
+//						
+//						ReservoirIsland.next(poly, current.x, current.z);
+//						
+//						poly = edgy(poly);
+//						
+//						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.WHITE_CONCRETE.getDefaultState()));
+//						
+//						poly = direction(poly);
+//						
+//						poly = optimizeLines(poly);
+//						
+//						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.ORANGE_CONCRETE.getDefaultState()));
+//						
+//						/*
+//						 * After this point the list would be stored inside the
+//						 * Island class and everything below would be there
+//						 * instead
+//						 */
+//						
+//						// Point inside Polygon Test
+//						{
+//							ReservoirIsland island = new ReservoirIsland(poly, Reservoir.map.get(new ResourceLocation(ImmersivePetroleum.MODID, "oil")), 0);
+//							
+//							long t = System.nanoTime();
+//							boolean inside = island.polygonContains(playerColumn);
+//							t = System.nanoTime() - t;
+//							
+//							String out = inside + " (" + (t/1000000F) + "ms)";
+//							playerIn.sendStatusMessage(new StringTextComponent(out), true);
+//						}
+//						
+//						timer = System.currentTimeMillis() - timer;
+//						ImmersivePetroleum.log.info("Time: {}ms, Points: {}", timer, poly.size());
+//					}else{
+//						ImmersivePetroleum.log.info("Nothing here.");
+//					}
 					
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
@@ -291,7 +289,7 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	/** Keep edges/corners and dump the rest */
-	List<ColumnPos> edgy(List<ColumnPos> poly){
+	public static List<ColumnPos> edgy(List<ColumnPos> poly){
 		final List<ColumnPos> list = new ArrayList<>();
 		poly.forEach(pos -> {
 			for(int z = -1;z <= 1;z++){
@@ -331,7 +329,7 @@ public class DebugItem extends IPItemBase{
 	 * Give this some direction. Result can end up being either clockwise or
 	 * counter-clockwise!
 	 */
-	List<ColumnPos> direction(List<ColumnPos> poly){
+	public static List<ColumnPos> direction(List<ColumnPos> poly){
 		List<ColumnPos> list = new ArrayList<>();
 		list.add(poly.remove(0));
 		int a = 0;
@@ -358,7 +356,7 @@ public class DebugItem extends IPItemBase{
 	 * For X and Z
 	 * </pre>
 	 */
-	ArrayList<ColumnPos> optimizeLines(List<ColumnPos> poly){
+	public static ArrayList<ColumnPos> optimizeLines(List<ColumnPos> poly){
 		ArrayList<ColumnPos> list = new ArrayList<>(poly);
 		
 		int endIndex = 0;
@@ -442,7 +440,7 @@ public class DebugItem extends IPItemBase{
 		return list;
 	}
 	
-	boolean moveNext(ColumnPos pos, List<ColumnPos> list0, List<ColumnPos> list1){
+	public static boolean moveNext(ColumnPos pos, List<ColumnPos> list0, List<ColumnPos> list1){
 		ColumnPos p0 = new ColumnPos(pos.x + 1, pos.z);
 		ColumnPos p1 = new ColumnPos(pos.x - 1, pos.z);
 		ColumnPos p2 = new ColumnPos(pos.x, pos.z + 1);

@@ -10,16 +10,19 @@ import net.minecraft.util.math.BlockPos;
 public class IslandAxisAlignedBB{
 	final int minX, minZ;
 	final int maxX, maxZ;
+	final BlockPos center;
 	public IslandAxisAlignedBB(int minX, int minZ, int maxX, int maxZ){
 		this.minX = minX;
 		this.minZ = minZ;
 		this.maxX = maxX;
 		this.maxZ = maxZ;
+		
+		this.center = new BlockPos((this.minX + this.maxX) / 2, 0, (this.minZ + this.maxZ) / 2);
 	}
 	
 	// May end up never using it, but its here already just incase i do
 	public BlockPos getCenter(){
-		return new BlockPos((this.minX + this.maxX) / 2, 0, (this.minZ + this.maxZ) / 2);
+		return this.center;
 	}
 	
 	public boolean contains(BlockPos pos){
