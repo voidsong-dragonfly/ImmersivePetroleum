@@ -197,7 +197,7 @@ public class DebugRenderHandler{
 					{
 						IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
 						
-						int radius = 31;
+						int radius = 12;
 						for(int i = -radius;i <= radius;i++){
 							for(int j = -radius;j <= radius;j++){
 								ChunkPos cPos = new ChunkPos(playerPos.add(16*i, 0, 16*j));
@@ -243,7 +243,7 @@ public class DebugRenderHandler{
 												
 												int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
 												
-												matrix.translate(x, Math.max(128, height) + 0.0625, z);
+												matrix.translate(x, Math.max(63, height) + 0.0625, z);
 												
 												Matrix4f mat = matrix.getLast().getMatrix();
 												
@@ -271,7 +271,7 @@ public class DebugRenderHandler{
 							Collection<ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList().get(player.getEntityWorld().getDimensionKey());
 							
 							if(islands != null && !islands.isEmpty()){
-								int radius = 500;
+								int radius = 128;
 								radius = radius * radius + radius * radius;
 								for(ReservoirIsland island:islands){
 									BlockPos p = new BlockPos(playerPos.getX(), 0, playerPos.getZ());
@@ -291,8 +291,8 @@ public class DebugRenderHandler{
 												ColumnPos b = poly.get(i);
 												float f = i / (float) poly.size();
 												
-												builder.pos(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1.0F, 0.5F).endVertex();
-												builder.pos(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1.0F, 0.5F).endVertex();
+												builder.pos(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
+												builder.pos(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
 												
 												j = i;
 											}

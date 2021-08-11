@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -31,5 +32,23 @@ public class IslandAxisAlignedBB{
 	
 	public boolean contains(int x, int z){
 		return x >= this.minX && x <= this.maxX && z >= this.minZ && z <= this.maxZ;
+	}
+	
+	public CompoundNBT writeToNBT(){
+		CompoundNBT bounds = new CompoundNBT();
+		bounds.putInt("minX", this.minX);
+		bounds.putInt("minZ", this.minZ);
+		bounds.putInt("maxX", this.maxX);
+		bounds.putInt("maxZ", this.maxZ);
+		return bounds;
+	}
+	
+	public static IslandAxisAlignedBB readFromNBT(CompoundNBT nbt){
+		int minX = nbt.getInt("minX");
+		int minZ = nbt.getInt("minZ");
+		int maxX = nbt.getInt("maxX");
+		int maxZ = nbt.getInt("maxZ");
+		
+		return new IslandAxisAlignedBB(minX, minZ, maxX, maxZ);
 	}
 }

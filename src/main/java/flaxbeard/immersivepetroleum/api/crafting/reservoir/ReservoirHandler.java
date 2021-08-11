@@ -104,17 +104,22 @@ public class ReservoirHandler{
 		return totalWeight;
 	}
 	
+	public static ReservoirIsland getIsland(World world, BlockPos pos){
+		return getIsland(world, new ColumnPos(pos.getX(), pos.getZ()));
+	}
+	
 	public static ReservoirIsland getIsland(World world, ColumnPos pos){
 		if(world.isRemote){
 			return null;
 		}
+		
+		// TODO Maybe do this better somehow? It'll do for testing, but not for real-world stuff
 		
 		RegistryKey<World> dimension = world.getDimensionKey();
 		Pair<RegistryKey<World>, ColumnPos> cacheKey = Pair.of(dimension, pos);
 		synchronized(RESERVOIR_ISLAND_LIST){
 			ReservoirIsland ret = CACHE.get(cacheKey);
 			if(ret == null){
-				// TODO Maybe do this better somehow? It'll do for testing, but not for real-world stuff
 				for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
 					if(island.polygonContains(pos)){
 						/*

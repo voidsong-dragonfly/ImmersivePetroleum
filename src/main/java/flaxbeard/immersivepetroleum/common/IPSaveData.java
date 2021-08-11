@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
@@ -33,7 +34,10 @@ public class IPSaveData extends WorldSavedData{
 				ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
 				RegistryKey<World> dimType = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, rl);
 				ListNBT islands = dim.getList("islands", NBT.TAG_COMPOUND);
-				ReservoirHandler.getReservoirIslandList().putAll(dimType, islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).collect(Collectors.toList()));
+				
+				List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).collect(Collectors.toList());
+				list.removeIf(o -> o == null);
+				ReservoirHandler.getReservoirIslandList().putAll(dimType, list);
 			}
 		}
 		

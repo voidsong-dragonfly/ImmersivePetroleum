@@ -21,6 +21,8 @@ public class ReservoirIsland{
 	private IslandAxisAlignedBB islandAABB;
 	private int amount;
 	
+	private ReservoirIsland(){}
+	
 	public ReservoirIsland(List<ColumnPos> poly, Reservoir reservoir, int amount){
 		this.poly = poly;
 		this.reservoir = reservoir;
@@ -84,15 +86,21 @@ public class ReservoirIsland{
 		CompoundNBT nbt = new CompoundNBT();
 		nbt.putString("reservoir", this.reservoir.getId().toString());
 		nbt.putInt("amount", this.getAmount());
+		nbt.put("bounds", this.getBoundingBox().writeToNBT());
 		
+		final IslandAxisAlignedBB bounds = this.getBoundingBox();
 		final ListNBT points = new ListNBT();
 		this.poly.forEach(pos -> {
+			byte x = (byte) ((pos.x - bounds.minX) & 0xFF);
+			byte z = (byte) ((pos.z - bounds.minZ) & 0xFF);
+			
 			CompoundNBT point = new CompoundNBT();
-			point.putInt("x", pos.x);
-			point.putInt("z", pos.z);
+			point.putByte("x", x);
+			point.putByte("z", z);
 			points.add(point);
+			
 		});
-		nbt.put("poly_points", points);
+		nbt.put("points", points);
 		
 		return nbt;
 	}
@@ -101,36 +109,30 @@ public class ReservoirIsland{
 		try{
 			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
+				int amount = nbt.getInt("amount");
+				IslandAxisAlignedBB bounds = IslandAxisAlignedBB.readFromNBT(nbt.getCompound("bounds"));
+				
 				final List<ColumnPos> points = new ArrayList<>();
-				final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
+				final ListNBT list = nbt.getList("points", NBT.TAG_COMPOUND);
 				list.forEach(tag -> {
 					CompoundNBT point = (CompoundNBT) tag;
-					int x = point.getInt("x");
-					int z = point.getInt("z");
+					int x = bounds.minX + ((int) point.getByte("x") & 0xFF);
+					int z = bounds.minZ + ((int) point.getByte("z") & 0xFF);
 					points.add(new ColumnPos(x, z));
 				});
 				
-				int amount = nbt.getInt("amount");
-				return new ReservoirIsland(points, reservoir, amount);
+				ReservoirIsland island = new ReservoirIsland();
+				island.reservoir = reservoir;
+				island.amount = amount;
+				island.poly = points;
+				island.islandAABB = bounds;
+				return island;
 			}
 		}catch(ResourceLocationException e){
 			// Dont care, if it doesnt exist just move on
 		}
 		
 		return null;
-	}
-	
-	public void readFromNBTOld(CompoundNBT nbt){
-		final List<ColumnPos> points = new ArrayList<>();
-		final ListNBT list = nbt.getList("poly_points", NBT.TAG_COMPOUND);
-		list.forEach(tag -> {
-			CompoundNBT point = (CompoundNBT) tag;
-			int x = point.getInt("x");
-			int z = point.getInt("z");
-			points.add(new ColumnPos(x, z));
-		});
-		this.poly = points;
-		createBoundingBox();
 	}
 	
 	public boolean contains(ColumnPos pos){
