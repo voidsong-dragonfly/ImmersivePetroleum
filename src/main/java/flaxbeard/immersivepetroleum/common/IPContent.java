@@ -35,6 +35,7 @@ import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltStairs;
 import flaxbeard.immersivepetroleum.common.blocks.stone.PetcokeBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.WellBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.CrudeOilFluid;
@@ -109,6 +110,8 @@ public class IPContent{
 		public static BlockDummy dummyOilOre;
 		public static BlockDummy dummyPipe;
 		public static BlockDummy dummyConveyor;
+		
+		public static WellBlock well;
 	}
 	
 	public static class Items{
@@ -152,6 +155,8 @@ public class IPContent{
 		Blocks.asphalt = asphalt;
 		Blocks.asphalt_slab = new AsphaltSlab(asphalt);
 		Blocks.asphalt_stair = new AsphaltStairs(asphalt);
+		
+		Blocks.well = new WellBlock("reservoir_well");
 		
 		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");
 		Blocks.flarestack = new FlarestackBlock();

@@ -18,6 +18,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.WellBlock;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
@@ -93,6 +94,21 @@ public class IPBlockStates extends BlockStateProvider{
 		simpleBlockWithItem(IPContent.Blocks.petcoke);
 		gasGenerator();
 		asphaltBlocks();
+		
+		{
+			Block well = IPContent.Blocks.well;
+			
+			ModelFile open = models().cubeTop(well.getRegistryName().toString() + "_uncapped", modLoc("block/well_side"), modLoc("block/well_top"));
+			ModelFile closed = models().cubeTop(well.getRegistryName().toString() + "_capped", modLoc("block/well_side"), modLoc("block/well_top_capped"));
+			
+			getVariantBuilder(well).partialState()
+				.with(WellBlock.CAPPED, false)
+				.setModels(new ConfiguredModel(open));
+			
+			getVariantBuilder(well).partialState()
+				.with(WellBlock.CAPPED, true)
+				.setModels(new ConfiguredModel(closed));
+		}
 		
 		autolubricator();
 		flarestack();
