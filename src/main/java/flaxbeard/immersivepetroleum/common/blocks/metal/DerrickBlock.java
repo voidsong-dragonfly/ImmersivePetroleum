@@ -9,8 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
-public class DerickBlock extends IPMetalMultiblock<DerrickTileEntity>{
-	public DerickBlock(){
+public class DerrickBlock extends IPMetalMultiblock<DerrickTileEntity>{
+	public DerrickBlock(){
 		super("derrick", () -> IPTileTypes.DERRICK.get());
 	}
 	
