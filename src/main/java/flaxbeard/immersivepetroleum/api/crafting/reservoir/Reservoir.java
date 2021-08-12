@@ -35,7 +35,7 @@ public class Reservoir extends IESerializableRecipe{
 	
 	public int minSize;
 	public int maxSize;
-	public int replenishRate;
+	public int residual;
 	
 	public int weight;
 	
@@ -56,11 +56,11 @@ public class Reservoir extends IESerializableRecipe{
 	 *        containing
 	 * @param minSize Minimum amount of fluid in this reservoir
 	 * @param maxSize Maximum amount of fluid in this reservoir
-	 * @param traceAmount Leftover fluid amount after depletion
+	 * @param residual Leftover fluid amount after depletion
 	 * @param weight The weight for this reservoir
 	 */
-	public Reservoir(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int traceAmount, int weight){
-		this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, traceAmount, weight);
+	public Reservoir(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int weight){
+		this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, residual, weight);
 	}
 	
 	/**
@@ -71,15 +71,15 @@ public class Reservoir extends IESerializableRecipe{
 	 * @param fluid The fluid this reservoir is containing
 	 * @param minSize Minimum amount of fluid in this reservoir
 	 * @param maxSize Maximum amount of fluid in this reservoir
-	 * @param traceAmount Leftover fluid amount after depletion
+	 * @param residual Leftover fluid amount after depletion
 	 * @param weight The weight for this reservoir
 	 */
-	public Reservoir(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int traceAmount, int weight){
+	public Reservoir(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int weight){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.name = name;
 		this.fluidLocation = fluid.getRegistryName();
 		this.fluid = fluid;
-		this.replenishRate = traceAmount;
+		this.residual = residual;
 		this.minSize = minSize;
 		this.maxSize = maxSize;
 		this.weight = weight;
@@ -95,7 +95,7 @@ public class Reservoir extends IESerializableRecipe{
 		
 		this.minSize = nbt.getInt("minSize");
 		this.maxSize = nbt.getInt("maxSize");
-		this.replenishRate = nbt.getInt("replenishRate");
+		this.residual = nbt.getInt("residual");
 		
 		this.dimWhitelist = toList(nbt.getList("dimensionWhitelist", NBT.TAG_STRING));
 		this.dimBlacklist = toList(nbt.getList("dimensionBlacklist", NBT.TAG_STRING));
@@ -120,7 +120,7 @@ public class Reservoir extends IESerializableRecipe{
 		
 		nbt.putInt("minSize", this.minSize);
 		nbt.putInt("maxSize", this.maxSize);
-		nbt.putInt("replenishRate", this.replenishRate);
+		nbt.putInt("residual", this.residual);
 		
 		nbt.put("dimensionWhitelist", toNbt(this.dimWhitelist));
 		nbt.put("dimensionBlacklist", toNbt(this.dimBlacklist));
@@ -205,9 +205,11 @@ public class Reservoir extends IESerializableRecipe{
 	private List<ResourceLocation> toList(ListNBT nbtList){
 		List<ResourceLocation> list = new ArrayList<>(0);
 		if(nbtList.size() > 0){
-			for(INBT tag:nbtList)
-				if(tag instanceof StringNBT)
+			for(INBT tag:nbtList){
+				if(tag instanceof StringNBT){
 					list.add(new ResourceLocation(((StringNBT) tag).getString()));
+				}
+			}
 		}
 		return list;
 	}

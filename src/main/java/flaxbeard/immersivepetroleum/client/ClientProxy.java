@@ -35,6 +35,7 @@ import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
+import flaxbeard.immersivepetroleum.client.gui.DerrickScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
@@ -120,6 +121,7 @@ public class ClientProxy extends CommonProxy{
 		
 		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerScreen::new);
 		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "cokerunit"), CokerUnitScreen::new);
+		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "derrick"), DerrickScreen::new);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -517,8 +519,8 @@ public class ClientProxy extends CommonProxy{
 			}
 			
 			String repRate = "";
-			if(reservoir.replenishRate > 0){
-				repRate = I18n.format("ie.manual.entry.reservoirs.replenish", reservoir.replenishRate, fluidName);
+			if(reservoir.residual > 0){
+				repRate = I18n.format("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName);
 			}
 			contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(reservoir.minSize), FORMATTER.format(reservoir.maxSize), repRate, bioBLWL));
 			

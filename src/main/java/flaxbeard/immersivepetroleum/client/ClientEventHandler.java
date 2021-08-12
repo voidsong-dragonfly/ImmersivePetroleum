@@ -251,12 +251,12 @@ public class ClientEventHandler{
 					tooltip.add(tipPos, header);
 					tooltip.add(tipPos + 1, info);
 				}else{
-					if(reservoir != null && reservoir.replenishRate > 0){
+					if(reservoir != null && reservoir.residual > 0){
 						String fluidName = new FluidStack(reservoir.getFluid(), 1).getDisplayName().getUnformattedComponentText();
 						
 						ITextComponent header = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName).mergeStyle(TextFormatting.GRAY);
 						
-						ITextComponent info = new StringTextComponent("  " + I18n.format("chat.immersivepetroleum.info.coresample.oilRep", reservoir.replenishRate, fluidName)).mergeStyle(TextFormatting.GRAY);
+						ITextComponent info = new StringTextComponent("  " + I18n.format("chat.immersivepetroleum.info.coresample.oilRep", reservoir.residual, fluidName)).mergeStyle(TextFormatting.GRAY);
 						
 						tooltip.add(tipPos, header);
 						tooltip.add(tipPos + 1, info);
@@ -346,9 +346,9 @@ public class ClientEventHandler{
 										if(reservoir != null && amnt > 0){
 											ITextComponent fluidName = new FluidStack(reservoir.getFluid(), 1).getDisplayName();
 											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oil", fluidName);
-										}else if(reservoir != null && reservoir.replenishRate > 0){
+										}else if(reservoir != null && reservoir.residual > 0){
 											ITextComponent fluidName = new FluidStack(reservoir.getFluid(), 1).getDisplayName();
-											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oilRep", reservoir.replenishRate, fluidName);
+											display = new TranslationTextComponent("chat.immersivepetroleum.info.coresample.oilRep", reservoir.residual, fluidName);
 										}
 										
 										int fx = event.getWindow().getScaledWidth() / 2 + 8;

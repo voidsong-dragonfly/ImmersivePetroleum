@@ -240,6 +240,10 @@ public class DebugRenderHandler{
 												int r = (color.getTextColor() & 0xFF0000) >> 16;
 												int g = (color.getTextColor() & 0x00FF00) >> 8;
 												int b = (color.getTextColor() & 0x0000FF);
+
+												r/=1.5F;
+												g/=1.5F;
+												b/=1.5F;
 												
 												int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
 												

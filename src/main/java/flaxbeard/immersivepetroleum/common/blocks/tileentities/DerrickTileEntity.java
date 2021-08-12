@@ -11,11 +11,15 @@ import com.google.common.collect.ImmutableSet;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -24,11 +28,14 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IBlockBounds{
+public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
 	
 	/** Template-Location of the Fluid Input Port. (2 0 4)<br> */
 	public static final BlockPos Fluid_IN = new BlockPos(2, 0, 4);
@@ -42,7 +49,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	/** Template-Location of the Redstone Input Port. (0 0 0)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(1, 0, 0));
 	
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 	public FluidTank dummyTank = new FluidTank(0);
+	public boolean drilling = false;
+	public boolean spilling = false;
 	public DerrickTileEntity(){
 		super(DerrickMultiblock.INSTANCE, 16000, true, null);
 	}
@@ -55,31 +65,125 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	@Override
 	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
+		this.drilling = nbt.getBoolean("drilling");
+		this.spilling = nbt.getBoolean("spilling");
+		
+		if(!descPacket){
+			readInventory(nbt.getCompound("inventory"));
+		}
 	}
 	
 	@Override
 	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
+		nbt.putBoolean("drilling", this.drilling);
+		nbt.putBoolean("spilling", this.spilling);
+		
+		if(!descPacket){
+			nbt.put("inventory", writeInventory(this.inventory));
+		}
+	}
+	
+	protected void readInventory(CompoundNBT nbt){
+		NonNullList<ItemStack> list = NonNullList.create();
+		ItemStackHelper.loadAllItems(nbt, list);
+		
+		for(int i = 0;i < this.inventory.size();i++){
+			ItemStack stack = ItemStack.EMPTY;
+			if(i < list.size()){
+				stack = list.get(i);
+			}
+			
+			this.inventory.set(i, stack);
+		}
+	}
+	
+	protected CompoundNBT writeInventory(NonNullList<ItemStack> list){
+		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
 	}
 	
 	@Override
 	public void tick(){
 		super.tick();
+		if(isDummy())
+			return;
+		
+		if(this.world.isRemote){
+			// Drilling Particles
+			if(this.drilling){
+				for(int i = 0;i < 10;i++){
+					float rx = (this.world.rand.nextFloat() - .5F) * 1.5F;
+					float rz = (this.world.rand.nextFloat() - .5F) * 1.5F;
+					
+					if(!(rx > -0.625 && rx < 0.625) || !(rz > -0.625 && rz < 0.625)){
+						float xa = (this.world.rand.nextFloat() - .5F) / 16;
+						float ya = 0.01F * this.world.rand.nextFloat();
+						float za = (this.world.rand.nextFloat() - .5F) / 16;
+						
+						double x = (this.pos.getX() + 0.5) + rx;
+						double y = (this.pos.getY() + 1.625) + this.world.rand.nextFloat();
+						double z = (this.pos.getZ() + 0.5) + rz;
+						
+						this.world.addParticle(this.world.rand.nextFloat() < 0.5F ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, x, y, z, xa, ya, za);
+					}
+				}
+			}
+			
+			
+			// TODO Spawn spill particles only when it's actualy spilling, duh
+			if(this.spilling){
+				spawnOilSpillParticles(this.world, this.pos, 10, 16.0F);
+			}
+			
+			return;
+		}
+		
+		if(this.world.isAreaLoaded(this.getPos(), 5)){
+			
+		}
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public static void spawnOilSpillParticles(World world, BlockPos pos, int particles, float heightOffset){
+		for(int i = 0;i < particles;i++){
+			float xa = (world.rand.nextFloat() - .5F) / 2;
+			float za = (world.rand.nextFloat() - .5F) / 2;
+			
+			float rx = (world.rand.nextFloat() - .5F) * 0.5F;
+			float ya = 0.5F + world.rand.nextFloat();
+			float rz = (world.rand.nextFloat() - .5F) * 0.5F;
+			
+			double x = (pos.getX() + 0.5) + rx;
+			double y = (pos.getY() + heightOffset);
+			double z = (pos.getZ() + 0.5) + rz;
+			
+			world.addParticle(ParticleTypes.SQUID_INK, x, y, z, xa, ya, za);
+		}
+	}
+	
+	@Override
+	public IInteractionObjectIE getGuiMaster(){
+		return master();
+	}
+	
+	@Override
+	public boolean canUseGui(PlayerEntity player){
+		return this.formed;
 	}
 	
 	@Override
 	public NonNullList<ItemStack> getInventory(){
-		return null;
+		return this.inventory;
 	}
 	
 	@Override
 	public boolean isStackValid(int slot, ItemStack stack){
-		return false;
+		return true;
 	}
 	
 	@Override
 	public int getSlotLimit(int slot){
-		return 0;
+		return 64;
 	}
 	
 	@Override

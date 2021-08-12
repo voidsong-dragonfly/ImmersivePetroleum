@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -13,6 +12,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -40,7 +40,6 @@ import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -222,6 +221,18 @@ public class DebugItem extends IPItemBase{
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
 				case SEEDBASED_RESERVOIR_AREA_TEST:{
+					BlockPos playerPos = playerIn.getPosition();
+					
+					ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
+					if(island != null){
+						String out = "";
+						out += "Noise: " + ReservoirHandler.noiseFor(playerPos.getX(), playerPos.getZ());
+						out += ", Amount: " + island.getAmount();
+						out += ", Pressure: " + island.getPressure(playerPos.getX(), playerPos.getZ());
+						out += ", Flow: " + island.getFlow(playerPos.getX(), playerPos.getZ()) + "mB/t";
+						playerIn.sendStatusMessage(new StringTextComponent(out), true);
+					}
+					
 //					if(worldIn instanceof ServerWorld){
 //						if(ReservoirHandler.generator == null){
 //							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
@@ -286,179 +297,6 @@ public class DebugItem extends IPItemBase{
 		}
 		
 		return super.onItemRightClick(worldIn, playerIn, handIn);
-	}
-	
-	/** Keep edges/corners and dump the rest */
-	public static List<ColumnPos> edgy(List<ColumnPos> poly){
-		final List<ColumnPos> list = new ArrayList<>();
-		poly.forEach(pos -> {
-			for(int z = -1;z <= 1;z++){
-				for(int x = -1;x <= 1;x++){
-					if(ReservoirHandler.noiseFor(pos.x + 1, pos.z) == -1){
-						ColumnPos p = new ColumnPos(pos.x + 1, pos.z);
-						if(!list.contains(p)){
-							list.add(p);
-						}
-					}
-					if(ReservoirHandler.noiseFor(pos.x - 1, pos.z) == -1){
-						ColumnPos p = new ColumnPos(pos.x - 1, pos.z);
-						if(!list.contains(p)){
-							list.add(p);
-						}
-					}
-					if(ReservoirHandler.noiseFor(pos.x, pos.z + 1) == -1){
-						ColumnPos p = new ColumnPos(pos.x, pos.z + 1);
-						if(!list.contains(p)){
-							list.add(p);
-						}
-					}
-					if(ReservoirHandler.noiseFor(pos.x, pos.z - 1) == -1){
-						ColumnPos p = new ColumnPos(pos.x, pos.z - 1);
-						if(!list.contains(p)){
-							list.add(p);
-						}
-					}
-				}
-			}
-		});
-		
-		return list;
-	}
-	
-	/**
-	 * Give this some direction. Result can end up being either clockwise or
-	 * counter-clockwise!
-	 */
-	public static List<ColumnPos> direction(List<ColumnPos> poly){
-		List<ColumnPos> list = new ArrayList<>();
-		list.add(poly.remove(0));
-		int a = 0;
-		while(poly.size() > 0){
-			final ColumnPos col = list.get(a);
-			
-			if(moveNext(col, poly, list)){
-				a++;
-			}else{
-				ImmersivePetroleum.log.info("This should not happen, but it did..");
-				break;
-			}
-		}
-		
-		return list;
-	}
-	
-	/**
-	 * <pre>
-	 * Straight Line Optimizations (Cut down on number of Points)
-	 * to avoid things like #### and turn them into #--#
-	 * Where # is a Point, and - is just an imaginary line between.
-	 * 
-	 * For X and Z
-	 * </pre>
-	 */
-	public static ArrayList<ColumnPos> optimizeLines(List<ColumnPos> poly){
-		ArrayList<ColumnPos> list = new ArrayList<>(poly);
-		
-		int endIndex = 0;
-		ColumnPos startPos = null, endPos = null;
-		for(int startIndex = 0;startIndex < list.size();startIndex++){
-			startPos = list.get(startIndex);
-			
-			// Find the end of the current line on X
-			{
-				for(int j = 1;j < 64;j++){
-					int index = (startIndex + j) % list.size();
-					ColumnPos pos = list.get(index);
-					
-					if(startPos.z != pos.z){
-						break;
-					}
-					
-					endIndex = index;
-					endPos = pos;
-				}
-			}
-			
-			// Find the end the current line on Z
-			{
-				for(int j = 1;j < 64;j++){
-					int index = (startIndex + j) % list.size();
-					ColumnPos pos = list.get(index);
-					
-					if(startPos.x != pos.x){
-						break;
-					}
-					
-					endIndex = index;
-					endPos = pos;
-				}
-			}
-			
-			// Diagonal lines?
-			boolean debug = false;
-			if(debug){
-				for(int j = 1;j < 64;j++){
-					int index = (startIndex + j) % list.size();
-					ColumnPos pos = list.get(index);
-
-					int dx = Math.abs(pos.x - startPos.x);
-					int dz = Math.abs(pos.z - startPos.z);
-					
-					if(dx != dz){
-						break;
-					}
-					
-					endIndex = index;
-					endPos = pos;
-				}
-			}
-			
-			// Commence culling
-			if(startPos != null && endPos != null){
-				int len = (endIndex - startIndex);
-				if(len > 1){
-					int index = startIndex + 1;
-					for(int j = index;j < endIndex;j++){
-						list.remove(index % list.size());
-					}
-				}else if(len < 0){
-					// Start and End cross the 
-					len = len + list.size() - 1;
-					
-					if(len>1){
-						int index = startIndex + 1;
-						for(int j = 0;j < len;j++){
-							list.remove(index % list.size());
-						}
-					}
-				}
-				
-				startPos = endPos = null;
-			}
-		}
-		
-		return list;
-	}
-	
-	public static boolean moveNext(ColumnPos pos, List<ColumnPos> list0, List<ColumnPos> list1){
-		ColumnPos p0 = new ColumnPos(pos.x + 1, pos.z);
-		ColumnPos p1 = new ColumnPos(pos.x - 1, pos.z);
-		ColumnPos p2 = new ColumnPos(pos.x, pos.z + 1);
-		ColumnPos p3 = new ColumnPos(pos.x, pos.z - 1);
-		ColumnPos p4 = new ColumnPos(pos.x - 1, pos.z - 1);
-		ColumnPos p5 = new ColumnPos(pos.x - 1, pos.z + 1);
-		ColumnPos p6 = new ColumnPos(pos.x + 1, pos.z - 1);
-		ColumnPos p7 = new ColumnPos(pos.x + 1, pos.z + 1);
-		
-		if((list0.remove(p0) && list1.add(p0)) || (list0.remove(p1) && list1.add(p1)) || (list0.remove(p2) && list1.add(p2)) || (list0.remove(p3) && list1.add(p3))){
-			return true;
-		}
-		
-		if((list0.remove(p4) && list1.add(p4)) || (list0.remove(p5) && list1.add(p5)) || (list0.remove(p6) && list1.add(p6)) || (list0.remove(p7) && list1.add(p7))){
-			return true;
-		}
-		
-		return false;
 	}
 	
 	@Override

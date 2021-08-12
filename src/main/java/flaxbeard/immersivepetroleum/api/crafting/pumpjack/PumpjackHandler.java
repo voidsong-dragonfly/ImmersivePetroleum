@@ -42,7 +42,7 @@ public class PumpjackHandler{
 			return 0;
 		
 		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
-		if(info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluidLocation == null || (info.current == 0 && info.getType().replenishRate == 0))
+		if(info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluidLocation == null || (info.current == 0 && info.getType().residual == 0))
 			return 0;
 		
 		return info.current;
@@ -81,7 +81,7 @@ public class PumpjackHandler{
 	public static int getResidualFluid(World world, int chunkX, int chunkZ){
 		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
 		
-		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().replenishRate == 0))
+		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().residual == 0))
 			return 0;
 		
 		DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimensionKey(), chunkX / depositSize, chunkZ / depositSize);
@@ -89,12 +89,12 @@ public class PumpjackHandler{
 		Long l = timeCache.get(coords);
 		if(l == null){
 			timeCache.put(coords, world.getGameTime());
-			return info.getType().replenishRate;
+			return info.getType().residual;
 		}
 		
 		long lastTime = world.getGameTime();
 		timeCache.put(coords, world.getGameTime());
-		return lastTime != l ? info.getType().replenishRate : 0;
+		return lastTime != l ? info.getType().residual : 0;
 	}
 	
 	/**

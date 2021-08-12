@@ -11,22 +11,38 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.ColumnPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
 
+/**
+ * Every instance of this class is it's own little ecosystem.
+ * <p>
+ * How much amount of fluid it has, what kind of fluid, how much residual fluid after it has been drained, etc.
+ * 
+ * @author TwistedGate
+ */
 public class ReservoirIsland{
+	/** Primary mB/t */
+	public static final int MIN_MBPT = 15;
+	
+	/** Pressure related maximum mB/t */
+	public static final int MAX_MBPT = 2500;
+	
+	/** "Unsigned 32-Bit" */
+	public static final long MAX_AMOUNT = 0xFFFFFFFFL;
+	
 	private Reservoir reservoir;
 	private List<ColumnPos> poly;
-	/** TODO Stored in Special block? Stored in ReservoirIsland? Stored Somewhere else? */
-	private List<ColumnPos> wells;
 	private IslandAxisAlignedBB islandAABB;
-	private int amount;
+	private long amount;
+	private long capacity;
 	
 	private ReservoirIsland(){}
 	
-	public ReservoirIsland(List<ColumnPos> poly, Reservoir reservoir, int amount){
+	public ReservoirIsland(List<ColumnPos> poly, Reservoir reservoir, long amount){
 		this.poly = poly;
 		this.reservoir = reservoir;
-		this.amount = amount;
+		setAmount(amount);
 		
 		createBoundingBox();
 	}
@@ -50,10 +66,16 @@ public class ReservoirIsland{
 	}
 	
 	/**
-	 * Sets the reservoirs current fluid amount
+	 * Sets the reservoirs current fluid amount in millibuckets.
+	 * 
+	 * @param amount of fluid in this reservoir. (Range: 0 - {@value #MAX_AMOUNT})
 	 */
-	public ReservoirIsland setAmount(int amount){
+	public ReservoirIsland setAmount(long amount){
+		amount = MathHelper.clamp(amount, 0L, MAX_AMOUNT);
+		
 		this.amount = amount;
+		this.capacity = amount;
+		
 		return this;
 	}
 	
@@ -65,8 +87,14 @@ public class ReservoirIsland{
 		return this;
 	}
 	
-	public int getAmount(){
+	/** While this returns long it only goes up to {@value #MAX_AMOUNT} */
+	public long getAmount(){
 		return this.amount;
+	}
+	
+	/** See {@link #getAmount()} */
+	public long getCapacity(){
+		return this.capacity;
 	}
 	
 	@Nonnull
@@ -82,10 +110,56 @@ public class ReservoirIsland{
 		return Collections.unmodifiableList(this.poly);
 	}
 	
+	/**
+	 * There is no simulation or testing, if what comes out of this cannot be dealt with.. well too bad!
+	 * 
+	 * @param x
+	 * @param z
+	 * @return how much has been drained, residual amount or 0 if the primary reserve has been drained
+	 */
+	public int extract(int x, int z){
+		// TODO There has to be a way for when pressure is at 0
+		
+		if(this.amount <= 0){
+			return this.reservoir.residual;
+		}
+		
+		long amount = Math.max(getFlow(x, z), this.amount);
+		
+		this.amount -= amount;
+		
+		return (int) amount;
+	}
+	
+	public int getFlow(int x, int z){
+		float pressure = getPressure(x, z);
+		return (int) Math.floor(MIN_MBPT + (MAX_MBPT - MIN_MBPT) * pressure);
+	}
+	
+	public float getPressure(int x, int z){
+		// prevents outside use
+		double noise = ReservoirHandler.noiseFor(x, z);
+		
+		if(noise > 0.0D){
+			float modifier = this.amount / (float) (this.capacity * 0.75F);
+			modifier = MathHelper.clamp(modifier, 0.0F, 1.0F);
+			
+			// Slightly modified version of what TeamSpen210 gave me, thank you!
+			float min = 1.0F, max = 1000.0F;
+			float decay = (float) (-Math.log(min / max) / 1.0D);
+			float output = (float) (Math.exp(decay * noise) / max) * modifier;
+			
+			return output < 1.0e-3 ? 0.0F : output;
+		}
+		
+		return 0.0F;
+	}
+	
 	public CompoundNBT writeToNBT(){
 		CompoundNBT nbt = new CompoundNBT();
 		nbt.putString("reservoir", this.reservoir.getId().toString());
-		nbt.putInt("amount", this.getAmount());
+		nbt.putInt("amount", (int)(this.getAmount() & 0xFFFFFFFFL));
+		nbt.putInt("capacity", (int)(this.getCapacity() & 0xFFFFFFFFL));
 		nbt.put("bounds", this.getBoundingBox().writeToNBT());
 		
 		final IslandAxisAlignedBB bounds = this.getBoundingBox();
@@ -109,7 +183,7 @@ public class ReservoirIsland{
 		try{
 			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
-				int amount = nbt.getInt("amount");
+				long amount = ((long)nbt.getInt("amount")) & 0xFFFFFFFFL;
 				IslandAxisAlignedBB bounds = IslandAxisAlignedBB.readFromNBT(nbt.getCompound("bounds"));
 				
 				final List<ColumnPos> points = new ArrayList<>();
@@ -195,20 +269,5 @@ public class ReservoirIsland{
 		}
 		
 		return ret;
-	}
-	
-	public static ColumnPos getFirst(int chunkStartX, int chunkStartZ){
-		for(int j = 0;j < 16;j++){
-			for(int i = 0;i < 16;i++){
-				int x = chunkStartX + i;
-				int z = chunkStartZ + j;
-				
-				if(ReservoirHandler.noiseFor(x, z) > -1){
-					return new ColumnPos(x, z);
-				}
-			}
-		}
-		
-		return null;
 	}
 }

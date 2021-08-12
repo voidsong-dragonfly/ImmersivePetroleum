@@ -12,8 +12,8 @@ import com.blamejared.crafttweaker.api.CraftTweakerAPI;
 import com.blamejared.crafttweaker.api.annotations.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 
@@ -158,7 +158,7 @@ public class ReservoirTweaker{
 						reservoir.addBiome(true, this.bioBlacklist);
 					}
 					
-					PumpjackHandler.addReservoir(id, reservoir);
+					ReservoirHandler.addReservoir(id, reservoir);
 				}else{
 					CraftTweakerAPI.logError("§cReservoir %s already exists!§r", name);
 				}

@@ -21,6 +21,7 @@ import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileE
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
+import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -167,10 +168,10 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 					
 					FluidUtil.getFluidHandler(this.world, pos, facing.getOpposite()).map(out -> {
 						if(this.tank.getFluidAmount() > 0){
-							FluidStack fs = copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432), !isSameTEType);
+							FluidStack fs = FluidHelper.copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432), !isSameTEType);
 							int accepted = out.fill(fs, FluidAction.SIMULATE);
 							if(accepted > 0){
-								int drained = out.fill(copyFluid(fs, Math.min(fs.getAmount(), accepted), !isSameTEType), FluidAction.EXECUTE);
+								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), !isSameTEType), FluidAction.EXECUTE);
 								this.tank.drain(Utils.copyFluidStackWithAmount(this.tank.getFluid(), drained, true), FluidAction.EXECUTE);
 								this.markContainingBlockForUpdate(null);
 								return true;
@@ -215,14 +216,6 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		}
 		
 		return false;
-	}
-	
-	private FluidStack copyFluid(FluidStack fluid, int amount, boolean pressurize){
-		FluidStack fs = new FluidStack(fluid, amount);
-		if(pressurize && amount > 50){
-			fs.getOrCreateTag().putBoolean("pressurized", true);
-		}
-		return fs;
 	}
 	
 	private Direction getPortDirection(Port port){

@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
@@ -112,7 +112,7 @@ public class ImmersivePetroleum{
 		
 		proxy.postInit();
 		
-		PumpjackHandler.recalculateChances();
+		ReservoirHandler.recalculateChances();
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event){
@@ -148,6 +148,6 @@ public class ImmersivePetroleum{
 			IPSaveData.setInstance(worldData);
 		}
 		
-		PumpjackHandler.recalculateChances();
+		ReservoirHandler.recalculateChances();
 	}
 }
