@@ -37,7 +37,7 @@ public class IPTileTypes{
 	public static final RegistryObject<TileEntityType<GasGeneratorTileEntity>> GENERATOR = register("gasgenerator", GasGeneratorTileEntity::new, IPContent.Blocks.gas_generator);
 	public static final RegistryObject<TileEntityType<AutoLubricatorTileEntity>> AUTOLUBE = register("autolubricator", AutoLubricatorTileEntity::new, IPContent.Blocks.auto_lubricator);
 	public static final RegistryObject<TileEntityType<FlarestackTileEntity>> FLARE = register("flarestack", FlarestackTileEntity::new, IPContent.Blocks.flarestack);
-	public static final RegistryObject<TileEntityType<WellTileEntity>> WELL = register("well", WellTileEntity::new, IPContent.Blocks.well);
+	public static final RegistryObject<TileEntityType<WellTileEntity>> WELL = register("reservoir_well", WellTileEntity::new, IPContent.Blocks.well);
 	
 	private static <T extends TileEntity> RegistryObject<TileEntityType<T>> register(String name, Supplier<T> factory, Block... valid){
 		return REGISTER.register(name, () -> new TileEntityType<>(factory, ImmutableSet.copyOf(valid), null));

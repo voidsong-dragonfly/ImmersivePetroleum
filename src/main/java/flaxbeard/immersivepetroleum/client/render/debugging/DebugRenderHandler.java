@@ -20,6 +20,7 @@ import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
@@ -96,6 +97,19 @@ public class DebugRenderHandler{
 							
 						}else if(te instanceof OilTankTileEntity){
 							oiltank(debugOut, (OilTankTileEntity) multiblock);
+							
+						}else if(te instanceof DerrickTileEntity){
+							DerrickTileEntity derrick = (DerrickTileEntity) multiblock;
+							
+							IFluidTank[] tanks = derrick.getInternalTanks();
+							if(tanks != null && tanks.length > 0){
+								for(int i = 0;i < tanks.length;i++){
+									FluidStack fs = tanks[i].getFluid();
+									debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+								}
+							}
+							
+							debugOut.add(toText("" + derrick.getWorld().getGameTime() % 20));
 						}
 					}
 					

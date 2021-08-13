@@ -36,6 +36,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
+	public static final FluidTank DUMMY_TANK = new FluidTank(0);
 	
 	/** Template-Location of the Fluid Input Port. (2 0 4)<br> */
 	public static final BlockPos Fluid_IN = new BlockPos(2, 0, 4);
@@ -49,8 +50,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	/** Template-Location of the Redstone Input Port. (0 0 0)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(1, 0, 0));
 	
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
-	public FluidTank dummyTank = new FluidTank(0);
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+	public FluidTank waterTank = new FluidTank(8000);
 	public boolean drilling = false;
 	public boolean spilling = false;
 	public DerrickTileEntity(){
@@ -67,6 +68,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		super.readCustomNBT(nbt, descPacket);
 		this.drilling = nbt.getBoolean("drilling");
 		this.spilling = nbt.getBoolean("spilling");
+		this.waterTank.readFromNBT(nbt.getCompound("tank"));
 		
 		if(!descPacket){
 			readInventory(nbt.getCompound("inventory"));
@@ -78,6 +80,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.putBoolean("drilling", this.drilling);
 		nbt.putBoolean("spilling", this.spilling);
+		nbt.put("tank", this.waterTank.writeToNBT(new CompoundNBT()));
 		
 		if(!descPacket){
 			nbt.put("inventory", writeInventory(this.inventory));
@@ -141,6 +144,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(this.world.isAreaLoaded(this.getPos(), 5)){
 			
 		}
+		
+		if(this.world.getGameTime() % 20 == 0){
+			updateMasterBlock(getBlockState(), true);
+		}
 	}
 	
 	@OnlyIn(Dist.CLIENT)
@@ -188,6 +195,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public void doGraphicalUpdates(int slot){
+		updateMasterBlock(null, true);
 	}
 	
 	@Override
@@ -207,7 +215,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public IFluidTank[] getInternalTanks(){
-		return new IFluidTank[0];
+		return new IFluidTank[]{this.waterTank};
 	}
 	
 	@Override
@@ -217,12 +225,12 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public int[] getOutputSlots(){
-		return null;
+		return new int[0];
 	}
 	
 	@Override
 	public int[] getOutputTanks(){
-		return null;
+		return new int[0];
 	}
 	
 	@Override
@@ -254,7 +262,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public float getMinProcessDistance(MultiblockProcess<MultiblockRecipe> process){
-		return 0;
+		return 1.0F;
 	}
 	
 	@Override
@@ -268,13 +276,13 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(master != null){
 			if(this.posInMultiblock.equals(Fluid_IN)){
 				if(side == null || side == getFacing().getOpposite()){
-					return new IFluidTank[]{this.dummyTank};
+					return new IFluidTank[]{this.waterTank};
 				}
 			}
 			
 			if(this.posInMultiblock.equals(Fluid_OUT)){
 				if(side == null || (getIsMirrored() ? side == getFacing().rotateYCCW() : side == getFacing().rotateY())){
-					return new IFluidTank[]{this.dummyTank};
+					return new IFluidTank[]{DUMMY_TANK};
 				}
 			}
 		}
@@ -282,12 +290,23 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	}
 	
 	@Override
-	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
+	protected boolean canDrainTankFrom(int iTank, Direction side){
 		return false;
 	}
 	
 	@Override
-	protected boolean canDrainTankFrom(int iTank, Direction side){
+	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
+		if(this.posInMultiblock.equals(Fluid_IN)){
+			if(side == null || side == getFacing().getOpposite()){
+				DerrickTileEntity master = master();
+				
+				if(master == null || master.waterTank.getFluidAmount() >= master.waterTank.getCapacity()){
+					return false;
+				}
+				
+				return true;
+			}
+		}
 		return false;
 	}
 	
