@@ -33,6 +33,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
@@ -262,7 +263,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public float getMinProcessDistance(MultiblockProcess<MultiblockRecipe> process){
-		return 1.0F;
+		return 0;
 	}
 	
 	@Override
@@ -276,7 +277,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(master != null){
 			if(this.posInMultiblock.equals(Fluid_IN)){
 				if(side == null || side == getFacing().getOpposite()){
-					return new IFluidTank[]{this.waterTank};
+					return new IFluidTank[]{master.waterTank};
 				}
 			}
 			
