@@ -116,11 +116,12 @@ public class DebugRenderHandler{
 					if(!debugOut.isEmpty() || isMBPart){
 						if(isMBPart){
 							MultiblockPartTileEntity<?> generic = (MultiblockPartTileEntity<?>) te;
+							BlockPos pos = generic.posInMultiblock;
+							
 							if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
 								generic = generic.master();
 							}
 							
-							BlockPos pos = generic.posInMultiblock;
 							BlockPos hit = result.getPos();
 							Block block = generic.getBlockState().getBlock();
 							
