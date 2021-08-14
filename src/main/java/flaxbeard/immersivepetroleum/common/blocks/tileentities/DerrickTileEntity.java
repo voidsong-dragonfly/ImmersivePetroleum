@@ -46,10 +46,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	public static final BlockPos Fluid_OUT = new BlockPos(4, 0, 2);
 	
 	/** Template-Location of the Energy Input Ports.<br><pre>0 0 0</pre><br> */
-	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(0, 0, 0));
+	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 1, 2));
 	
 	/** Template-Location of the Redstone Input Port. (0 0 0)<br> */
-	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(1, 0, 0));
+	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
 	public FluidTank waterTank = new FluidTank(8000);
@@ -67,8 +67,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	@Override
 	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
+		
 		this.drilling = nbt.getBoolean("drilling");
 		this.spilling = nbt.getBoolean("spilling");
+		
 		this.waterTank.readFromNBT(nbt.getCompound("tank"));
 		
 		if(!descPacket){
@@ -79,8 +81,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	@Override
 	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
+		
 		nbt.putBoolean("drilling", this.drilling);
 		nbt.putBoolean("spilling", this.spilling);
+		
 		nbt.put("tank", this.waterTank.writeToNBT(new CompoundNBT()));
 		
 		if(!descPacket){
