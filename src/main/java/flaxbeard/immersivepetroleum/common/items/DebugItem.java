@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.items;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.IntStream;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -36,7 +35,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -44,14 +42,12 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ISeedReader;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.PerlinNoiseGenerator;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 
@@ -198,12 +194,6 @@ public class DebugItem extends IPItemBase{
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
 				case SEEDBASED_RESERVOIR:{
-					if(worldIn instanceof ServerWorld){
-						if(ReservoirHandler.generator == null){
-							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
-						}
-					}
-					
 					BlockPos playerPos = playerIn.getPosition();
 					
 					ChunkPos cPos = new ChunkPos(playerPos);
@@ -214,7 +204,7 @@ public class DebugItem extends IPItemBase{
 					int x = playerPos.getX() - cPos.getXStart();
 					int z = playerPos.getZ() - cPos.getZStart();
 					
-					double noise = ReservoirHandler.noiseFor((chunkX + x), (chunkZ + z));
+					double noise = ReservoirHandler.noiseFor(worldIn, (chunkX + x), (chunkZ + z));
 					
 					playerIn.sendStatusMessage(new StringTextComponent((chunkX + " " + chunkZ) + ": " + noise), true);
 					
@@ -225,11 +215,24 @@ public class DebugItem extends IPItemBase{
 					
 					ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
 					if(island != null){
-						String out = "";
-						out += "Noise: " + ReservoirHandler.noiseFor(playerPos.getX(), playerPos.getZ());
-						out += ", Amount: " + island.getAmount();
-						out += ", Pressure: " + island.getPressure(playerPos.getX(), playerPos.getZ());
-						out += ", Flow: " + island.getFlow(playerPos.getX(), playerPos.getZ()) + "mB/t";
+						int x = playerPos.getX();
+						int z = playerPos.getZ();
+						
+						float pressure = island.getPressure(worldIn, x, z);
+						
+						if(playerIn.isSneaking()){
+							island.setAmount(FluidAttributes.BUCKET_VOLUME * 1000);
+							IPSaveData.setDirty();
+						}
+						
+						String out = String.format(Locale.ENGLISH,
+								"Noise: %.3f, Amount: %d/%d, Pressure: %.6f, Flow: %d", 
+								ReservoirHandler.noiseFor(worldIn, x, z),
+								island.getAmount(),
+								island.getCapacity(),
+								pressure,
+								island.getFlow(pressure));
+						
 						playerIn.sendStatusMessage(new StringTextComponent(out), true);
 					}
 					

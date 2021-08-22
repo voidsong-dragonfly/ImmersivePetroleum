@@ -6,12 +6,14 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import flaxbeard.immersivepetroleum.common.IPSaveData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 
 /**
@@ -68,7 +70,7 @@ public class ReservoirIsland{
 	/**
 	 * Sets the reservoirs current fluid amount in millibuckets.
 	 * 
-	 * @param amount of fluid in this reservoir. (Range: 0 - {@value #MAX_AMOUNT})
+	 * @param amount of fluid in this reservoir. (Range: 0 - 4294967295})
 	 */
 	public ReservoirIsland setAmount(long amount){
 		amount = MathHelper.clamp(amount, 0L, MAX_AMOUNT);
@@ -87,7 +89,7 @@ public class ReservoirIsland{
 		return this;
 	}
 	
-	/** While this returns long it only goes up to {@value #MAX_AMOUNT} */
+	/** While this returns long it only goes up to 4294967295 */
 	public long getAmount(){
 		return this.amount;
 	}
@@ -95,6 +97,10 @@ public class ReservoirIsland{
 	/** See {@link #getAmount()} */
 	public long getCapacity(){
 		return this.capacity;
+	}
+	
+	public boolean isEmpty(){
+		return this.amount <= 0L;
 	}
 	
 	@Nonnull
@@ -111,45 +117,75 @@ public class ReservoirIsland{
 	}
 	
 	/**
-	 * There is no simulation or testing, if what comes out of this cannot be dealt with.. well too bad!
-	 * 
 	 * @param x
 	 * @param z
-	 * @return how much has been drained, residual amount or 0 if the primary reserve has been drained
+	 * @param amount to extract
+	 * @return how much has been extracted or residual if drained
 	 */
-	public int extract(int x, int z){
-		// TODO There has to be a way for when pressure is at 0
-		
-		if(this.amount <= 0){
+	public long extract(int x, int z, int amount){
+		if(isEmpty()){
 			return this.reservoir.residual;
 		}
 		
-		long amount = Math.max(getFlow(x, z), this.amount);
+		int extracted = (int) Math.min(this.amount, amount);
 		
-		this.amount -= amount;
+		this.amount -= extracted;
+		IPSaveData.setDirty();
 		
-		return (int) amount;
+		return extracted;
 	}
 	
-	public int getFlow(int x, int z){
-		float pressure = getPressure(x, z);
-		return (int) Math.floor(MIN_MBPT + (MAX_MBPT - MIN_MBPT) * pressure);
+	/**
+	 * @param x
+	 * @param z
+	 * @return How much was spilled
+	 */
+	public int spill(World world, int x, int z){
+		float pressure = getPressure(world, x, z);
+		
+		if(pressure > 0.0 && this.amount > 0){
+			int flow = (int)Math.min(getFlow(pressure), this.amount);
+			
+			this.amount -= flow;
+			IPSaveData.setDirty();
+			return flow;
+		}
+		
+		return 0;
 	}
 	
-	public float getPressure(int x, int z){
+	/**
+	 * @param pressure (Clamped: 0.0 - 1.0)
+	 * @return mb
+	 */
+	public int getFlow(float pressure){
+		return MIN_MBPT + (int) Math.floor((MAX_MBPT - MIN_MBPT) * MathHelper.clamp(pressure, 0.0F, 1.0F));
+	}
+	
+	public float getPressure(World world, int x, int z){
 		// prevents outside use
-		double noise = ReservoirHandler.noiseFor(x, z);
+		double noise = ReservoirHandler.noiseFor(world, x, z);
 		
 		if(noise > 0.0D){
-			float modifier = this.amount / (float) (this.capacity * 0.75F);
-			modifier = MathHelper.clamp(modifier, 0.0F, 1.0F);
+			// Pressure should drop from 100% to 0%
+			// While the reservoir is between 100% and 50% at max
 			
-			// Slightly modified version of what TeamSpen210 gave me, thank you!
-			float min = 1.0F, max = 1000.0F;
-			float decay = (float) (-Math.log(min / max) / 1.0D);
-			float output = (float) (Math.exp(decay * noise) / max) * modifier;
-			
-			return output < 1.0e-3 ? 0.0F : output;
+			boolean debug = false;
+			if(debug){
+				float modifier = (this.amount - (this.capacity * 0.75F)) / ((float) this.capacity);
+				
+				modifier = MathHelper.clamp(modifier, 0.0F, 1.0F);
+				
+				// Slightly modified version of what TeamSpen210 gave me, thank you!
+				float min = 1F;
+				float max = 1000F;
+				float decay = (float) (-Math.log(min / max) / 1.0D);
+				float output = (float) (Math.exp(decay * noise) / max) * modifier;
+				
+				return output <= 0.001F ? 0.0F : output;
+			}else{
+				return 1.0F;
+			}
 		}
 		
 		return 0.0F;
@@ -184,6 +220,7 @@ public class ReservoirIsland{
 			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
 				long amount = ((long)nbt.getInt("amount")) & 0xFFFFFFFFL;
+				long capacity = ((long)nbt.getInt("capacity")) & 0xFFFFFFFFL;
 				IslandAxisAlignedBB bounds = IslandAxisAlignedBB.readFromNBT(nbt.getCompound("bounds"));
 				
 				final List<ColumnPos> points = new ArrayList<>();
@@ -198,6 +235,7 @@ public class ReservoirIsland{
 				ReservoirIsland island = new ReservoirIsland();
 				island.reservoir = reservoir;
 				island.amount = amount;
+				island.capacity = capacity;
 				island.poly = points;
 				island.islandAABB = bounds;
 				return island;

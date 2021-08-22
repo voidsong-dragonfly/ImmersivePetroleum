@@ -15,6 +15,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteract
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
@@ -33,7 +34,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
@@ -137,8 +137,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				}
 			}
 			
-			
-			// TODO Spawn spill particles only when it's actualy spilling, duh
 			if(this.spilling){
 				spawnOilSpillParticles(this.world, this.pos, 10, 16.0F);
 			}
@@ -147,11 +145,32 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 		
 		if(this.world.isAreaLoaded(this.getPos(), 5)){
-			
+			if(!isRSDisabled()){
+				
+				// TODO May actualy ommit this "flatness" stuff
+				
+				BlockPos below = this.getPos().down().add(-1, 0, -1);
+				boolean onFlatGround = true;
+				flatcheck:{
+					for(int j = 0;j < 3;j++){
+						for(int i = 0;i < 3;i++){
+							BlockPos pos = below.add(i, 0, j);
+							BlockState state = this.getWorldNonnull().getBlockState(below.add(i, 0, j));
+							if(state.getBlock().isAir(state, getWorldNonnull(), pos)){
+								onFlatGround = false;
+								break flatcheck;
+							}
+						}
+					}
+				}
+				
+				if(onFlatGround){
+				}
+			}
 		}
 		
 		if(this.world.getGameTime() % 20 == 0){
-			updateMasterBlock(getBlockState(), true);
+			updateMasterBlock(null, true);
 		}
 	}
 	

@@ -13,7 +13,13 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 	public DerrickContainer(int id, PlayerInventory playerInventory, DerrickTileEntity tile){
 		super(playerInventory, tile, id, DerrickMultiblock.INSTANCE);
 		
-		this.addSlot(new Slot(this.inv, 0, 164, 120));
+		this.addSlot(new Slot(this.inv, 0, 164, 120){
+			@Override
+			public boolean isItemValid(ItemStack stack){
+				// TODO Idealy only allow IEs fluid pipes
+				return true;
+			}
+		});
 		
 		this.addSlot(new Slot(this.inv, 1, 36, 89){
 			@Override

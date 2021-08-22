@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.IntStream;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -12,14 +15,18 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.IPSaveData;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.INoiseGenerator;
+import net.minecraft.world.gen.PerlinNoiseGenerator;
 import net.minecraft.world.server.ServerWorld;
 
 /**
@@ -48,7 +55,7 @@ public class ReservoirHandler{
 				int x = chunkX + i;
 				int z = chunkZ + j;
 				
-				if(ReservoirHandler.noiseFor(x, z) > -1){
+				if(ReservoirHandler.noiseFor(world, x, z) > -1){
 					// Getting the biome now to prevent lockups
 					ResourceLocation biome = world.getBiome(new BlockPos(x, 64, z)).getRegistryName();
 					
@@ -74,12 +81,13 @@ public class ReservoirHandler{
 						}
 						
 						List<ColumnPos> poly = new ArrayList<>();
-						next(poly, x, z);
-						poly = optimizeLines(direction(edgy(poly)));
+						next(world, poly, x, z);
+						poly = optimizeLines(direction(edgy(world, poly)));
 						
 						int amount = (int) MathHelper.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
 						ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
 						RESERVOIR_ISLAND_LIST.put(world.getDimensionKey(), island);
+						IPSaveData.setDirty();
 					}
 				}
 			}
@@ -118,7 +126,7 @@ public class ReservoirHandler{
 	}
 	
 	public static ReservoirIsland getIsland(World world, BlockPos pos){
-		return getIsland(world, new ColumnPos(pos.getX(), pos.getZ()));
+		return getIsland(world, new ColumnPos(pos));
 	}
 	
 	public static ReservoirIsland getIsland(World world, ColumnPos pos){
@@ -169,31 +177,36 @@ public class ReservoirHandler{
 	static final double d1 = 1 / 3D;
 	
 	/**
+	 * <i>Only call on server side!</i>
+	 * 
+	 * @param world
 	 * @param x Block Position
 	 * @param z Block Position
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
-	public static double noiseFor(int x, int z){
-		if(generator != null){
-			double noise = Math.abs(generator.noiseAt(x * scale, z * scale, scale, x * scale)) / .55;
-			
-			if(noise > d0){
-				return (noise - d0) / d1;
-			}
+	public static double noiseFor(@Nonnull World world, int x, int z){
+		if(generator == null && !world.isRemote){
+			generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) world).getSeed()), IntStream.of(0));
 		}
-		return -1D;
 		
+		double noise = Math.abs(generator.noiseAt(x * scale, z * scale, scale, x * scale)) / .55;
+		
+		if(noise > d0){
+			return (noise - d0) / d1;
+		}
+		
+		return -1D;
 	}
 	
 	/** Recursively discover the whole island */
-	static void next(List<ColumnPos> list, int x, int z){
-		if(ReservoirHandler.noiseFor(x, z) > -1 && !list.contains(new ColumnPos(x, z))){
+	static void next(World world, List<ColumnPos> list, int x, int z){
+		if(ReservoirHandler.noiseFor(world, x, z) > -1 && !list.contains(new ColumnPos(x, z))){
 			list.add(new ColumnPos(x, z));
 			
-			next(list, x + 1, z);
-			next(list, x - 1, z);
-			next(list, x, z + 1);
-			next(list, x, z - 1);
+			next(world, list, x + 1, z);
+			next(world, list, x - 1, z);
+			next(world, list, x, z + 1);
+			next(world, list, x, z - 1);
 		}
 	}
 	
@@ -221,30 +234,30 @@ public class ReservoirHandler{
 	// ####################################################
 	
 	/** Keep edges/corners and dump the rest */
-	private static List<ColumnPos> edgy(List<ColumnPos> poly){
+	private static List<ColumnPos> edgy(World world, List<ColumnPos> poly){
 		final List<ColumnPos> list = new ArrayList<>();
 		poly.forEach(pos -> {
 			for(int z = -1;z <= 1;z++){
 				for(int x = -1;x <= 1;x++){
-					if(ReservoirHandler.noiseFor(pos.x + 1, pos.z) == -1){
+					if(ReservoirHandler.noiseFor(world, pos.x + 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x + 1, pos.z);
 						if(!list.contains(p)){
 							list.add(p);
 						}
 					}
-					if(ReservoirHandler.noiseFor(pos.x - 1, pos.z) == -1){
+					if(ReservoirHandler.noiseFor(world, pos.x - 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x - 1, pos.z);
 						if(!list.contains(p)){
 							list.add(p);
 						}
 					}
-					if(ReservoirHandler.noiseFor(pos.x, pos.z + 1) == -1){
+					if(ReservoirHandler.noiseFor(world, pos.x, pos.z + 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z + 1);
 						if(!list.contains(p)){
 							list.add(p);
 						}
 					}
-					if(ReservoirHandler.noiseFor(pos.x, pos.z - 1) == -1){
+					if(ReservoirHandler.noiseFor(world, pos.x, pos.z - 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z - 1);
 						if(!list.contains(p)){
 							list.add(p);
