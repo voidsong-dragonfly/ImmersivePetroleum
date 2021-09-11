@@ -22,13 +22,13 @@ import net.minecraft.util.ResourceLocationException;
 public class ReservoirTweaker{
 	
 	@Method
-	public static boolean remove(String recipeName){
-		List<ResourceLocation> test = Reservoir.map.keySet().stream()
-				.filter(loc -> loc.getPath().contains(recipeName))
+	public static boolean remove(String name){
+			List<ResourceLocation> test = Reservoir.map.keySet().stream()
+				.filter(loc -> loc.getPath().contains(name))
 				.collect(Collectors.toList());
 		
 		if(test.size() > 1){
-			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", recipeName);
+			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
 		}else if(test.size() == 1){
 			ResourceLocation id = test.get(0);
 			if(Reservoir.map.containsKey(id)){
@@ -38,7 +38,7 @@ public class ReservoirTweaker{
 				CraftTweakerAPI.logError("§c%s does not exist, or was already removed.§r", id);
 			}
 		}else{
-			CraftTweakerAPI.logInfo("\"%s\" does not exist or could not be found.", recipeName);
+			CraftTweakerAPI.logInfo("\"%s\" does not exist or could not be found.", name);
 		}
 		
 		return false;

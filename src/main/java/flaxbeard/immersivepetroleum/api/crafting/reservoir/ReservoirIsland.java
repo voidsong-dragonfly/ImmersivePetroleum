@@ -130,7 +130,7 @@ public class ReservoirIsland{
 		int extracted = (int) Math.min(this.amount, amount);
 		
 		this.amount -= extracted;
-		IPSaveData.setDirty();
+		IPSaveData.markInstanceAsDirty();
 		
 		return extracted;
 	}
@@ -147,7 +147,7 @@ public class ReservoirIsland{
 			int flow = (int)Math.min(getFlow(pressure), this.amount);
 			
 			this.amount -= flow;
-			IPSaveData.setDirty();
+			IPSaveData.markInstanceAsDirty();
 			return flow;
 		}
 		

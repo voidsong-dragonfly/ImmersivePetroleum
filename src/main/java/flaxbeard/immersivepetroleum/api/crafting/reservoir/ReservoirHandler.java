@@ -87,7 +87,7 @@ public class ReservoirHandler{
 						int amount = (int) MathHelper.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
 						ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
 						RESERVOIR_ISLAND_LIST.put(world.getDimensionKey(), island);
-						IPSaveData.setDirty();
+						IPSaveData.markInstanceAsDirty();
 					}
 				}
 			}

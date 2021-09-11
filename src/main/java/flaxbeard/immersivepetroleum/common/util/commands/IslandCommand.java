@@ -89,7 +89,7 @@ public class IslandCommand{
 		}
 		
 		island.setReservoirType(reservoir);
-		IPSaveData.setDirty();
+		IPSaveData.markInstanceAsDirty();
 		CommandUtils.sendTranslated(sender, "chat.immersivepetroleum.command.reservoir.set.sucess", reservoir.name);
 	}
 }

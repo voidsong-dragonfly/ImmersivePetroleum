@@ -23,6 +23,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntit
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
+import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -187,7 +188,7 @@ public class DebugItem extends IPItemBase{
 					PumpjackHandler.reservoirsCache.clear();
 					PumpjackHandler.recalculateChances();
 					
-					IPSaveData.setDirty();
+					IPSaveData.markInstanceAsDirty();
 					
 					playerIn.sendStatusMessage(new StringTextComponent("Cleared Oil Cache. (Removed " + contentSize + ")"), true);
 					
@@ -222,7 +223,7 @@ public class DebugItem extends IPItemBase{
 						
 						if(playerIn.isSneaking()){
 							island.setAmount(FluidAttributes.BUCKET_VOLUME * 1000);
-							IPSaveData.setDirty();
+							IPSaveData.markInstanceAsDirty();
 						}
 						
 						String out = String.format(Locale.ENGLISH,
@@ -315,13 +316,21 @@ public class DebugItem extends IPItemBase{
 		TileEntity te = context.getWorld().getTileEntity(context.getPos());
 		switch(mode){
 			case GENERAL_TEST:{
-				if(context.getWorld().isRemote){
+				World world = context.getWorld();
+				if(world.isRemote){
 					// Client
+					BlockPos pos = context.getPos();
+
+					float xa = 0.0625F * (float) Math.random();
+					float ya = 0.0625F;
+					float za = 0.0625F * (float) Math.random();
+					
+					world.addParticle(IPParticleTypes.FLARE_FIRE, true, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, xa, ya, za);
 				}else{
 					// Server
 				}
 				
-				return ActionResultType.PASS;
+				return ActionResultType.SUCCESS;
 			}
 			case UPDATE_SHAPES:{
 				if(te instanceof CokerUnitTileEntity){
