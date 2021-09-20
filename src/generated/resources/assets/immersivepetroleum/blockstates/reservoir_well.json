@@ -1,10 +1,7 @@
 {
   "variants": {
-    "capped=false": {
-      "model": "immersivepetroleum:block/reservoir_well_uncapped"
-    },
-    "capped=true": {
-      "model": "immersivepetroleum:block/reservoir_well_capped"
+    "": {
+      "model": "immersivepetroleum:block/reservoir_well"
     }
   }
 }

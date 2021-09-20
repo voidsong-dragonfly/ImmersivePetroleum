@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_top",
-  "textures": {
-    "side": "immersivepetroleum:block/well_side",
-    "top": "immersivepetroleum:block/well_top_capped"
-  }
-}
