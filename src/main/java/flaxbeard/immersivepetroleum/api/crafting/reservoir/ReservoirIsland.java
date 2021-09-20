@@ -194,8 +194,8 @@ public class ReservoirIsland{
 	public CompoundNBT writeToNBT(){
 		CompoundNBT nbt = new CompoundNBT();
 		nbt.putString("reservoir", this.reservoir.getId().toString());
-		nbt.putInt("amount", (int)(this.getAmount() & 0xFFFFFFFFL));
-		nbt.putInt("capacity", (int)(this.getCapacity() & 0xFFFFFFFFL));
+		nbt.putInt("amount", (int)(this.getAmount() & MAX_AMOUNT));
+		nbt.putInt("capacity", (int)(this.getCapacity() & MAX_AMOUNT));
 		nbt.put("bounds", this.getBoundingBox().writeToNBT());
 		
 		final IslandAxisAlignedBB bounds = this.getBoundingBox();
@@ -219,8 +219,8 @@ public class ReservoirIsland{
 		try{
 			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
-				long amount = ((long)nbt.getInt("amount")) & 0xFFFFFFFFL;
-				long capacity = ((long)nbt.getInt("capacity")) & 0xFFFFFFFFL;
+				long amount = ((long)nbt.getInt("amount")) & MAX_AMOUNT;
+				long capacity = ((long)nbt.getInt("capacity")) & MAX_AMOUNT;
 				IslandAxisAlignedBB bounds = IslandAxisAlignedBB.readFromNBT(nbt.getCompound("bounds"));
 				
 				final List<ColumnPos> points = new ArrayList<>();

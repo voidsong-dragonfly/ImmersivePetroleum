@@ -48,7 +48,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 
@@ -222,7 +221,7 @@ public class DebugItem extends IPItemBase{
 						float pressure = island.getPressure(worldIn, x, z);
 						
 						if(playerIn.isSneaking()){
-							island.setAmount(FluidAttributes.BUCKET_VOLUME * 1000);
+							island.setAmount(ReservoirIsland.MAX_AMOUNT);
 							IPSaveData.markInstanceAsDirty();
 						}
 						
