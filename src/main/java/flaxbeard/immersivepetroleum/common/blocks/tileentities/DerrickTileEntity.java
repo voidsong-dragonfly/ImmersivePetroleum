@@ -8,14 +8,16 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
+import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
-import net.minecraft.block.BlockState;
+import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
@@ -45,10 +47,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	/** Template-Location of the Fluid Output Port. (4 0 2)<br> */
 	public static final BlockPos Fluid_OUT = new BlockPos(4, 0, 2);
 	
-	/** Template-Location of the Energy Input Ports.<br><pre>0 0 0</pre><br> */
+	/** Template-Location of the Energy Input Ports.<br><pre>2 1 2</pre><br> */
 	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 1, 2));
 	
-	/** Template-Location of the Redstone Input Port. (0 0 0)<br> */
+	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
@@ -112,9 +114,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public void tick(){
-		super.tick();
-		if(isDummy())
+		checkForNeedlessTicking();
+		if(isDummy()){
 			return;
+		}
 		
 		if(this.world.isRemote){
 			// Drilling Particles
@@ -137,8 +140,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				}
 			}
 			
-			if(this.spilling){
-				spawnOilSpillParticles(this.world, this.pos, 10, 16.0F);
+			if(true || this.spilling){
+				spawnOilSpillParticles(this.world, this.pos, 5, 15.75F);
 			}
 			
 			return;
@@ -146,31 +149,14 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		
 		if(this.world.isAreaLoaded(this.getPos(), 5)){
 			if(!isRSDisabled()){
+				// TODO
 				
-				// TODO May actualy ommit this "flatness" stuff
-				
-				BlockPos below = this.getPos().down().add(-1, 0, -1);
-				boolean onFlatGround = true;
-				flatcheck:{
-					for(int j = 0;j < 3;j++){
-						for(int i = 0;i < 3;i++){
-							BlockPos pos = below.add(i, 0, j);
-							BlockState state = this.getWorldNonnull().getBlockState(below.add(i, 0, j));
-							if(state.getBlock().isAir(state, getWorldNonnull(), pos)){
-								onFlatGround = false;
-								break flatcheck;
-							}
-						}
-					}
-				}
-				
-				if(onFlatGround){
-				}
+				this.energyStorage.extractEnergy(256, false);
 			}
 		}
 		
-		if(this.world.getGameTime() % 20 == 0){
-			updateMasterBlock(null, true);
+		updateMasterBlock(null, true);
+		if(this.world.getGameTime() % 1 == 0){
 		}
 	}
 	
@@ -181,14 +167,14 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			float za = (world.rand.nextFloat() - .5F) / 2;
 			
 			float rx = (world.rand.nextFloat() - .5F) * 0.5F;
-			float ya = 0.5F + world.rand.nextFloat();
+			float ya = 0.75F + (world.rand.nextFloat() * 0.25F);
 			float rz = (world.rand.nextFloat() - .5F) * 0.5F;
 			
 			double x = (pos.getX() + 0.5) + rx;
 			double y = (pos.getY() + heightOffset);
 			double z = (pos.getZ() + 0.5) + rz;
 			
-			world.addParticle(ParticleTypes.SQUID_INK, x, y, z, xa, ya, za);
+			world.addParticle(new FluidParticleData(Fluids.crudeOil), x, y, z, xa, ya, za);
 		}
 	}
 	
@@ -235,6 +221,14 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	@Override
 	public Set<BlockPos> getRedstonePos(){
 		return Redstone_IN;
+	}
+	
+	@Override
+	public IOSideConfig getEnergySideConfig(Direction facing){
+		if(this.formed && this.isEnergyPos() && (facing == null || facing == Direction.UP))
+			return IOSideConfig.INPUT;
+		
+		return IOSideConfig.NONE;
 	}
 	
 	@Override

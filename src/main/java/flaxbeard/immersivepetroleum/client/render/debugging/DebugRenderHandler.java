@@ -108,8 +108,6 @@ public class DebugRenderHandler{
 									debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 								}
 							}
-							
-							debugOut.add(toText("" + derrick.getWorld().getGameTime() % 20));
 						}
 					}
 					

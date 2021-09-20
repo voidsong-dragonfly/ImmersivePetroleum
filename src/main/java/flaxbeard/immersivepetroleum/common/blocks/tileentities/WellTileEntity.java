@@ -37,7 +37,7 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 		}else{
 			ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), this.pos);
 			int x = this.pos.getX();
-			int z = getPos().getZ();
+			int z = this.pos.getZ();
 			
 			if(this.world.getGameTime() % 10 == 0){
 				BlockPos above = this.pos.offset(Direction.UP);
@@ -58,18 +58,14 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 				if(this.spill != last){
 					markDirty();
 					
-					BlockState state = world.getBlockState(this.pos);
-					world.notifyBlockUpdate(this.pos, state, state, 3);
-					world.notifyNeighborsOfStateChange(this.pos, state.getBlock());
+					BlockState state = this.world.getBlockState(this.pos);
+					this.world.notifyBlockUpdate(this.pos, state, state, 3);
+					this.world.notifyNeighborsOfStateChange(this.pos, state.getBlock());
 				}
 			}
 			
-			if(this.spill){
-				// TODO Spill until pressure is gone.
-				
-				if(island != null){
-					island.spill(getWorld(), x, z);
-				}
+			if(this.spill && island != null){
+				island.spill(getWorld(), x, z);
 			}
 		}
 	}
