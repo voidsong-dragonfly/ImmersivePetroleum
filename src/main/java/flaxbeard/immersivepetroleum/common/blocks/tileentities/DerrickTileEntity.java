@@ -140,7 +140,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				}
 			}
 			
-			if(true || this.spilling){
+			if(this.spilling){
 				spawnOilSpillParticles(this.world, this.pos, 5, 15.75F);
 			}
 			
