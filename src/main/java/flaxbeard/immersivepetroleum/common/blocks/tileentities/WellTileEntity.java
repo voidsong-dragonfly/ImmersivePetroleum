@@ -31,7 +31,7 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 	public void tick(){
 		if(this.world.isRemote){
 			if(this.spill){
-				DerrickTileEntity.spawnOilSpillParticles(this.world, this.pos, 10, 1.5F);
+				DerrickTileEntity.spawnOilSpillParticles(this.world, this.pos, 10, 0.75F);
 			}
 		}else{
 			ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), this.pos);
