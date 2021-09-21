@@ -44,12 +44,8 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 					BlockState aState = this.world.getBlockState(above);
 					
 					boolean last = this.spill;
-					if(island.getPressure(getWorldNonnull(), x, z) > 0.0){
-						if(aState.getBlock() == IPContent.Multiblock.derrick && !aState.get(IEProperties.MULTIBLOCKSLAVE)){
-							this.spill = false;
-						}else{
-							this.spill = true;
-						}
+					if(island.getPressure(getWorldNonnull(), x, z) > 0.0 && !(aState.getBlock() == IPContent.Multiblock.derrick && !aState.get(IEProperties.MULTIBLOCKSLAVE))){
+						this.spill = true;
 					}else{
 						this.spill = false;
 					}
