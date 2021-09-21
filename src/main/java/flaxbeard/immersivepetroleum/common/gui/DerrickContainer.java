@@ -13,7 +13,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 	public DerrickContainer(int id, PlayerInventory playerInventory, DerrickTileEntity tile){
 		super(playerInventory, tile, id, DerrickMultiblock.INSTANCE);
 		
-		this.addSlot(new Slot(this.inv, 0, 164, 120){
+		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
 			public boolean isItemValid(ItemStack stack){
 				// TODO Idealy only allow IEs fluid pipes
@@ -21,7 +21,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 			}
 		});
 		
-		this.addSlot(new Slot(this.inv, 1, 36, 89){
+		this.addSlot(new Slot(this.inv, 1, 35, 10){
 			@Override
 			public boolean isItemValid(ItemStack stack){
 				return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(h -> {
@@ -40,7 +40,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 			}
 		});
 		
-		this.addSlot(new Slot(this.inv, 2, 36, 120){
+		this.addSlot(new Slot(this.inv, 2, 35, 49){
 			@Override
 			public boolean isItemValid(ItemStack stack){
 				return false;
@@ -49,9 +49,16 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 		
 		slotCount = 3;
 		
+		// Player Inventory
+		for(int i = 0;i < 3;i++){
+			for(int j = 0;j < 9;j++){
+				addSlot(new Slot(playerInventory, j + i * 9 + 9, 20 + j * 18, 82 + i * 18));
+			}
+		}
+		
 		// Player Hotbar
 		for(int i = 0;i < 9;i++){
-			addSlot(new Slot(playerInventory, i, 20 + i * 18, 163));
+			addSlot(new Slot(playerInventory, i, 20 + i * 18, 140));
 		}
 	}
 }
