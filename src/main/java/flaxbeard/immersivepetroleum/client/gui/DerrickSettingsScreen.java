@@ -44,7 +44,7 @@ public class DerrickSettingsScreen extends Screen{
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		
-		addButton(new PButton(this.guiLeft + 243, this.guiTop + 4, 9, 9, 0, 101, button -> {
+		addButton(new PButton((this.guiLeft + this.xSize) - 14, this.guiTop + 4, 10, 10, 4, 4, button -> {
 			DerrickSettingsScreen.this.closeScreen();
 		}, new StringTextComponent("Return")));
 		
@@ -138,6 +138,7 @@ public class DerrickSettingsScreen extends Screen{
 		public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
 			blit(matrix, this.x, this.y, this.iconX, this.iconY, this.iconWidth, this.iconHeight);
+			Minecraft.getInstance().fontRenderer.drawString(matrix, "X", this.x + 2, this.y + 2, 0);
 			if(isHovered() && this.hoverText != null){
 				int screenWidth = Minecraft.getInstance().getMainWindow().getScaledWidth();
 				int screenHeight = Minecraft.getInstance().getMainWindow().getScaledHeight();

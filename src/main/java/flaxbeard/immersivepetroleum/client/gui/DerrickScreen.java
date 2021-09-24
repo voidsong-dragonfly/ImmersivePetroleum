@@ -3,11 +3,13 @@ package flaxbeard.immersivepetroleum.client.gui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
@@ -67,8 +69,23 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 	}
 	
 	@Override
-	protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y){
+	protected void drawGuiContainerForegroundLayer(MatrixStack matrix, int x, int y){
 		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
+		
+		// Possible display prototypes
+		
+		//
+//		if(this.tile.drilling){
+			String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * this.tile.pipeLength / (float) this.tile.pipeMaxLength));
+			drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
+			drawInfoText(matrix, new StringTextComponent("Depth: " + this.tile.pipeLength + "/" + this.tile.pipeMaxLength + "m"), 1);
+			drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + this.tile.pipe + ", " + this.tile.timer + "t"), 2);
+			drawInfoText(matrix, new StringTextComponent(""), 3);
+//		}
+	}
+	
+	private void drawInfoText(MatrixStack matrix, ITextComponent text, int line){
+		this.font.drawText(matrix, text, 60, 8 + (9 * line), Lib.colour_nixieTubeText);
 	}
 	
 	@Override

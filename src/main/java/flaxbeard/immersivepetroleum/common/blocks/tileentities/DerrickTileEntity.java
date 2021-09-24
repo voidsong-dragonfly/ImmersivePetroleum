@@ -14,11 +14,12 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -36,6 +37,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
@@ -47,16 +49,17 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	/** Template-Location of the Fluid Output Port. (4 0 2)<br> */
 	public static final BlockPos Fluid_OUT = new BlockPos(4, 0, 2);
 	
-	/** Template-Location of the Energy Input Ports.<br><pre>2 1 2</pre><br> */
-	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 1, 2));
+	/** Template-Location of the Energy Input Ports.<br><pre>2 1 0</pre><br> */
+	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 1, 0));
 	
 	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
-	public FluidTank waterTank = new FluidTank(8000);
+	public FluidTank waterTank = new FluidTank(8000, fs -> fs.getFluid() == Fluids.WATER);
 	public boolean drilling = false;
 	public boolean spilling = false;
+	public boolean isActive = false;
 	public DerrickTileEntity(){
 		super(DerrickMultiblock.INSTANCE, 16000, true, null);
 	}
@@ -72,6 +75,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		
 		this.drilling = nbt.getBoolean("drilling");
 		this.spilling = nbt.getBoolean("spilling");
+		this.isActive = nbt.getBoolean("isActive");
+		this.pipe = nbt.getInt("pipe");
+		this.pipeLength = nbt.getInt("pipelength");
+		this.timer = nbt.getInt("timer");
 		
 		this.waterTank.readFromNBT(nbt.getCompound("tank"));
 		
@@ -86,6 +93,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		
 		nbt.putBoolean("drilling", this.drilling);
 		nbt.putBoolean("spilling", this.spilling);
+		nbt.putBoolean("isActive", this.isActive);
+		nbt.putInt("pipe", this.pipe);
+		nbt.putInt("pipelength", this.pipeLength);
+		nbt.putInt("timer", this.timer);
 		
 		nbt.put("tank", this.waterTank.writeToNBT(new CompoundNBT()));
 		
@@ -111,6 +122,13 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	protected CompoundNBT writeInventory(NonNullList<ItemStack> list){
 		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
 	}
+	
+	static final int PIPE_WORTH = 6;
+	
+	public int pipe = 0;
+	public int pipeLength = 0;
+	public int pipeMaxLength = PIPE_WORTH * 64;
+	public int timer = 0;
 	
 	@Override
 	public void tick(){
@@ -151,12 +169,54 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			if(!isRSDisabled()){
 				// TODO
 				
-				this.energyStorage.extractEnergy(256, false);
+				// Drill with water
+				// FluidHelper.copyFluid(fluid, amount, pressurize)
+				// updateMasterBlock(null, true);
+				
+				this.drilling = false;
+				boolean update = false;
+				
+				if(this.pipeLength < this.pipeMaxLength){
+					int power = 512;
+					int water = 125;
+					if(this.energyStorage.getEnergyStored() >= power && this.waterTank.getFluidAmount() >= water){
+						if(this.pipe <= 0){
+							if(this.inventory.get(0) != ItemStack.EMPTY){
+								ItemStack stack = this.inventory.get(0);
+								if(stack.getCount() > 0){
+									stack.shrink(1);
+									this.pipe = PIPE_WORTH;
+									
+									if(stack.getCount() <= 0){
+										this.inventory.set(0, ItemStack.EMPTY);
+									}
+								}
+							}
+						}
+						
+						if(this.pipe > 0){
+							this.energyStorage.extractEnergy(power, false);
+							this.waterTank.drain(water, FluidAction.EXECUTE);
+							
+							if(this.timer-- <= 0){
+								this.timer = 15;
+								
+								this.pipe -= 1;
+								this.pipeLength += 1;
+							}
+							
+							this.drilling = true;
+							update = true;
+						}
+					}
+				}else{
+					// Horizontal? or Struck oil?
+				}
+				
+				if(update){
+					updateMasterBlock(null, true);
+				}
 			}
-		}
-		
-		updateMasterBlock(null, true);
-		if(this.world.getGameTime() % 1 == 0){
 		}
 	}
 	
@@ -174,7 +234,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			double y = (pos.getY() + heightOffset);
 			double z = (pos.getZ() + 0.5) + rz;
 			
-			world.addParticle(new FluidParticleData(Fluids.crudeOil), x, y, z, xa, ya, za);
+			world.addParticle(new FluidParticleData(IPContent.Fluids.crudeOil), x, y, z, xa, ya, za);
 		}
 	}
 	

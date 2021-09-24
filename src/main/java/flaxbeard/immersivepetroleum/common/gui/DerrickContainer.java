@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
@@ -16,8 +17,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
 			public boolean isItemValid(ItemStack stack){
-				// TODO Idealy only allow IEs fluid pipes
-				return true;
+				return stack.getItem().getRegistryName().equals(new ResourceLocation("immersiveengineering", "fluid_pipe"));
 			}
 		});
 		
