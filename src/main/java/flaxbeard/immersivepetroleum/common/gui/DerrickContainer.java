@@ -21,7 +21,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 			}
 		});
 		
-		this.addSlot(new Slot(this.inv, 1, 35, 10){
+		this.addSlot(new Slot(this.inv, 1, 35, 11){
 			@Override
 			public boolean isItemValid(ItemStack stack){
 				return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(h -> {
@@ -40,7 +40,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 			}
 		});
 		
-		this.addSlot(new Slot(this.inv, 2, 35, 49){
+		this.addSlot(new Slot(this.inv, 2, 35, 50){
 			@Override
 			public boolean isItemValid(ItemStack stack){
 				return false;
