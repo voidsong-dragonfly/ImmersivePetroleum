@@ -309,6 +309,13 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		return false;
 	}
 	
+	public boolean isLadder(){
+		int x = posInMultiblock.getX();
+		int z = posInMultiblock.getZ();
+		
+		return x == 3 && z == 0;
+	}
+	
 	@Override
 	public ITextComponent[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))){
