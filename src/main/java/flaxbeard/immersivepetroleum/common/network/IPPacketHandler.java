@@ -26,6 +26,7 @@ public class IPPacketHandler{
 		registerMessage(MessageDebugSync.class, MessageDebugSync::new);
 		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
 		registerMessage(MessageProjectorSync.class, MessageProjectorSync::new);
+		registerMessage(MessageDerrick.class, MessageDerrick::new);
 	}
 	
 	private static int id = 0;

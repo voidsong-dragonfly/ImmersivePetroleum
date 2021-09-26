@@ -76,9 +76,9 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 		
 		//
 //		if(this.tile.drilling){
-			String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * this.tile.pipeLength / (float) this.tile.pipeMaxLength));
+			String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * this.tile.pipeLength / (float) this.tile.pipeMaxLength()));
 			drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
-			drawInfoText(matrix, new StringTextComponent("Depth: " + this.tile.pipeLength + "/" + this.tile.pipeMaxLength + "m"), 1);
+			drawInfoText(matrix, new StringTextComponent("Depth: " + this.tile.pipeLength + "/" + this.tile.pipeMaxLength() + "m"), 1);
 			drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + this.tile.pipe + ", " + this.tile.timer + "t"), 2);
 			drawInfoText(matrix, new StringTextComponent(""), 3);
 //		}

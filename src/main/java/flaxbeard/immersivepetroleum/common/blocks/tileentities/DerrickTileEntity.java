@@ -30,6 +30,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
@@ -40,6 +41,9 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
+/**
+ * @author TwistedGate
+ */
 public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
 	public static final FluidTank DUMMY_TANK = new FluidTank(0);
 	
@@ -55,11 +59,12 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
+	/** */
+	public List<ColumnPos> tappedIslandPositions = new ArrayList<>();
+	public int additionalPipes = 0;
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
 	public FluidTank waterTank = new FluidTank(8000, fs -> fs.getFluid() == Fluids.WATER);
-	public boolean drilling = false;
-	public boolean spilling = false;
-	public boolean isActive = false;
+	public boolean drilling, spilling, isActive;
 	public DerrickTileEntity(){
 		super(DerrickMultiblock.INSTANCE, 16000, true, null);
 	}
@@ -126,10 +131,14 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	static final int POWER = 512;
 	static final int WATER = 125;
 	static final int PIPE_WORTH = 6;
+	static final int DEFAULT_PIPELENGTH = PIPE_WORTH * 64;
+	
+	public int pipeMaxLength(){
+		return DEFAULT_PIPELENGTH + this.additionalPipes;
+	}
 	
 	public int pipe = 0;
 	public int pipeLength = 0;
-	public int pipeMaxLength = PIPE_WORTH * 64;
 	public int timer = 0;
 	
 	@Override
@@ -178,7 +187,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				this.drilling = false;
 				boolean update = false;
 				
-				if(this.pipeLength < this.pipeMaxLength){
+				if(this.pipeLength < pipeMaxLength()){
 					if(this.energyStorage.getEnergyStored() >= POWER && this.waterTank.getFluidAmount() >= WATER){
 						if(this.pipe <= 0){
 							if(this.inventory.get(0) != ItemStack.EMPTY){

@@ -29,7 +29,7 @@ public class DerrickSettingsScreen extends Screen{
 	private int ySize = 176;
 	private int guiLeft;
 	private int guiTop;
-	private PipeGrid grid;
+	private PipeGrid pipeGrid;
 	
 	final DerrickScreen derrickScreen;
 	public DerrickSettingsScreen(DerrickScreen derrickScreen){
@@ -45,21 +45,16 @@ public class DerrickSettingsScreen extends Screen{
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		
-//		addButton(new PButton((this.guiLeft + this.xSize) - 14, this.guiTop + 4, 10, 10, 4, 4, button -> {
-//			DerrickSettingsScreen.this.closeScreen();
-//		}, new StringTextComponent("Return")));
-//		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) - 54, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Confirm"), b -> {
+		addButton(new Button(this.guiLeft + (this.xSize / 2) - 54, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Set"), b -> {
+			
 		}));
 		
 		addButton(new Button(this.guiLeft + (this.xSize / 2) + 5, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Cancel"), b -> {
 			DerrickSettingsScreen.this.closeScreen();
-		}, (button, matrix, mx, my) -> {
-			GuiUtils.drawHoveringText(matrix, Arrays.asList(new StringTextComponent("Return")), mx, my, width, height, -1, font);
 		}));
 		
-		this.grid = new PipeGrid(this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
-		addButton(this.grid);
+		this.pipeGrid = new PipeGrid(this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
+		addButton(this.pipeGrid);
 	}
 	
 	@Override
@@ -108,14 +103,14 @@ public class DerrickSettingsScreen extends Screen{
 	@Override
 	public void closeScreen(){
 		this.minecraft.displayGuiScreen(this.derrickScreen);
-		this.grid.dispose();
+		this.pipeGrid.dispose();
 	}
 	
 	@Override
 	public void resize(Minecraft minecraft, int width, int height){
-		PipeGrid oldGrid = this.grid;
+		PipeGrid oldGrid = this.pipeGrid;
 		super.resize(minecraft, width, height);
-		this.grid.copyDataFrom(oldGrid);
+		this.pipeGrid.copyDataFrom(oldGrid);
 		oldGrid.dispose();
 	}
 	

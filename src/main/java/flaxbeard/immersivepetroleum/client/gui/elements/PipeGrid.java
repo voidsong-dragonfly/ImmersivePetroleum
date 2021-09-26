@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -73,6 +74,11 @@ public class PipeGrid extends Button{
 	}
 	
 	private void drawLine(int xa, int ya, int xb, int yb, int value){
+		xa = MathHelper.clamp(xa, 0, this.grid.getWidth() - 1);
+		xb = MathHelper.clamp(xb, 0, this.grid.getWidth() - 1);
+		ya = MathHelper.clamp(ya, 0, this.grid.getHeight() - 1);
+		yb = MathHelper.clamp(yb, 0, this.grid.getHeight() - 1);
+		
 		int dx = xb - xa;
 		int dy = yb - ya;
 		
@@ -103,10 +109,10 @@ public class PipeGrid extends Button{
 		}
 	}
 	
-	static final int EMPTY = 0x00;
-	static final int PIPE_NORMAL = 0x01;
-	static final int PIPE_PERFORATED = 0x02;
-	static final int PIPE_PERFORATED_FIXED = 0x03;
+	public static final int EMPTY = 0x00;
+	public static final int PIPE_NORMAL = 0x01;
+	public static final int PIPE_PERFORATED = 0x02;
+	public static final int PIPE_PERFORATED_FIXED = 0x03;
 	
 	public void updateTexture(){
 		NativeImage image = this.gridTexture.getTextureData();
@@ -126,11 +132,11 @@ public class PipeGrid extends Button{
 						break;
 					}
 					case PIPE_NORMAL:{
-						color = 0xFF5EC1FF;
+						color = 0xFF8CC5FF;
 						break;
 					}
 					case PIPE_PERFORATED:{
-						color = 0xFF8AFF7F;
+						color = 0xFFFFFF5E;
 						break;
 					}
 					case PIPE_PERFORATED_FIXED:{
@@ -253,12 +259,6 @@ public class PipeGrid extends Button{
 			clearGrid();
 		}
 		
-		// int px = x - (this.grid.getWidth() / 2);
-		// int py = y - (this.grid.getHeight() / 2);
-		//
-		// if(!(px >= -2 && px <= 2 && py >= -2 && py <= 2)){
-		// }
-		
 		updateTexture();
 	}
 	
@@ -277,7 +277,7 @@ public class PipeGrid extends Button{
 		clearGrid();
 		drawLine(this.grid.getWidth() / 2, this.grid.getHeight() / 2, x, y, 1);
 		setType(this.grid.getWidth() / 2, this.grid.getHeight() / 2, PIPE_PERFORATED_FIXED);
-		setType(x, y, PIPE_PERFORATED_FIXED);
+		setType(MathHelper.clamp(x, 0, this.grid.getWidth() - 1), MathHelper.clamp(y, 0, this.grid.getHeight() - 1), PIPE_PERFORATED_FIXED);
 		updateTexture();
 	}
 	
@@ -331,11 +331,13 @@ public class PipeGrid extends Button{
 	}
 	
 	public PipeGrid copyDataFrom(PipeGrid other){
-		this.gridScale = other.gridScale;
-		this.grid = other.grid;
-		updateTexture();
-		
-		ImmersivePetroleum.log.info("Copied data from GridPipe[{}] to GridPipe[{}].", other.hashCode(), this.hashCode());
+		if(other != null){
+			this.gridScale = other.gridScale;
+			this.grid = other.grid;
+			updateTexture();
+			
+			ImmersivePetroleum.log.info("Copied data from GridPipe[{}] to GridPipe[{}].", other.hashCode(), this.hashCode());
+		}
 		return this;
 	}
 	
@@ -371,12 +373,26 @@ public class PipeGrid extends Button{
 			return this.array.length;
 		}
 		
+		public void set(int x, int y, int value){
+			set(index(x, y), value);
+		}
+		
 		public void set(int index, int value){
 			this.array[index] = (byte) (value & 0xFF);
 		}
 		
+		/** returns "unsigned" byte */
+		public int get(int x, int y){
+			return get(index(x, y));
+		}
+		
+		/** returns "unsigned" byte */
 		public int get(int index){
 			return ((int) this.array[index]) & 0xFF;
+		}
+		
+		int index(int x, int y){
+			return this.width * y + x;
 		}
 		
 		public CompoundNBT toCompound(){
