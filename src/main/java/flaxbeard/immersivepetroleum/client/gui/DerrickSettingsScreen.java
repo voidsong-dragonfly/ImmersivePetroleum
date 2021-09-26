@@ -11,8 +11,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import flaxbeard.immersivepetroleum.client.gui.elements.PipeGrid;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
@@ -25,10 +25,11 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 public class DerrickSettingsScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation(MODID, "textures/gui/derrick_settings.png");
 	
-	private int xSize = 135;
-	private int ySize = 120;
+	private int xSize = 158;
+	private int ySize = 176;
 	private int guiLeft;
 	private int guiTop;
+	private PipeGrid grid;
 	
 	final DerrickScreen derrickScreen;
 	public DerrickSettingsScreen(DerrickScreen derrickScreen){
@@ -44,15 +45,21 @@ public class DerrickSettingsScreen extends Screen{
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		
-		addButton(new PButton((this.guiLeft + this.xSize) - 14, this.guiTop + 4, 10, 10, 4, 4, button -> {
+//		addButton(new PButton((this.guiLeft + this.xSize) - 14, this.guiTop + 4, 10, 10, 4, 4, button -> {
+//			DerrickSettingsScreen.this.closeScreen();
+//		}, new StringTextComponent("Return")));
+//		
+		addButton(new Button(this.guiLeft + (this.xSize / 2) - 54, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Confirm"), b -> {
+		}));
+		
+		addButton(new Button(this.guiLeft + (this.xSize / 2) + 5, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Cancel"), b -> {
 			DerrickSettingsScreen.this.closeScreen();
-		}, new StringTextComponent("Return")));
-		
-		addButton(new Button(this.guiLeft + this.xSize / 2 - 54, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Confirm"), b -> {
+		}, (button, matrix, mx, my) -> {
+			GuiUtils.drawHoveringText(matrix, Arrays.asList(new StringTextComponent("Return")), mx, my, width, height, -1, font);
 		}));
 		
-		addButton(new Button(this.guiLeft + this.xSize / 2+5, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Cancel"), b -> {
-		}));
+		this.grid = new PipeGrid(this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
+		addButton(this.grid);
 	}
 	
 	@Override
@@ -67,6 +74,7 @@ public class DerrickSettingsScreen extends Screen{
 		background(matrix, mx, my, partialTicks);
 		super.render(matrix, mx, my, partialTicks);
 		
+		/*
 		{
 			int x = this.guiLeft + 33;
 			int y = this.guiTop + 13;
@@ -85,6 +93,7 @@ public class DerrickSettingsScreen extends Screen{
 				}
 			}
 		}
+		*/
 		
 		if(!tooltip.isEmpty()){
 			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);
@@ -99,17 +108,21 @@ public class DerrickSettingsScreen extends Screen{
 	@Override
 	public void closeScreen(){
 		this.minecraft.displayGuiScreen(this.derrickScreen);
+		this.grid.dispose();
+	}
+	
+	@Override
+	public void resize(Minecraft minecraft, int width, int height){
+		PipeGrid oldGrid = this.grid;
+		super.resize(minecraft, width, height);
+		this.grid.copyDataFrom(oldGrid);
+		oldGrid.dispose();
 	}
 	
 	private void background(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-		
-		this.minecraft.fontRenderer.drawString(matrix, "N", this.guiLeft + 65, this.guiTop + 4, 0);
-		this.minecraft.fontRenderer.drawString(matrix, "E", this.guiLeft + 104, this.guiTop + 45, 0);
-		this.minecraft.fontRenderer.drawString(matrix, "S", this.guiLeft + 65, this.guiTop + 85, 0);
-		this.minecraft.fontRenderer.drawString(matrix, "W", this.guiLeft + 26, this.guiTop + 45, 0);
 	}
 	
 	static class PButton extends AbstractButton{

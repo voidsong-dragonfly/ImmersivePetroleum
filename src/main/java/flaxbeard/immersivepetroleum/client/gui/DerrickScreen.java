@@ -33,7 +33,7 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 		
 		// TODO GUI may either get bigger or smaller as i figure this out
 		this.xSize = 200;
-		this.ySize = 159;
+		this.ySize = 164;
 	}
 	
 	@Override

@@ -123,6 +123,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
 	}
 	
+	static final int POWER = 512;
+	static final int WATER = 125;
 	static final int PIPE_WORTH = 6;
 	
 	public int pipe = 0;
@@ -177,9 +179,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				boolean update = false;
 				
 				if(this.pipeLength < this.pipeMaxLength){
-					int power = 512;
-					int water = 125;
-					if(this.energyStorage.getEnergyStored() >= power && this.waterTank.getFluidAmount() >= water){
+					if(this.energyStorage.getEnergyStored() >= POWER && this.waterTank.getFluidAmount() >= WATER){
 						if(this.pipe <= 0){
 							if(this.inventory.get(0) != ItemStack.EMPTY){
 								ItemStack stack = this.inventory.get(0);
@@ -195,8 +195,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 						}
 						
 						if(this.pipe > 0){
-							this.energyStorage.extractEnergy(power, false);
-							this.waterTank.drain(water, FluidAction.EXECUTE);
+							this.energyStorage.extractEnergy(POWER, false);
+							this.waterTank.drain(WATER, FluidAction.EXECUTE);
 							
 							if(this.timer-- <= 0){
 								this.timer = 15;
