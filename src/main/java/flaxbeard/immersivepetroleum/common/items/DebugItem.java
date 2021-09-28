@@ -221,17 +221,20 @@ public class DebugItem extends IPItemBase{
 						float pressure = island.getPressure(worldIn, x, z);
 						
 						if(playerIn.isSneaking()){
-							island.setAmount(ReservoirIsland.MAX_AMOUNT);
+							island.setAmount(13789804);
+//							island.setAmount(665637);
+//							island.setAmount(ReservoirIsland.MAX_AMOUNT);
 							IPSaveData.markInstanceAsDirty();
 						}
 						
 						String out = String.format(Locale.ENGLISH,
-								"Noise: %.3f, Amount: %d/%d, Pressure: %.6f, Flow: %d", 
+								"Noise: %.3f, Amount: %d/%d, Pressure: %.3f, Flow: %d, Type: %s", 
 								ReservoirHandler.noiseFor(worldIn, x, z),
 								island.getAmount(),
 								island.getCapacity(),
 								pressure,
-								island.getFlow(pressure));
+								island.getFlow(pressure),
+								new FluidStack(island.getType().getFluid(),1).getDisplayName().getString());
 						
 						playerIn.sendStatusMessage(new StringTextComponent(out), true);
 					}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeGrid;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -64,9 +65,11 @@ public class MessageDerrick implements INetMessage{
 									switch(type){
 										case PipeGrid.PIPE_PERFORATED:
 										case PipeGrid.PIPE_PERFORATED_FIXED:{
-											int x = i - grid.getWidth();
-											int z = j - grid.getHeight();
-											list.add(new ColumnPos(x, z));
+											int x = i - (grid.getWidth() / 2);
+											int z = j - (grid.getHeight() / 2);
+											ColumnPos pos = new ColumnPos(this.derrickPos.getX() + x, this.derrickPos.getZ() + z);
+											ImmersivePetroleum.log.info("x{} z{} -> {}", x, z, pos);
+											list.add(pos);
 										}
 										case PipeGrid.PIPE_NORMAL:{
 											additionalPipes++;
@@ -76,7 +79,7 @@ public class MessageDerrick implements INetMessage{
 							}
 						}
 						
-						derrick.tappedIslandPositions = list;
+						derrick.tappedIslands = list;
 						derrick.additionalPipes = additionalPipes;
 						derrick.updateMasterBlock(null, true);
 					}

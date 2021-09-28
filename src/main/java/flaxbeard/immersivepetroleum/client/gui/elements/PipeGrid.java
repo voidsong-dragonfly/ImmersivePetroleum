@@ -2,11 +2,13 @@ package flaxbeard.immersivepetroleum.client.gui.elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -18,6 +20,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
@@ -33,23 +36,30 @@ public class PipeGrid extends Button{
 	private final RenderType gridTextureRenderType;
 	
 	protected Grid grid;
+	protected ColumnPos tilePos;
 	protected int gridWidthScaled, gridHeightScaled;
 	protected int gridScale;
-	public PipeGrid(int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
+	public PipeGrid(ColumnPos tilePos, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
 		super(x, y, width, height, StringTextComponent.EMPTY, NO_ACTION);
 		this.grid = new Grid(gridWidth, gridHeight);
 		this.gridWidthScaled = gridWidth * gridScale;
 		this.gridHeightScaled = gridHeight * gridScale;
 		this.gridScale = gridScale;
 		
-		this.dynTextureWidth = gridWidth;
-		this.dynTextureHeight = gridHeight;
+		this.tilePos = tilePos;
+		
+		this.dynTextureWidth = gridWidth * this.gridScale;
+		this.dynTextureHeight = gridHeight * this.gridScale;
 		this.gridTexture = new DynamicTexture(this.dynTextureWidth, this.dynTextureHeight, true);
 		ResourceLocation loc = Minecraft.getInstance().textureManager.getDynamicTextureLocation("pipegrid/" + this.hashCode(), this.gridTexture);
 		this.gridTextureRenderType = RenderType.getText(loc);
 		updateTexture();
 		
-		ImmersivePetroleum.log.info("Created PipeGrid({}, {}, {}, {}, {}, {}, {})[{}]", x, y, width, height, gridWidth, gridHeight, gridScale, this.hashCode());
+		//ImmersivePetroleum.log.info("Created PipeGrid({}, {}, {}, {}, {}, {}, {})[{}]", x, y, width, height, gridWidth, gridHeight, gridScale, this.hashCode());
+	}
+	
+	public PipeGrid.Grid getGrid(){
+		return this.grid;
 	}
 	
 	public void setType(int gridX, int gridY, int value){
@@ -118,6 +128,7 @@ public class PipeGrid extends Button{
 		NativeImage image = this.gridTexture.getTextureData();
 		int texCenterX = this.dynTextureWidth / 2;
 		int texCenterY = this.dynTextureHeight / 2;
+		// TODO Change this, texture is bigger than the grid!
 		for(int y = 0;y < this.dynTextureHeight;y++){
 			for(int x = 0;x < this.dynTextureWidth;x++){
 				int i = this.dynTextureWidth * y + x;
@@ -125,22 +136,25 @@ public class PipeGrid extends Button{
 				int color = 0;
 				switch(this.grid.get(i)){
 					case EMPTY:{
-						color = (i % 2 == 0) ? 0xFF373737 : 0xFF545454;
 						if((x >= texCenterX - 2 && x <= texCenterX + 2) && (y >= texCenterY - 2 && y <= texCenterY + 2)){
 							color = 0xFF000000;
+						}else if(x % 10 == 4 || y % 10 == 4){
+							color = 0xFF181818;
+						}else{
+							color = (i % 2 == 0) ? 0xFF383838 : 0xFF282828;
 						}
 						break;
 					}
 					case PIPE_NORMAL:{
-						color = 0xFF8CC5FF;
+						color = 0xFF1F7F1F;
 						break;
 					}
 					case PIPE_PERFORATED:{
-						color = 0xFFFFFF5E;
+						color = 0xFFFF1FFF;
 						break;
 					}
 					case PIPE_PERFORATED_FIXED:{
-						color = 0xFFFF5157;
+						color = 0xFFFF1F1F;
 						break;
 					}
 				}
@@ -213,11 +227,11 @@ public class PipeGrid extends Button{
 					}
 				}
 				
-				tooltip.add(new StringTextComponent(dir));
+				tooltip.add(new StringTextComponent("§n"+dir));
 			}
 			
-			tooltip.add(new StringTextComponent("X: " + px));
-			tooltip.add(new StringTextComponent("Z: " + py));
+			tooltip.add(new StringTextComponent(String.format(Locale.ENGLISH, "X: %d §7(%d)", (this.tilePos.x + px), px)));
+			tooltip.add(new StringTextComponent(String.format(Locale.ENGLISH, "Z: %d §7(%d)", (this.tilePos.z + py), py)));
 			
 			int i = getType(x, y);
 			if(i > EMPTY){
@@ -243,7 +257,7 @@ public class PipeGrid extends Button{
 	}
 	
 	protected void onGridClick(int x, int y, int button){
-		ImmersivePetroleum.log.info("onGridClick({}, {}, {})", x, y, button);
+		//ImmersivePetroleum.log.info("onGridClick({}, {}, {})", x, y, button);
 		
 		if(button == 0){
 			int type = getType(x, y);
@@ -254,12 +268,23 @@ public class PipeGrid extends Button{
 				}else{
 					setType(x, y, PIPE_NORMAL);
 				}
+			}else if(type == EMPTY && (isPressing(GLFW.GLFW_KEY_LEFT_SHIFT) || isPressing(GLFW.GLFW_KEY_RIGHT_SHIFT))){
+				clearGrid();
+				drawLine(this.grid.getWidth() / 2, this.grid.getHeight() / 2, x, y, 1);
+				setType(this.grid.getWidth() / 2, this.grid.getHeight() / 2, PIPE_PERFORATED_FIXED);
+				setType(MathHelper.clamp(x, 0, this.grid.getWidth() - 1), MathHelper.clamp(y, 0, this.grid.getHeight() - 1), PIPE_PERFORATED_FIXED);
+				updateTexture();
 			}
 		}else if(button == 1){
 			clearGrid();
 		}
 		
 		updateTexture();
+	}
+	
+	private boolean isPressing(int key){
+		long window = Minecraft.getInstance().getMainWindow().getHandle();
+		return GLFW.glfwGetKey(window, key) == GLFW.GLFW_PRESS;
 	}
 	
 	private int[] getPipeCount(){
@@ -272,17 +297,17 @@ public class PipeGrid extends Button{
 	}
 	
 	protected void onGridDrag(int x, int y, int dragX, int dragY, int button){
-		ImmersivePetroleum.log.info("onGridDrag({}, {}, {}, {}, {})", x, y, dragX, dragY, button);
+		//ImmersivePetroleum.log.info("onGridDrag({}, {}, {}, {}, {})", x, y, dragX, dragY, button);
 		
-		clearGrid();
-		drawLine(this.grid.getWidth() / 2, this.grid.getHeight() / 2, x, y, 1);
-		setType(this.grid.getWidth() / 2, this.grid.getHeight() / 2, PIPE_PERFORATED_FIXED);
-		setType(MathHelper.clamp(x, 0, this.grid.getWidth() - 1), MathHelper.clamp(y, 0, this.grid.getHeight() - 1), PIPE_PERFORATED_FIXED);
-		updateTexture();
+//		clearGrid();
+//		drawLine(this.grid.getWidth() / 2, this.grid.getHeight() / 2, x, y, 1);
+//		setType(this.grid.getWidth() / 2, this.grid.getHeight() / 2, PIPE_PERFORATED_FIXED);
+//		setType(MathHelper.clamp(x, 0, this.grid.getWidth() - 1), MathHelper.clamp(y, 0, this.grid.getHeight() - 1), PIPE_PERFORATED_FIXED);
+//		updateTexture();
 	}
 	
 	protected void onGridRelease(int x, int y, int button){
-		ImmersivePetroleum.log.info("onGridRelease({}, {}, {})", x, y, button);
+		//ImmersivePetroleum.log.info("onGridRelease({}, {}, {})", x, y, button);
 	}
 	
 	@Override
@@ -327,7 +352,7 @@ public class PipeGrid extends Button{
 	/** This has to be called at the end of its life! */
 	public void dispose(){
 		this.gridTexture.close();
-		ImmersivePetroleum.log.info("Disposing GridPipe[{}] texture.", this.hashCode());
+		//ImmersivePetroleum.log.info("Disposing GridPipe[{}] texture.", this.hashCode());
 	}
 	
 	public PipeGrid copyDataFrom(PipeGrid other){
@@ -336,7 +361,7 @@ public class PipeGrid extends Button{
 			this.grid = other.grid;
 			updateTexture();
 			
-			ImmersivePetroleum.log.info("Copied data from GridPipe[{}] to GridPipe[{}].", other.hashCode(), this.hashCode());
+			//ImmersivePetroleum.log.info("Copied data from GridPipe[{}] to GridPipe[{}].", other.hashCode(), this.hashCode());
 		}
 		return this;
 	}

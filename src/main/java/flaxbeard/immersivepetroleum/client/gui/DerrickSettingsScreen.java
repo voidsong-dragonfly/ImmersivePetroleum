@@ -11,13 +11,17 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeGrid;
+import flaxbeard.immersivepetroleum.common.network.MessageDerrick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -32,9 +36,11 @@ public class DerrickSettingsScreen extends Screen{
 	private PipeGrid pipeGrid;
 	
 	final DerrickScreen derrickScreen;
+	final BlockPos derrickWorldPos;
 	public DerrickSettingsScreen(DerrickScreen derrickScreen){
 		super(new StringTextComponent("DerrickSettings"));
 		this.derrickScreen = derrickScreen;
+		this.derrickWorldPos = derrickScreen.tile.getPos();
 	}
 	
 	@Override
@@ -46,14 +52,21 @@ public class DerrickSettingsScreen extends Screen{
 		this.guiTop = (this.height - this.ySize) / 2;
 		
 		addButton(new Button(this.guiLeft + (this.xSize / 2) - 54, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Set"), b -> {
-			
+			ImmersivePetroleum.log.info("Button: Set");
+			MessageDerrick.sendToServer(this.derrickWorldPos, this.pipeGrid.getGrid());
 		}));
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) + 5, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Cancel"), b -> {
+		addButton(new Button(this.guiLeft + (this.xSize / 2) + 5, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Close"), b -> {
+			ImmersivePetroleum.log.info("Button: Close");
 			DerrickSettingsScreen.this.closeScreen();
+		}, (button, matrix, mx, my) -> {
+			List<ITextComponent> list = new ArrayList<>();
+			list.add(new StringTextComponent("§4§n§lBefore clicking"));
+			list.add(new StringTextComponent("If you re-open this Config window it will not restore what has been set previously!"));
+			GuiUtils.drawHoveringText(matrix, list, mx, my, width, height, -1, font);
 		}));
 		
-		this.pipeGrid = new PipeGrid(this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
+		this.pipeGrid = new PipeGrid(new ColumnPos(this.derrickWorldPos), this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
 		addButton(this.pipeGrid);
 	}
 	
@@ -68,27 +81,6 @@ public class DerrickSettingsScreen extends Screen{
 		
 		background(matrix, mx, my, partialTicks);
 		super.render(matrix, mx, my, partialTicks);
-		
-		/*
-		{
-			int x = this.guiLeft + 33;
-			int y = this.guiTop + 13;
-			int w = 69;
-			int h = 69;
-			if(mx >= x && my >= y && mx < x + w && my < y + h){
-				int px = (mx - x) - (w / 2);
-				int py = (my - y) - (h / 2);
-				
-				if(!(px >= -2 && px <= 2 && py >= -2 && py <= 2)){
-					tooltip.add(new StringTextComponent("X: " + px));
-					tooltip.add(new StringTextComponent("Z: " + py));
-					int xa = x + (mx - x);
-					int ya = y + (my - y);
-					AbstractGui.fill(matrix, xa, ya, xa + 1, ya + 1, 0x7FFFFFFF);
-				}
-			}
-		}
-		*/
 		
 		if(!tooltip.isEmpty()){
 			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);
@@ -120,6 +112,7 @@ public class DerrickSettingsScreen extends Screen{
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 	
+	@Deprecated
 	static class PButton extends AbstractButton{
 		protected final List<ITextComponent> hoverText;
 		protected final int iconX;

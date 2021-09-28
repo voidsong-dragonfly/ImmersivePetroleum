@@ -14,15 +14,19 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -36,6 +40,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -59,8 +64,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
-	/** */
-	public List<ColumnPos> tappedIslandPositions = new ArrayList<>();
+	public List<ColumnPos> tappedIslands = new ArrayList<>();
 	public int additionalPipes = 0;
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
 	public FluidTank waterTank = new FluidTank(8000, fs -> fs.getFluid() == Fluids.WATER);
@@ -83,9 +87,22 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		this.isActive = nbt.getBoolean("isActive");
 		this.pipe = nbt.getInt("pipe");
 		this.pipeLength = nbt.getInt("pipelength");
+		this.additionalPipes = nbt.getInt("additional");
 		this.timer = nbt.getInt("timer");
 		
 		this.waterTank.readFromNBT(nbt.getCompound("tank"));
+		
+		if(nbt.contains("tappedislands", NBT.TAG_LIST)){
+			ListNBT list = nbt.getList("tappedislands", NBT.TAG_COMPOUND);
+			final List<ColumnPos> tmp = new ArrayList<>(list.size());
+			list.forEach(n -> {
+				CompoundNBT pos = (CompoundNBT) n;
+				int x = pos.getInt("x");
+				int z = pos.getInt("z");
+				tmp.add(new ColumnPos(x, z));
+			});
+			this.tappedIslands = tmp;
+		}
 		
 		if(!descPacket){
 			readInventory(nbt.getCompound("inventory"));
@@ -101,9 +118,21 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		nbt.putBoolean("isActive", this.isActive);
 		nbt.putInt("pipe", this.pipe);
 		nbt.putInt("pipelength", this.pipeLength);
+		nbt.putInt("additional", this.additionalPipes);
 		nbt.putInt("timer", this.timer);
 		
 		nbt.put("tank", this.waterTank.writeToNBT(new CompoundNBT()));
+		
+		if(!this.tappedIslands.isEmpty()){
+			final ListNBT list = new ListNBT();
+			this.tappedIslands.forEach(c -> {
+				CompoundNBT pos = new CompoundNBT();
+				pos.putInt("x", c.x);
+				pos.putInt("z", c.z);
+				list.add(pos);
+			});
+			nbt.put("tappedislands", list);
+		}
 		
 		if(!descPacket){
 			nbt.put("inventory", writeInventory(this.inventory));
@@ -231,6 +260,12 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@OnlyIn(Dist.CLIENT)
 	public static void spawnOilSpillParticles(World world, BlockPos pos, int particles, float heightOffset){
+		Fluid fluid = IPContent.Fluids.crudeOil; // Fallback
+		ReservoirIsland island = ReservoirHandler.getIsland(world, pos);
+		if(island != null){
+			fluid = island.getType().getFluid();
+		}
+		
 		for(int i = 0;i < particles;i++){
 			float xa = (world.rand.nextFloat() - .5F) / 2;
 			float za = (world.rand.nextFloat() - .5F) / 2;
@@ -243,7 +278,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			double y = (pos.getY() + heightOffset);
 			double z = (pos.getZ() + 0.5) + rz;
 			
-			world.addParticle(new FluidParticleData(IPContent.Fluids.crudeOil), x, y, z, xa, ya, za);
+			world.addParticle(new FluidParticleData(fluid), x, y, z, xa, ya, za);
 		}
 	}
 	

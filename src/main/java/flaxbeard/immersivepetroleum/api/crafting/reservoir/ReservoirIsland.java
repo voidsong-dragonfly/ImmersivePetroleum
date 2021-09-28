@@ -184,7 +184,12 @@ public class ReservoirIsland{
 				
 				return output <= 0.001F ? 0.0F : output;
 			}else{
-				return 1.0F;
+				double half = this.capacity * 0.50;
+				double alt = this.amount - half;
+				if(alt > 0){
+					double pre = alt / half;
+					return (float) (pre * noise);
+				}
 			}
 		}
 		

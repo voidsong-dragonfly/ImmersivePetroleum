@@ -25,6 +25,8 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/derrick.png");
 	
+	Button cfgButton;
+	
 	final DerrickTileEntity tile;
 	
 	public DerrickScreen(DerrickContainer inventorySlotsIn, PlayerInventory inv, ITextComponent title){
@@ -41,11 +43,14 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		
-		addButton(new Button(this.guiLeft + 125, this.guiTop + 52, 50, 20, new StringTextComponent("Config"), button -> {
+		this.cfgButton = new Button(this.guiLeft + 125, this.guiTop + 52, 50, 20, new StringTextComponent("Config"), button -> {
 			this.minecraft.displayGuiScreen(new DerrickSettingsScreen(this));
 		}, (button, matrix, mx, my) -> {
-			GuiUtils.drawHoveringText(matrix, Arrays.asList(new StringTextComponent("Configuration")), mx, my, width, height, -1, font);
-		}));
+			if(!button.active){
+				GuiUtils.drawHoveringText(matrix, Arrays.asList(new StringTextComponent("Set in Stone.")), mx, my, width, height, -1, font);
+			}
+		});
+		addButton(this.cfgButton);
 	}
 	
 	@Override
@@ -72,13 +77,17 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 	protected void drawGuiContainerForegroundLayer(MatrixStack matrix, int x, int y){
 		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 		
+		if(this.cfgButton.active && this.tile.pipeLength > 0){
+			this.cfgButton.active = false;
+		}
+		
 		// Possible display prototypes
 		
 		//
 //		if(this.tile.drilling){
 			String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * this.tile.pipeLength / (float) this.tile.pipeMaxLength()));
 			drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
-			drawInfoText(matrix, new StringTextComponent("Depth: " + this.tile.pipeLength + "/" + this.tile.pipeMaxLength() + "m"), 1);
+			drawInfoText(matrix, new StringTextComponent("Length: " + this.tile.pipeLength + "/" + this.tile.pipeMaxLength() + "m"), 1);
 			drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + this.tile.pipe + ", " + this.tile.timer + "t"), 2);
 			drawInfoText(matrix, new StringTextComponent(""), 3);
 //		}
