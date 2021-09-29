@@ -3,21 +3,16 @@ package flaxbeard.immersivepetroleum.client.gui;
 import static flaxbeard.immersivepetroleum.ImmersivePetroleum.MODID;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.client.gui.elements.PipeGrid;
+import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.network.MessageDerrick;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +28,7 @@ public class DerrickSettingsScreen extends Screen{
 	private int ySize = 176;
 	private int guiLeft;
 	private int guiTop;
-	private PipeGrid pipeGrid;
+	private PipeConfig pipeConfig;
 	
 	final DerrickScreen derrickScreen;
 	final BlockPos derrickWorldPos;
@@ -52,12 +47,10 @@ public class DerrickSettingsScreen extends Screen{
 		this.guiTop = (this.height - this.ySize) / 2;
 		
 		addButton(new Button(this.guiLeft + (this.xSize / 2) - 54, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Set"), b -> {
-			ImmersivePetroleum.log.info("Button: Set");
-			MessageDerrick.sendToServer(this.derrickWorldPos, this.pipeGrid.getGrid());
+			MessageDerrick.sendToServer(this.derrickWorldPos, this.pipeConfig.getGrid());
 		}));
 		
 		addButton(new Button(this.guiLeft + (this.xSize / 2) + 5, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Close"), b -> {
-			ImmersivePetroleum.log.info("Button: Close");
 			DerrickSettingsScreen.this.closeScreen();
 		}, (button, matrix, mx, my) -> {
 			List<ITextComponent> list = new ArrayList<>();
@@ -66,8 +59,8 @@ public class DerrickSettingsScreen extends Screen{
 			GuiUtils.drawHoveringText(matrix, list, mx, my, width, height, -1, font);
 		}));
 		
-		this.pipeGrid = new PipeGrid(new ColumnPos(this.derrickWorldPos), this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
-		addButton(this.pipeGrid);
+		this.pipeConfig = new PipeConfig(new ColumnPos(this.derrickWorldPos), this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
+		addButton(this.pipeConfig);
 	}
 	
 	@Override
@@ -88,21 +81,16 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
-	public void onClose(){
-		
-	}
-	
-	@Override
 	public void closeScreen(){
 		this.minecraft.displayGuiScreen(this.derrickScreen);
-		this.pipeGrid.dispose();
+		this.pipeConfig.dispose();
 	}
 	
 	@Override
 	public void resize(Minecraft minecraft, int width, int height){
-		PipeGrid oldGrid = this.pipeGrid;
+		PipeConfig oldGrid = this.pipeConfig;
 		super.resize(minecraft, width, height);
-		this.pipeGrid.copyDataFrom(oldGrid);
+		this.pipeConfig.copyDataFrom(oldGrid);
 		oldGrid.dispose();
 	}
 	
@@ -110,48 +98,5 @@ public class DerrickSettingsScreen extends Screen{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-	}
-	
-	@Deprecated
-	static class PButton extends AbstractButton{
-		protected final List<ITextComponent> hoverText;
-		protected final int iconX;
-		protected final int iconY;
-		protected int iconWidth = 10;
-		protected int iconHeight = 10;
-		protected Consumer<PButton> action;
-		
-		public PButton(int x, int y, int width, int height, int iconX, int iconY, Consumer<PButton> action, ITextComponent... hoverText){
-			this(x, y, width, height, iconX, iconY, width, height, action, hoverText);
-		}
-		
-		public PButton(int x, int y, int width, int height, int iconX, int iconY, int iconWidth, int iconHeight, Consumer<PButton> action, ITextComponent... hoverText){
-			super(x, y, width, height, StringTextComponent.EMPTY);
-			this.action = action;
-			this.iconX = iconX;
-			this.iconY = iconY;
-			this.iconWidth = iconWidth;
-			this.iconHeight = iconHeight;
-			this.hoverText = (hoverText != null && hoverText.length > 0) ? Arrays.asList(hoverText) : null;
-		}
-		
-		@Override
-		public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
-			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
-			blit(matrix, this.x, this.y, this.iconX, this.iconY, this.iconWidth, this.iconHeight);
-			Minecraft.getInstance().fontRenderer.drawString(matrix, "X", this.x + 2, this.y + 2, 0);
-			if(isHovered() && this.hoverText != null){
-				int screenWidth = Minecraft.getInstance().getMainWindow().getScaledWidth();
-				int screenHeight = Minecraft.getInstance().getMainWindow().getScaledHeight();
-				FontRenderer font = Minecraft.getInstance().fontRenderer;
-				fill(matrix, this.x, this.y + 1, this.x + this.iconWidth, this.y + this.iconHeight, 0x7FFFFFFF);
-				GuiUtils.drawHoveringText(matrix, hoverText, this.x, this.y + 1, screenWidth, screenHeight, -1, font);
-			}
-		}
-		
-		@Override
-		public void onPress(){
-			this.action.accept(this);
-		}
 	}
 }

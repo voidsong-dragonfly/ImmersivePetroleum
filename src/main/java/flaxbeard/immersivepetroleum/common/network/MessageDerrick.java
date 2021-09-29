@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.client.gui.elements.PipeGrid;
+import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -19,14 +19,14 @@ import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 public class MessageDerrick implements INetMessage{
 	
-	public static void sendToServer(BlockPos derrickPos, PipeGrid.Grid grid){
+	public static void sendToServer(BlockPos derrickPos, PipeConfig.Grid grid){
 		IPPacketHandler.sendToServer(new MessageDerrick(derrickPos, grid));
 	}
 	
 	BlockPos derrickPos;
 	CompoundNBT nbt;
 	
-	private MessageDerrick(BlockPos derrick, PipeGrid.Grid grid){
+	private MessageDerrick(BlockPos derrick, PipeConfig.Grid grid){
 		this.derrickPos = derrick;
 		this.nbt = grid.toCompound();
 	}
@@ -54,24 +54,24 @@ public class MessageDerrick implements INetMessage{
 					if(te instanceof DerrickTileEntity){
 						DerrickTileEntity derrick = (DerrickTileEntity) te;
 						
-						List<ColumnPos> list = new ArrayList<>();
 						int additionalPipes = 0;
-						PipeGrid.Grid grid = PipeGrid.Grid.fromCompound(this.nbt);
+						List<ColumnPos> list = new ArrayList<>();
+						PipeConfig.Grid grid = PipeConfig.Grid.fromCompound(this.nbt);
 						for(int j = 0;j < grid.getHeight();j++){
 							for(int i = 0;i < grid.getWidth();i++){
 								int type = grid.get(i, j);
 								
 								if(type > 0){
 									switch(type){
-										case PipeGrid.PIPE_PERFORATED:
-										case PipeGrid.PIPE_PERFORATED_FIXED:{
+										case PipeConfig.PIPE_PERFORATED:
+										case PipeConfig.PIPE_PERFORATED_FIXED:{
 											int x = i - (grid.getWidth() / 2);
 											int z = j - (grid.getHeight() / 2);
 											ColumnPos pos = new ColumnPos(this.derrickPos.getX() + x, this.derrickPos.getZ() + z);
 											ImmersivePetroleum.log.info("x{} z{} -> {}", x, z, pos);
 											list.add(pos);
 										}
-										case PipeGrid.PIPE_NORMAL:{
+										case PipeConfig.PIPE_NORMAL:{
 											additionalPipes++;
 										}
 									}
