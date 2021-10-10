@@ -221,8 +221,8 @@ public class DebugItem extends IPItemBase{
 						float pressure = island.getPressure(worldIn, x, z);
 						
 						if(playerIn.isSneaking()){
-							island.setAmount(13789804);
-//							island.setAmount(665637);
+//							island.setAmount(13789804);
+							island.setAmount(665637);
 //							island.setAmount(ReservoirIsland.MAX_AMOUNT);
 							IPSaveData.markInstanceAsDirty();
 						}

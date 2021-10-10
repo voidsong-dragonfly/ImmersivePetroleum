@@ -13,13 +13,16 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public class DerrickScreen extends ContainerScreen<DerrickContainer>{
@@ -77,20 +80,29 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 	protected void drawGuiContainerForegroundLayer(MatrixStack matrix, int x, int y){
 		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 		
-		if(this.cfgButton.active && this.tile.pipeLength > 0){
-			this.cfgButton.active = false;
+		World world = this.tile.getWorldNonnull();
+		WellTileEntity well = null;
+		
+		TileEntity te = world.getTileEntity(this.tile.getPos().down());
+		if(te instanceof WellTileEntity){
+			well = (WellTileEntity) te;
 		}
 		
-		// Possible display prototypes
-		
-		//
-//		if(this.tile.drilling){
-			String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * this.tile.pipeLength / (float) this.tile.pipeMaxLength()));
-			drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
-			drawInfoText(matrix, new StringTextComponent("Length: " + this.tile.pipeLength + "/" + this.tile.pipeMaxLength() + "m"), 1);
-			drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + this.tile.pipe + ", " + this.tile.timer + "t"), 2);
-			drawInfoText(matrix, new StringTextComponent(""), 3);
-//		}
+		if(well != null){
+			if(this.cfgButton.active && well.pipeLength > 0){
+				this.cfgButton.active = false;
+			}
+			
+			// Possible display prototypes
+			
+//			if(this.tile.drilling){
+				String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * well.pipeLength / (float) well.pipeMaxLength()));
+				drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
+				drawInfoText(matrix, new StringTextComponent("Length: " + well.pipeLength + "/" + well.pipeMaxLength() + "m"), 1);
+				drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + well.pipe + ", " + this.tile.timer + "t"), 2);
+				drawInfoText(matrix, new StringTextComponent(""), 3);
+//			}
+		}
 	}
 	
 	private void drawInfoText(MatrixStack matrix, ITextComponent text, int line){

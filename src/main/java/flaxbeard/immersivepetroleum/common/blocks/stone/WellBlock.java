@@ -15,8 +15,8 @@ import net.minecraftforge.common.ToolType;
 
 public class WellBlock extends IPBlockBase{
 	
-	public WellBlock(String name){
-		super(name, Block.Properties.create(Material.ROCK, MaterialColor.OBSIDIAN).hardnessAndResistance(100.0F, 3000.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.STONE));
+	public WellBlock(){
+		super("reservoir_well", Block.Properties.create(Material.ROCK, MaterialColor.OBSIDIAN).hardnessAndResistance(150.0F, 3000.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.STONE));
 	}
 	
 	@Override

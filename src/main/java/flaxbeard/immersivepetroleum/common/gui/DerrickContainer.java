@@ -11,13 +11,15 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEntity>{
+	static final ResourceLocation IE_PIPE = new ResourceLocation("immersiveengineering", "fluid_pipe");
+	
 	public DerrickContainer(int id, PlayerInventory playerInventory, DerrickTileEntity tile){
 		super(playerInventory, tile, id, DerrickMultiblock.INSTANCE);
 		
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
 			public boolean isItemValid(ItemStack stack){
-				return stack.getItem().getRegistryName().equals(new ResourceLocation("immersiveengineering", "fluid_pipe"));
+				return stack.getItem().getRegistryName().equals(IE_PIPE);
 			}
 		});
 		

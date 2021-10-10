@@ -165,7 +165,7 @@ public class IPContent{
 		Blocks.asphalt_slab = new AsphaltSlab(asphalt);
 		Blocks.asphalt_stair = new AsphaltStairs(asphalt);
 		
-		Blocks.well = new WellBlock("reservoir_well");
+		Blocks.well = new WellBlock();
 		
 		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");
 		Blocks.flarestack = new FlarestackBlock();
