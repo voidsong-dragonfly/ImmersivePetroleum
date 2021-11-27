@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
+import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
@@ -191,7 +192,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 	}
 	
 	@Override
-	public void doGraphicalUpdates(int slot){
+	public void doGraphicalUpdates(){
 		updateMasterBlock(null, true);
 	}
 	
@@ -353,11 +354,11 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 			
 			update |= FluidUtil.getFluidHandler(this.world, getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite()), getFacing().getOpposite()).map(out -> {
 				if(this.bufferTanks[TANK_OUTPUT].getFluidAmount() > 0){
-					FluidStack fs = copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 100);
+					FluidStack fs = FluidHelper.copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 100);
 					int accepted = out.fill(fs, FluidAction.SIMULATE);
 					if(accepted > 0){
-						int drained = out.fill(copyFluid(fs, Math.min(accepted, fs.getAmount())), FluidAction.EXECUTE);
-						this.bufferTanks[TANK_OUTPUT].drain(copyFluid(fs, drained), FluidAction.EXECUTE);
+						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), true), FluidAction.EXECUTE);
+						this.bufferTanks[TANK_OUTPUT].drain(FluidHelper.copyFluid(fs, drained), FluidAction.EXECUTE);
 						return true;
 					}
 				}
@@ -408,12 +409,6 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 		return 0;
 	}
 	
-	private FluidStack copyFluid(FluidStack fluid, int amount){
-		FluidStack copy = fluid.copy();
-		copy.setAmount(amount);
-		return copy;
-	}
-
 	private ItemStack copyStack(ItemStack stack, int amount){
 		ItemStack copy = stack.copy();
 		copy.setCount(amount);
