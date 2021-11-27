@@ -228,8 +228,8 @@ public class PipeConfig extends Button{
 			this.grid.drawLine(this.grid.getWidth() / 2, this.grid.getHeight() / 2, x, y, 1);
 			this.grid.set(this.grid.getWidth() / 2, this.grid.getHeight() / 2, PIPE_PERFORATED_FIXED);
 			this.grid.set(MathHelper.clamp(x, 0, this.grid.getWidth() - 1), MathHelper.clamp(y, 0, this.grid.getHeight() - 1), PIPE_PERFORATED_FIXED);
-			updateTexture();
 		}
+		updateTexture();
 	}
 	
 	int[] pipeCountArray = new int[4];
