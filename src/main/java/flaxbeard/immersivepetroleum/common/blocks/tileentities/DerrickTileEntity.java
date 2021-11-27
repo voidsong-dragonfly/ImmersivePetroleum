@@ -314,7 +314,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	}
 	
 	@Override
-	public void doGraphicalUpdates(int slot){
+	public void doGraphicalUpdates(){
 		updateMasterBlock(null, true);
 	}
 	
