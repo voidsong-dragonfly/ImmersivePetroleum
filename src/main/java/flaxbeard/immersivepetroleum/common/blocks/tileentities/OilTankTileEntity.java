@@ -102,7 +102,7 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 	/** Template-Location of the Redstone Input Port. (0 0 0)<br>*/
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(2, 2, 5));
 	
-	public FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME);
+	public FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME, f -> !f.getFluid().getAttributes().isGaseous());
 	public EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
 	public OilTankTileEntity(){
 		super(OilTankMultiblock.INSTANCE, IPTileTypes.OILTANK.get(), true);
