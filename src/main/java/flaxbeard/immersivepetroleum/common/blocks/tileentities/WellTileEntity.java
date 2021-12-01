@@ -38,6 +38,10 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 		nbt.putBoolean("spill", this.spill);
 		nbt.putBoolean("drillingCompleted", this.drillingCompleted);
 		
+		nbt.putInt("pipe", this.pipe);
+		nbt.putInt("pipelength", this.pipeLength);
+		nbt.putInt("additionalpipes", this.additionalPipes);
+		
 		if(!this.tappedIslands.isEmpty()){
 			final ListNBT list = new ListNBT();
 			this.tappedIslands.forEach(c -> {
@@ -54,6 +58,10 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 	protected void readCustom(BlockState state, CompoundNBT nbt){
 		this.spill = nbt.getBoolean("spill");
 		this.drillingCompleted = nbt.getBoolean("drillingCompleted");
+		
+		this.pipe = nbt.getInt("pipe");
+		this.pipeLength = nbt.getInt("pipelength");
+		this.additionalPipes = nbt.getInt("additionalpipes");
 		
 		if(nbt.contains("tappedislands", NBT.TAG_LIST)){
 			ListNBT list = nbt.getList("tappedislands", NBT.TAG_COMPOUND);
@@ -106,6 +114,7 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 					}
 					
 					if(this.spill && island != null){
+						// TODO Spill using the tappedIslands array
 						island.spill(getWorld(), x, z);
 					}
 				}
