@@ -35,6 +35,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
@@ -182,6 +183,11 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				if(well == null){
 					if(this.inventory.get(0) != ItemStack.EMPTY){
 						well = getOrCreateWell();
+						
+						if(well.tappedIslands.isEmpty()){
+							well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
+							well.markDirty();
+						}
 					}
 				}
 				
@@ -203,9 +209,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 										update = true;
 									}
 								}
-							}
-							
-							if(well.pipe > 0){
+								
+							}else if(well.pipe > 0){
 								this.energyStorage.extractEnergy(POWER, false);
 								this.waterTank.drain(WATER, FluidAction.EXECUTE);
 								
