@@ -211,18 +211,23 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 								}
 								
 							}else if(well.pipe > 0){
-								this.energyStorage.extractEnergy(POWER, false);
-								this.waterTank.drain(WATER, FluidAction.EXECUTE);
+								int amtEnergy = this.energyStorage.extractEnergy(POWER, false);
+								int amtWater = this.waterTank.drain(WATER, FluidAction.SIMULATE).getAmount();
 								
-								if(this.timer-- <= 0){
-									this.timer = 15;
+								if(amtEnergy >= POWER && amtWater >= WATER){
+									this.energyStorage.extractEnergy(POWER, true);
+									this.waterTank.drain(WATER, FluidAction.EXECUTE);
 									
-									well.pipe -= 1;
-									well.pipeLength += 1;
+									if(this.timer-- <= 0){
+										this.timer = 15;
+										
+										well.pipe -= 1;
+										well.pipeLength += 1;
+									}
+									
+									this.drilling = true;
+									update = true;
 								}
-								
-								this.drilling = true;
-								update = true;
 							}
 						}
 					}else{
