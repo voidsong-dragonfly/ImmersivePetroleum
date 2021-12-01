@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
@@ -26,17 +27,22 @@ public class IPSaveData extends WorldSavedData{
 	@Override
 	public void read(CompoundNBT nbt){
 		ListNBT reservoirs = nbt.getList("reservoirs", NBT.TAG_COMPOUND);
-		synchronized(ReservoirHandler.getReservoirIslandList()){
-			ReservoirHandler.getReservoirIslandList().clear();
-			for(int i = 0;i < reservoirs.size();i++){
-				CompoundNBT dim = reservoirs.getCompound(i);
-				ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
-				RegistryKey<World> dimType = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, rl);
-				ListNBT islands = dim.getList("islands", NBT.TAG_COMPOUND);
+		if(!reservoirs.isEmpty()){
+			synchronized(ReservoirHandler.getReservoirIslandList()){
+				ReservoirHandler.getReservoirIslandList().clear();
 				
-				List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).collect(Collectors.toList());
-				list.removeIf(o -> o == null);
-				ReservoirHandler.getReservoirIslandList().putAll(dimType, list);
+				for(int i = 0;i < reservoirs.size();i++){
+					CompoundNBT dim = reservoirs.getCompound(i);
+					ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
+					RegistryKey<World> dimType = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, rl);
+					ListNBT islands = dim.getList("islands", NBT.TAG_COMPOUND);
+					
+					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).collect(Collectors.toList());
+					list.removeIf(o -> o == null);
+					ReservoirHandler.getReservoirIslandList().putAll(dimType, list);
+				}
+				
+				ReservoirHandler.clearCache();
 			}
 		}
 		
