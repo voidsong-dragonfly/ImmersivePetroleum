@@ -13,20 +13,15 @@ import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -64,9 +59,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	public FluidTank fakeTank = new FluidTank(0);
 	public boolean wasActive = false;
 	public float activeTicks = 0;
-	private int pipeTicks = 0;
-	private boolean lastHadPipes = true;
-	public BlockState state = null;
 	public PumpjackTileEntity(){
 		super(PumpjackMultiblock.INSTANCE, 16000, true, null);
 	}
@@ -81,37 +73,18 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	public int getFluidAmount(){
-		return PumpjackHandler.getFluidAmount(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return 1;
 	}
 	
 	public Fluid getFluidType(){
-		return PumpjackHandler.getFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return IPContent.Fluids.crudeOil;
 	}
 	
 	public int getResidualFluid(){
-		return PumpjackHandler.getResidualFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4);
+		return 1;
 	}
 	
 	public void extractFluid(int amount){
-		PumpjackHandler.depleteFluid(this.world, getPos().getX() >> 4, getPos().getZ() >> 4, amount);
-	}
-	
-	private boolean hasPipes(){
-		if(IPServerConfig.EXTRACTION.required_pipes.get()){
-			BlockPos basePos = getBlockPosForPos(Down_Port);
-			for(int y = basePos.getY() - 1;y > 0;y--){
-				BlockPos pos = new BlockPos(basePos.getX(), y, basePos.getZ());
-				BlockState state = this.world.getBlockState(pos);
-				
-				if(state.getBlock() == Blocks.BEDROCK)
-					return true;
-				
-				if(state.getBlock() != IEBlocks.MetalDevices.fluidPipe)
-					return false;
-			}
-		}
-		
-		return true;
 	}
 	
 	@Override
@@ -119,20 +92,8 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		super.readCustomNBT(nbt, descPacket);
 		boolean lastActive = this.wasActive;
 		this.wasActive = nbt.getBoolean("wasActive");
-		this.lastHadPipes = nbt.getBoolean("lastHadPipes");
-		if(!wasActive && lastActive){
+		if(!this.wasActive && lastActive){
 			this.activeTicks++;
-		}
-		this.state = null;
-		if(nbt.hasUniqueId("comp")){
-			ItemStack stack = ItemStack.read(nbt.getCompound("comp"));
-			
-			if(!stack.isEmpty()){
-				Block block = Block.getBlockFromItem(stack.getItem());
-				if(block != Blocks.AIR){
-					this.state = block.getDefaultState();
-				}
-			}
 		}
 	}
 	
@@ -140,13 +101,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.putBoolean("wasActive", this.wasActive);
-		nbt.putBoolean("lastHadPipes", this.lastHadPipes);
-		if(getFluidType() != null){
-			FluidStack stack = new FluidStack(getFluidType(), 0);
-			CompoundNBT comp = new CompoundNBT();
-			stack.writeToNBT(comp);
-			nbt.put("comp", comp);
-		}
 	}
 	
 	@Override
@@ -155,16 +109,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		
 		if((this.world.isRemote || isDummy()) && this.wasActive){
 			this.activeTicks++;
-			
-			if(this.state != null){
-				// What is this whole thing even for? I've never seen the
-				// pumpjack spawning particles anywhere.
-				float r1 = (this.world.rand.nextFloat() - .5F) * 2F;
-				float r2 = (this.world.rand.nextFloat() - .5F) * 2F;
-				
-				this.world.addParticle(ParticleTypes.SMOKE, this.pos.getX() + .5, this.pos.getY() + .5, this.pos.getZ() + .5, r1 * 0.04D, 0.25D, r2 * 0.025D);
-			}
-			
 			return;
 		}
 		
@@ -174,11 +118,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		int extracted = this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.pumpjack_consumption.get(), true);
 		
 		if(extracted >= consumption && canExtract()){
-			if((getPos().getX() + getPos().getZ()) % IPServerConfig.EXTRACTION.pipe_check_ticks.get() == this.pipeTicks){
-				this.lastHadPipes = hasPipes();
-			}
-			
-			if(!isRSDisabled() && this.lastHadPipes){
+			if(!isRSDisabled()){
 				int available = getFluidAmount();
 				int residual = getResidualFluid();
 				if(available > 0 || residual > 0){
@@ -216,7 +156,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					this.activeTicks++;
 				}
 			}
-			this.pipeTicks = (this.pipeTicks + 1) % IPServerConfig.EXTRACTION.pipe_check_ticks.get();
 		}
 		
 		if(active != this.wasActive){
@@ -347,9 +286,9 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			}
 			
 			// Below Head
-			if(IPServerConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side == null || side == Direction.DOWN)){
-				return new FluidTank[]{master.fakeTank};
-			}
+//			if(IPServerConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side == null || side == Direction.DOWN)){
+//				return new FluidTank[]{master.fakeTank};
+//			}
 		}
 		return new FluidTank[0];
 	}

@@ -56,8 +56,6 @@ public class IPServerConfig{
 		public final ConfigValue<Double> reservoir_chance;
 		public final ConfigValue<Integer> pumpjack_consumption;
 		public final ConfigValue<Integer> pumpjack_speed;
-		public final ConfigValue<Integer> pipe_check_ticks;
-		public final BooleanValue required_pipes;
 		Extraction(ForgeConfigSpec.Builder builder){
 			builder.push("Extraction");
 			
@@ -72,14 +70,6 @@ public class IPServerConfig{
 			pumpjack_speed = builder
 					.comment("The amount of mB of oil a Pumpjack extracts per tick", "Default: 15")
 					.define("pumpjack_speed", Integer.valueOf(15));
-			
-			required_pipes = builder
-					.comment("Require a pumpjack to have pipes built down to Bedrock", "Default: false")
-					.define("req_pipes", false);
-			
-			pipe_check_ticks = builder
-					.comment("Number of ticks between checking for pipes below pumpjack if required", "Default: 100")
-					.define("pipe_check_ticks", Integer.valueOf(100));
 			
 			builder.pop();
 		}
