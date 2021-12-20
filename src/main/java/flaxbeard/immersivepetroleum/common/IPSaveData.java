@@ -29,19 +29,22 @@ public class IPSaveData extends WorldSavedData{
 		ListNBT reservoirs = nbt.getList("reservoirs", NBT.TAG_COMPOUND);
 		if(!reservoirs.isEmpty()){
 			synchronized(ReservoirHandler.getReservoirIslandList()){
+				ImmersivePetroleum.log.info("[ReservoirIslands]: Clearing main list.");
 				ReservoirHandler.getReservoirIslandList().clear();
 				
+				ImmersivePetroleum.log.info("[ReservoirIslands]: Reading...");
 				for(int i = 0;i < reservoirs.size();i++){
 					CompoundNBT dim = reservoirs.getCompound(i);
 					ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
 					RegistryKey<World> dimType = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, rl);
 					ListNBT islands = dim.getList("islands", NBT.TAG_COMPOUND);
 					
-					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).collect(Collectors.toList());
-					list.removeIf(o -> o == null);
+					ImmersivePetroleum.log.info("[ReservoirIslands]: Read islands for dim {}", dimType.toString());
+					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).filter(o -> o != null).collect(Collectors.toList());
 					ReservoirHandler.getReservoirIslandList().putAll(dimType, list);
 				}
 				
+				ImmersivePetroleum.log.info("[ReservoirIslands]: Clearing Cache...");
 				ReservoirHandler.clearCache();
 			}
 		}
