@@ -19,12 +19,10 @@ import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
 import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
@@ -386,10 +384,6 @@ public class DebugItem extends IPItemBase{
 		textOut.appendSibling(upgradesText);
 		
 		player.sendMessage(textOut, Util.DUMMY_UUID);
-	}
-	
-	@SuppressWarnings("unused")
-	private void analyze(ItemUseContext context, BlockState state, PumpjackTileEntity te){
 	}
 	
 	public static void setModeServer(ItemStack stack, Modes mode){

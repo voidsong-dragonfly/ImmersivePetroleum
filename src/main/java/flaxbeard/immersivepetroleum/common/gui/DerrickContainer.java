@@ -14,7 +14,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 	static final ResourceLocation IE_PIPE = new ResourceLocation("immersiveengineering", "fluid_pipe");
 	
 	public DerrickContainer(int id, PlayerInventory playerInventory, DerrickTileEntity tile){
-		super(playerInventory, tile, id, DerrickMultiblock.INSTANCE);
+		super(tile, id, DerrickMultiblock.INSTANCE);
 		
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override

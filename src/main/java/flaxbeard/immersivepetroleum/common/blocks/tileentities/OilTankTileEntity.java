@@ -164,14 +164,13 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 				if((!wasBalancing && getPortStateFor(port) == PortState.OUTPUT) || (wasBalancing && port == Port.BOTTOM)){
 					Direction facing = getPortDirection(port);
 					BlockPos pos = getBlockPosForPos(port.posInMultiblock).offset(facing);
-					final boolean isSameTEType = getWorld().getTileEntity(pos) instanceof OilTankTileEntity;
 					
 					FluidUtil.getFluidHandler(this.world, pos, facing.getOpposite()).map(out -> {
 						if(this.tank.getFluidAmount() > 0){
-							FluidStack fs = FluidHelper.copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432), !isSameTEType);
+							FluidStack fs = FluidHelper.copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432));
 							int accepted = out.fill(fs, FluidAction.SIMULATE);
 							if(accepted > 0){
-								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), !isSameTEType), FluidAction.EXECUTE);
+								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted)), FluidAction.EXECUTE);
 								this.tank.drain(Utils.copyFluidStackWithAmount(this.tank.getFluid(), drained, true), FluidAction.EXECUTE);
 								this.markContainingBlockForUpdate(null);
 								return true;
