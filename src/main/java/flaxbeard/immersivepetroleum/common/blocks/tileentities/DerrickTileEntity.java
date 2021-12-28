@@ -178,9 +178,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				TileEntity te = this.getWorldNonnull().getTileEntity(this.pos.down());
 				if(te instanceof WellTileEntity){
 					well = (WellTileEntity) te;
-				}
-				
-				if(well == null){
+				}else if(well == null){
 					if(this.inventory.get(0) != ItemStack.EMPTY){
 						well = getOrCreateWell();
 						

@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,7 +23,6 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
-import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
@@ -108,6 +108,15 @@ public class DebugItem extends IPItemBase{
 			Modes mode = DebugItem.getMode(playerIn.getHeldItem(handIn));
 			
 			switch(mode){
+				case GENERAL_TEST:{
+					if(worldIn.isRemote){
+						
+					}else{
+						Collection<ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList().get(worldIn.getDimensionKey());
+						ImmersivePetroleum.log.info("{}", islands.size());
+					}
+					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+				}
 				case REFRESH_ALL_IPMODELS:{
 					IPModels.getModels().forEach(m -> m.init());
 					
@@ -320,14 +329,17 @@ public class DebugItem extends IPItemBase{
 				if(world.isRemote){
 					// Client
 					BlockPos pos = context.getPos();
-
-					float xa = 0.0625F * (float) Math.random();
-					float ya = 0.0625F;
-					float za = 0.0625F * (float) Math.random();
+					TileEntity tile = world.getTileEntity(pos);
+					CompoundNBT nbt = tile.serializeNBT();
 					
-					world.addParticle(IPParticleTypes.FLARE_FIRE, true, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, xa, ya, za);
+					ImmersivePetroleum.log.info("Client: {}", nbt);
 				}else{
 					// Server
+					BlockPos pos = context.getPos();
+					TileEntity tile = world.getTileEntity(pos);
+					CompoundNBT nbt = tile.serializeNBT();
+					
+					ImmersivePetroleum.log.info("Server: {}", nbt);
 				}
 				
 				return ActionResultType.SUCCESS;

@@ -121,4 +121,13 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 			}
 		}
 	}
+	
+	@Override
+	public void markDirty(){
+		super.markDirty();
+		
+		BlockState state = world.getBlockState(pos);
+		world.notifyBlockUpdate(pos, state, state, 3);
+		world.notifyNeighborsOfStateChange(pos, state.getBlock());
+	}
 }
