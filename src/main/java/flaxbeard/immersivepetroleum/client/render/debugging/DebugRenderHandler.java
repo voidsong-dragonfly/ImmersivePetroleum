@@ -87,53 +87,6 @@ public class DebugRenderHandler{
 							World world = player.world;
 							
 							List<ITextComponent> debugOut = new ArrayList<>();
-							
-/*<<<<<<< HEAD
-						}else if(te instanceof HydrotreaterTileEntity){
-							hydrotreater(debugOut, (HydrotreaterTileEntity) multiblock);
-							
-						}else if(te instanceof OilTankTileEntity){
-							oiltank(debugOut, (OilTankTileEntity) multiblock);
-							
-						}else if(te instanceof DerrickTileEntity){
-							DerrickTileEntity derrick = (DerrickTileEntity) multiblock;
-							
-							IFluidTank[] tanks = derrick.getInternalTanks();
-							if(tanks != null && tanks.length > 0){
-								for(int i = 0;i < tanks.length;i++){
-									FluidStack fs = tanks[i].getFluid();
-									debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-								}
-							}
-						}
-					}
-					
-					if(!debugOut.isEmpty() || isMBPart){
-						if(isMBPart){
-							MultiblockPartTileEntity<?> generic = (MultiblockPartTileEntity<?>) te;
-							BlockPos pos = generic.posInMultiblock;
-							
-							if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
-								generic = generic.master();
-							}
-							
-							BlockPos hit = result.getPos();
-							Block block = generic.getBlockState().getBlock();
-							
-							debugOut.add(0, toText("World XYZ: " + hit.getX() + ", " + hit.getY() + ", " + hit.getZ()));
-							debugOut.add(1, toText("Template XYZ: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()));
-							
-							IFormattableTextComponent name = toTranslation(block.getTranslationKey()).mergeStyle(TextFormatting.GOLD);
-							
-							try{
-								name.appendSibling(toText(generic.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED));
-							}catch(UnsupportedOperationException e){
-								// Don't care, skip if this is thrown
-							}
-							
-							if(generic instanceof PoweredMultiblockTileEntity<?, ?>){
-								PoweredMultiblockTileEntity<?, ?> poweredGeneric = (PoweredMultiblockTileEntity<?, ?>) generic;
-=======*/
 							TileEntity te = world.getTileEntity(result.getPos());
 							boolean isMBPart = te instanceof MultiblockPartTileEntity;
 							if(isMBPart){
