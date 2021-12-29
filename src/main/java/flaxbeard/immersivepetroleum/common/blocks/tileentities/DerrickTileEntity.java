@@ -217,7 +217,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 									this.waterTank.drain(WATER, FluidAction.EXECUTE);
 									
 									if(this.timer-- <= 0){
-										this.timer = 15;
+										this.timer = 10;
 										
 										well.pipe -= 1;
 										well.pipeLength += 1;

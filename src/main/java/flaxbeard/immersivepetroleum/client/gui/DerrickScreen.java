@@ -95,18 +95,33 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 			
 			// Possible display prototypes
 			
-//			if(this.tile.drilling){
+			if(this.tile.drilling){
 				String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * well.pipeLength / (float) well.pipeMaxLength()));
 				drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
 				drawInfoText(matrix, new StringTextComponent("Length: " + well.pipeLength + "/" + well.pipeMaxLength() + "m"), 1);
 				drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + well.pipe + ", " + this.tile.timer + "t"), 2);
 				drawInfoText(matrix, new StringTextComponent(""), 3);
-//			}
+			}else{
+				boolean debug = true;
+				if(this.tile.spilling || debug){
+					drawInfoText(matrix, new StringTextComponent("§l !  !  !  !  !  !  !  !  !"), 0, 0xEF0000);
+					drawInfoText(matrix, new StringTextComponent("§lSAFETYVALVE OPEN"), 1, 0xEF0000);
+					drawInfoText(matrix, new StringTextComponent("§lPRESSURE TOO HIGH"), 2, 0xEF0000);
+					drawInfoText(matrix, new StringTextComponent("§l !  !  !  !  !  !  !  !  !"), 3, 0xEF0000);
+				}else{
+					drawInfoText(matrix, new StringTextComponent("   Drilling Completed."), 1);
+					drawInfoText(matrix, new StringTextComponent("   Have a nice day :3"), 3);
+				}
+			}
 		}
 	}
 	
 	private void drawInfoText(MatrixStack matrix, ITextComponent text, int line){
-		this.font.drawText(matrix, text, 60, 8 + (9 * line), Lib.colour_nixieTubeText);
+		drawInfoText(matrix, text, line, Lib.colour_nixieTubeText);
+	}
+	
+	private void drawInfoText(MatrixStack matrix, ITextComponent text, int line, int color){
+		this.font.drawText(matrix, text, 60, 8 + (9 * line), color);
 	}
 	
 	@Override

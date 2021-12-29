@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -110,10 +109,9 @@ public class DebugItem extends IPItemBase{
 			switch(mode){
 				case GENERAL_TEST:{
 					if(worldIn.isRemote){
-						
+						// Client
 					}else{
-						Collection<ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList().get(worldIn.getDimensionKey());
-						ImmersivePetroleum.log.info("{}", islands.size());
+						// Server
 					}
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
@@ -328,18 +326,8 @@ public class DebugItem extends IPItemBase{
 				World world = context.getWorld();
 				if(world.isRemote){
 					// Client
-					BlockPos pos = context.getPos();
-					TileEntity tile = world.getTileEntity(pos);
-					CompoundNBT nbt = tile.serializeNBT();
-					
-					ImmersivePetroleum.log.info("Client: {}", nbt);
 				}else{
 					// Server
-					BlockPos pos = context.getPos();
-					TileEntity tile = world.getTileEntity(pos);
-					CompoundNBT nbt = tile.serializeNBT();
-					
-					ImmersivePetroleum.log.info("Server: {}", nbt);
 				}
 				
 				return ActionResultType.SUCCESS;
