@@ -73,7 +73,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	public int getFluidAmount(){
-		return 1;
+		return 50;
 	}
 	
 	public Fluid getFluidType(){

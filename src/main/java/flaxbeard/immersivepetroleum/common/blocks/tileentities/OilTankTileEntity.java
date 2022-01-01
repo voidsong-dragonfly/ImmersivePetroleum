@@ -167,10 +167,10 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 					
 					FluidUtil.getFluidHandler(this.world, pos, facing.getOpposite()).map(out -> {
 						if(this.tank.getFluidAmount() > 0){
-							FluidStack fs = FluidHelper.copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432));
+							FluidStack fs = FluidHelper.copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432), true);
 							int accepted = out.fill(fs, FluidAction.SIMULATE);
 							if(accepted > 0){
-								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted)), FluidAction.EXECUTE);
+								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), true), FluidAction.EXECUTE);
 								this.tank.drain(Utils.copyFluidStackWithAmount(this.tank.getFluid(), drained, true), FluidAction.EXECUTE);
 								this.markContainingBlockForUpdate(null);
 								return true;

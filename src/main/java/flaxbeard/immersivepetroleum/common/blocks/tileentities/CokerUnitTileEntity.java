@@ -330,10 +330,10 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 		
 		if(this.bufferTanks[TANK_OUTPUT].getFluidAmount() > 0){
 			if(!getInventory(Inventory.OUTPUT_EMPTY).isEmpty()){
-				ItemStack filledContainer = Utils.fillFluidContainer(this.bufferTanks[TANK_OUTPUT], getInventory(Inventory.OUTPUT_EMPTY), getInventory(Inventory.OUTPUT_FILLED), null);
+				ItemStack filledContainer = FluidHelper.fillFluidContainer(this.bufferTanks[TANK_OUTPUT], getInventory(Inventory.OUTPUT_EMPTY), getInventory(Inventory.OUTPUT_FILLED), null);
 				if(!filledContainer.isEmpty()){
 					
-					if(getInventory(Inventory.OUTPUT_FILLED).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer)){
+					if(getInventory(Inventory.OUTPUT_FILLED).getCount() == 1 && !FluidHelper.isFluidContainerFull(filledContainer)){
 						setInventory(Inventory.OUTPUT_FILLED, filledContainer.copy());
 					}else{
 						if(!getInventory(Inventory.OUTPUT_FILLED).isEmpty() && ItemHandlerHelper.canItemStacksStack(getInventory(Inventory.OUTPUT_FILLED), filledContainer)){
@@ -355,10 +355,10 @@ public class CokerUnitTileEntity extends PoweredMultiblockTileEntity<CokerUnitTi
 			BlockPos outPos = getBlockPosForPos(Fluid_OUT).offset(getFacing().getOpposite());
 			update |= FluidUtil.getFluidHandler(this.world, outPos, getFacing()).map(out -> {
 				if(this.bufferTanks[TANK_OUTPUT].getFluidAmount() > 0){
-					FluidStack fs = FluidHelper.copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 1000);
+					FluidStack fs = FluidHelper.copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 100, true);
 					int accepted = out.fill(fs, FluidAction.SIMULATE);
 					if(accepted > 0){
-						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted)), FluidAction.EXECUTE);
+						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), true), FluidAction.EXECUTE);
 						this.bufferTanks[TANK_OUTPUT].drain(FluidHelper.copyFluid(fs, drained), FluidAction.EXECUTE);
 						return true;
 					}
