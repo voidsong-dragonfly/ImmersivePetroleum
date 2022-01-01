@@ -107,16 +107,14 @@ minecraft {
 dependencies {
 	minecraft "net.minecraftforge:forge:1.16.5-36.2.0"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.6-141")
+	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.8-pre.8")
 	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135:api")
-	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.6-141:datagen")
+	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.8-pre.8:datagen")
 	
 	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
 	
 	runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.4.88")
 	compileOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.4.88:api")
-	
-	runtimeOnly fg.deobf("ignored:immersiveposts-1.16.5:4.2.2")
 }
 
 processResources {
