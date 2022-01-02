@@ -69,7 +69,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	public boolean canExtract(){
-		return true;
+		return false;
 	}
 	
 	public int getFluidAmount(){
