@@ -290,6 +290,11 @@ public class DebugRenderHandler{
 												b/=1.5F;
 												
 												int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
+												for(;height > 0;height--){
+													if(world.getBlockState(new BlockPos(x, height - 1, z)).isOpaqueCube(world, new BlockPos(x, height - 1, z))){
+														break;
+													}
+												}
 												
 												matrix.translate(x, Math.max(63, height) + 0.0625, z);
 												

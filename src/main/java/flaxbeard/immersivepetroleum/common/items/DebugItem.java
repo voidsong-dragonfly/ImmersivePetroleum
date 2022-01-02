@@ -108,11 +108,6 @@ public class DebugItem extends IPItemBase{
 			
 			switch(mode){
 				case GENERAL_TEST:{
-					if(worldIn.isRemote){
-						// Client
-					}else{
-						// Server
-					}
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}
 				case REFRESH_ALL_IPMODELS:{
@@ -226,9 +221,7 @@ public class DebugItem extends IPItemBase{
 						float pressure = island.getPressure(worldIn, x, z);
 						
 						if(playerIn.isSneaking()){
-//							island.setAmount(13789804);
-							island.setAmount(665637);
-//							island.setAmount(ReservoirIsland.MAX_AMOUNT);
+							island.setAmount(island.getCapacity());
 							IPSaveData.markInstanceAsDirty();
 						}
 						
