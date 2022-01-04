@@ -20,6 +20,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
+import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -42,7 +43,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
@@ -164,7 +167,9 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 		
 		if(this.world.isAreaLoaded(this.getPos(), 5)){
-			boolean update = false;
+			boolean lastDrilling = this.drilling;
+			boolean lastSpilling = this.spilling;
+			this.drilling = this.spilling = false;
 			
 			if(!isRSDisabled()){
 				// TODO
@@ -190,7 +195,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				}
 				
 				if(well != null){
-					this.drilling = false;
 					if(well.pipeLength < well.pipeMaxLength()){
 						if(this.energyStorage.getEnergyStored() >= POWER && this.waterTank.getFluidAmount() >= WATER){
 							if(well.pipe <= 0){
@@ -204,7 +208,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 											this.inventory.set(0, ItemStack.EMPTY);
 										}
 										
-										update = true;
+										well.markDirty();
 									}
 								}
 								
@@ -224,22 +228,58 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 									}
 									
 									this.drilling = true;
-									update = true;
+									well.markDirty();
 								}
 							}
 						}
 					}else{
 						// This is the part where it should start filling tanks
 						// ..or spill if all tanks are full
-					}
-					
-					if(update){
-						well.markDirty();
+						
+						// TODO Preamtively check if the tapped islands contain the same fluid before drilling?
+						boolean disable = false;
+						if(!disable){
+							Fluid extractedFluid = Fluids.EMPTY;
+							int extractedAmount = 0;
+							for(ColumnPos cPos:well.tappedIslands){
+								ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+								if(island != null){
+									if(extractedFluid == Fluids.EMPTY){
+										extractedFluid = island.getType().getFluid();
+									}else if(island.getType().getFluid() != extractedFluid){
+										continue;
+									}
+									
+									extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
+								}
+							}
+							
+							if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
+								Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+								BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
+								IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
+								if(output != null){
+									FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
+									
+									int accepted = output.fill(fluid, FluidAction.SIMULATE);
+									if(accepted > 0){
+										int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
+										if(fluid.getAmount() - drained > 0){
+											this.spilling = true;
+										}
+									}else{
+										this.spilling = true;
+									}
+								}else{
+									this.spilling = true;
+								}
+							}
+						}
 					}
 				}
 			}
 			
-			if(update){
+			if((lastDrilling != this.drilling) || (lastSpilling != this.spilling)){
 				updateMasterBlock(null, true);
 			}
 		}

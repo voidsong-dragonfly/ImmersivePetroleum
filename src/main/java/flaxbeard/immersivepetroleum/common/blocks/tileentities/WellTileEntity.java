@@ -115,7 +115,7 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 					
 					if(this.spill && island != null){
 						// TODO Spill using the tappedIslands array
-						island.spill(getWorld(), x, z);
+						island.extractWithPressure(getWorld(), x, z);
 					}
 				}
 			}

@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
@@ -16,16 +17,40 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public class FluidHelper{
 	
-	/** No pressure variant of {@link #copyFluid(FluidStack, int, boolean)} */
+	/** Convenience Method */
 	public static FluidStack copyFluid(FluidStack fluid, int amount){
-		FluidStack fs = new FluidStack(fluid.getFluid(), amount);
+		FluidStack fs = copyFluid(fluid, amount, false);
 		return fs;
 	}
 	
+	/**
+	 * Makes a copy of a FluidStack (excluding NBT) and optionally adds the
+	 * Pressurized tag
+	 * 
+	 * @param fluid
+	 * @param amount
+	 * @param pressurize (optionally)
+	 * @return FluidStack
+	 */
 	public static FluidStack copyFluid(FluidStack fluid, int amount, boolean pressurize){
 		FluidStack fs = new FluidStack(fluid.getFluid(), amount);
 		if(pressurize && amount > IFluidPipe.AMOUNT_UNPRESSURIZED){
-			
+			fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true);
+		}
+		return fs;
+	}
+	
+	/**
+	 * Creates a pressurized FluidStack instance of the given Fluid.<br>
+	 * Only pressurizes the fluid if nessesary. (amount goes above 50)
+	 * 
+	 * @param fluid
+	 * @param amount
+	 * @return FluidStack, with Pressuzired tag as needed.
+	 */
+	public static FluidStack makePressurizedFluid(Fluid fluid, int amount){
+		FluidStack fs = new FluidStack(fluid, amount);
+		if(amount > IFluidPipe.AMOUNT_UNPRESSURIZED){
 			fs.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true);
 		}
 		return fs;

@@ -223,6 +223,8 @@ public class DebugItem extends IPItemBase{
 						if(playerIn.isSneaking()){
 							island.setAmount(island.getCapacity());
 							IPSaveData.markInstanceAsDirty();
+							playerIn.sendStatusMessage(new StringTextComponent("Island Refilled."), true);
+							return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 						}
 						
 						String out = String.format(Locale.ENGLISH,

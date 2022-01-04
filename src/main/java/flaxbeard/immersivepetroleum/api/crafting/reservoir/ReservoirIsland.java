@@ -15,6 +15,7 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
  * Every instance of this class is it's own little ecosystem.
@@ -117,34 +118,40 @@ public class ReservoirIsland{
 	}
 	
 	/**
+	 * Used by Pumpjack
+	 * 
 	 * @param x
 	 * @param z
 	 * @param amount to extract
 	 * @return how much has been extracted or residual if drained
 	 */
-	public long extract(int x, int z, int amount){
+	public int extract(int amount, FluidAction fluidAction){
 		if(isEmpty()){
 			return this.reservoir.residual;
 		}
 		
-		int extracted = (int) Math.min(this.amount, amount);
+		int extracted = (int) Math.min(amount, this.amount);
 		
-		this.amount -= extracted;
-		IPSaveData.markInstanceAsDirty();
+		if(fluidAction == FluidAction.EXECUTE){
+			this.amount -= extracted;
+			IPSaveData.markInstanceAsDirty();
+		}
 		
 		return extracted;
 	}
 	
 	/**
+	 * Used by Derrick
+	 * 
 	 * @param x
 	 * @param z
-	 * @return How much was spilled
+	 * @return How much was extracted
 	 */
-	public int spill(World world, int x, int z){
+	public int extractWithPressure(World world, int x, int z){
 		float pressure = getPressure(world, x, z);
 		
 		if(pressure > 0.0 && this.amount > 0){
-			int flow = (int)Math.min(getFlow(pressure), this.amount);
+			int flow = (int) Math.min(getFlow(pressure), this.amount);
 			
 			this.amount -= flow;
 			IPSaveData.markInstanceAsDirty();

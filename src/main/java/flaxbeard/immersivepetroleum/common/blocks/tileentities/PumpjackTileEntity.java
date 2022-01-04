@@ -14,20 +14,22 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import net.minecraft.fluid.Fluid;
+import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidStack;
@@ -68,25 +70,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		return IPTileTypes.PUMP.get();
 	}
 	
-	public boolean canExtract(){
-		return false;
-	}
-	
-	public int getFluidAmount(){
-		return 50;
-	}
-	
-	public Fluid getFluidType(){
-		return IPContent.Fluids.crudeOil;
-	}
-	
-	public int getResidualFluid(){
-		return 1;
-	}
-	
-	public void extractFluid(int amount){
-	}
-	
 	@Override
 	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
@@ -115,13 +98,76 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		boolean active = false;
 		
 		int consumption = IPServerConfig.EXTRACTION.pumpjack_consumption.get();
-		int extracted = this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.pumpjack_consumption.get(), true);
+		int extracted = this.energyStorage.extractEnergy(consumption, true);
 		
-		if(extracted >= consumption && canExtract()){
+		if(extracted >= consumption){
 			if(!isRSDisabled()){
+				TileEntity te = this.getWorldNonnull().getTileEntity(this.pos.down());
+				if(te != null && te instanceof WellTileEntity){
+					WellTileEntity well = (WellTileEntity) te;
+					
+					// Does any island still have pressure?
+					boolean foundPressurizedIsland = false;
+					for(ColumnPos cPos:well.tappedIslands){
+						ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+						if(island != null){
+							if(island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0F){
+								foundPressurizedIsland = true;
+								break;
+							}
+						}
+					}
+					
+					if(!foundPressurizedIsland){
+						int extractSpeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
+						
+						Direction portEast_facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+						Direction portWest_facing = getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
+						
+						BlockPos portEast_pos = getBlockPosForPos(East_Port).offset(portEast_facing);
+						BlockPos portWest_pos = getBlockPosForPos(West_Port).offset(portWest_facing);
+
+						IFluidHandler portEast_output = FluidUtil.getFluidHandler(this.world, portEast_pos, portEast_facing.getOpposite()).orElse(null);
+						IFluidHandler portWest_output = FluidUtil.getFluidHandler(this.world, portWest_pos, portWest_facing.getOpposite()).orElse(null);
+						
+						for(ColumnPos cPos:well.tappedIslands){
+							ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+							if(island != null){
+								FluidStack fluid = new FluidStack(island.getType().getFluid(), island.extract(extractSpeed, FluidAction.SIMULATE));
+								
+								if(portEast_output != null){
+									int accepted = portEast_output.fill(fluid, FluidAction.SIMULATE);
+									if(accepted > 0){
+										int drained = portEast_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
+										island.extract(drained, FluidAction.EXECUTE);
+										fluid = FluidHelper.copyFluid(fluid, fluid.getAmount() - drained);
+										active = true;
+									}
+								}
+								
+								if(fluid.getAmount() > 0 && portWest_output != null){
+									int accepted = portWest_output.fill(fluid, FluidAction.SIMULATE);
+									if(accepted > 0){
+										int drained = portWest_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
+										island.extract(drained, FluidAction.EXECUTE);
+										active = true;
+									}
+								}
+							}
+						}
+						
+						if(active){
+							this.energyStorage.extractEnergy(consumption, false);
+						}
+						this.activeTicks++;
+					}
+				}
+				
+				/*
+				boolean disable = true;
 				int available = getFluidAmount();
 				int residual = getResidualFluid();
-				if(available > 0 || residual > 0){
+				if((available > 0 || residual > 0) && !disable){
 					int oilAmnt = available <= 0 ? residual : available;
 					
 					FluidStack out = new FluidStack(getFluidType(), Math.min(IPServerConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
@@ -154,7 +200,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						this.energyStorage.extractEnergy(consumption, false);
 					}
 					this.activeTicks++;
-				}
+				}*/
 			}
 		}
 		
