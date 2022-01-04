@@ -16,13 +16,16 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public class PipeConfig extends Button{
@@ -84,19 +87,32 @@ public class PipeConfig extends Button{
 		int texCenterX = this.grid.width / this.gridScale;
 		int texCenterY = this.grid.height / this.gridScale;
 		
-		for(int gy = 0;gy < this.grid.height;gy++){
-			for(int gx = 0;gx < this.grid.height;gx++){
-				int gi = this.grid.height * gy + gx;
-				
+		// TODO Use height map instead of checker pattern?
+		
+		ClientWorld world = Minecraft.getInstance().world;
+		
+		for(int gy = 0;gy < this.grid.getHeight();gy++){
+			for(int gx = 0;gx < this.grid.getWidth();gx++){
 				int color = 0;
+				
 				switch(this.grid.get(gx, gy)){
 					case EMPTY:{
 						if((gx >= texCenterX - 2 && gx <= texCenterX + 2) && (gy >= texCenterY - 2 && gy <= texCenterY + 2)){
 							color = 0x000000;
-						}else if(gx % 10 == 4 || gy % 10 == 4){
-							color = 0x202020;
 						}else{
-							color = (gi % 2 == 1) ? 0x404040 : 0x303030;
+							int px = gx - (this.grid.getWidth() / 2);
+							int py = gy - (this.grid.getHeight() / 2);
+							
+							ColumnPos c = new ColumnPos(this.tilePos.x + px, this.tilePos.z + py);
+							int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(c.x, 0, c.z)).getY();
+							
+							int tmp = world.getBlockState(new BlockPos(c.x, y - 1, c.z)).getMaterial().getColor().colorValue;
+							float f = 0.5F;
+							int r = (int) (((tmp >> 16) & 0xFF) * f);
+							int g = (int) (((tmp >> 8) & 0xFF) * f);
+							int b = (int) (((tmp >> 0) & 0xFF) * f);
+							
+							color = (r << 16 | g << 8 | b);
 						}
 						break;
 					}
