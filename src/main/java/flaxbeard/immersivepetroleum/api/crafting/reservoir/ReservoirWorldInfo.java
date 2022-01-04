@@ -2,6 +2,9 @@ package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
 import net.minecraft.nbt.CompoundNBT;
 
+/**
+ * @deprecated Will be nuked as part of a complete rewrite.
+ */
 public class ReservoirWorldInfo{
 	public Reservoir type;
 	public Reservoir overrideType;

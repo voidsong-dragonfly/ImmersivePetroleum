@@ -5,14 +5,10 @@ import java.util.Locale;
 
 import org.lwjgl.glfw.GLFW;
 
-import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
@@ -48,17 +44,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 
-@SuppressWarnings("deprecation")
 public class DebugItem extends IPItemBase{
 	public static enum Modes{
 		DISABLED("Disabled"),
 		INFO_SPEEDBOAT("Info: Speedboat"),
 		
-		// TODO Chunk-Based Reservoir: Nuke this aswell then
-		CHUNKBASED_RESERVOIR("Chunk-Based Reservoir: Create/Get"),
-		CHUNKBASED_RESERVOIR_BIG_SCAN("Chunk-Based Reservoir: Scan 5 Chunk Radius Area"),
-		CHUNKBASED_RESERVOIR_CLEAR_CACHE("Chunk-Based Reservoir: Clear Cache"),
-
 		SEEDBASED_RESERVOIR("Seed-Based Reservoir: Heatmap"),
 		SEEDBASED_RESERVOIR_AREA_TEST("Seed-Based Reservoir: Island Testing"),
 		
@@ -114,82 +104,6 @@ public class DebugItem extends IPItemBase{
 					IPModels.getModels().forEach(m -> m.init());
 					
 					playerIn.sendStatusMessage(new StringTextComponent("Models refreshed."), true);
-					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
-				}
-				case CHUNKBASED_RESERVOIR:{
-					BlockPos pos = playerIn.getPosition();
-					DimensionChunkCoords coords = new DimensionChunkCoords(worldIn.getDimensionKey(), (pos.getX() >> 4), (pos.getZ() >> 4));
-					
-					int last = PumpjackHandler.reservoirsCache.size();
-					ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
-					boolean isNew = PumpjackHandler.reservoirsCache.size() != last;
-					
-					if(info != null){
-						int cap = info.capacity;
-						int cur = info.current;
-						Reservoir type = info.getType();
-						
-						if(type!=null){
-							String out = String.format(Locale.ENGLISH,
-									"%s %s: %.3f/%.3f Buckets of %s%s%s",
-									coords.x,
-									coords.z,
-									cur/1000D,
-									cap/1000D,
-									type.name,
-									(info.overrideType!=null?" [OVERRIDDEN]":""),
-									(isNew?" [NEW]":"")
-							);
-							
-							playerIn.sendStatusMessage(new StringTextComponent(out), true);
-							
-							return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
-						}
-					}
-					
-					playerIn.sendStatusMessage(new StringTextComponent(String.format(Locale.ENGLISH, "%s %s: Nothing.", coords.x, coords.z)), true);
-					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
-				}
-				case CHUNKBASED_RESERVOIR_BIG_SCAN:{
-					BlockPos pos = playerIn.getPosition();
-					int r = 5;
-					int cx = (pos.getX() >> 4);
-					int cz = (pos.getZ() >> 4);
-					ImmersivePetroleum.log.info(worldIn.getDimensionKey());
-					for(int i = -r;i <= r;i++){
-						for(int j = -r;j <= r;j++){
-							int x = cx + i;
-							int z = cz + j;
-							
-							DimensionChunkCoords coords = new DimensionChunkCoords(worldIn.getDimensionKey(), x, z);
-							
-							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(worldIn, coords, false);
-							if(info != null && info.getType() != null){
-								Reservoir reservoir = info.getType();
-								
-								int cap = info.capacity;
-								int cur = info.current;
-								
-								String out = String.format(Locale.ENGLISH, "%s %s:\t%.3f/%.3f Buckets of %s", coords.x, coords.z, cur / 1000D, cap / 1000D, reservoir.name);
-								
-								ImmersivePetroleum.log.info(out);
-							}
-						}
-					}
-					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
-				}
-				case CHUNKBASED_RESERVOIR_CLEAR_CACHE:{
-					int contentSize = PumpjackHandler.reservoirsCache.size();
-					
-					PumpjackHandler.reservoirsCache.clear();
-					PumpjackHandler.recalculateChances();
-					
-					IPSaveData.markInstanceAsDirty();
-					
-					playerIn.sendStatusMessage(new StringTextComponent("Cleared Oil Cache. (Removed " + contentSize + ")"), true);
 					
 					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 				}

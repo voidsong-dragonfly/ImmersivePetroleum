@@ -2,19 +2,12 @@ package flaxbeard.immersivepetroleum.api.crafting.pumpjack;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
-import flaxbeard.immersivepetroleum.common.IPSaveData;
-import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SharedSeedRandom;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
 import net.minecraft.world.World;
 
 /**
@@ -22,12 +15,14 @@ import net.minecraft.world.World;
  */
 // TODO Chunk-Based Reservoir: Nuke this once the new system is in place.
 public class PumpjackHandler{
+	@SuppressWarnings("unused")
+	@Deprecated
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
+	@Deprecated
 	public static Map<DimensionChunkCoords, Long> timeCache = new HashMap<>();
+	@Deprecated
 	public static Map<DimensionChunkCoords, ReservoirWorldInfo> reservoirsCache = new HashMap<>();
-	
-	private static int depositSize = 1;
 	
 	/**
 	 * Gets amount of fluid in a specific chunk's reservoir in mB
@@ -38,14 +33,7 @@ public class PumpjackHandler{
 	 * @return mB of fluid in the given reservoir
 	 */
 	public static int getFluidAmount(World world, int chunkX, int chunkZ){
-		if(world.isRemote)
-			return 0;
-		
-		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
-		if(info == null || (info.capacity == 0) || info.getType() == null || info.getType().fluidLocation == null || (info.current == 0 && info.getType().residual == 0))
-			return 0;
-		
-		return info.current;
+		return 0;
 	}
 	
 	/**
@@ -57,16 +45,7 @@ public class PumpjackHandler{
 	 * @return Fluid in given reservoir (or null if none)
 	 */
 	public static Fluid getFluid(World world, int chunkX, int chunkZ){
-		if(world.isRemote)
-			return null;
-		
-		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
-		
-		if(info == null || info.getType() == null){
-			return null;
-		}else{
-			return info.getType().getFluid();
-		}
+		return null;
 	}
 	
 	/**
@@ -79,22 +58,7 @@ public class PumpjackHandler{
 	 * @return mB of fluid that can be extracted "residually"
 	 */
 	public static int getResidualFluid(World world, int chunkX, int chunkZ){
-		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
-		
-		if(info == null || info.getType() == null || info.getType().fluidLocation == null || (info.capacity == 0) || (info.current == 0 && info.getType().residual == 0))
-			return 0;
-		
-		DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimensionKey(), chunkX / depositSize, chunkZ / depositSize);
-		
-		Long l = timeCache.get(coords);
-		if(l == null){
-			timeCache.put(coords, world.getGameTime());
-			return info.getType().residual;
-		}
-		
-		long lastTime = world.getGameTime();
-		timeCache.put(coords, world.getGameTime());
-		return lastTime != l ? info.getType().residual : 0;
+		return 0;
 	}
 	
 	/**
@@ -106,7 +70,7 @@ public class PumpjackHandler{
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
 	public static ReservoirWorldInfo getOrCreateOilWorldInfo(World world, int chunkX, int chunkZ){
-		return getOrCreateOilWorldInfo(world, new DimensionChunkCoords(world.getDimensionKey(), chunkX, chunkZ), false);
+		return null;
 	}
 	
 	/**
@@ -118,61 +82,7 @@ public class PumpjackHandler{
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
 	public static ReservoirWorldInfo getOrCreateOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
-		if(world.isRemote)
-			return null;
-		
-		ReservoirWorldInfo worldInfo = reservoirsCache.get(coords);
-		if(worldInfo == null){
-			Reservoir reservoir = null;
-			
-			Random r = SharedSeedRandom.createSlimeChunkSpawningSeed(coords.x, coords.z, ((ISeedReader) world).getSeed(), 90210L);
-			boolean empty = (r.nextDouble() > IPServerConfig.EXTRACTION.reservoir_chance.get());
-			double size = r.nextDouble();
-			int query = r.nextInt();
-			
-			ImmersivePetroleum.log.debug("Empty? {}. Forced? {}. Size: {}, Query: {}", empty ? "Yes" : "No", force ? "Yes" : "No", size, query);
-			
-			if(!empty || force){
-				ResourceLocation biome = world.getBiome(new BlockPos(coords.x << 4, 64, coords.z << 4)).getRegistryName();
-				ResourceLocation dimension = coords.dimension.getLocation();
-				ImmersivePetroleum.log.debug(coords.dimension.getLocation());
-				
-				int totalWeight = getTotalWeight(dimension, biome);
-				ImmersivePetroleum.log.debug("Total Weight: " + totalWeight);
-				if(totalWeight > 0){
-					int weight = Math.abs(query % totalWeight);
-					for(Reservoir res:Reservoir.map.values()){
-						if(res.isValidDimension(dimension) && res.isValidBiome(biome)){
-							weight -= res.weight;
-							if(weight < 0){
-								reservoir = res;
-								break;
-							}
-						}
-					}
-				}
-			}
-			
-			int capacity = 0;
-			
-			if(reservoir != null){
-				ImmersivePetroleum.log.debug("Using: {}", reservoir.name);
-				
-				capacity = (int) ((reservoir.maxSize - reservoir.minSize) * size + reservoir.minSize);
-			}
-			
-			ImmersivePetroleum.log.debug("Capacity: {}", capacity);
-			
-			worldInfo = new ReservoirWorldInfo();
-			worldInfo.capacity = capacity;
-			worldInfo.current = capacity;
-			worldInfo.type = reservoir;
-			
-			ImmersivePetroleum.log.debug("Storing {} for {}", worldInfo, coords);
-			reservoirsCache.put(coords, worldInfo);
-		}
-		
-		return worldInfo;
+		return null;
 	}
 	
 	/**
@@ -184,9 +94,6 @@ public class PumpjackHandler{
 	 * @param amount Amount of fluid in mB to drain
 	 */
 	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount){
-		ReservoirWorldInfo info = getOrCreateOilWorldInfo(world, chunkX, chunkZ);
-		info.current = Math.max(info.current - amount, 0);
-		IPSaveData.markInstanceAsDirty();
 	}
 	
 	/**
@@ -198,21 +105,7 @@ public class PumpjackHandler{
 	 * @return The total weight associated with the dimension/biome pair
 	 */
 	public static int getTotalWeight(ResourceLocation dimension, ResourceLocation biome){
-		if(!totalWeightMap.containsKey(dimension)){
-			totalWeightMap.put(dimension, new HashMap<>());
-		}
-		
-		Map<ResourceLocation, Integer> dimMap = totalWeightMap.get(dimension);
-		
-		if(dimMap.containsKey(biome))
-			return dimMap.get(biome);
-		
-		int totalWeight = 0;
-		for(Reservoir reservoir:Reservoir.map.values()){
-			if(reservoir.isValidDimension(dimension) && reservoir.isValidBiome(biome))
-				totalWeight += reservoir.weight;
-		}
-		return totalWeight;
+		return 0;
 	}
 	
 	/**
@@ -223,11 +116,9 @@ public class PumpjackHandler{
 	 * @return
 	 */
 	public static Reservoir addReservoir(ResourceLocation id, Reservoir reservoir){
-		Reservoir.map.put(id, reservoir);
-		return reservoir;
+		return null;
 	}
 	
 	public static void recalculateChances(){
-		totalWeightMap.clear();
 	}
 }

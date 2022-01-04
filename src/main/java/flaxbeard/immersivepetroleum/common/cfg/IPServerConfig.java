@@ -53,15 +53,10 @@ public class IPServerConfig{
 	}
 	
 	public static class Extraction{
-		public final ConfigValue<Double> reservoir_chance;
 		public final ConfigValue<Integer> pumpjack_consumption;
 		public final ConfigValue<Integer> pumpjack_speed;
 		Extraction(ForgeConfigSpec.Builder builder){
 			builder.push("Extraction");
-			
-			reservoir_chance = builder
-					.comment("The chance that a chunk contains a fluid reservoir", "Default: 0.5")
-					.define("reservoir_chance", Double.valueOf(0.5));
 			
 			pumpjack_consumption = builder
 					.comment("The Flux the Pumpjack requires each tick to pump", "Default: 1024")

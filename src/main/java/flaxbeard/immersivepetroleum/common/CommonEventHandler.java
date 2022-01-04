@@ -9,18 +9,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.SampleDrillTileEntity;
 import blusunrize.immersiveengineering.common.items.CoresampleItem;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.crafting.pumpjack.PumpjackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;
@@ -75,6 +71,11 @@ public class CommonEventHandler{
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void handlePickupItem(RightClickBlock event){
+		// TODO Reuse to find islands?
+		boolean disable = true;
+		if(disable) return;
+		
+		
 		BlockPos pos = event.getPos();
 		BlockState state = event.getWorld().getBlockState(pos);
 		if(state.getBlock() == IEBlocks.MetalDevices.sampleDrill){
@@ -88,21 +89,21 @@ public class CommonEventHandler{
 				if(!drill.sample.isEmpty()){
 					ColumnPos cPos = CoresampleItem.getCoords(drill.sample);
 					if(cPos != null){
-						try{
-							World world = event.getWorld();
-							DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimensionKey(), cPos.x >> 4, cPos.z >> 4);
-							
-							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
-							if(info != null && info.getType() != null){
-								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
-								ItemNBTHelper.putInt(drill.sample, "resAmount", info.current);
-							}else{
-								ItemNBTHelper.putInt(drill.sample, "resAmount", 0);
-							}
-							
-						}catch(Exception e){
-							ImmersivePetroleum.log.warn("This aint good!", e);
-						}
+//						try{
+//							World world = event.getWorld();
+//							DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimensionKey(), cPos.x >> 4, cPos.z >> 4);
+//							
+//							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
+//							if(info != null && info.getType() != null){
+//								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
+//								ItemNBTHelper.putInt(drill.sample, "resAmount", info.current);
+//							}else{
+//								ItemNBTHelper.putInt(drill.sample, "resAmount", 0);
+//							}
+//							
+//						}catch(Exception e){
+//							ImmersivePetroleum.log.warn("This aint good!", e);
+//						}
 					}
 				}
 			}
