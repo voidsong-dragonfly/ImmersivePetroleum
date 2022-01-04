@@ -145,7 +145,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 									}
 								}
 								
-								if(fluid.getAmount() > 0 && portWest_output != null){
+								if(portWest_output != null && fluid.getAmount() > 0){
 									int accepted = portWest_output.fill(fluid, FluidAction.SIMULATE);
 									if(accepted > 0){
 										int drained = portWest_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
@@ -158,49 +158,10 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						
 						if(active){
 							this.energyStorage.extractEnergy(consumption, false);
+							this.activeTicks++;
 						}
-						this.activeTicks++;
 					}
 				}
-				
-				/*
-				boolean disable = true;
-				int available = getFluidAmount();
-				int residual = getResidualFluid();
-				if((available > 0 || residual > 0) && !disable){
-					int oilAmnt = available <= 0 ? residual : available;
-					
-					FluidStack out = new FluidStack(getFluidType(), Math.min(IPServerConfig.EXTRACTION.pumpjack_speed.get(), oilAmnt));
-					Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-					BlockPos outputPos = getBlockPosForPos(East_Port).offset(facing);
-					IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
-					if(output != null){
-						int accepted = output.fill(out, FluidAction.SIMULATE);
-						if(accepted > 0){
-							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
-							extractFluid(drained);
-							active = true;
-							out = Utils.copyFluidStackWithAmount(out, out.getAmount() - drained, false);
-						}
-					}
-					
-					facing = getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
-					outputPos = getBlockPosForPos(West_Port).offset(facing);
-					output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
-					if(output != null){
-						int accepted = output.fill(out, FluidAction.SIMULATE);
-						if(accepted > 0){
-							int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), FluidAction.EXECUTE);
-							extractFluid(drained);
-							active = true;
-						}
-					}
-					
-					if(active){
-						this.energyStorage.extractEnergy(consumption, false);
-					}
-					this.activeTicks++;
-				}*/
 			}
 		}
 		
@@ -330,11 +291,6 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 					return new FluidTank[]{master.fakeTank};
 				}
 			}
-			
-			// Below Head
-//			if(IPServerConfig.EXTRACTION.required_pipes.get() && this.posInMultiblock.equals(Down_Port) && (side == null || side == Direction.DOWN)){
-//				return new FluidTank[]{master.fakeTank};
-//			}
 		}
 		return new FluidTank[0];
 	}
