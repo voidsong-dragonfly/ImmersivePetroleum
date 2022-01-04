@@ -172,12 +172,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			this.drilling = this.spilling = false;
 			
 			if(!isRSDisabled()){
-				// TODO
-				
-				// Drill with water
-				// FluidHelper.copyFluid(fluid, amount, pressurize)
-				// updateMasterBlock(null, true);
-				
 				WellTileEntity well = null;
 				
 				TileEntity te = this.getWorldNonnull().getTileEntity(this.pos.down());
@@ -233,10 +227,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 							}
 						}
 					}else{
-						// This is the part where it should start filling tanks
-						// ..or spill if all tanks are full
-						
-						// TODO Preamtively check if the tapped islands contain the same fluid before drilling?
 						boolean disable = false;
 						if(!disable){
 							Fluid extractedFluid = Fluids.EMPTY;

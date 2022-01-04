@@ -141,8 +141,6 @@ public class ReservoirIsland{
 	}
 	
 	/**
-	 * Used by Derrick
-	 * 
 	 * @param x
 	 * @param z
 	 * @return How much was extracted

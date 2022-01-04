@@ -88,38 +88,78 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 			}
 		}else{
 			if(this.drillingCompleted){
-				ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), this.pos);
-				if(island != null){
-					int x = this.pos.getX();
-					int z = this.pos.getZ();
-					
-					if(this.world.getGameTime() % 10 == 0){
-						BlockPos above = this.pos.offset(Direction.UP);
-						BlockState aState = this.world.getBlockState(above);
+				if(this.tappedIslands.size() > 0){
+					if(this.world.getGameTime() % 10 == 0 && !isMasterBlockAbove()){
+						boolean spill = false;
 						
-						boolean last = this.spill;
-						if(island.getPressure(getWorldNonnull(), x, z) > 0.0 && !((aState.getBlock() == IPContent.Multiblock.derrick || aState.getBlock() == IPContent.Multiblock.pumpjack) && !aState.get(IEProperties.MULTIBLOCKSLAVE))){
-							this.spill = true;
-						}else{
-							this.spill = false;
+						for(ColumnPos cPos:this.tappedIslands){
+							ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+							
+							// One is enough to trigger spilling
+							if(island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
+								spill = true;
+								break;
+							}
 						}
 						
-						if(this.spill != last){
+						if(spill != this.spill){
+							this.spill = spill;
 							markDirty();
-							
-							BlockState state = this.world.getBlockState(this.pos);
-							this.world.notifyBlockUpdate(this.pos, state, state, 3);
-							this.world.notifyNeighborsOfStateChange(this.pos, state.getBlock());
 						}
 					}
 					
-					if(this.spill && island != null){
-						// TODO Spill using the tappedIslands array
-						island.extractWithPressure(getWorld(), x, z);
+					if(this.spill){
+						for(ColumnPos cPos:this.tappedIslands){
+							ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+							
+							if(island != null){
+								// Already unpressurized islands are left alone
+								island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
+							}
+						}
+					}
+					
+				}else{
+					ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), this.pos);
+					if(island != null){
+						int x = this.pos.getX();
+						int z = this.pos.getZ();
+						
+						if(this.world.getGameTime() % 10 == 0){
+							boolean last = this.spill;
+							
+							// Even if the pressure is high, don't spill if the masterblock from one is detected.
+							if(island.getPressure(getWorldNonnull(), x, z) > 0.0 && !isMasterBlockAbove()){
+								this.spill = true;
+							}else{
+								this.spill = false;
+							}
+							
+							if(this.spill != last){
+								markDirty();
+							}
+						}
+						
+						if(this.spill && island != null){
+							island.extractWithPressure(getWorldNonnull(), x, z);
+						}
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Simply checks if either the Pumpjack or Derrick masterblock is above the
+	 * well
+	 * 
+	 * @return true if that is the case
+	 */
+	private boolean isMasterBlockAbove(){
+		BlockPos above = this.pos.offset(Direction.UP);
+		BlockState aState = getWorldNonnull().getBlockState(above);
+		
+		return (aState.getBlock() == IPContent.Multiblock.derrick || aState.getBlock() == IPContent.Multiblock.pumpjack) && !aState.get(IEProperties.MULTIBLOCKSLAVE);
 	}
 	
 	@Override
