@@ -22,7 +22,7 @@ public class IslandCommand{
 	}
 	
 	public static LiteralArgumentBuilder<CommandSource> create(){
-		LiteralArgumentBuilder<CommandSource> main = Commands.literal("reservoirisland").executes(source -> {
+		LiteralArgumentBuilder<CommandSource> main = Commands.literal("reservoir").executes(source -> {
 			return Command.SINGLE_SUCCESS;
 		}).requires(source -> source.hasPermissionLevel(4));
 		
@@ -84,7 +84,7 @@ public class IslandCommand{
 		}
 		
 		if(reservoir == null){
-			CommandUtils.sendTranslated(sender, "chat.immersivepetroleum.command.reservoir.set.invalidReservoir", name);
+			CommandUtils.sendTranslatedError(sender, "chat.immersivepetroleum.command.reservoir.set.invalidReservoir", name);
 			return;
 		}
 		

@@ -19,6 +19,7 @@ import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
+import flaxbeard.immersivepetroleum.common.util.commands.IslandCommand;
 import flaxbeard.immersivepetroleum.common.util.loot.IPLootFunctions;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.command.CommandSource;
@@ -129,7 +130,7 @@ public class ImmersivePetroleum{
 	public void registerCommand(RegisterCommandsEvent event){
 		LiteralArgumentBuilder<CommandSource> ip = Commands.literal("ip");
 		
-//		ip.then(ReservoirCommand.create());
+		ip.then(IslandCommand.create());
 		
 		event.getDispatcher().register(ip);
 	}
