@@ -1,18 +1,21 @@
 package flaxbeard.immersivepetroleum.common.blocks.stone;
 
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
+import net.minecraftforge.common.ToolType;
 
-public class WellBlock extends IPBlockBase{
-	public WellBlock(){
-		super("well", Block.Properties.create(Material.ROCK).hardnessAndResistance(-1.0F, 3600000.0F).noDrops().setAllowsSpawn((s, r, p, e) -> false));
+public class WellPipeBlock extends IPBlockBase{
+	public WellPipeBlock(){
+		super("well_pipe", Block.Properties.create(Material.ROCK, MaterialColor.OBSIDIAN).hardnessAndResistance(150.0F, 3000.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.STONE));
 	}
 	
 	@Override
@@ -22,13 +25,17 @@ public class WellBlock extends IPBlockBase{
 	}
 	
 	@Override
+	public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor){
+		
+	}
+	
+	@Override
 	public boolean hasTileEntity(BlockState state){
-		return true;
+		return false; // Not yet
 	}
 	
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world){
-		WellTileEntity tile = IPTileTypes.WELL.get().create();
-		return tile;
+		return null;
 	}
 }

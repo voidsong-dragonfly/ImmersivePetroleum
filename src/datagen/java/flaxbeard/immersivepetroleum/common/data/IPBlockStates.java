@@ -97,9 +97,19 @@ public class IPBlockStates extends BlockStateProvider{
 		{
 			Block well = IPContent.Blocks.well;
 			
-			ModelFile wellModel = models().cubeTop(well.getRegistryName().toString(), modLoc("block/well_side"), modLoc("block/well_top"));
+			ModelFile wellModel = models().cubeTop(well.getRegistryName().toString(), mcLoc("block/bedrock"), modLoc("block/well_top_oil"));
 			getVariantBuilder(well).partialState()
 				.setModels(new ConfiguredModel(wellModel));
+		}
+		
+		{
+			Block wellPipe = IPContent.Blocks.wellPipe;
+
+			ResourceLocation ieConreteTexture = new ResourceLocation("immersiveengineering", "block/stone_decoration/concrete");
+			ResourceLocation wellPipeTexture = modLoc("block/well_pipe_top");
+			ModelFile wellPipeModel = models().cubeBottomTop(wellPipe.getRegistryName().toString(), ieConreteTexture, wellPipeTexture, wellPipeTexture);
+			getVariantBuilder(wellPipe).partialState()
+				.setModels(new ConfiguredModel(wellPipeModel));
 		}
 		
 		autolubricator();

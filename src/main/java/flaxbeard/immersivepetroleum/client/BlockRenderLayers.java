@@ -19,6 +19,8 @@ public class BlockRenderLayers{
 		RenderTypeLookup.setRenderLayer(IPContent.Blocks.gas_generator, BlockRenderLayers::solidCutout);
 		RenderTypeLookup.setRenderLayer(IPContent.Blocks.flarestack, BlockRenderLayers::stackLayer);
 		
+		RenderTypeLookup.setRenderLayer(IPContent.Blocks.well, RenderType.getCutout());
+		
 		RenderTypeLookup.setRenderLayer(IPContent.Blocks.dummyConveyor, RenderType.getCutout());
 		RenderTypeLookup.setRenderLayer(IPContent.Blocks.dummyOilOre, RenderType.getCutout());
 		RenderTypeLookup.setRenderLayer(IPContent.Blocks.dummyPipe, RenderType.getCutout());
