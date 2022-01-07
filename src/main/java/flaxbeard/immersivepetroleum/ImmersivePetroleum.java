@@ -9,6 +9,7 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
+import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
@@ -113,6 +114,7 @@ public class ImmersivePetroleum{
 		proxy.postInit();
 		
 		ReservoirHandler.recalculateChances();
+		ExternalModContent.init();
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event){

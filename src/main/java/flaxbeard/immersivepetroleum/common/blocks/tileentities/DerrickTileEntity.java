@@ -16,6 +16,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteract
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
@@ -68,7 +69,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
-	public FluidTank waterTank = new FluidTank(8000, fs -> fs.getFluid() == Fluids.WATER);
+	public FluidTank waterTank = new FluidTank(8000, this::acceptsFluid);
 	public boolean drilling, spilling;
 	public int timer = 0;
 	public DerrickTileEntity(){
@@ -126,6 +127,11 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	protected CompoundNBT writeInventory(NonNullList<ItemStack> list){
 		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
+	}
+	
+	private boolean acceptsFluid(FluidStack fs){
+		Fluid fluid = fs.getFluid();
+		return fluid == Fluids.WATER || fluid == ExternalModContent.IE_CONCRETE_FLUID.get();
 	}
 	
 	static final int POWER = 512;
@@ -227,42 +233,39 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 							}
 						}
 					}else{
-						boolean disable = false;
-						if(!disable){
-							Fluid extractedFluid = Fluids.EMPTY;
-							int extractedAmount = 0;
-							for(ColumnPos cPos:well.tappedIslands){
-								ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
-								if(island != null){
-									if(extractedFluid == Fluids.EMPTY){
-										extractedFluid = island.getType().getFluid();
-									}else if(island.getType().getFluid() != extractedFluid){
-										continue;
-									}
-									
-									extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
+						Fluid extractedFluid = Fluids.EMPTY;
+						int extractedAmount = 0;
+						for(ColumnPos cPos:well.tappedIslands){
+							ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+							if(island != null){
+								if(extractedFluid == Fluids.EMPTY){
+									extractedFluid = island.getType().getFluid();
+								}else if(island.getType().getFluid() != extractedFluid){
+									continue;
 								}
+								
+								extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
 							}
-							
-							if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
-								Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-								BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
-								IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
-								if(output != null){
-									FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
-									
-									int accepted = output.fill(fluid, FluidAction.SIMULATE);
-									if(accepted > 0){
-										int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
-										if(fluid.getAmount() - drained > 0){
-											this.spilling = true;
-										}
-									}else{
+						}
+						
+						if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
+							Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+							BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
+							IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
+							if(output != null){
+								FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
+								
+								int accepted = output.fill(fluid, FluidAction.SIMULATE);
+								if(accepted > 0){
+									int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
+									if(fluid.getAmount() - drained > 0){
 										this.spilling = true;
 									}
 								}else{
 									this.spilling = true;
 								}
+							}else{
+								this.spilling = true;
 							}
 						}
 					}

@@ -1,6 +1,8 @@
 package flaxbeard.immersivepetroleum.common.blocks.stone;
 
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -31,11 +33,12 @@ public class WellPipeBlock extends IPBlockBase{
 	
 	@Override
 	public boolean hasTileEntity(BlockState state){
-		return false; // Not yet
+		return true;
 	}
 	
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world){
-		return null;
+		WellPipeTileEntity tile = IPTileTypes.WELL_PIPE.get().create();
+		return tile;
 	}
 }
