@@ -7,6 +7,8 @@ import java.util.Locale;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -52,25 +54,42 @@ public class PipeConfig extends Button{
 	protected ColumnPos tilePos;
 	protected int gridWidthScaled, gridHeightScaled;
 	protected int gridScale;
-	public PipeConfig(ColumnPos tilePos, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
+	public PipeConfig(DerrickTileEntity tile, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
 		super(x, y, width, height, StringTextComponent.EMPTY, NO_ACTION);
+		this.tilePos = new ColumnPos(tile.getPos());
+		
 		this.grid = new Grid(gridWidth, gridHeight);
+		copyGridFrom(tile.gridStorage);
 		this.gridWidthScaled = gridWidth * gridScale;
 		this.gridHeightScaled = gridHeight * gridScale;
 		this.gridScale = MathHelper.clamp(gridScale, 1, Integer.MAX_VALUE);
-		
-		this.tilePos = tilePos;
 		
 		this.dynTextureWidth = gridWidth;
 		this.dynTextureHeight = gridHeight;
 		this.gridTexture = new DynamicTexture(this.dynTextureWidth, this.dynTextureHeight, true);
 		ResourceLocation loc = Minecraft.getInstance().textureManager.getDynamicTextureLocation("pipegrid/" + this.hashCode(), this.gridTexture);
 		this.gridTextureRenderType = RenderType.getText(loc);
-		updateTexture();
 		
 		this.pipeNormalColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_normal_color.get(), 16);
 		this.pipePerforatedColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_perforated_color.get(), 16);
 		this.pipePerforatedFixedColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_perforated_fixed_color.get(), 16);
+		
+		updateTexture();
+	}
+	
+	public void reset(DerrickTileEntity tile){
+		copyGridFrom(tile.gridStorage);
+		updateTexture();
+	}
+	
+	private void copyGridFrom(PipeConfig.Grid grid){
+		if(grid != null && grid.width == this.grid.width && grid.height == this.grid.height){
+			for(int i = 0;i < this.grid.array.length;i++){
+				this.grid.array[i] = grid.array[i];
+			}
+			this.grid.changed = true;
+			ImmersivePetroleum.log.info("Copied grid from Derrick storage.");
+		}
 	}
 	
 	public PipeConfig.Grid getGrid(){
@@ -86,8 +105,6 @@ public class PipeConfig extends Button{
 		NativeImage image = this.gridTexture.getTextureData();
 		int texCenterX = this.grid.width / this.gridScale;
 		int texCenterY = this.grid.height / this.gridScale;
-		
-		// TODO Use height map instead of checker pattern?
 		
 		ClientWorld world = Minecraft.getInstance().world;
 		

@@ -50,40 +50,47 @@ public class MessageDerrick implements INetMessage{
 			
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER){
 				ServerWorld world = Objects.requireNonNull(con.getSender()).getServerWorld();
-				if(world.isAreaLoaded(this.derrickPos, 1)){
+				if(world.isAreaLoaded(this.derrickPos, 2)){
 					TileEntity te = world.getTileEntity(this.derrickPos);
 					if(te instanceof DerrickTileEntity){
-						WellTileEntity well = ((DerrickTileEntity) te).getOrCreateWell();
+						((DerrickTileEntity) te).gridStorage = PipeConfig.Grid.fromCompound(this.nbt);
+						((DerrickTileEntity) te).updateMasterBlock(null, true);
+						ImmersivePetroleum.log.info("Applied grid to Derrick storage.");
 						
-						if(well != null){
-							int additionalPipes = 0;
-							List<ColumnPos> list = new ArrayList<>();
-							PipeConfig.Grid grid = PipeConfig.Grid.fromCompound(this.nbt);
-							for(int j = 0;j < grid.getHeight();j++){
-								for(int i = 0;i < grid.getWidth();i++){
-									int type = grid.get(i, j);
-									
-									if(type > 0){
-										switch(type){
-											case PipeConfig.PIPE_PERFORATED:
-											case PipeConfig.PIPE_PERFORATED_FIXED:{
-												int x = i - (grid.getWidth() / 2);
-												int z = j - (grid.getHeight() / 2);
-												ColumnPos pos = new ColumnPos(this.derrickPos.getX() + x, this.derrickPos.getZ() + z);
-												ImmersivePetroleum.log.info("x{} z{} -> {}", x, z, pos);
-												list.add(pos);
-											}
-											case PipeConfig.PIPE_NORMAL:{
-												additionalPipes++;
+						boolean use = false;
+						if(use){
+							// TODO Reuse this whole thing!
+							WellTileEntity well = ((DerrickTileEntity) te).getOrCreateWell();
+							if(well != null){
+								int additionalPipes = 0;
+								List<ColumnPos> list = new ArrayList<>();
+								PipeConfig.Grid grid = PipeConfig.Grid.fromCompound(this.nbt);
+								for(int j = 0;j < grid.getHeight();j++){
+									for(int i = 0;i < grid.getWidth();i++){
+										int type = grid.get(i, j);
+										
+										if(type > 0){
+											switch(type){
+												case PipeConfig.PIPE_PERFORATED:
+												case PipeConfig.PIPE_PERFORATED_FIXED:{
+													int x = i - (grid.getWidth() / 2);
+													int z = j - (grid.getHeight() / 2);
+													ColumnPos pos = new ColumnPos(this.derrickPos.getX() + x, this.derrickPos.getZ() + z);
+													ImmersivePetroleum.log.info("x{} z{} -> {}", x, z, pos);
+													list.add(pos);
+												}
+												case PipeConfig.PIPE_NORMAL:{
+													additionalPipes++;
+												}
 											}
 										}
 									}
 								}
+								
+								well.tappedIslands = list;
+								well.additionalPipes = additionalPipes;
+								well.markDirty();
 							}
-							
-							well.tappedIslands = list;
-							well.additionalPipes = additionalPipes;
-							well.markDirty();
 						}
 					}
 				}

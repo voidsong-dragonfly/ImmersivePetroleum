@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks.stone;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntity;
@@ -13,6 +14,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 
 public class WellPipeBlock extends IPBlockBase{
@@ -28,7 +31,30 @@ public class WellPipeBlock extends IPBlockBase{
 	
 	@Override
 	public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor){
+		if(world instanceof ServerWorld)
+			ImmersivePetroleum.log.info("onNeighborChange({}, {}, {}, {})", state.getBlock().getRegistryName(), ((ServerWorld) world).getDimensionKey().getLocation(), pos, neighbor);
 		
+		int d = pos.getY() - neighbor.getY();
+		if(d > 0 && world.getBlockState(pos.up()).getBlock() != this){
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
+		if(worldIn instanceof ServerWorld)
+			ImmersivePetroleum.log.info("onBlockAdded({}, {}, {}, {}, {})", state.getBlock().getRegistryName(), ((ServerWorld) worldIn).getDimensionKey().getLocation(), pos, oldState.getBlock().getRegistryName(), isMoving);
+		
+		super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(worldIn instanceof ServerWorld)
+			ImmersivePetroleum.log.info("onReplaced({}, {}, {}, {}, {})", state.getBlock().getRegistryName(), ((ServerWorld) worldIn).getDimensionKey().getLocation(), pos, newState.getBlock().getRegistryName(), isMoving);
+		
+		super.onReplaced(state, worldIn, pos, newState, isMoving);
 	}
 	
 	@Override

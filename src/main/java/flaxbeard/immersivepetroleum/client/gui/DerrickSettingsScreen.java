@@ -15,8 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -31,11 +29,9 @@ public class DerrickSettingsScreen extends Screen{
 	private PipeConfig pipeConfig;
 	
 	final DerrickScreen derrickScreen;
-	final BlockPos derrickWorldPos;
 	public DerrickSettingsScreen(DerrickScreen derrickScreen){
 		super(new StringTextComponent("DerrickSettings"));
 		this.derrickScreen = derrickScreen;
-		this.derrickWorldPos = derrickScreen.tile.getPos();
 	}
 	
 	@Override
@@ -46,21 +42,32 @@ public class DerrickSettingsScreen extends Screen{
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) - 54, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Set"), b -> {
-			MessageDerrick.sendToServer(this.derrickWorldPos, this.pipeConfig.getGrid());
+		this.pipeConfig = new PipeConfig(this.derrickScreen.tile, this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
+		addButton(this.pipeConfig);
+		
+		addButton(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new StringTextComponent("Set"), b -> {
+			MessageDerrick.sendToServer(this.derrickScreen.tile.getPos(), this.pipeConfig.getGrid());
+		}, (button, matrix, mx, my) -> {
+			List<ITextComponent> list = new ArrayList<>();
+			list.add(new StringTextComponent("Applies the Path to Derrick"));
+			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
 		}));
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) + 5, this.guiTop + this.ySize - 25, 50, 20, new StringTextComponent("Close"), b -> {
+		addButton(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new StringTextComponent("Reload"), b -> {
+			this.pipeConfig.reset(this.derrickScreen.tile);
+		}, (button, matrix, mx, my) -> {
+			List<ITextComponent> list = new ArrayList<>();
+			list.add(new StringTextComponent("Loads the already saved config again."));
+			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
+		}));
+		
+		addButton(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new StringTextComponent("Close"), b -> {
 			DerrickSettingsScreen.this.closeScreen();
 		}, (button, matrix, mx, my) -> {
 			List<ITextComponent> list = new ArrayList<>();
-			list.add(new StringTextComponent("§4§n§lBefore clicking"));
-			list.add(new StringTextComponent("If you re-open this Config window it will not restore what has been set previously!"));
-			GuiUtils.drawHoveringText(matrix, list, mx, my, width, height, -1, font);
+			list.add(new StringTextComponent("Return to Derrick"));
+			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
 		}));
-		
-		this.pipeConfig = new PipeConfig(new ColumnPos(this.derrickWorldPos), this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
-		addButton(this.pipeConfig);
 	}
 	
 	@Override

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
@@ -14,15 +17,18 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
-import flaxbeard.immersivepetroleum.common.util.FluidHelper;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -30,7 +36,6 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -43,11 +48,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 /**
@@ -72,6 +75,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	public FluidTank waterTank = new FluidTank(8000, this::acceptsFluid);
 	public boolean drilling, spilling;
 	public int timer = 0;
+	
+	@Nullable
+	public PipeConfig.Grid gridStorage;
+	
 	public DerrickTileEntity(){
 		super(DerrickMultiblock.INSTANCE, 16000, true, null);
 	}
@@ -91,6 +98,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		
 		this.waterTank.readFromNBT(nbt.getCompound("tank"));
 		
+		if(nbt.contains("grid", NBT.TAG_COMPOUND)){
+			this.gridStorage = PipeConfig.Grid.fromCompound(nbt.getCompound("grid"));
+		}
+		
 		if(!descPacket){
 			readInventory(nbt.getCompound("inventory"));
 		}
@@ -105,6 +116,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		nbt.putInt("timer", this.timer);
 		
 		nbt.put("tank", this.waterTank.writeToNBT(new CompoundNBT()));
+		
+		if(this.gridStorage != null){
+			nbt.put("grid", this.gridStorage.toCompound());
+		}
 		
 		if(!descPacket){
 			nbt.put("inventory", writeInventory(this.inventory));
@@ -131,7 +146,12 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	private boolean acceptsFluid(FluidStack fs){
 		Fluid fluid = fs.getFluid();
-		return fluid == Fluids.WATER || fluid == ExternalModContent.IE_CONCRETE_FLUID.get();
+		
+		if(fluid == ExternalModContent.IE_CONCRETE_FLUID.get()){
+			return true;
+		}
+		
+		return fluid == Fluids.WATER;
 	}
 	
 	static final int POWER = 512;
@@ -172,12 +192,61 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			return;
 		}
 		
-		if(this.world.isAreaLoaded(this.getPos(), 5)){
+		if(this.world.isAreaLoaded(this.getPos(), 2)){
+			boolean forceUpdate = true;
 			boolean lastDrilling = this.drilling;
 			boolean lastSpilling = this.spilling;
 			this.drilling = this.spilling = false;
 			
 			if(!isRSDisabled()){
+				if(this.energyStorage.extractEnergy(POWER, true) >= POWER){
+					this.energyStorage.extractEnergy(POWER, false);
+					
+					if(this.timer-- <= 0){
+						this.timer = 10;
+						
+						boolean reachedBedrock = false;
+						BlockPos dPos = getPos();
+						int y = dPos.getY() - 1;
+						int placed = 0;
+						for(;y >= 0;y--){
+							BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
+							BlockState state = getWorldNonnull().getBlockState(current);
+							
+							if(state.getBlock() == Blocks.BEDROCK){
+								reachedBedrock = true;
+								break;
+							}else if(state.getBlock() == IPContent.Blocks.well){
+								break;
+							}else{
+								if(state.getBlock() != IPContent.Blocks.wellPipe){
+									getWorldNonnull().destroyBlock(current, false);
+									getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+									break;
+								}else{
+									placed++;
+								}
+							}
+						}
+						
+						if(reachedBedrock){
+							BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
+							Block block = getWorldNonnull().getBlockState(current).getBlock();
+							if(block != IPContent.Blocks.well && block == Blocks.BEDROCK){
+								ImmersivePetroleum.log.info("Placed {} well pipes.", placed);
+								
+								getWorldNonnull().setBlockState(current, IPContent.Blocks.well.getDefaultState());
+								WellTileEntity well = (WellTileEntity) getWorldNonnull().getTileEntity(current);
+								if(well.tappedIslands.isEmpty()){
+									well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
+									well.markDirty();
+								}
+							}
+						}
+					}
+				}
+				
+				/*
 				WellTileEntity well = null;
 				
 				TileEntity te = this.getWorldNonnull().getTileEntity(this.pos.down());
@@ -213,11 +282,11 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 								}
 								
 							}else if(well.pipe > 0){
-								int amtEnergy = this.energyStorage.extractEnergy(POWER, false);
+								int amtEnergy = this.energyStorage.extractEnergy(POWER, true);
 								int amtWater = this.waterTank.drain(WATER, FluidAction.SIMULATE).getAmount();
 								
 								if(amtEnergy >= POWER && amtWater >= WATER){
-									this.energyStorage.extractEnergy(POWER, true);
+									this.energyStorage.extractEnergy(POWER, false);
 									this.waterTank.drain(WATER, FluidAction.EXECUTE);
 									
 									if(this.timer-- <= 0){
@@ -270,9 +339,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 						}
 					}
 				}
+				*/
 			}
 			
-			if((lastDrilling != this.drilling) || (lastSpilling != this.spilling)){
+			if(forceUpdate || (lastDrilling != this.drilling) || (lastSpilling != this.spilling)){
 				updateMasterBlock(null, true);
 			}
 		}
@@ -303,6 +373,38 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 		
 		return ret;
+	}
+	
+	public void transferDataToWell(@Nonnull WellTileEntity well){
+		if(well != null){
+			int additionalPipes = 0;
+			List<ColumnPos> list = new ArrayList<>();
+			PipeConfig.Grid grid = this.gridStorage;
+			for(int j = 0;j < grid.getHeight();j++){
+				for(int i = 0;i < grid.getWidth();i++){
+					int type = grid.get(i, j);
+					
+					if(type > 0){
+						switch(type){
+							case PipeConfig.PIPE_PERFORATED:
+							case PipeConfig.PIPE_PERFORATED_FIXED:{
+								int x = i - (grid.getWidth() / 2);
+								int z = j - (grid.getHeight() / 2);
+								ColumnPos pos = new ColumnPos(this.pos.getX() + x, this.pos.getZ() + z);
+								list.add(pos);
+							}
+							case PipeConfig.PIPE_NORMAL:{
+								additionalPipes++;
+							}
+						}
+					}
+				}
+			}
+			
+			well.tappedIslands = list;
+			well.additionalPipes = additionalPipes;
+			well.markDirty();
+		}
 	}
 	
 	@OnlyIn(Dist.CLIENT)

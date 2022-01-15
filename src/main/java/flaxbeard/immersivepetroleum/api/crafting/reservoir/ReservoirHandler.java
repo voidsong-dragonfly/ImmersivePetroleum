@@ -34,12 +34,14 @@ import net.minecraft.world.server.ServerWorld;
  * 
  * @author TwistedGate
  */
+// FIXME There is a leak *SOMEWHERE* that causes islands from an existing world to carry over to freshly created worlds
 public class ReservoirHandler{
 	private static final Multimap<RegistryKey<World>, ReservoirIsland> RESERVOIR_ISLAND_LIST = ArrayListMultimap.create();
 	private static final Map<Pair<RegistryKey<World>, ColumnPos>, ReservoirIsland> CACHE = new HashMap<>();
 	
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
+	static long lastSeed;
 	public static INoiseGenerator generator;
 	public static double noiseThreshold = 0;
 	
@@ -185,8 +187,11 @@ public class ReservoirHandler{
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
 	public static double noiseFor(@Nonnull World world, int x, int z){
-		if(generator == null && !world.isRemote){
-			generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) world).getSeed()), IntStream.of(0));
+		if(!world.isRemote){
+			if(generator == null || ((ISeedReader) world).getSeed() != lastSeed){
+				lastSeed = ((ISeedReader) world).getSeed();
+				generator = new PerlinNoiseGenerator(new SharedSeedRandom(lastSeed), IntStream.of(0));
+			}
 		}
 		
 		double noise = Math.abs(generator.noiseAt(x * scale, z * scale, scale, x * scale)) / .55;

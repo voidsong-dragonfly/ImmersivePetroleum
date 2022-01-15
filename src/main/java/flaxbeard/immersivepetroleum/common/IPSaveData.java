@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.common;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Multimap;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
@@ -28,9 +30,10 @@ public class IPSaveData extends WorldSavedData{
 	public void read(CompoundNBT nbt){
 		ListNBT reservoirs = nbt.getList("reservoirs", NBT.TAG_COMPOUND);
 		if(!reservoirs.isEmpty()){
-			synchronized(ReservoirHandler.getReservoirIslandList()){
+			Multimap<RegistryKey<World>, ReservoirIsland> mainList = ReservoirHandler.getReservoirIslandList();
+			synchronized(mainList){
 				ImmersivePetroleum.log.info("[ReservoirIslands]: Clearing main list.");
-				ReservoirHandler.getReservoirIslandList().clear();
+				mainList.clear();
 				
 				ImmersivePetroleum.log.info("[ReservoirIslands]: Reading...");
 				for(int i = 0;i < reservoirs.size();i++){
@@ -41,7 +44,7 @@ public class IPSaveData extends WorldSavedData{
 					
 					ImmersivePetroleum.log.info("[ReservoirIslands]: Read islands for dim {}", dimType.toString());
 					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundNBT) inbt)).filter(o -> o != null).collect(Collectors.toList());
-					ReservoirHandler.getReservoirIslandList().putAll(dimType, list);
+					mainList.putAll(dimType, list);
 				}
 				
 				ImmersivePetroleum.log.info("[ReservoirIslands]: Clearing Cache...");

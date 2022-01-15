@@ -74,12 +74,21 @@ public class ReservoirIsland{
 	 * @param amount of fluid in this reservoir. (Range: 0 - 4294967295})
 	 */
 	public ReservoirIsland setAmount(long amount){
-		amount = MathHelper.clamp(amount, 0L, MAX_AMOUNT);
+		amount = clamp(amount, 0L, MAX_AMOUNT);
 		
 		this.amount = amount;
 		this.capacity = amount;
 		
 		return this;
+	}
+	
+	/** Copy of {@link MathHelper#clamp(long, long, long)} Because F-You Minecraft, you and your stupid client-only BS */
+	public static long clamp(long num, long min, long max){
+		if(num < min){
+			return min;
+		}else{
+			return num > max ? max : num;
+		}
 	}
 	
 	/**
