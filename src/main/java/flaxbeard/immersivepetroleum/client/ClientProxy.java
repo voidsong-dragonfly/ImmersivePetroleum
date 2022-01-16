@@ -37,6 +37,7 @@ import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DerrickScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
+import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
 import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
@@ -126,6 +127,7 @@ public class ClientProxy extends CommonProxy{
 		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerScreen::new);
 		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "cokerunit"), CokerUnitScreen::new);
 		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "derrick"), DerrickScreen::new);
+		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater"), HydrotreaterScreen::new);
 	}
 	
 	@SuppressWarnings("unchecked")
