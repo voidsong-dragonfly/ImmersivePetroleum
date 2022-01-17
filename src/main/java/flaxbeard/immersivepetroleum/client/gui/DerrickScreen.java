@@ -68,7 +68,7 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 		
 		// Power Stored
 		if(mx > guiLeft + 184 && mx < guiLeft + 192 && my > guiTop + 18 && my < guiTop + 65){
-			tooltip.add(new StringTextComponent(this.tile.energyStorage.getEnergyStored() + "/" + this.tile.energyStorage.getMaxEnergyStored() + " RF"));
+			tooltip.add(new StringTextComponent(this.tile.energyStorage.getEnergyStored() + "/" + this.tile.energyStorage.getMaxEnergyStored() + " IF"));
 		}
 		
 		if(!tooltip.isEmpty()){
