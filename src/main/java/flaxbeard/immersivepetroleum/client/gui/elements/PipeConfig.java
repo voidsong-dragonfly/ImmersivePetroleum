@@ -7,9 +7,10 @@ import java.util.Locale;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.Button;
@@ -88,7 +89,6 @@ public class PipeConfig extends Button{
 				this.grid.array[i] = grid.array[i];
 			}
 			this.grid.changed = true;
-			ImmersivePetroleum.log.info("Copied grid from Derrick storage.");
 		}
 	}
 	
@@ -123,7 +123,15 @@ public class PipeConfig extends Button{
 							ColumnPos c = new ColumnPos(this.tilePos.x + px, this.tilePos.z + py);
 							int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(c.x, 0, c.z)).getY();
 							
-							int tmp = world.getBlockState(new BlockPos(c.x, y - 1, c.z)).getMaterial().getColor().colorValue;
+							BlockPos p;
+							BlockState state;
+							do{
+								--y;
+								p = new BlockPos(c.x, y, c.z);
+								state = world.getBlockState(p);
+							}while(state.getMaterialColor(world, p) == MaterialColor.AIR && y > 0);
+							
+							int tmp = world.getBlockState(p).getMaterialColor(world, p).colorValue;
 							float f = 0.5F;
 							int r = (int) (((tmp >> 16) & 0xFF) * f);
 							int g = (int) (((tmp >> 8) & 0xFF) * f);
