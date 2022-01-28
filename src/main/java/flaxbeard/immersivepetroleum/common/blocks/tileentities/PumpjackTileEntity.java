@@ -97,68 +97,71 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		
 		boolean active = false;
 		
-		int consumption = IPServerConfig.EXTRACTION.pumpjack_consumption.get();
-		int extracted = this.energyStorage.extractEnergy(consumption, true);
-		
-		if(extracted >= consumption){
-			if(!isRSDisabled()){
-				TileEntity te = this.getWorldNonnull().getTileEntity(this.pos.down());
-				if(te != null && te instanceof WellTileEntity){
-					WellTileEntity well = (WellTileEntity) te;
+		if(!isRSDisabled()){
+			TileEntity teLow = this.getWorldNonnull().getTileEntity(this.pos.down());
+			
+			if(teLow instanceof WellPipeTileEntity){
+				WellTileEntity well = ((WellPipeTileEntity) teLow).getWell();
+				
+				boolean debug = true;
+				if(well != null && debug){
+					int consumption = IPServerConfig.EXTRACTION.pumpjack_consumption.get();
+					int extracted = this.energyStorage.extractEnergy(consumption, true);
 					
-					// Does any island still have pressure?
-					boolean foundPressurizedIsland = false;
-					for(ColumnPos cPos:well.tappedIslands){
-						ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
-						if(island != null){
-							if(island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0F){
+					if(extracted >= consumption){
+						// Does any island still have pressure?
+						boolean foundPressurizedIsland = false;
+						for(ColumnPos cPos:well.tappedIslands){
+							ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+							
+							if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0F){
 								foundPressurizedIsland = true;
 								break;
 							}
 						}
-					}
-					
-					if(!foundPressurizedIsland){
-						int extractSpeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
 						
-						Direction portEast_facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-						Direction portWest_facing = getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
-						
-						BlockPos portEast_pos = getBlockPosForPos(East_Port).offset(portEast_facing);
-						BlockPos portWest_pos = getBlockPosForPos(West_Port).offset(portWest_facing);
-
-						IFluidHandler portEast_output = FluidUtil.getFluidHandler(this.world, portEast_pos, portEast_facing.getOpposite()).orElse(null);
-						IFluidHandler portWest_output = FluidUtil.getFluidHandler(this.world, portWest_pos, portWest_facing.getOpposite()).orElse(null);
-						
-						for(ColumnPos cPos:well.tappedIslands){
-							ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
-							if(island != null){
-								FluidStack fluid = new FluidStack(island.getType().getFluid(), island.extract(extractSpeed, FluidAction.SIMULATE));
-								
-								if(portEast_output != null){
-									int accepted = portEast_output.fill(fluid, FluidAction.SIMULATE);
-									if(accepted > 0){
-										int drained = portEast_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
-										island.extract(drained, FluidAction.EXECUTE);
-										fluid = FluidHelper.copyFluid(fluid, fluid.getAmount() - drained);
-										active = true;
+						if(!foundPressurizedIsland){
+							int extractSpeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
+							
+							Direction portEast_facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+							Direction portWest_facing = getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
+							
+							BlockPos portEast_pos = getBlockPosForPos(East_Port).offset(portEast_facing);
+							BlockPos portWest_pos = getBlockPosForPos(West_Port).offset(portWest_facing);
+							
+							IFluidHandler portEast_output = FluidUtil.getFluidHandler(this.world, portEast_pos, portEast_facing.getOpposite()).orElse(null);
+							IFluidHandler portWest_output = FluidUtil.getFluidHandler(this.world, portWest_pos, portWest_facing.getOpposite()).orElse(null);
+							
+							for(ColumnPos cPos:well.tappedIslands){
+								ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+								if(island != null){
+									FluidStack fluid = new FluidStack(island.getType().getFluid(), island.extract(extractSpeed, FluidAction.SIMULATE));
+									
+									if(portEast_output != null){
+										int accepted = portEast_output.fill(fluid, FluidAction.SIMULATE);
+										if(accepted > 0){
+											int drained = portEast_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
+											island.extract(drained, FluidAction.EXECUTE);
+											fluid = FluidHelper.copyFluid(fluid, fluid.getAmount() - drained);
+											active = true;
+										}
 									}
-								}
-								
-								if(portWest_output != null && fluid.getAmount() > 0){
-									int accepted = portWest_output.fill(fluid, FluidAction.SIMULATE);
-									if(accepted > 0){
-										int drained = portWest_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
-										island.extract(drained, FluidAction.EXECUTE);
-										active = true;
+									
+									if(portWest_output != null && fluid.getAmount() > 0){
+										int accepted = portWest_output.fill(fluid, FluidAction.SIMULATE);
+										if(accepted > 0){
+											int drained = portWest_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
+											island.extract(drained, FluidAction.EXECUTE);
+											active = true;
+										}
 									}
 								}
 							}
-						}
-						
-						if(active){
-							this.energyStorage.extractEnergy(consumption, false);
-							this.activeTicks++;
+							
+							if(active){
+								this.energyStorage.extractEnergy(consumption, false);
+								this.activeTicks++;
+							}
 						}
 					}
 				}

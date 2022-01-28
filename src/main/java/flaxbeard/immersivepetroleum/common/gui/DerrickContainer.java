@@ -1,25 +1,23 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
+import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEntity>{
-	static final ResourceLocation IE_PIPE = new ResourceLocation("immersiveengineering", "fluid_pipe");
-	
 	public DerrickContainer(int id, PlayerInventory playerInventory, DerrickTileEntity tile){
 		super(tile, id, DerrickMultiblock.INSTANCE);
 		
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
 			public boolean isItemValid(ItemStack stack){
-				return stack.getItem().getRegistryName().equals(IE_PIPE);
+				return ExternalModContent.isIEPipeItem(stack);
 			}
 		});
 		
@@ -34,10 +32,10 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 					if(fs.isEmpty())
 						return false;
 					
-					if(tile.waterTank.getFluidAmount() > 0 && !fs.isFluidEqual(tile.waterTank.getFluid()))
+					if(tile.tank.getFluidAmount() > 0 && !fs.isFluidEqual(tile.tank.getFluid()))
 						return false;
 					
-					return fs.getFluid() == Fluids.WATER;
+					return fs.getFluid() == Fluids.WATER || ExternalModContent.isIEConcrete(fs);
 				}).orElse(false);
 			}
 		});

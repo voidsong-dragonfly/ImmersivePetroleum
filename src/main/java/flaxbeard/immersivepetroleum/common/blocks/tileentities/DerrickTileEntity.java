@@ -17,7 +17,6 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
@@ -26,7 +25,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
-import net.minecraft.block.Block;
+import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,10 +35,12 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
@@ -50,8 +51,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * @author TwistedGate
@@ -71,11 +76,17 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
+	public FluidTank tank = new FluidTank(8000, this::acceptsFluid);
+	public FluidTank tankWater = new FluidTank(8000, f -> f.getFluid() == Fluids.WATER);
+	public FluidTank tankConcrete = new FluidTank(1000, ExternalModContent::isIEConcrete);
+	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
-	public FluidTank waterTank = new FluidTank(8000, this::acceptsFluid);
 	public boolean drilling, spilling;
 	public int timer = 0;
 	
+	private Fluid fluidSpilled = Fluids.EMPTY;
+	
+	/** Stores the current derrick configuration. */
 	@Nullable
 	public PipeConfig.Grid gridStorage;
 	
@@ -96,7 +107,15 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		this.spilling = nbt.getBoolean("spilling");
 		this.timer = nbt.getInt("timer");
 		
-		this.waterTank.readFromNBT(nbt.getCompound("tank"));
+		try{
+			this.fluidSpilled = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillingfluid")));
+		}catch(ResourceLocationException rle){
+			this.fluidSpilled = Fluids.EMPTY;
+		}
+		
+		this.tank.readFromNBT(nbt.getCompound("tank"));
+		this.tankWater.readFromNBT(nbt.getCompound("tankwater"));
+		this.tankConcrete.readFromNBT(nbt.getCompound("tankconcrete"));
 		
 		if(nbt.contains("grid", NBT.TAG_COMPOUND)){
 			this.gridStorage = PipeConfig.Grid.fromCompound(nbt.getCompound("grid"));
@@ -115,7 +134,11 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		nbt.putBoolean("spilling", this.spilling);
 		nbt.putInt("timer", this.timer);
 		
-		nbt.put("tank", this.waterTank.writeToNBT(new CompoundNBT()));
+		nbt.putString("spillingfluid", this.fluidSpilled.getRegistryName().toString());
+		
+		nbt.put("tank", this.tank.writeToNBT(new CompoundNBT()));
+		nbt.put("tankwater", this.tankWater.writeToNBT(new CompoundNBT()));
+		nbt.put("tankconcrete", this.tankConcrete.writeToNBT(new CompoundNBT()));
 		
 		if(this.gridStorage != null){
 			nbt.put("grid", this.gridStorage.toCompound());
@@ -145,17 +168,30 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	}
 	
 	private boolean acceptsFluid(FluidStack fs){
-		Fluid fluid = fs.getFluid();
+		WellTileEntity well = getOrCreateWell(false);
+		if(well == null)
+			return false;
 		
-		if(fluid == ExternalModContent.IE_CONCRETE_FLUID.get()){
+		final BlockPos dPos = getPos();
+		final BlockPos wPos = well.getPos();
+		int realPipeLength = (dPos.getY() - 1) - wPos.getY();
+		int concreteNeeded = (CONCRETE.getAmount() * (realPipeLength - well.pipeLength));
+		
+		if(ExternalModContent.isIEConcrete(fs) && concreteNeeded > 0){
+			FluidStack tFluidStack = this.tank.getFluid();
+			if(ExternalModContent.isIEConcrete(tFluidStack) && tFluidStack.getAmount() >= concreteNeeded){
+				return false;
+			}
+			
 			return true;
 		}
 		
-		return fluid == Fluids.WATER;
+		return fs.getFluid() == Fluids.WATER && concreteNeeded <= 0;
 	}
 	
 	static final int POWER = 512;
-	static final int WATER = 125;
+	static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
+	static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
 	
 	@Override
 	public void tick(){
@@ -186,7 +222,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			}
 			
 			if(this.spilling){
-				spawnOilSpillParticles(this.world, this.pos, 5, 15.75F);
+				spawnSpillParticles(world, this.pos, this.fluidSpilled, 5, 15.75F);
 			}
 			
 			return;
@@ -198,148 +234,148 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			boolean lastSpilling = this.spilling;
 			this.drilling = this.spilling = false;
 			
-			if(!isRSDisabled()){
-				if(this.energyStorage.extractEnergy(POWER, true) >= POWER){
-					this.energyStorage.extractEnergy(POWER, false);
-					
-					if(this.timer-- <= 0){
-						this.timer = 10;
+			// Check if lower than 64 and stop working, then also display a message as to why in GUI
+			if(this.pos.getY() < 64){
+				if(this.fluidSpilled == Fluids.EMPTY){
+					this.fluidSpilled = Fluids.WATER;
+				}
+				this.spilling = true;
+			}else{
+				if(!isRSDisabled()){
+					if(this.energyStorage.extractEnergy(POWER, true) >= POWER){
+						WellTileEntity well = getOrCreateWell(this.inventory.get(0) != ItemStack.EMPTY);
 						
-						boolean reachedBedrock = false;
-						BlockPos dPos = getPos();
-						int y = dPos.getY() - 1;
-						int placed = 0;
-						for(;y >= 0;y--){
-							BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
-							BlockState state = getWorldNonnull().getBlockState(current);
-							
-							if(state.getBlock() == Blocks.BEDROCK){
-								reachedBedrock = true;
-								break;
-							}else if(state.getBlock() == IPContent.Blocks.well){
-								break;
+						if(well != null){
+							if(well.pipeLength < well.pipeMaxLength()){
+								if(well.pipe <= 0){
+									if(this.inventory.get(0) != ItemStack.EMPTY){
+										ItemStack stack = this.inventory.get(0);
+										if(stack.getCount() > 0){
+											stack.shrink(1);
+											well.pipe = WellTileEntity.PIPE_WORTH;
+											
+											if(stack.getCount() <= 0){
+												this.inventory.set(0, ItemStack.EMPTY);
+											}
+											
+											well.markDirty();
+										}
+									}
+									
+								}else if(well.pipe > 0){
+									
+									final BlockPos dPos = getPos();
+									final BlockPos wPos = well.getPos();
+									int realPipeLength = ((dPos.getY() - 1) - wPos.getY());
+									
+									if(well.pipeLength < realPipeLength){
+										if(this.tank.drain(CONCRETE, FluidAction.SIMULATE).getAmount() >= CONCRETE.getAmount()){
+											this.energyStorage.extractEnergy(POWER, false);
+											
+											if(this.timer-- <= 0){
+												this.timer = 10;
+												
+												int min = Math.min(well.pipeLength, realPipeLength);
+												for(int i = 1;i < min;i++){
+													BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
+													BlockState state = getWorldNonnull().getBlockState(current);
+													if(state.getBlock() != IPContent.Blocks.wellPipe){
+														getWorldNonnull().destroyBlock(current, false);
+														getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+													}
+												}
+												
+												int y = dPos.getY() - 1;
+												for(;y > wPos.getY();y--){
+													BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
+													BlockState state = getWorldNonnull().getBlockState(current);
+													
+													if(state.getBlock() == Blocks.BEDROCK || state.getBlock() == IPContent.Blocks.well){
+														break;
+													}else if(state.getBlock() != IPContent.Blocks.wellPipe){
+														getWorldNonnull().destroyBlock(current, false);
+														getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+														
+														this.tank.drain(CONCRETE, FluidAction.EXECUTE);
+														
+														well.pipe -= 1;
+														well.pipeLength += 1;
+														this.drilling = true;
+														well.markDirty();
+														break;
+													}
+												}
+											}
+										}
+									}else{
+										if(this.tank.drain(WATER, FluidAction.SIMULATE).getAmount() >= WATER.getAmount()){
+											this.tank.drain(WATER, FluidAction.EXECUTE);
+											this.energyStorage.extractEnergy(POWER, false);
+											
+											if(this.timer-- <= 0){
+												this.timer = 10;
+												
+												int min = Math.min(well.pipeLength, realPipeLength);
+												for(int i = 1;i < min;i++){
+													BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
+													BlockState state = getWorldNonnull().getBlockState(current);
+													if(state.getBlock() != IPContent.Blocks.wellPipe){
+														getWorldNonnull().destroyBlock(current, false);
+														getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+													}
+												}
+												
+												well.pipe -= 1;
+												well.pipeLength += 1;
+												well.markDirty();
+											}
+											
+											this.drilling = true;
+										}
+									}
+								}
 							}else{
-								if(state.getBlock() != IPContent.Blocks.wellPipe){
-									getWorldNonnull().destroyBlock(current, false);
-									getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
-									break;
-								}else{
-									placed++;
-								}
-							}
-						}
-						
-						if(reachedBedrock){
-							BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
-							Block block = getWorldNonnull().getBlockState(current).getBlock();
-							if(block != IPContent.Blocks.well && block == Blocks.BEDROCK){
-								ImmersivePetroleum.log.info("Placed {} well pipes.", placed);
-								
-								getWorldNonnull().setBlockState(current, IPContent.Blocks.well.getDefaultState());
-								WellTileEntity well = (WellTileEntity) getWorldNonnull().getTileEntity(current);
-								if(well.tappedIslands.isEmpty()){
-									well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
-									well.markDirty();
-								}
-							}
-						}
-					}
-				}
-				
-				/*
-				WellTileEntity well = null;
-				
-				TileEntity te = this.getWorldNonnull().getTileEntity(this.pos.down());
-				if(te instanceof WellTileEntity){
-					well = (WellTileEntity) te;
-				}else if(well == null){
-					if(this.inventory.get(0) != ItemStack.EMPTY){
-						well = getOrCreateWell();
-						
-						if(well.tappedIslands.isEmpty()){
-							well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
-							well.markDirty();
-						}
-					}
-				}
-				
-				if(well != null){
-					if(well.pipeLength < well.pipeMaxLength()){
-						if(this.energyStorage.getEnergyStored() >= POWER && this.waterTank.getFluidAmount() >= WATER){
-							if(well.pipe <= 0){
-								if(this.inventory.get(0) != ItemStack.EMPTY){
-									ItemStack stack = this.inventory.get(0);
-									if(stack.getCount() > 0){
-										stack.shrink(1);
-										well.pipe = WellTileEntity.PIPE_WORTH;
-										
-										if(stack.getCount() <= 0){
-											this.inventory.set(0, ItemStack.EMPTY);
+								Fluid extractedFluid = Fluids.EMPTY;
+								int extractedAmount = 0;
+								for(ColumnPos cPos:well.tappedIslands){
+									ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+									if(island != null){
+										if(extractedFluid == Fluids.EMPTY){
+											extractedFluid = island.getType().getFluid();
+										}else if(island.getType().getFluid() != extractedFluid){
+											continue;
 										}
 										
-										well.markDirty();
+										extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
 									}
 								}
 								
-							}else if(well.pipe > 0){
-								int amtEnergy = this.energyStorage.extractEnergy(POWER, true);
-								int amtWater = this.waterTank.drain(WATER, FluidAction.SIMULATE).getAmount();
-								
-								if(amtEnergy >= POWER && amtWater >= WATER){
-									this.energyStorage.extractEnergy(POWER, false);
-									this.waterTank.drain(WATER, FluidAction.EXECUTE);
-									
-									if(this.timer-- <= 0){
-										this.timer = 10;
+								if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
+									Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+									BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
+									IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
+									if(output != null){
+										FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
 										
-										well.pipe -= 1;
-										well.pipeLength += 1;
-									}
-									
-									this.drilling = true;
-									well.markDirty();
-								}
-							}
-						}
-					}else{
-						Fluid extractedFluid = Fluids.EMPTY;
-						int extractedAmount = 0;
-						for(ColumnPos cPos:well.tappedIslands){
-							ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
-							if(island != null){
-								if(extractedFluid == Fluids.EMPTY){
-									extractedFluid = island.getType().getFluid();
-								}else if(island.getType().getFluid() != extractedFluid){
-									continue;
-								}
-								
-								extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
-							}
-						}
-						
-						if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
-							Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-							BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
-							IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
-							if(output != null){
-								FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
-								
-								int accepted = output.fill(fluid, FluidAction.SIMULATE);
-								if(accepted > 0){
-									int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
-									if(fluid.getAmount() - drained > 0){
+										int accepted = output.fill(fluid, FluidAction.SIMULATE);
+										if(accepted > 0){
+											int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
+											if(fluid.getAmount() - drained > 0){
+												this.spilling = true;
+											}
+										}else{
+											this.spilling = true;
+										}
+									}else{
 										this.spilling = true;
 									}
-								}else{
-									this.spilling = true;
 								}
-							}else{
-								this.spilling = true;
 							}
 						}
 					}
 				}
-				*/
+				
+				// TODO Bucket I/O
 			}
 			
 			if(forceUpdate || (lastDrilling != this.drilling) || (lastSpilling != this.spilling)){
@@ -348,34 +384,45 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 	}
 	
-	public WellTileEntity getOrCreateWell(){
+	/**
+	 * Create or Get the {@link WellTileEntity}.
+	 * 
+	 * @param popList Set to true, to try and populate the
+	 *        {@link WellTileEntity#tappedIslands} list.
+	 * @return WellTileEntity or possibly null
+	 */
+	public WellTileEntity getOrCreateWell(boolean popList){
 		World world = this.getWorldNonnull();
-		BlockPos pos = getPos().down();
-		
 		WellTileEntity ret = null;
 		
-		BlockState state = world.getBlockState(pos);
-		if(state.getBlock() != IPContent.Blocks.well){
-			boolean isClear = false;
-			if(state.getBlock().isAir(state, world, pos)){
-				isClear = true;
-			}else{
-				if(state.getBlockHardness(world, pos) >= 0.0F){
-					isClear = world.destroyBlock(pos, true);
-				}
-			}
+		// TODO !Replace "y >= 0" in 1.18 with something that can go negative
+		for(int y = getPos().getY() - 1;y >= 0;y--){
+			BlockPos current = new BlockPos(this.getPos().getX(), y, this.getPos().getZ());
+			BlockState state = world.getBlockState(current);
 			
-			if(isClear && world.setBlockState(pos, IPContent.Blocks.well.getDefaultState())){
-				ret = (WellTileEntity) world.getTileEntity(pos);
+			if(state.getBlock() == IPContent.Blocks.well){
+				ret = (WellTileEntity) world.getTileEntity(current);
+				break;
+			}else if(state.getBlock() == Blocks.BEDROCK){
+				world.setBlockState(current, IPContent.Blocks.well.getDefaultState());
+				ret = (WellTileEntity) world.getTileEntity(current);
+				break;
 			}
-		}else{
-			ret = (WellTileEntity) world.getTileEntity(pos);
+		}
+		
+		if(popList && ret != null && ret.tappedIslands.isEmpty()){
+			if(this.gridStorage != null){
+				transferGridDataToWell(ret);
+			}else{
+				ret.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
+				ret.markDirty();
+			}
 		}
 		
 		return ret;
 	}
 	
-	public void transferDataToWell(@Nonnull WellTileEntity well){
+	public void transferGridDataToWell(@Nonnull WellTileEntity well){
 		if(well != null){
 			int additionalPipes = 0;
 			List<ColumnPos> list = new ArrayList<>();
@@ -408,27 +455,49 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public static void spawnOilSpillParticles(World world, BlockPos pos, int particles, float heightOffset){
-		Fluid fluid = IPContent.Fluids.crudeOil; // Fallback
-		ReservoirIsland island = ReservoirHandler.getIsland(world, pos);
-		if(island != null){
-			fluid = island.getType().getFluid();
+	public static void spawnSpillParticles(World world, BlockPos pos, Fluid fluid, int particles, float yOffset){
+		if(fluid == null || fluid == Fluids.EMPTY){
+			return;
 		}
 		
 		for(int i = 0;i < particles;i++){
-			float xa = (world.rand.nextFloat() - .5F) / 2;
-			float za = (world.rand.nextFloat() - .5F) / 2;
+			float xa = (world.rand.nextFloat() - .5F) / 2F;
+			float ya = 0.75F + (world.rand.nextFloat() * 0.25F);
+			float za = (world.rand.nextFloat() - .5F) / 2F;
 			
 			float rx = (world.rand.nextFloat() - .5F) * 0.5F;
-			float ya = 0.75F + (world.rand.nextFloat() * 0.25F);
 			float rz = (world.rand.nextFloat() - .5F) * 0.5F;
 			
 			double x = (pos.getX() + 0.5) + rx;
-			double y = (pos.getY() + heightOffset);
+			double y = (pos.getY() + yOffset);
 			double z = (pos.getZ() + 0.5) + rz;
 			
 			world.addParticle(new FluidParticleData(fluid), x, y, z, xa, ya, za);
 		}
+	}
+	
+	@Override
+	public void disassemble(){
+		if(this.formed && !this.world.isRemote){
+			// Do this even if this is the master itself
+			DerrickTileEntity master = master();
+			
+			World world = master.getWorldNonnull();
+			BlockPos dPos = master.getPos();
+			// TODO !Replace "y >= 0" in 1.18 with something that can go negative
+			for(int y = getPos().getY() - 1;y >= 0;y--){
+				BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
+				TileEntity teLow = world.getTileEntity(current);
+				
+				if(teLow instanceof WellTileEntity && !((WellTileEntity)teLow).drillingCompleted){
+					world.setBlockState(current, Blocks.BEDROCK.getDefaultState());
+					break;
+				}
+			}
+		}
+		
+		// Calling it after just to be on the safe side
+		super.disassemble();
 	}
 	
 	@Override
@@ -486,7 +555,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public IFluidTank[] getInternalTanks(){
-		return new IFluidTank[]{this.waterTank};
+		return new IFluidTank[]{this.tank};
 	}
 	
 	@Override
@@ -547,7 +616,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(master != null){
 			if(this.posInMultiblock.equals(Fluid_IN)){
 				if(side == null || side == getFacing().getOpposite()){
-					return new IFluidTank[]{master.waterTank};
+					return new IFluidTank[]{master.tank};//, master.tankWater, master.tankConcrete};
 				}
 			}
 			
@@ -571,9 +640,13 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			if(side == null || side == getFacing().getOpposite()){
 				DerrickTileEntity master = master();
 				
-				if(master == null || master.waterTank.getFluidAmount() >= master.waterTank.getCapacity()){
+				if(master == null || master.tank.getFluidAmount() >= master.tank.getCapacity()){
 					return false;
 				}
+				
+//				if(master.tankWater.getFluidAmount() >= master.tankWater.getCapacity() || master.tankConcrete.getFluidAmount() >= master.tankConcrete.getCapacity()){
+//					return false;
+//				}
 				
 				return true;
 			}

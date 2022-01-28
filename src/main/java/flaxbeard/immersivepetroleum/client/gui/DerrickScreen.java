@@ -18,11 +18,9 @@ import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public class DerrickScreen extends ContainerScreen<DerrickContainer>{
@@ -64,7 +62,7 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 		this.renderHoveredTooltip(matrix, mx, my);
 		
 		List<ITextComponent> tooltip = new ArrayList<>();
-		GuiHelper.handleGuiTank(matrix, this.tile.waterTank, guiLeft + 11, guiTop + 16, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
+		GuiHelper.handleGuiTank(matrix, this.tile.tank, guiLeft + 11, guiTop + 16, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
 		
 		// Power Stored
 		if(mx > guiLeft + 184 && mx < guiLeft + 192 && my > guiTop + 18 && my < guiTop + 65){
@@ -80,14 +78,14 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 	protected void drawGuiContainerForegroundLayer(MatrixStack matrix, int x, int y){
 		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 		
-		World world = this.tile.getWorldNonnull();
-		WellTileEntity well = null;
-		
-		TileEntity te = world.getTileEntity(this.tile.getPos().down());
-		if(te instanceof WellTileEntity){
-			well = (WellTileEntity) te;
+		if(this.tile.getPos().getY() < 64){
+			drawInfoTextCentered(matrix, new StringTextComponent("! WARNING !"), 0, 0xEF0000);
+			drawInfoTextCentered(matrix, new StringTextComponent("Derrick is being flooded"), 2, 0xEF0000);
+			drawInfoTextCentered(matrix, new StringTextComponent("below the water table"), 3, 0xEF0000);
+			return;
 		}
 		
+		WellTileEntity well = this.tile.getOrCreateWell(false);
 		if(well != null){
 			if(this.cfgButton.active && well.pipeLength > 0){
 				this.cfgButton.active = false;
@@ -100,17 +98,16 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 				drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
 				drawInfoText(matrix, new StringTextComponent("Length: " + well.pipeLength + "/" + well.pipeMaxLength() + "m"), 1);
 				drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + well.pipe + ", " + this.tile.timer + "t"), 2);
-				//drawInfoText(matrix, new StringTextComponent(""), 3);
+//				drawInfoText(matrix, new StringTextComponent(""), 3);
 			}else{
 				boolean debug = false;
 				if(this.tile.spilling || debug){
-					drawInfoText(matrix, new StringTextComponent("§l !  !  !  !  !  !  !  !  !"), 0, 0xEF0000);
-					drawInfoText(matrix, new StringTextComponent("§lSAFETYVALVE OPEN"), 1, 0xEF0000);
-					drawInfoText(matrix, new StringTextComponent("§lPRESSURE TOO HIGH"), 2, 0xEF0000);
-					drawInfoText(matrix, new StringTextComponent("§l !  !  !  !  !  !  !  !  !"), 3, 0xEF0000);
+					drawInfoTextCentered(matrix, new StringTextComponent("! WARNING !"), 0, 0xEF0000);
+					drawInfoTextCentered(matrix, new StringTextComponent("SAFETYVALVE OPEN"), 2, 0xEF0000);
+					drawInfoTextCentered(matrix, new StringTextComponent("PRESSURE TOO HIGH"), 3, 0xEF0000);
 				}else{
-					drawInfoText(matrix, new StringTextComponent("   Drilling Completed."), 1);
-					drawInfoText(matrix, new StringTextComponent("   Have a nice day :3"), 3);
+					drawInfoTextCentered(matrix, new StringTextComponent("Drilling Completed"), 0);
+					drawInfoTextCentered(matrix, new StringTextComponent("Have a nice day :3"), 3);
 				}
 			}
 		}
@@ -121,7 +118,16 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 	}
 	
 	private void drawInfoText(MatrixStack matrix, ITextComponent text, int line, int color){
-		this.font.drawText(matrix, text, 60, 8 + (9 * line), color);
+		this.font.drawText(matrix, text, 60, 10 + (9 * line), color);
+	}
+	
+	private void drawInfoTextCentered(MatrixStack matrix, ITextComponent text, int line){
+		drawInfoTextCentered(matrix, text, line, Lib.colour_nixieTubeText);
+	}
+	
+	private void drawInfoTextCentered(MatrixStack matrix, ITextComponent text, int line, int color){
+		int strWidth = this.font.getStringWidth(text.getString());
+		this.font.drawText(matrix, text, 118.5F - (strWidth / 2F), 10 + (9 * line), color);
 	}
 	
 	@Override
@@ -130,7 +136,7 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 		ClientUtils.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
 		
-		GuiHelper.handleGuiTank(matrix, this.tile.waterTank, guiLeft + 11, guiTop + 16, 16, 47, 200, 0, 20, 51, mx, my, GUI_TEXTURE, null);
+		GuiHelper.handleGuiTank(matrix, this.tile.tank, guiLeft + 11, guiTop + 16, 16, 47, 200, 0, 20, 51, mx, my, GUI_TEXTURE, null);
 		
 		int x = guiLeft + 185;
 		int y = guiTop + 44;

@@ -289,12 +289,12 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void handleEntitySound(SoundEvent soundEvent, Entity entity, boolean active, float volume, float pitch){
-		// TODO Restore sound for the Motorboat
+		// TODO Sound: Restore motorboat audio
 	}
 	
 	@Override
 	public void handleTileSound(SoundEvent soundEvent, TileEntity te, boolean active, float volume, float pitch){
-		// TODO
+		// TODO Sound: Perhaps give some MBs some audio
 	}
 	
 	public void setupManualPages(){

@@ -15,6 +15,7 @@ import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
@@ -32,6 +33,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -237,6 +239,16 @@ public class DebugItem extends IPItemBase{
 					// Client
 				}else{
 					// Server
+					
+					if(te instanceof WellTileEntity){
+						WellTileEntity well = (WellTileEntity) te;
+						
+						if(well.tappedIslands.isEmpty()){
+							well.tappedIslands.add(new ColumnPos(well.getPos()));
+						}
+						
+					}
+					
 				}
 				
 				return ActionResultType.SUCCESS;
