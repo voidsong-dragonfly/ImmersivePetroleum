@@ -184,6 +184,21 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 		}
 	}
 	
+	public void usePipe(){
+		if(this.drillingCompleted){
+			return;
+		}
+		
+		this.pipe -= 1;
+		this.pipeLength += 1;
+		
+		if(this.pipeLength >= pipeMaxLength()){
+			this.drillingCompleted = true;
+		}
+		
+		markDirty();
+	}
+	
 	@Override
 	public void markDirty(){
 		super.markDirty();

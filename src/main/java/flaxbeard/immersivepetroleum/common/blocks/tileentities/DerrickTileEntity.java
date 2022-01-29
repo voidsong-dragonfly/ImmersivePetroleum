@@ -62,6 +62,15 @@ import net.minecraftforge.registries.ForgeRegistries;
  * @author TwistedGate
  */
 public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
+	public enum Inventory{
+		/** Item Pipe Input */
+		INPUT;
+		
+		public int id(){
+			return ordinal();
+		}
+	}
+	
 	public static final FluidTank DUMMY_TANK = new FluidTank(0);
 	
 	/** Template-Location of the Fluid Input Port. (2 0 4)<br> */
@@ -78,7 +87,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	public FluidTank tank = new FluidTank(8000, this::acceptsFluid);
 	
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 	public boolean drilling, spilling;
 	public int timer = 0;
 	
@@ -166,14 +175,17 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(well == null)
 			return false;
 		
-		final BlockPos dPos = getPos();
-		final BlockPos wPos = well.getPos();
-		int realPipeLength = (dPos.getY() - 1) - wPos.getY();
+		int realPipeLength = (getPos().getY() - 1) - well.getPos().getY();
 		int concreteNeeded = (CONCRETE.getAmount() * (realPipeLength - well.pipeLength));
 		
 		if(ExternalModContent.isIEConcrete(fs) && concreteNeeded > 0){
 			FluidStack tFluidStack = this.tank.getFluid();
+			
 			if(ExternalModContent.isIEConcrete(tFluidStack) && tFluidStack.getAmount() >= concreteNeeded){
+				return false;
+			}
+			
+			if(concreteNeeded < fs.getAmount()){
 				return false;
 			}
 			
@@ -241,23 +253,19 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 						
 						if(well != null){
 							if(well.pipeLength < well.pipeMaxLength()){
-								if(well.pipe <= 0){
-									if(this.inventory.get(0) != ItemStack.EMPTY){
-										ItemStack stack = this.inventory.get(0);
-										if(stack.getCount() > 0){
-											stack.shrink(1);
-											well.pipe = WellTileEntity.PIPE_WORTH;
-											
-											if(stack.getCount() <= 0){
-												this.inventory.set(0, ItemStack.EMPTY);
-											}
-											
-											well.markDirty();
+								if(well.pipe <= 0 && getInventory(Inventory.INPUT) != ItemStack.EMPTY){
+									ItemStack stack = getInventory(Inventory.INPUT);
+									if(stack.getCount() > 0){
+										stack.shrink(1);
+										well.pipe = WellTileEntity.PIPE_WORTH;
+										
+										if(stack.getCount() <= 0){
+											setInventory(Inventory.INPUT, ItemStack.EMPTY);
 										}
+										
+										well.markDirty();
 									}
-									
 								}else if(well.pipe > 0){
-									
 									final BlockPos dPos = getPos();
 									final BlockPos wPos = well.getPos();
 									int realPipeLength = ((dPos.getY() - 1) - wPos.getY());
@@ -292,14 +300,13 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 														
 														this.tank.drain(CONCRETE, FluidAction.EXECUTE);
 														
-														well.pipe -= 1;
-														well.pipeLength += 1;
-														this.drilling = true;
-														well.markDirty();
+														well.usePipe();
 														break;
 													}
 												}
 											}
+											
+											this.drilling = true;
 										}
 									}else{
 										if(this.tank.drain(WATER, FluidAction.SIMULATE).getAmount() >= WATER.getAmount()){
@@ -319,9 +326,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 													}
 												}
 												
-												well.pipe -= 1;
-												well.pipeLength += 1;
-												well.markDirty();
+												well.usePipe();
 											}
 											
 											this.drilling = true;
@@ -481,7 +486,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
 				TileEntity teLow = world.getTileEntity(current);
 				
-				if(teLow instanceof WellTileEntity && !((WellTileEntity)teLow).drillingCompleted){
+				if(teLow instanceof WellTileEntity && !((WellTileEntity) teLow).drillingCompleted){
 					world.setBlockState(current, Blocks.BEDROCK.getDefaultState());
 					break;
 				}
@@ -490,6 +495,14 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		
 		// Calling it after just to be on the safe side
 		super.disassemble();
+	}
+	
+	public ItemStack getInventory(Inventory inv){
+		return this.inventory.get(inv.id());
+	}
+	
+	public ItemStack setInventory(Inventory inv, ItemStack stack){
+		return this.inventory.set(inv.id(), stack);
 	}
 	
 	@Override
