@@ -15,7 +15,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -34,12 +33,6 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 	/** It's supposed to be never null nor empty. If it is then something's wrong. */
 	@Nonnull
 	public List<ColumnPos> tappedIslands = new ArrayList<>();
-	
-	/**
-	 * Contains already placed pipes. (Only their Y value)<br>
-	 * To make sure that if, while drilling, one of the blocks gets destroyed by accident it gets replaced. (For free?)
-	 */
-	public final ArrayList<Integer> realPipes = new ArrayList<>(128);
 	
 	/** Amount of pipe left over from 1 IE Pipe */
 	public int pipe = 0;
@@ -80,14 +73,6 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 			});
 			nbt.put("tappedislands", list);
 		}
-		
-		if(this.realPipes.size() > 0){
-			ListNBT list = new ListNBT();
-			this.realPipes.forEach(yLevel -> {
-				list.add(IntNBT.valueOf(yLevel));
-			});
-			nbt.put("realpipes", list);
-		}
 	}
 	
 	@Override
@@ -116,17 +101,6 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 				tmp.add(new ColumnPos(x, z));
 			});
 			this.tappedIslands = tmp;
-		}
-		
-		if(nbt.contains("realpipes", NBT.TAG_LIST)){
-			ListNBT list = nbt.getList("realpipes", NBT.TAG_INT);
-			List<Integer> tmp = new ArrayList<>(list.size());
-			list.forEach(intNBT -> {
-				int yLevel = ((IntNBT) intNBT).getInt();
-				tmp.add(yLevel);
-			});
-			this.realPipes.clear();
-			this.realPipes.addAll(tmp);
 		}
 	}
 	

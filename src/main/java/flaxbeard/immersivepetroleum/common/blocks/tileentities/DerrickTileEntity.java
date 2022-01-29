@@ -77,8 +77,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
 	public FluidTank tank = new FluidTank(8000, this::acceptsFluid);
-	public FluidTank tankWater = new FluidTank(8000, f -> f.getFluid() == Fluids.WATER);
-	public FluidTank tankConcrete = new FluidTank(1000, ExternalModContent::isIEConcrete);
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
 	public boolean drilling, spilling;
@@ -114,8 +112,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 		
 		this.tank.readFromNBT(nbt.getCompound("tank"));
-		this.tankWater.readFromNBT(nbt.getCompound("tankwater"));
-		this.tankConcrete.readFromNBT(nbt.getCompound("tankconcrete"));
 		
 		if(nbt.contains("grid", NBT.TAG_COMPOUND)){
 			this.gridStorage = PipeConfig.Grid.fromCompound(nbt.getCompound("grid"));
@@ -137,8 +133,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		nbt.putString("spillingfluid", this.fluidSpilled.getRegistryName().toString());
 		
 		nbt.put("tank", this.tank.writeToNBT(new CompoundNBT()));
-		nbt.put("tankwater", this.tankWater.writeToNBT(new CompoundNBT()));
-		nbt.put("tankconcrete", this.tankConcrete.writeToNBT(new CompoundNBT()));
 		
 		if(this.gridStorage != null){
 			nbt.put("grid", this.gridStorage.toCompound());
@@ -374,8 +368,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 						}
 					}
 				}
-				
-				// TODO Bucket I/O
 			}
 			
 			if(forceUpdate || (lastDrilling != this.drilling) || (lastSpilling != this.spilling)){
@@ -616,7 +608,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(master != null){
 			if(this.posInMultiblock.equals(Fluid_IN)){
 				if(side == null || side == getFacing().getOpposite()){
-					return new IFluidTank[]{master.tank};//, master.tankWater, master.tankConcrete};
+					return new IFluidTank[]{master.tank};
 				}
 			}
 			
@@ -643,10 +635,6 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				if(master == null || master.tank.getFluidAmount() >= master.tank.getCapacity()){
 					return false;
 				}
-				
-//				if(master.tankWater.getFluidAmount() >= master.tankWater.getCapacity() || master.tankConcrete.getFluidAmount() >= master.tankConcrete.getCapacity()){
-//					return false;
-//				}
 				
 				return true;
 			}
