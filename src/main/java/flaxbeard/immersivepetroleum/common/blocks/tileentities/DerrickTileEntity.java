@@ -381,6 +381,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 	}
 	
+	
+	private WellTileEntity wellCache = null;
 	/**
 	 * Create or Get the {@link WellTileEntity}.
 	 * 
@@ -389,34 +391,39 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	 * @return WellTileEntity or possibly null
 	 */
 	public WellTileEntity getOrCreateWell(boolean popList){
-		World world = this.getWorldNonnull();
-		WellTileEntity ret = null;
-		
-		// TODO !Replace "y >= 0" in 1.18 with something that can go negative
-		for(int y = getPos().getY() - 1;y >= 0;y--){
-			BlockPos current = new BlockPos(this.getPos().getX(), y, this.getPos().getZ());
-			BlockState state = world.getBlockState(current);
+		if((this.wellCache == null) || (this.wellCache != null && !this.wellCache.isRemoved())){
+			World world = this.getWorldNonnull();
+			WellTileEntity well = null;
 			
-			if(state.getBlock() == IPContent.Blocks.well){
-				ret = (WellTileEntity) world.getTileEntity(current);
-				break;
-			}else if(state.getBlock() == Blocks.BEDROCK){
-				world.setBlockState(current, IPContent.Blocks.well.getDefaultState());
-				ret = (WellTileEntity) world.getTileEntity(current);
-				break;
+			// TODO !Replace "y >= 0" in 1.18 with something that can go negative
+			for(int y = getPos().getY() - 1;y >= 0;y--){
+				BlockPos current = new BlockPos(this.getPos().getX(), y, this.getPos().getZ());
+				BlockState state = world.getBlockState(current);
+				
+				if(state.getBlock() == IPContent.Blocks.well){
+					well = (WellTileEntity) world.getTileEntity(current);
+					break;
+				}else if(state.getBlock() == Blocks.BEDROCK){
+					world.setBlockState(current, IPContent.Blocks.well.getDefaultState());
+					well = (WellTileEntity) world.getTileEntity(current);
+					break;
+				}
 			}
+			
+			if(popList && well != null && well.tappedIslands.isEmpty()){
+				if(this.gridStorage != null){
+					transferGridDataToWell(well);
+				}else{
+					well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
+					well.markDirty();
+				}
+			}
+			
+			this.wellCache = well;
+			return this.wellCache;
 		}
 		
-		if(popList && ret != null && ret.tappedIslands.isEmpty()){
-			if(this.gridStorage != null){
-				transferGridDataToWell(ret);
-			}else{
-				ret.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
-				ret.markDirty();
-			}
-		}
-		
-		return ret;
+		return this.wellCache;
 	}
 	
 	public void transferGridDataToWell(@Nonnull WellTileEntity well){
