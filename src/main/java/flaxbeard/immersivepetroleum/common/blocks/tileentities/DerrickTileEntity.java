@@ -391,7 +391,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	 * @return WellTileEntity or possibly null
 	 */
 	public WellTileEntity getOrCreateWell(boolean popList){
-		if((this.wellCache == null) || (this.wellCache != null && !this.wellCache.isRemoved())){
+		if((this.wellCache == null) || (this.wellCache != null && this.wellCache.isRemoved())){
 			World world = this.getWorldNonnull();
 			WellTileEntity well = null;
 			
@@ -419,7 +419,9 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				}
 			}
 			
-			this.wellCache = well;
+			if(well != null){
+				this.wellCache = well;
+			}
 			return this.wellCache;
 		}
 		
