@@ -249,10 +249,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			}else{
 				if(!isRSDisabled()){
 					if(this.energyStorage.extractEnergy(POWER, true) >= POWER){
-						WellTileEntity well = getOrCreateWell(this.inventory.get(0) != ItemStack.EMPTY);
+						WellTileEntity well = getOrCreateWell(getInventory(Inventory.INPUT) != ItemStack.EMPTY);
 						
 						if(well != null){
-							if(well.pipeLength < well.pipeMaxLength()){
+							if(well.pipeLength < well.getMaxPipeLength()){
 								if(well.pipe <= 0 && getInventory(Inventory.INPUT) != ItemStack.EMPTY){
 									ItemStack stack = getInventory(Inventory.INPUT);
 									if(stack.getCount() > 0){
@@ -274,18 +274,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 										if(this.tank.drain(CONCRETE, FluidAction.SIMULATE).getAmount() >= CONCRETE.getAmount()){
 											this.energyStorage.extractEnergy(POWER, false);
 											
-											if(this.timer-- <= 0){
-												this.timer = 10;
-												
-												int min = Math.min(well.pipeLength, realPipeLength);
-												for(int i = 1;i < min;i++){
-													BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
-													BlockState state = getWorldNonnull().getBlockState(current);
-													if(state.getBlock() != IPContent.Blocks.wellPipe){
-														getWorldNonnull().destroyBlock(current, false);
-														getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
-													}
-												}
+											if(advanceTimer()){
+												restorePhysicalPipeProgress(dPos, realPipeLength);
 												
 												int y = dPos.getY() - 1;
 												for(;y > wPos.getY();y--){
@@ -313,18 +303,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 											this.tank.drain(WATER, FluidAction.EXECUTE);
 											this.energyStorage.extractEnergy(POWER, false);
 											
-											if(this.timer-- <= 0){
-												this.timer = 10;
-												
-												int min = Math.min(well.pipeLength, realPipeLength);
-												for(int i = 1;i < min;i++){
-													BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
-													BlockState state = getWorldNonnull().getBlockState(current);
-													if(state.getBlock() != IPContent.Blocks.wellPipe){
-														getWorldNonnull().destroyBlock(current, false);
-														getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
-													}
-												}
+											if(advanceTimer()){
+												restorePhysicalPipeProgress(dPos, realPipeLength);
 												
 												well.usePipe();
 											}
@@ -334,41 +314,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 									}
 								}
 							}else{
-								Fluid extractedFluid = Fluids.EMPTY;
-								int extractedAmount = 0;
-								for(ColumnPos cPos:well.tappedIslands){
-									ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
-									if(island != null){
-										if(extractedFluid == Fluids.EMPTY){
-											extractedFluid = island.getType().getFluid();
-										}else if(island.getType().getFluid() != extractedFluid){
-											continue;
-										}
-										
-										extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
-									}
-								}
-								
-								if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
-									Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-									BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
-									IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
-									if(output != null){
-										FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
-										
-										int accepted = output.fill(fluid, FluidAction.SIMULATE);
-										if(accepted > 0){
-											int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
-											if(fluid.getAmount() - drained > 0){
-												this.spilling = true;
-											}
-										}else{
-											this.spilling = true;
-										}
-									}else{
-										this.spilling = true;
-									}
-								}
+								outputReservoirFluid();
 							}
 						}
 					}
@@ -377,6 +323,75 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			
 			if(forceUpdate || (lastDrilling != this.drilling) || (lastSpilling != this.spilling)){
 				updateMasterBlock(null, true);
+			}
+		}
+	}
+	
+	/** Only returns true if the timer reached zero */
+	private boolean advanceTimer(){
+		if(this.timer-- <= 0){
+			this.timer = 10;
+			return true;
+		}
+		return false;
+	}
+	
+	/** May end up being removed */
+	public void restorePhysicalPipeProgress(BlockPos dPos, int realPipeLength){
+		if(this.wellCache == null){
+			return;
+		}
+		
+		int min = Math.min(this.wellCache.pipeLength, realPipeLength);
+		for(int i = 1;i < min;i++){
+			BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
+			BlockState state = getWorldNonnull().getBlockState(current);
+			if(state.getBlock() != IPContent.Blocks.wellPipe){
+				getWorldNonnull().destroyBlock(current, false);
+				getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+			}
+		}
+	}
+	
+	private void outputReservoirFluid(){
+		WellTileEntity well = getOrCreateWell(true);
+		if(well == null){
+			return;
+		}
+		
+		Fluid extractedFluid = Fluids.EMPTY;
+		int extractedAmount = 0;
+		for(ColumnPos cPos:well.tappedIslands){
+			ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+			if(island != null){
+				if(extractedFluid == Fluids.EMPTY){
+					extractedFluid = island.getType().getFluid();
+				}else if(island.getType().getFluid() != extractedFluid){
+					continue;
+				}
+				
+				extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
+			}
+		}
+		
+		if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
+			Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+			BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
+			IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
+			if(output != null){
+				FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
+				
+				int accepted = output.fill(fluid, FluidAction.SIMULATE);
+				if(accepted > 0){
+					int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
+					if(fluid.getAmount() - drained > 0){
+						this.spilling = true;
+					}
+				}else{
+					this.spilling = true;
+				}
+			}else{
+				this.spilling = true;
 			}
 		}
 	}
@@ -391,7 +406,11 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	 * @return WellTileEntity or possibly null
 	 */
 	public WellTileEntity getOrCreateWell(boolean popList){
-		if((this.wellCache == null) || (this.wellCache != null && this.wellCache.isRemoved())){
+		if(this.wellCache != null && this.wellCache.isRemoved()){
+			this.wellCache = null;
+		}
+		
+		if(this.wellCache == null){
 			World world = this.getWorldNonnull();
 			WellTileEntity well = null;
 			
@@ -410,21 +429,21 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				}
 			}
 			
-			if(popList && well != null && well.tappedIslands.isEmpty()){
-				if(this.gridStorage != null){
-					transferGridDataToWell(well);
-				}else{
-					well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
-					well.markDirty();
+			if(well != null){
+				if(popList && well.tappedIslands.isEmpty()){
+					if(this.gridStorage != null){
+						transferGridDataToWell(well);
+					}else{
+						well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
+						well.markDirty();
+					}
 				}
 			}
 			
-			if(well != null){
-				this.wellCache = well;
-			}
-			return this.wellCache;
+			this.wellCache = well;
 		}
 		
+		this.wellCache.abortSelfDestructSequence();
 		return this.wellCache;
 	}
 	
@@ -495,9 +514,17 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 				BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
 				TileEntity teLow = world.getTileEntity(current);
 				
-				if(teLow instanceof WellTileEntity && !((WellTileEntity) teLow).drillingCompleted){
-					world.setBlockState(current, Blocks.BEDROCK.getDefaultState());
-					break;
+				if(teLow instanceof WellTileEntity){
+					WellTileEntity well = (WellTileEntity) teLow;
+					
+					if(!well.drillingCompleted){
+						if(well.pipeLength > 0){
+							well.startSelfDestructSequence();
+						}else{
+							world.setBlockState(current, Blocks.BEDROCK.getDefaultState());
+						}
+						break;
+					}
 				}
 			}
 		}

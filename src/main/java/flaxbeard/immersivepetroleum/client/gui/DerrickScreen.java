@@ -93,10 +93,10 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 			
 			// Possible display prototypes
 			
-			if(well.pipeLength < well.pipeMaxLength()){
-				String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * well.pipeLength / (float) well.pipeMaxLength()));
+			if(well.pipeLength < well.getMaxPipeLength()){
+				String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * well.pipeLength / (float) well.getMaxPipeLength()));
 				drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
-				drawInfoText(matrix, new StringTextComponent("Length: " + well.pipeLength + "/" + well.pipeMaxLength() + "m"), 1);
+				drawInfoText(matrix, new StringTextComponent("Length: " + well.pipeLength + "/" + well.getMaxPipeLength() + "m"), 1);
 				drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + well.pipe + ", " + this.tile.timer + "t"), 2);
 //				drawInfoText(matrix, new StringTextComponent(""), 3);
 			}else{

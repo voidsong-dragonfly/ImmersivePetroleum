@@ -12,6 +12,7 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
@@ -42,6 +43,9 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 	public int additionalPipes = 0;
 	public boolean drillingCompleted;
 	
+	private boolean selfDestruct;
+	private int selfDestructTimer;
+	
 	private Fluid spillFType = Fluids.EMPTY;
 	@Nullable
 	private int spillHeight = -1;
@@ -59,6 +63,9 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 		nbt.putInt("pipe", this.pipe);
 		nbt.putInt("pipelength", this.pipeLength);
 		nbt.putInt("additionalpipes", this.additionalPipes);
+		
+		nbt.putBoolean("selfdestruct", this.selfDestruct);
+		nbt.putInt("selfdestructtimer", this.selfDestructTimer);
 		
 		nbt.putString("spillftype", this.spillFType.getRegistryName().toString());
 		nbt.putInt("spillheight", this.spillHeight);
@@ -84,6 +91,9 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 		this.pipeLength = nbt.getInt("pipelength");
 		this.additionalPipes = nbt.getInt("additionalpipes");
 		
+		this.selfDestruct = nbt.getBoolean("selfdestruct");
+		this.selfDestructTimer = nbt.getInt("selfdestructtimer");
+		
 		try{
 			this.spillFType = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillftype")));
 		}catch(ResourceLocationException rle){
@@ -102,10 +112,6 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 			});
 			this.tappedIslands = tmp;
 		}
-	}
-	
-	public int pipeMaxLength(){
-		return DEFAULT_PIPELENGTH + this.additionalPipes;
 	}
 	
 	@Override
@@ -180,6 +186,11 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 						}
 					}
 				}
+			}else{
+				if(this.selfDestruct && advanceTimer()){
+					getWorldNonnull().setBlockState(getPos(), Blocks.BEDROCK.getDefaultState());
+					// Sucks to be you if this happens =P
+				}
 			}
 		}
 	}
@@ -192,11 +203,37 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 		this.pipe -= 1;
 		this.pipeLength += 1;
 		
-		if(this.pipeLength >= pipeMaxLength()){
+		if(this.pipeLength >= getMaxPipeLength()){
 			this.drillingCompleted = true;
 		}
 		
 		markDirty();
+	}
+	
+	public int getMaxPipeLength(){
+		return DEFAULT_PIPELENGTH + this.additionalPipes;
+	}
+	
+	public void startSelfDestructSequence(){
+		if(this.drillingCompleted){
+			return;
+		}
+		
+		this.selfDestruct = true;
+		this.selfDestructTimer = 6000; // 5 Minutes
+	}
+	
+	public void abortSelfDestructSequence(){
+		if(this.selfDestruct){
+			this.selfDestruct = false;
+		}
+	}
+	
+	public boolean advanceTimer(){
+		if(this.selfDestruct && this.selfDestructTimer-- <= 0){
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
