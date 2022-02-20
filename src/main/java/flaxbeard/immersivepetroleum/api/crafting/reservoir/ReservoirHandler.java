@@ -84,7 +84,7 @@ public class ReservoirHandler{
 						
 						List<ColumnPos> poly = new ArrayList<>();
 						next(world, poly, x, z);
-						poly = optimizeLines(direction(edgy(world, poly)));
+						poly = optimizeIsland(world, poly);
 						
 						int amount = (int) MathHelper.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
 						ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
@@ -238,8 +238,16 @@ public class ReservoirHandler{
 	// Optimization methods below. Warning, overengineered!
 	// ####################################################
 	
+	private static List<ColumnPos> optimizeIsland(World world, List<ColumnPos> poly){
+		poly = keepOutline(world, poly);
+		poly = makeDirectional(poly);
+		poly = cullLines(poly);
+		
+		return poly;
+	}
+	
 	/** Keep edges/corners and dump the rest */
-	private static List<ColumnPos> edgy(World world, List<ColumnPos> poly){
+	private static List<ColumnPos> keepOutline(World world, List<ColumnPos> poly){
 		final List<ColumnPos> list = new ArrayList<>();
 		poly.forEach(pos -> {
 			for(int z = -1;z <= 1;z++){
@@ -279,7 +287,7 @@ public class ReservoirHandler{
 	 * Give this some direction. Result can end up being either clockwise or
 	 * counter-clockwise!
 	 */
-	private static List<ColumnPos> direction(List<ColumnPos> poly){
+	private static List<ColumnPos> makeDirectional(List<ColumnPos> poly){
 		List<ColumnPos> list = new ArrayList<>();
 		list.add(poly.remove(0));
 		int a = 0;
@@ -306,7 +314,7 @@ public class ReservoirHandler{
 	 * For X and Z
 	 * </pre>
 	 */
-	private static ArrayList<ColumnPos> optimizeLines(List<ColumnPos> poly){
+	private static ArrayList<ColumnPos> cullLines(List<ColumnPos> poly){
 		ArrayList<ColumnPos> list = new ArrayList<>(poly);
 		
 		int endIndex = 0;
@@ -390,14 +398,14 @@ public class ReservoirHandler{
 		return list;
 	}
 	
-	private static boolean moveNext(ColumnPos pos, List<ColumnPos> list0, List<ColumnPos> list1){
+	private static boolean moveNext(ColumnPos pos, List<ColumnPos> src, List<ColumnPos> dst){
 		// X Z axis biased
 		ColumnPos p0 = new ColumnPos(pos.x + 1, pos.z);
 		ColumnPos p1 = new ColumnPos(pos.x - 1, pos.z);
 		ColumnPos p2 = new ColumnPos(pos.x, pos.z + 1);
 		ColumnPos p3 = new ColumnPos(pos.x, pos.z - 1);
 		
-		if((list0.remove(p0) && list1.add(p0)) || (list0.remove(p1) && list1.add(p1)) || (list0.remove(p2) && list1.add(p2)) || (list0.remove(p3) && list1.add(p3))){
+		if((src.remove(p0) && dst.add(p0)) || (src.remove(p1) && dst.add(p1)) || (src.remove(p2) && dst.add(p2)) || (src.remove(p3) && dst.add(p3))){
 			return true;
 		}
 		
@@ -407,7 +415,7 @@ public class ReservoirHandler{
 		ColumnPos p6 = new ColumnPos(pos.x + 1, pos.z - 1);
 		ColumnPos p7 = new ColumnPos(pos.x + 1, pos.z + 1);
 		
-		if((list0.remove(p4) && list1.add(p4)) || (list0.remove(p5) && list1.add(p5)) || (list0.remove(p6) && list1.add(p6)) || (list0.remove(p7) && list1.add(p7))){
+		if((src.remove(p4) && dst.add(p4)) || (src.remove(p5) && dst.add(p5)) || (src.remove(p6) && dst.add(p6)) || (src.remove(p7) && dst.add(p7))){
 			return true;
 		}
 		

@@ -45,7 +45,7 @@ public class ReservoirIsland{
 	public ReservoirIsland(List<ColumnPos> poly, Reservoir reservoir, long amount){
 		this.poly = poly;
 		this.reservoir = reservoir;
-		setAmount(amount);
+		setAmountAndCapacity(amount, amount);
 		
 		createBoundingBox();
 	}
@@ -68,17 +68,33 @@ public class ReservoirIsland{
 		this.islandAABB = new IslandAxisAlignedBB(minX, minZ, maxX, maxZ);
 	}
 	
+	public ReservoirIsland setAmountAndCapacity(long amount, long capacity){
+		capacity = clamp(capacity, 0L, MAX_AMOUNT);
+		amount = clamp(amount, 0L, capacity);
+		
+		this.capacity = capacity;
+		this.amount = amount;
+		
+		return this;
+	}
+	
 	/**
 	 * Sets the reservoirs current fluid amount in millibuckets.
 	 * 
-	 * @param amount of fluid in this reservoir. (Range: 0 - 4294967295})
+	 * @param amount of fluid in this reservoir. (Range: 0 - 4294967295; Capacity Clamped})
 	 */
 	public ReservoirIsland setAmount(long amount){
-		amount = clamp(amount, 0L, MAX_AMOUNT);
-		
-		this.amount = amount;
-		this.capacity = amount;
-		
+		this.amount = clamp(amount, 0L, this.capacity);
+		return this;
+	}
+	
+	/**
+	 * Sets the reservoirs current fluid capacity in millibuckets.
+	 * 
+	 * @param capacity of this reservoir. (Range: 0 - 4294967295; Clamped})
+	 */
+	public ReservoirIsland setCapacity(long capacity){
+		this.capacity = clamp(capacity, 0L, MAX_AMOUNT);
 		return this;
 	}
 	
@@ -99,7 +115,7 @@ public class ReservoirIsland{
 		return this;
 	}
 	
-	/** While this returns long it only goes up to 4294967295 */
+	/** While this returns long it only goes up to {@value #MAX_AMOUNT} */
 	public long getAmount(){
 		return this.amount;
 	}
