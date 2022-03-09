@@ -21,7 +21,7 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 	protected void readCustom(BlockState state, CompoundNBT nbt){
 	}
 	
-	/** Returns null if it couldnt be found. Used by Pumpjack. */
+	/** Returns null if there is no connection to the Well. Used by Pumpjack. */
 	public WellTileEntity getWell(){
 		// TODO !Replace "y >= 0" in 1.18 with something that can go negative
 		for(int y = this.pos.getY() - 1;y >= 0;y--){

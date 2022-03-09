@@ -18,6 +18,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
@@ -104,12 +105,30 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		{
 			Block wellPipe = IPContent.Blocks.wellPipe;
-
+			
 			ResourceLocation ieConreteTexture = new ResourceLocation("immersiveengineering", "block/stone_decoration/concrete");
+			ResourceLocation concrete_cracked = modLoc("block/concrete_cracked");
 			ResourceLocation wellPipeTexture = modLoc("block/well_pipe_top");
+			
 			ModelFile wellPipeModel = models().cubeBottomTop(wellPipe.getRegistryName().toString(), ieConreteTexture, wellPipeTexture, wellPipeTexture);
-			getVariantBuilder(wellPipe).partialState()
+			ModelFile wellPipeModel_cracked = models().cubeBottomTop(wellPipe.getRegistryName().toString() + "_cracked", concrete_cracked, wellPipeTexture, wellPipeTexture);
+			
+			ModelFile wellPipeModel_cracked_mirrored = models()
+				.withExistingParent(wellPipe.getRegistryName().toString() + "_cracked_mirrored", "block/cube_mirrored")
+				.texture("down", wellPipeTexture)
+                .texture("up", wellPipeTexture)
+                .texture("north", concrete_cracked)
+                .texture("south", concrete_cracked)
+                .texture("east", concrete_cracked)
+                .texture("west", concrete_cracked);
+			
+			VariantBlockStateBuilder builder = getVariantBuilder(wellPipe);
+			builder.partialState()
+				.with(WellPipeBlock.BROKEN, false)
 				.setModels(new ConfiguredModel(wellPipeModel));
+			builder.partialState()
+				.with(WellPipeBlock.BROKEN, true)
+				.setModels(new ConfiguredModel(wellPipeModel_cracked), new ConfiguredModel(wellPipeModel_cracked_mirrored));
 		}
 		
 		autolubricator();

@@ -23,6 +23,7 @@ import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -176,7 +177,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			return false;
 		
 		int realPipeLength = (getPos().getY() - 1) - well.getPos().getY();
-		int concreteNeeded = (CONCRETE.getAmount() * (realPipeLength - well.pipeLength));
+		int concreteNeeded = (CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength));
 		
 		if(ExternalModContent.isIEConcrete(fs) && concreteNeeded > 0){
 			FluidStack tFluidStack = this.tank.getFluid();
@@ -235,7 +236,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 		
 		if(this.world.isAreaLoaded(this.getPos(), 2)){
-			boolean forceUpdate = true;
+			boolean forceUpdate = false;
 			boolean lastDrilling = this.drilling;
 			boolean lastSpilling = this.spilling;
 			this.drilling = this.spilling = false;
@@ -252,12 +253,12 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 						WellTileEntity well = getOrCreateWell(getInventory(Inventory.INPUT) != ItemStack.EMPTY);
 						
 						if(well != null){
-							if(well.pipeLength < well.getMaxPipeLength()){
-								if(well.pipe <= 0 && getInventory(Inventory.INPUT) != ItemStack.EMPTY){
+							if(well.wellPipeLength < well.getMaxPipeLength()){
+								if(well.pipes <= 0 && getInventory(Inventory.INPUT) != ItemStack.EMPTY){
 									ItemStack stack = getInventory(Inventory.INPUT);
 									if(stack.getCount() > 0){
 										stack.shrink(1);
-										well.pipe = WellTileEntity.PIPE_WORTH;
+										well.pipes = WellTileEntity.PIPE_WORTH;
 										
 										if(stack.getCount() <= 0){
 											setInventory(Inventory.INPUT, ItemStack.EMPTY);
@@ -265,34 +266,42 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 										
 										well.markDirty();
 									}
-								}else if(well.pipe > 0){
+								}else if(well.pipes > 0){
 									final BlockPos dPos = getPos();
 									final BlockPos wPos = well.getPos();
 									int realPipeLength = ((dPos.getY() - 1) - wPos.getY());
 									
-									if(well.pipeLength < realPipeLength){
+									if(well.phyiscalPipesList.size() < realPipeLength && well.wellPipeLength < realPipeLength){
 										if(this.tank.drain(CONCRETE, FluidAction.SIMULATE).getAmount() >= CONCRETE.getAmount()){
 											this.energyStorage.extractEnergy(POWER, false);
 											
 											if(advanceTimer()){
-												restorePhysicalPipeProgress(dPos, realPipeLength);
+												//restorePhysicalPipeProgress(dPos, realPipeLength);
 												
+												World world = getWorldNonnull();
 												int y = dPos.getY() - 1;
 												for(;y > wPos.getY();y--){
 													BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
-													BlockState state = getWorldNonnull().getBlockState(current);
+													BlockState state = world.getBlockState(current);
 													
 													if(state.getBlock() == Blocks.BEDROCK || state.getBlock() == IPContent.Blocks.well){
 														break;
-													}else if(state.getBlock() != IPContent.Blocks.wellPipe){
-														getWorldNonnull().destroyBlock(current, false);
-														getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+													}else if(!(state.getBlock() == IPContent.Blocks.wellPipe && !state.get(WellPipeBlock.BROKEN))){
+														world.destroyBlock(current, false);
+														world.setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+														
+														well.phyiscalPipesList.add(Integer.valueOf(y));
 														
 														this.tank.drain(CONCRETE, FluidAction.EXECUTE);
 														
 														well.usePipe();
 														break;
 													}
+												}
+												
+												if(well.phyiscalPipesList.size() >= realPipeLength && well.wellPipeLength >= realPipeLength){
+													well.pastPhyiscalPart = true;
+													well.markDirty();
 												}
 											}
 											
@@ -342,7 +351,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			return;
 		}
 		
-		int min = Math.min(this.wellCache.pipeLength, realPipeLength);
+		int min = Math.min(this.wellCache.wellPipeLength, realPipeLength);
 		for(int i = 1;i < min;i++){
 			BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
 			BlockState state = getWorldNonnull().getBlockState(current);
@@ -518,7 +527,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 					WellTileEntity well = (WellTileEntity) teLow;
 					
 					if(!well.drillingCompleted){
-						if(well.pipeLength > 0){
+						if(well.wellPipeLength > 0){
 							well.startSelfDestructSequence();
 						}else{
 							world.setBlockState(current, Blocks.BEDROCK.getDefaultState());

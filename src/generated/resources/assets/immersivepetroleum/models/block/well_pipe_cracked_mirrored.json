@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube_mirrored",
+  "textures": {
+    "down": "immersivepetroleum:block/well_pipe_top",
+    "up": "immersivepetroleum:block/well_pipe_top",
+    "north": "immersivepetroleum:block/concrete_cracked",
+    "south": "immersivepetroleum:block/concrete_cracked",
+    "east": "immersivepetroleum:block/concrete_cracked",
+    "west": "immersivepetroleum:block/concrete_cracked"
+  }
+}

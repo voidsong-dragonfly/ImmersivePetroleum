@@ -11,11 +11,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -35,13 +37,18 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 	@Nonnull
 	public List<ColumnPos> tappedIslands = new ArrayList<>();
 	
+	/** Only ever contains the Y component of {@link BlockPos} */
+	public List<Integer> phyiscalPipesList = new ArrayList<>();
+	
 	/** Amount of pipe left over from 1 IE Pipe */
-	public int pipe = 0;
+	public int pipes = 0;
 	/** Current length of the virtual well pipe */
-	public int pipeLength = 0;
+	public int wellPipeLength = 0;
 	/** Extra pipes needed to make the bend and connect to other "inputs" */
 	public int additionalPipes = 0;
 	public boolean drillingCompleted;
+	
+	public boolean pastPhyiscalPart;
 	
 	private boolean selfDestruct;
 	private int selfDestructTimer;
@@ -58,10 +65,11 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 	@Override
 	protected void writeCustom(CompoundNBT nbt){
 		nbt.putBoolean("spill", this.spill);
-		nbt.putBoolean("drillingCompleted", this.drillingCompleted);
+		nbt.putBoolean("drillingcompleted", this.drillingCompleted);
+		nbt.putBoolean("pastphyiscalpart", this.pastPhyiscalPart);
 		
-		nbt.putInt("pipe", this.pipe);
-		nbt.putInt("pipelength", this.pipeLength);
+		nbt.putInt("pipes", this.pipes);
+		nbt.putInt("wellpipelength", this.wellPipeLength);
 		nbt.putInt("additionalpipes", this.additionalPipes);
 		
 		nbt.putBoolean("selfdestruct", this.selfDestruct);
@@ -80,15 +88,24 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 			});
 			nbt.put("tappedislands", list);
 		}
+		
+		if(!this.phyiscalPipesList.isEmpty()){
+			final ListNBT list = new ListNBT();
+			this.phyiscalPipesList.forEach(i -> {
+				list.add(IntNBT.valueOf(i.intValue()));
+			});
+			nbt.put("pipeLoc", list);
+		}
 	}
 	
 	@Override
 	protected void readCustom(BlockState state, CompoundNBT nbt){
 		this.spill = nbt.getBoolean("spill");
-		this.drillingCompleted = nbt.getBoolean("drillingCompleted");
+		this.drillingCompleted = nbt.getBoolean("drillingcompleted");
+		this.pastPhyiscalPart = nbt.getBoolean("pastphyiscalpart");
 		
-		this.pipe = nbt.getInt("pipe");
-		this.pipeLength = nbt.getInt("pipelength");
+		this.pipes = nbt.getInt("pipes");
+		this.wellPipeLength = nbt.getInt("wellpipelength");
 		this.additionalPipes = nbt.getInt("additionalpipes");
 		
 		this.selfDestruct = nbt.getBoolean("selfdestruct");
@@ -111,6 +128,14 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 				tmp.add(new ColumnPos(x, z));
 			});
 			this.tappedIslands = tmp;
+		}
+		
+		if(nbt.contains("pipeLoc", NBT.TAG_LIST)){
+			ListNBT list = nbt.getList("pipeLoc", NBT.TAG_INT);
+			final List<Integer> ints = new ArrayList<>(list.size());
+			list.forEach(n -> {
+				ints.add(Integer.valueOf(((IntNBT) n).getInt()));
+			});
 		}
 	}
 	
@@ -188,8 +213,21 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 				}
 			}else{
 				if(this.selfDestruct && advanceTimer()){
-					getWorldNonnull().setBlockState(getPos(), Blocks.BEDROCK.getDefaultState());
 					// Sucks to be you if this happens =P
+					getWorldNonnull().setBlockState(getPos(), Blocks.BEDROCK.getDefaultState());
+					
+					if(!this.phyiscalPipesList.isEmpty()){
+						for(int i = 0;i < this.phyiscalPipesList.size();i++){
+							BlockPos pos = getPos();
+							pos = new BlockPos(pos.getX(), this.phyiscalPipesList.get(i).intValue(), pos.getZ());
+							
+							BlockState state = getWorldNonnull().getBlockState(pos);
+							
+							if(state.getBlock() instanceof WellPipeBlock){
+								getWorldNonnull().setBlockState(pos, state.with(WellPipeBlock.BROKEN, true));
+							}
+						}
+					}
 				}
 			}
 		}
@@ -200,10 +238,10 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 			return;
 		}
 		
-		this.pipe -= 1;
-		this.pipeLength += 1;
+		this.pipes -= 1;
+		this.wellPipeLength += 1;
 		
-		if(this.pipeLength >= getMaxPipeLength()){
+		if(this.wellPipeLength >= getMaxPipeLength()){
 			this.drillingCompleted = true;
 		}
 		
@@ -220,7 +258,8 @@ public class WellTileEntity extends IPTileEntityBase implements ITickableTileEnt
 		}
 		
 		this.selfDestruct = true;
-		this.selfDestructTimer = 6000; // 5 Minutes
+		this.selfDestructTimer = 100;
+//		this.selfDestructTimer = 6000; // 5 Minutes
 	}
 	
 	public void abortSelfDestructSequence(){

@@ -87,18 +87,21 @@ public class DerrickScreen extends ContainerScreen<DerrickContainer>{
 		
 		WellTileEntity well = this.tile.getOrCreateWell(false);
 		if(well != null){
-			if(this.cfgButton.active && well.pipeLength > 0){
+			if(this.cfgButton.active && well.wellPipeLength > 0){
 				this.cfgButton.active = false;
 			}
 			
 			// Possible display prototypes
 			
-			if(well.pipeLength < well.getMaxPipeLength()){
-				String str = String.format(Locale.ENGLISH, "%d%%", (int) (100 * well.pipeLength / (float) well.getMaxPipeLength()));
+			if(well.wellPipeLength < well.getMaxPipeLength()){
+				String str = String.format(Locale.ROOT, "%d%%", (int) (100 * well.wellPipeLength / (float) well.getMaxPipeLength()));
 				drawInfoText(matrix, new StringTextComponent("Drilling... " + str), 0);
-				drawInfoText(matrix, new StringTextComponent("Length: " + well.pipeLength + "/" + well.getMaxPipeLength() + "m"), 1);
-				drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + well.pipe + ", " + this.tile.timer + "t"), 2);
-//				drawInfoText(matrix, new StringTextComponent(""), 3);
+				drawInfoText(matrix, new StringTextComponent("Length: " + well.wellPipeLength + "/" + well.getMaxPipeLength() + "m"), 1);
+				drawInfoText(matrix, new StringTextComponent("§8Pipe, Timer: " + well.pipes + ", " + this.tile.timer + "t"), 2);
+				
+				int realPipes = Math.max(0, (this.tile.getPos().getY() - well.getPos().getY() - 1) - well.wellPipeLength);
+				str = String.format(Locale.ROOT, "§8R.Pipes: %d (%dmB)", realPipes, realPipes * 125);
+				drawInfoText(matrix, new StringTextComponent(str), 3);
 			}else{
 				boolean debug = false;
 				if(this.tile.spilling || debug){

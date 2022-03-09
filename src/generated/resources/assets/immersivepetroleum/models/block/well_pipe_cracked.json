@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "immersivepetroleum:block/concrete_cracked",
+    "bottom": "immersivepetroleum:block/well_pipe_top",
+    "top": "immersivepetroleum:block/well_pipe_top"
+  }
+}
