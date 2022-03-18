@@ -13,7 +13,7 @@ import net.minecraft.world.level.material.Material;
 
 public class PetcokeBlock extends IPBlockBase{
 	public PetcokeBlock(){
-		super("petcoke_block", Block.Properties.of(Material.STONE).sound(SoundType.STONE).requiresCorrectToolForDrops()
+		super(Block.Properties.of(Material.STONE).sound(SoundType.STONE).requiresCorrectToolForDrops()
 				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
 				.strength(2, 10));
 	}

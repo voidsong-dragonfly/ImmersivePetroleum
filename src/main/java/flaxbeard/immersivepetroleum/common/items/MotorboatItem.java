@@ -45,8 +45,8 @@ import net.minecraftforge.items.IItemHandler;
 public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	public static final String UPGRADE_TYPE = "MOTORBOAT";
 	
-	public MotorboatItem(String name){
-		super(name, new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
+	public MotorboatItem(){
+		super(new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
 	}
 	
 	@Override

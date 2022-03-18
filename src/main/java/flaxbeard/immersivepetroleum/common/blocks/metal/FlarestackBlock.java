@@ -50,7 +50,7 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	public static final BooleanProperty SLAVE = BooleanProperty.create("slave");
 	
 	public FlarestackBlock(){
-		super("flarestack", Block.Properties.of(material)
+		super(Block.Properties.of(material)
 				.strength(3.0F, 15.0F)
 				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
 				.sound(SoundType.METAL)

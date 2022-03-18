@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import java.util.function.Supplier;
+
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.BlockItem;
@@ -14,13 +16,13 @@ import net.minecraft.world.level.material.PushReaction;
 public class BlockDummy extends IPBlockBase{
 	private static final Material Material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
 	
-	public BlockDummy(String name){
-		super(name, Block.Properties.of(Material).noOcclusion());
+	public BlockDummy(){
+		super(Block.Properties.of(Material).noOcclusion());
 	}
 	
 	@Override
-	protected BlockItem createBlockItem(){
-		return new BlockItem(this, new Item.Properties());
+	public Supplier<BlockItem> blockItemSupplier(){
+		return () -> new BlockItem(this, new Item.Properties());
 	}
 	
 	@Override

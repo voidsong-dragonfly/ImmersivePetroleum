@@ -39,8 +39,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 public class OilCanItem extends IPItemBase{
-	public OilCanItem(String name){
-		super(name, new Item.Properties().stacksTo(1));
+	public OilCanItem(){
+		super(new Item.Properties().stacksTo(1));
 	}
 	
 	@Override
