@@ -2,13 +2,15 @@ package flaxbeard.immersivepetroleum.common.fluids;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPRegisters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -35,63 +37,53 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
+import net.minecraftforge.registries.RegistryObject;
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableObject;
 
 public class IPFluid extends FlowingFluid{
 	public static final List<IPFluid> FLUIDS = new ArrayList<>();
 	
-	protected final String fluidName;
+	protected final IPFluidEntry entry;
 	protected final ResourceLocation stillTexture;
 	protected final ResourceLocation flowingTexture;
-	protected IPFluid source;
-	protected IPFluid flowing;
-	public Block block;
-	protected Item bucket;
 	@Nullable
 	protected final Consumer<FluidAttributes.Builder> buildAttributes;
 	
-	public IPFluid(String name, int density, int viscosity){
-		this(name,
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + name + "_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + name + "_flow"), IPFluid.createBuilder(density, viscosity));
+	public IPFluid(IPFluidEntry entry, int density, int viscosity){
+		this(entry,
+				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + entry.name + "_still"),
+				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + entry.name + "_flow"), IPFluid.createBuilder(density, viscosity));
 	}
 	
-	protected IPFluid(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
-		this(name, stillTexture, flowingTexture, buildAttributes, true);
+	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
+		this(entry, stillTexture, flowingTexture, buildAttributes, true);
 	}
 	
-	protected IPFluid(String name, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes, boolean isSource){
-		this.fluidName = name;
+	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes, boolean isSource){
+		this.entry = entry;
 		this.stillTexture = stillTexture;
 		this.flowingTexture = flowingTexture;
 		this.buildAttributes = buildAttributes;
-		IPContent.registeredIPFluids.add(this);
-		if(!isSource){
-			flowing = this;
-			setRegistryName(ImmersivePetroleum.MODID, this.fluidName + "_flowing");
-		}else{
-			this.source = this;
-			this.block = createFluidBlock();
-			this.bucket = createBucketItem();
-			this.flowing = createFlowingFluid();
-			
-			setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, this.fluidName));
-			
-			FLUIDS.add(this);
-			IPContent.registeredIPBlocks.add(this.block);
-			IPContent.registeredIPItems.add(this.bucket);
-		}
 	}
-	
-	protected IPFluidFlowing createFlowingFluid(){
-		return new IPFluidFlowing(this);
+
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory) {
+		return makeFluid(name, factory, IPFluidBlock::new);
 	}
-	
-	protected IPFluidBlock createFluidBlock(){
-		return new IPFluidBlock(this.source, this.fluidName);
-	}
-	
-	protected IPBucketItem createBucketItem(){
-		return new IPBucketItem(this.source, this.fluidName);
+
+	public static IPFluidEntry makeFluid(
+			String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory
+	) {
+		Mutable<IPFluidEntry> entry = new MutableObject<>();
+
+		entry.setValue(new IPFluidEntry(
+				name,
+				IPRegisters.registerFluid(name+"_still", () -> factory.apply(entry.getValue())),
+				IPRegisters.registerFluid(name+"_flowing", () -> new IPFluidFlowing(entry.getValue().still.get())),
+				IPRegisters.registerBlock(name, () -> blockFactory.apply(entry.getValue())),
+				IPRegisters.registerItem(name+"_bucket", () -> new IPBucketItem(entry.getValue().still()))
+		));
+		return entry.getValue();
 	}
 	
 	@Override
@@ -117,17 +109,17 @@ public class IPFluid extends FlowingFluid{
 	
 	@Override
 	public Fluid getFlowing(){
-		return this.flowing;
+		return this.entry.flowing.get();
 	}
 	
 	@Override
 	public Fluid getSource(){
-		return this.source;
+		return this.entry.still.get();
 	}
 	
 	@Override
 	public Item getBucket(){
-		return this.bucket;
+		return this.entry.bucket.get();
 	}
 	
 	@Override
@@ -157,12 +149,12 @@ public class IPFluid extends FlowingFluid{
 	
 	@Override
 	protected BlockState createLegacyBlock(FluidState state){
-		return this.block.defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
+		return this.entry.block.get().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
 	}
 	
 	@Override
 	public boolean isSource(FluidState state){
-		return state.getType() == this.source;
+		return state.is(this.getSource());
 	}
 	
 	@Override
@@ -172,7 +164,7 @@ public class IPFluid extends FlowingFluid{
 	
 	@Override
 	public boolean isSame(Fluid fluidIn){
-		return fluidIn == this.source || fluidIn == this.flowing;
+		return fluidIn.isSame(this.getSource()) || fluidIn.isSame(this.getFlowing());
 	}
 	
 	public static Consumer<FluidAttributes.Builder> createBuilder(int density, int viscosity){
@@ -182,47 +174,16 @@ public class IPFluid extends FlowingFluid{
 	// STATIC CLASSES
 	
 	public static class IPFluidBlock extends LiquidBlock{
-		private static IPFluid tmp = null;
-		
-		private IPFluid fluid;
-		public IPFluidBlock(IPFluid fluid, String fluidName){
-			super(supplier(fluid), BlockBehaviour.Properties.of(Material.WATER));
-			this.fluid = fluid;
-			setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName + "_fluid_block"));
-		}
-		
-		@Override
-		protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
-			super.createBlockStateDefinition(builder);
-			IPFluid f = this.fluid != null ? this.fluid : tmp;
-			builder.add(f.getStateDefinition().getProperties().toArray(new Property[0]));
-		}
-		
-		@Override
-		public FluidState getFluidState(BlockState state){
-			FluidState baseState = super.getFluidState(state);
-			for(Property<?> prop:this.fluid.getStateDefinition().getProperties())
-				if(prop != LiquidBlock.LEVEL)
-					baseState = withCopiedValue(prop, baseState, state);
-			return baseState;
-		}
-		
-		private <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom){
-			return oldState.setValue(prop, copyFrom.getValue(prop));
-		}
-		
-		private static Supplier<IPFluid> supplier(IPFluid fluid){
-			tmp = fluid;
-			return () -> fluid;
+		public IPFluidBlock(IPFluidEntry entry){
+			super(entry.still(), BlockBehaviour.Properties.of(Material.WATER));
 		}
 	}
 	
 	public static class IPBucketItem extends BucketItem{
 		private static final Item.Properties PROPS = new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab);
 		
-		public IPBucketItem(IPFluid fluid, String fluidName){
-			super(() -> fluid, PROPS);
-			setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName + "_bucket"));
+		public IPBucketItem(Supplier<? extends Fluid> fluid){
+			super(fluid, PROPS);
 		}
 		
 		@Override
@@ -243,10 +204,7 @@ public class IPFluid extends FlowingFluid{
 	
 	public static class IPFluidFlowing extends IPFluid{
 		public IPFluidFlowing(IPFluid source){
-			super(source.fluidName, source.stillTexture, source.flowingTexture, source.buildAttributes, false);
-			this.source = source;
-			this.bucket = source.bucket;
-			this.block = source.block;
+			super(source.entry, source.stillTexture, source.flowingTexture, source.buildAttributes, false);
 			registerDefaultState(this.getStateDefinition().any().setValue(LEVEL, 7));
 		}
 		
@@ -256,4 +214,12 @@ public class IPFluid extends FlowingFluid{
 			builder.add(LEVEL);
 		}
 	}
+
+	public record IPFluidEntry(
+			String name,
+			RegistryObject<IPFluid> still,
+			RegistryObject<IPFluid> flowing,
+			RegistryObject<Block> block,
+			RegistryObject<Item> bucket
+	) {}
 }

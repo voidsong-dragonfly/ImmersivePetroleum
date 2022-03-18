@@ -18,20 +18,8 @@ public class IPBlockSlab<B extends IPBlockBase> extends SlabBlock{
 	
 	public IPBlockSlab(B base){
 		super(Properties.copy(base).isSuffocating(causesSuffocation(base)).isRedstoneConductor(isNormalCube(base)));
-		setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, base.getRegistryName().getPath() + "_slab"));
-		
-		IPContent.registeredIPBlocks.add(this);
-		
-		BlockItem bItem = createBlockItem();
-		if(bItem != null){
-			IPContent.registeredIPItems.add(bItem.setRegistryName(getRegistryName()));
-		}
-		
+
 		this.base = base;
-	}
-	
-	protected BlockItem createBlockItem(){
-		return new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
 	}
 	
 	@Override

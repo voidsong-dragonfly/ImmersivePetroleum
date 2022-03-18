@@ -44,13 +44,17 @@ public class IPRegisters{
 		GUI_REGISTER.register(eventBus);
 		RECIPE_SERIALIZERS.register(eventBus);
 	}
-	
+
 	public static final <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor, @Nullable Function<RegistryObject<T>, ? extends BlockItem> blockItem){
 		RegistryObject<T> block = BLOCK_REGISTER.register(name, blockConstructor);
 		if(blockItem != null){
 			registerItem(name, () -> blockItem.apply(block));
 		}
 		return block;
+	}
+
+	public static final <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor){
+		return registerBlock(name, blockConstructor, null);
 	}
 	
 	public static final <T extends IPBlockBase> RegistryObject<T> registerIPBlock(String name, Supplier<T> blockConstructor){
@@ -67,8 +71,12 @@ public class IPRegisters{
 	public static final <T extends Item> RegistryObject<T> registerItem(String name, Supplier<T> itemConstructor){
 		return ITEM_REGISTER.register(name, itemConstructor);
 	}
-	
+
 	public static final <T extends Fluid> RegistryObject<T> registerFluid(String name, Supplier<T> fluidConstructor){
+		return FLUID_REGISTER.register(name, fluidConstructor);
+	}
+
+	public static <T extends Fluid> RegistryObject<T> registerFlowingFluid(String name, Supplier<T> fluidConstructor){
 		return FLUID_REGISTER.register(name, fluidConstructor);
 	}
 

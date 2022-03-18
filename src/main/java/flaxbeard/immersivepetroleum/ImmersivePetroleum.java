@@ -52,7 +52,7 @@ public class ImmersivePetroleum{
 	public static final CreativeModeTab creativeTab = new CreativeModeTab(MODID){
 		@Override
 		public ItemStack makeIcon(){
-			return new ItemStack(Fluids.CRUDEOIL.get().getBucket());
+			return new ItemStack(Fluids.CRUDEOIL.bucket().get());
 		}
 	};
 	

@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common.fluids;
 
 import java.util.ArrayList;
 
+import blusunrize.immersiveengineering.common.register.IEFluids;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,13 +16,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 
 public class NapalmFluid extends IPFluid{
-	public NapalmFluid(){
-		super("napalm", 1000, 4000);
+	public NapalmFluid(IPFluidEntry entry){
+		super(entry, 1000, 4000);
 	}
-	
-	@Override
-	protected IPFluidBlock createFluidBlock(){
-		IPFluidBlock block = new IPFluidBlock(this.source, this.fluidName){
+
+	public static IPFluidEntry makeFluid() {
+		return makeFluid("napalm", NapalmFluid::new, e -> new IPFluidBlock(e){
 			@Override
 			public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
 				for(Direction facing:Direction.values()){
@@ -33,20 +33,19 @@ public class NapalmFluid extends IPFluid{
 				}
 				super.onPlace(state, worldIn, pos, oldState, isMoving);
 			}
-			
+
 			@Override
 			public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 				if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
 					ResourceLocation d = worldIn.dimension().getRegistryName();
 					if(!CommonEventHandler.napalmPositions.containsKey(d) || !CommonEventHandler.napalmPositions.get(d).contains(fromPos)){
-						processFire(worldIn, pos);
+						processFire(e, worldIn, pos);
 					}
 				}
-				
+
 				super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 			}
-		};
-		return block;
+		});
 	}
 	
 	@Override
@@ -54,7 +53,7 @@ public class NapalmFluid extends IPFluid{
 		return 10;
 	}
 	
-	public void processFire(Level world, BlockPos pos){
+	public static void processFire(IPFluidEntry entry, Level world, BlockPos pos){
 		ResourceLocation d = world.dimension().getRegistryName();
 		if(!CommonEventHandler.napalmPositions.containsKey(d)){
 			CommonEventHandler.napalmPositions.put(d, new ArrayList<>());
@@ -65,8 +64,7 @@ public class NapalmFluid extends IPFluid{
 		
 		for(Direction facing:Direction.values()){
 			BlockPos notifyPos = pos.relative(facing);
-			Block block = world.getBlockState(notifyPos).getBlock();
-			if(block == this.block){
+			if(world.getBlockState(notifyPos).is(entry.block().get())){
 				CommonEventHandler.napalmPositions.get(d).add(notifyPos);
 			}
 		}
