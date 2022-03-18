@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common;
 
+import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,7 +57,7 @@ public class CommonProxy{
 	}
 	
 	/** Fired at {@link FMLLoadCompleteEvent} */
-	public void completed(){
+	public void completed(ParallelDispatchEvent event){
 	}
 	
 	public void serverAboutToStart(){

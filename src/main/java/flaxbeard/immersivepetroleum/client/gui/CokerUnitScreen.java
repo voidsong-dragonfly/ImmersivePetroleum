@@ -29,7 +29,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	
 	CokerUnitTileEntity tile;
 	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, Inventory inv, Component title){
-		super(inventorySlotsIn, inv, title);
+		super(inventorySlotsIn, inv, title, GUI_TEXTURE);
 		this.tile = menu.tile;
 		
 		this.imageWidth = 200;
@@ -96,10 +96,6 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int mx, int my){
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture(GUI_TEXTURE);
-		this.blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-		
 		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], leftPos + 32, topPos + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
 		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_OUTPUT], leftPos + 152, topPos + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
 		

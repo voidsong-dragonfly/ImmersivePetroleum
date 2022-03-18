@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -11,8 +13,6 @@ import com.mojang.math.Matrix4f;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
@@ -54,7 +54,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -88,10 +88,10 @@ public class DebugRenderHandler{
 							
 							List<Component> debugOut = new ArrayList<>();
 							BlockEntity te = world.getBlockEntity(result.getBlockPos());
-							boolean isMBPart = te instanceof MultiblockPartTileEntity;
+							boolean isMBPart = te instanceof MultiblockPartBlockEntity<?>;
 							if(isMBPart){
-								MultiblockPartTileEntity<?> multiblock = (MultiblockPartTileEntity<?>) te;
-								
+								MultiblockPartBlockEntity<?> multiblock = (MultiblockPartBlockEntity<?>) te;
+
 								if(!multiblock.offsetToMaster.equals(BlockPos.ZERO)){
 									multiblock = multiblock.master();
 								}
@@ -123,7 +123,7 @@ public class DebugRenderHandler{
 							
 							if(!debugOut.isEmpty() || isMBPart){
 								if(isMBPart){
-									MultiblockPartTileEntity<?> generic = (MultiblockPartTileEntity<?>) te;
+									MultiblockPartBlockEntity<?> generic = (MultiblockPartBlockEntity<?>) te;
 									BlockPos tPos = generic.posInMultiblock;
 									
 									if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
@@ -144,9 +144,8 @@ public class DebugRenderHandler{
 										// Don't care, skip if this is thrown
 									}
 									
-									if(generic instanceof PoweredMultiblockTileEntity<?, ?>){
-										PoweredMultiblockTileEntity<?, ?> poweredGeneric = (PoweredMultiblockTileEntity<?, ?>) generic;
-										
+									if(generic instanceof PoweredMultiblockBlockEntity<?,?> poweredGeneric){
+
 										name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
 										
 										debugOut.add(2, toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
@@ -207,7 +206,7 @@ public class DebugRenderHandler{
 	}
 	
 	@SubscribeEvent
-	public void reservoirDebuggingRenderLast(RenderWorldLastEvent event){
+	public void reservoirDebuggingRenderLast(RenderLevelLastEvent event){
 		if(ReservoirHandler.generator == null){
 			return;
 		}
@@ -227,7 +226,7 @@ public class DebugRenderHandler{
 			}
 			
 			if(mode == DebugItem.Modes.SEEDBASED_RESERVOIR || mode == DebugItem.Modes.SEEDBASED_RESERVOIR_AREA_TEST){
-				PoseStack matrix = event.getMatrixStack();
+				PoseStack matrix = event.getPoseStack();
 				Level world = player.getCommandSenderWorld();
 				BlockPos playerPos = player.blockPosition();
 				

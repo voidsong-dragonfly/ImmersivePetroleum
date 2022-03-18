@@ -7,8 +7,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -23,7 +24,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.ResourceLocationException;
@@ -103,8 +103,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public static final BlockPos Item_IN = new BlockPos(4, 0, 0);
 	
 	/** Template-Location of the Energy Input Ports.<br><pre>1 1 0<br>2 1 0<br>3 1 0</pre><br> */
-	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(1, 1, 0), new BlockPos(2, 1, 0), new BlockPos(3, 1, 0));
-	
+	public static final Set<MultiblockFace> Energy_IN = ImmutableSet.of(
+			new MultiblockFace(1, 1, 0, RelativeBlockFace.UP),
+			new MultiblockFace(2, 1, 0, RelativeBlockFace.UP),
+			new MultiblockFace(3, 1, 0, RelativeBlockFace.UP)
+	);
+
 	/** Template-Location of the Redstone Input Port. (6 1 4)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(6, 1, 4));
 	
@@ -438,7 +442,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	}
 	
 	@Override
-	public Set<BlockPos> getEnergyPos(){
+	public Set<MultiblockFace> getEnergyPos(){
 		return Energy_IN;
 	}
 	

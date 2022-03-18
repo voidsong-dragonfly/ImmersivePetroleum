@@ -28,7 +28,7 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 	DistillationTowerTileEntity tile;
 	
 	public DistillationTowerScreen(DistillationTowerContainer container, Inventory playerInventory, Component title){
-		super(container, playerInventory, title);
+		super(container, playerInventory, title, GUI_TEXTURE);
 		this.tile = container.tile;
 	}
 	
@@ -60,7 +60,7 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 		}
 		
 		if(mx > leftPos + 157 && mx < leftPos + 164 && my > topPos + 21 && my < topPos + 67)
-			tooltip.add(new TextComponent(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " IF"));
+			tooltip.add(new TextComponent(tile.energyStorage.getEnergyStored() + "/" + tile.energyStorage.getMaxEnergyStored() + " IF"));
 		
 		if(!tooltip.isEmpty()){
 			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);
@@ -69,11 +69,7 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 	
 	@Override
 	protected void renderBg(PoseStack matrix, float f, int mx, int my){
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture(GUI_TEXTURE);
-		this.blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-		
-		int stored = (int) (46 * (tile.getEnergyStored(null) / (float) tile.getMaxEnergyStored(null)));
+		int stored = (int) (46 * (tile.energyStorage.getEnergyStored() / (float) tile.energyStorage.getMaxEnergyStored()));
 		fillGradient(matrix, leftPos + 158, topPos + 22 + (46 - stored), leftPos + 165, topPos + 68, 0xffb51500, 0xff600b00);
 		
 		GuiHelper.handleGuiTank(matrix, tile.tanks[0], leftPos + 62, topPos + 21, 16, 47, 177, 31, 20, 51, mx, my, GUI_TEXTURE, null);

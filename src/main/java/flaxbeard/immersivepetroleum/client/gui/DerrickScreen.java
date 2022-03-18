@@ -51,7 +51,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 				GuiUtils.drawHoveringText(matrix, Arrays.asList(new TextComponent("Set in Stone.")), mx, my, width, height, -1, font);
 			}
 		});
-		addButton(this.cfgButton);
+		addRenderableWidget(this.cfgButton);
 	}
 	
 	@Override

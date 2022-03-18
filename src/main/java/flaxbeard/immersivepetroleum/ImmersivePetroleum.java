@@ -118,7 +118,7 @@ public class ImmersivePetroleum{
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event){
-		proxy.completed();
+		proxy.completed(event);
 	}
 	
 	public void serverAboutToStart(ServerAboutToStartEvent event){

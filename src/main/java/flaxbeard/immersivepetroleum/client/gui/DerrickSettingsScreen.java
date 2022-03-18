@@ -43,9 +43,9 @@ public class DerrickSettingsScreen extends Screen{
 		this.guiTop = (this.height - this.ySize) / 2;
 		
 		this.pipeConfig = new PipeConfig(this.derrickScreen.tile, this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
-		addButton(this.pipeConfig);
+		addRenderableWidget(this.pipeConfig);
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Set"), b -> {
+		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Set"), b -> {
 			MessageDerrick.sendToServer(this.derrickScreen.tile.getBlockPos(), this.pipeConfig.getGrid());
 		}, (button, matrix, mx, my) -> {
 			List<Component> list = new ArrayList<>();
@@ -53,7 +53,7 @@ public class DerrickSettingsScreen extends Screen{
 			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
 		}));
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Reload"), b -> {
+		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Reload"), b -> {
 			this.pipeConfig.reset(this.derrickScreen.tile);
 		}, (button, matrix, mx, my) -> {
 			List<Component> list = new ArrayList<>();
@@ -61,7 +61,7 @@ public class DerrickSettingsScreen extends Screen{
 			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
 		}));
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Close"), b -> {
+		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Close"), b -> {
 			DerrickSettingsScreen.this.onClose();
 		}, (button, matrix, mx, my) -> {
 			List<Component> list = new ArrayList<>();

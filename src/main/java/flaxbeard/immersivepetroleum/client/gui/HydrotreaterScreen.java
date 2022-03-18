@@ -23,7 +23,7 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 	
 	HydrotreaterTileEntity tile;
 	public HydrotreaterScreen(HydrotreaterContainer inventorySlotsIn, Inventory inv, Component title){
-		super(inventorySlotsIn, inv, title);
+		super(inventorySlotsIn, inv, title, GUI_TEXTURE);
 		this.tile = this.menu.tile;
 		
 		this.imageWidth = 140;
@@ -61,15 +61,11 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 	
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int mx, int my){
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture(GUI_TEXTURE);
-		this.blit(matrix, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-		
 		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_A], this.leftPos + 34, this.topPos + 11, 16, 47, 140, 0, 20, 51, mx, my, GUI_TEXTURE, null);
 		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_B], this.leftPos + 11, this.topPos + 11, 16, 47, 140, 0, 20, 51, mx, my, GUI_TEXTURE, null);
 		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_OUTPUT], this.leftPos + 92, this.topPos + 11, 16, 47, 140, 0, 20, 51, mx, my, GUI_TEXTURE, null);
 		
-		int stored = (int) (46 * (tile.getEnergyStored(null) / (float) tile.getMaxEnergyStored(null)));
+		int stored = (int) (46 * (tile.energyStorage.getEnergyStored() / (float) tile.energyStorage.getMaxEnergyStored()));
 		fillGradient(matrix, leftPos + 122, topPos + 12 + (46 - stored), leftPos + 129, topPos + 58, 0xffb51500, 0xff600b00);
 	}
 }

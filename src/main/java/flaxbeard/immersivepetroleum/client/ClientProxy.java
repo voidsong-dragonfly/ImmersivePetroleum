@@ -1,23 +1,5 @@
 package flaxbeard.immersivepetroleum.client;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import blusunrize.lib.manual.ManualEntry.SpecialElementData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
-
-import com.electronwill.nightconfig.core.Config;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.client.manual.ManualElementMultiblock;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
@@ -29,24 +11,22 @@ import blusunrize.lib.manual.ManualElementCrafting;
 import blusunrize.lib.manual.ManualElementTable;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualEntry.EntryData;
+import blusunrize.lib.manual.ManualEntry.SpecialElementData;
 import blusunrize.lib.manual.ManualInstance;
-import blusunrize.lib.manual.TextSplitter;
 import blusunrize.lib.manual.Tree.InnerNode;
+import com.electronwill.nightconfig.core.Config;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
-import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
-import flaxbeard.immersivepetroleum.client.gui.DerrickScreen;
-import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
-import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
-import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
-import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
-import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
-import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
-import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
-import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
+import flaxbeard.immersivepetroleum.client.gui.*;
+import flaxbeard.immersivepetroleum.client.render.*;
 import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -69,7 +49,6 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.model.BakedModel;
@@ -90,10 +69,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -101,9 +82,19 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
 public class ClientProxy extends CommonProxy{
@@ -137,55 +128,38 @@ public class ClientProxy extends CommonProxy{
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void completed(){
-		DeferredWorkQueue.runLater(() -> ManualHelper.addConfigGetter(str -> {
-			switch(str){
-				case "distillationtower_operationcost":{
-					return Integer.valueOf((int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get()));
-				}
-				case "coker_operationcost":{
-					return Integer.valueOf((int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get()));
-				}
-				case "hydrotreater_operationcost":{
-					return Integer.valueOf((int) (512 * IPServerConfig.REFINING.hydrotreater_energyModifier.get()));
-				}
-				case "pumpjack_consumption":{
-					return IPServerConfig.EXTRACTION.pumpjack_consumption.get();
-				}
-				case "pumpjack_speed":{
-					return IPServerConfig.EXTRACTION.pumpjack_speed.get();
-				}
-				case "pumpjack_days":{
-					int oil_min = 1000000;
-					int oil_max = 5000000;
-					for(Reservoir reservoir:Reservoir.map.values()){
-						if(reservoir.name.equals("oil")){
-							oil_min = reservoir.minSize;
-							oil_max = reservoir.maxSize;
-							break;
-						}
+	public void completed(ParallelDispatchEvent event){
+		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch (str){
+			case "distillationtower_operationcost" -> (int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get());
+			case "coker_operationcost" -> (int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get());
+			case "hydrotreater_operationcost" -> (int) (512 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
+			case "pumpjack_consumption" -> IPServerConfig.EXTRACTION.pumpjack_consumption.get();
+			case "pumpjack_speed" -> IPServerConfig.EXTRACTION.pumpjack_speed.get();
+			case "pumpjack_days" -> {
+				int oil_min = 1000000;
+				int oil_max = 5000000;
+				for (Reservoir reservoir : Reservoir.map.values()){
+					if (reservoir.name.equals("oil")){
+						oil_min = reservoir.minSize;
+						oil_max = reservoir.maxSize;
+						break;
 					}
-					
-					float averageSize = (oil_min + oil_max) / 2F;
-					float pumpspeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
-					return Integer.valueOf(Mth.floor((averageSize / pumpspeed) / 24000F));
 				}
-				case "autolubricant_speedup":{
-					return Double.valueOf(1.25D);
-				}
-				case "portablegenerator_flux":{
-					return FuelHandler.getFluxGeneratedPerTick(IPContent.Fluids.GASOLINE.still().get());
-				}
-				default:
-					break;
+
+				float averageSize = (oil_min + oil_max) / 2F;
+				float pumpspeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
+				yield Mth.floor((averageSize / pumpspeed) / 24000F);
 			}
-			
-			// Last resort
-			Config cfg = IPServerConfig.getRawConfig();
-			if(cfg.contains(str)){
-				return cfg.get(str);
+			case "autolubricant_speedup" -> 1.25D;
+			case "portablegenerator_flux" -> FuelHandler.getFluxGeneratedPerTick(IPContent.Fluids.GASOLINE.still().get());
+			default -> {
+				// Last resort
+				Config cfg = IPServerConfig.getRawConfig();
+				if(cfg.contains(str)){
+					yield cfg.get(str);
+				}
+				yield null;
 			}
-			return null;
 		}));
 		
 		setupManualPages();
@@ -208,12 +182,21 @@ public class ClientProxy extends CommonProxy{
 		
 		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);
-		
-		ClientRegistry.bindTileEntityRenderer(IPTileTypes.TOWER.get(), MultiblockDistillationTowerRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(IPTileTypes.PUMP.get(), MultiblockPumpjackRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(IPTileTypes.OILTANK.get(), OilTankRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(IPTileTypes.DERRICK.get(), DerrickRenderer::new);
+	}
+
+	@SubscribeEvent
+	public static void registerBERenders(RegisterRenderers ev){
+		registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
+		registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
+		registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
+		registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
+		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
+	}
+
+	private static <T extends BlockEntity> void registerBERender(
+			RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory
+	) {
+		ev.registerBlockEntityRenderer(type, ctx -> factory.get());
 	}
 	
 	/** ImmersivePetroleum's Manual Category */
@@ -230,7 +213,7 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void renderTile(BlockEntity te, VertexConsumer iVertexBuilder, PoseStack transform, MultiBufferSource buffer){
-		BlockEntityRenderer<BlockEntity> tesr = BlockEntityRenderDispatcher.instance.getRenderer((BlockEntity) te);
+		BlockEntityRenderer<BlockEntity> tesr = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(te);
 		
 		if(te instanceof PumpjackTileEntity){
 			transform.pushPose();

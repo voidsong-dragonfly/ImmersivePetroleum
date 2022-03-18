@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -23,10 +26,6 @@ import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -98,9 +97,9 @@ public class ProjectorScreen extends Screen{
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		
-		this.searchField = addButton(new SearchField(this.font, this.guiLeft + 25, this.guiTop + 13));
+		this.searchField = addRenderableWidget(new SearchField(this.font, this.guiLeft + 25, this.guiTop + 13));
 		
-		addButton(new ConfirmButton(this.guiLeft + 115, this.guiTop + 10, but -> {
+		addRenderableWidget(new ConfirmButton(this.guiLeft + 115, this.guiTop + 10, but -> {
 			LocalPlayer player = Minecraft.getInstance().player;
 			
 			this.settings.setMode(Settings.Mode.PROJECTION);
@@ -112,16 +111,16 @@ public class ProjectorScreen extends Screen{
 			
 			player.displayClientMessage(this.settings.getMode().getTranslated(), true);
 		}));
-		addButton(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
+		addRenderableWidget(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
 			Minecraft.getInstance().screen.onClose();
 		}));
-		addButton(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> {
+		addRenderableWidget(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> {
 			this.settings.flip();
 		}));
-		addButton(new RotateLeftButton(this.guiLeft + 115, this.guiTop + 106, but -> {
+		addRenderableWidget(new RotateLeftButton(this.guiLeft + 115, this.guiTop + 106, but -> {
 			this.settings.rotateCCW();
 		}));
-		addButton(new RotateRightButton(this.guiLeft + 115, this.guiTop + 130, but -> {
+		addRenderableWidget(new RotateRightButton(this.guiLeft + 115, this.guiTop + 130, but -> {
 			this.settings.rotateCW();
 		}));
 		
@@ -138,7 +137,7 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	private void updatelist(){
-		boolean exists = this.buttons.contains(this.list);
+		boolean exists = this.renderables.contains(this.list);
 		
 		List<String> list = new ArrayList<>();
 		for(int i = 0;i < this.multiblocks.get().size();i++){
@@ -170,15 +169,13 @@ public class ProjectorScreen extends Screen{
 		guilist.setTranslationFunc(str -> getMBName(Integer.valueOf(str)));
 		
 		if(!exists){
-			this.list = addButton(guilist);
+			this.list = addRenderableWidget(guilist);
 			return;
 		}
-		
-		int a = this.buttons.indexOf(this.list);
-		int b = this.children.indexOf(this.list);
+
+		removeWidget(this.list);
 		this.list = guilist;
-		if(a != -1) this.buttons.set(a, this.list);
-		if(b != -1) this.children.set(b, this.list);
+		addRenderableWidget(this.list);
 	}
 	
 	private String getMBName(int index){
@@ -221,8 +218,8 @@ public class ProjectorScreen extends Screen{
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		this.searchField.render(matrix, mouseX, mouseY, partialTicks);
 		
-		for(AbstractWidget widget:this.buttons){
-			if(widget.isHovered()){
+		for(Widget rawWidget:this.renderables){
+			if(rawWidget instanceof AbstractWidget widget && widget.isHoveredOrFocused()){
 				widget.renderToolTip(matrix, mouseX, mouseY);
 				break;
 			}
@@ -258,12 +255,13 @@ public class ProjectorScreen extends Screen{
 					matrix.mulPose(new Quaternion(25, 0, 0, true));
 					matrix.mulPose(new Quaternion(0, (int) (45 - this.rotation), 0, true));
 					matrix.translate(size.getX() / -2F, size.getY() / -2F, size.getZ() / -2F);
-					
+
+					var mbClientData = ClientMultiblocks.get(mb);
 					boolean tempDisable = true;
-					if(tempDisable && mb.canRenderFormedStructure()){
+					if(tempDisable && mbClientData.canRenderFormedStructure()){
 						matrix.pushPose();
 						{
-							mb.renderFormedStructure(matrix, IPRenderTypes.disableLighting(buffer));
+							mbClientData.renderFormedStructure(matrix, IPRenderTypes.disableLighting(buffer));
 						}
 						matrix.popPose();
 					}else{
@@ -276,7 +274,7 @@ public class ProjectorScreen extends Screen{
 						int it = 0;
 						List<StructureTemplate.StructureBlockInfo> infos = mb.getStructure(null);
 						for(StructureTemplate.StructureBlockInfo info:infos){
-							if(info.state.getMaterial() != Material.AIR && !mb.overwriteBlockRender(info.state, it++)){
+							if(info.state.getMaterial() != Material.AIR){
 								matrix.pushPose();
 								{
 									matrix.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
@@ -286,7 +284,7 @@ public class ProjectorScreen extends Screen{
 									if(te != null){
 										modelData = te.getModelData();
 									}
-									blockRender.renderBlock(info.state, matrix, IPRenderTypes.disableLighting(buffer), 0xF000F0, overlay, modelData);
+									blockRender.renderSingleBlock(info.state, matrix, IPRenderTypes.disableLighting(buffer), 0xF000F0, overlay, modelData);
 								}
 								matrix.popPose();
 							}
@@ -346,7 +344,7 @@ public class ProjectorScreen extends Screen{
 		@Override
 		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
-			if(isHovered()){
+			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}
 			
@@ -452,7 +450,7 @@ public class ProjectorScreen extends Screen{
 		@Override
 		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
-			if(isHovered()){
+			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}
 			blit(matrix, this.x, this.y, this.xOverlay, this.yOverlay, this.iconSize, this.iconSize);
@@ -470,5 +468,8 @@ public class ProjectorScreen extends Screen{
 		public void setSelected(boolean isSelected){
 			this.selected = isSelected;
 		}
+
+		@Override
+		public void updateNarration(NarrationElementOutput output){}
 	}
 }
