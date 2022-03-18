@@ -193,7 +193,7 @@ public class CommonEventHandler{
 						if(te instanceof MultiblockPartBlockEntity){
 							MultiblockPartBlockEntity<?> part = (MultiblockPartBlockEntity<?>) te;
 							
-							BlockParticleOption lubeParticle = new BlockParticleOption(ParticleTypes.FALLING_DUST, IPContent.Fluids.lubricant.block.defaultBlockState());
+							BlockParticleOption lubeParticle = new BlockParticleOption(ParticleTypes.FALLING_DUST, IPContent.Fluids.LUBRICANT.block().get().defaultBlockState());
 							Vec3i size = lubeHandler.getStructureDimensions();
 							
 							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
@@ -278,8 +278,8 @@ public class CommonEventHandler{
 				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(d));
 				for(BlockPos position:iterate){
 					BlockState state = event.world.getBlockState(position);
-					if(state.getBlock() instanceof LiquidBlock && state.getBlock() == IPContent.Fluids.napalm.block){
-						((NapalmFluid) IPContent.Fluids.napalm).processFire(event.world, position);
+					if(state.getBlock() instanceof LiquidBlock && state.getBlock() == IPContent.Fluids.NAPALM.block().get()){
+						NapalmFluid.processFire(IPContent.Fluids.NAPALM, event.world, position);
 					}
 					toRemove.get(d).add(position);
 				}

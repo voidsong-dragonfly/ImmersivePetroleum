@@ -11,6 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.NetworkEvent;
 
 public class MessageDerrick implements INetMessage{
 	
@@ -38,9 +39,9 @@ public class MessageDerrick implements INetMessage{
 	}
 	
 	@Override
-	public void process(Supplier<Context> context){
+	public void process(Supplier<NetworkEvent.Context> context){
 		context.get().enqueueWork(() -> {
-			Context con = context.get();
+			NetworkEvent.Context con = context.get();
 			
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER){
 				ServerLevel world = Objects.requireNonNull(con.getSender()).getLevel();

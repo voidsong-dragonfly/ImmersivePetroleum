@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
+import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -15,6 +15,7 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
+import com.mojang.datafixers.util.Pair;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
@@ -46,7 +47,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 5));
 	
 	/** Template-Location of the Redstone Input Port. (2, 1, 5) */
-	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 1, 5));
+	public static final Set<MultiblockFace> Energy_IN = ImmutableSet.of(new MultiblockFace(2, 1, 5, RelativeBlockFace.UP));
 	
 	/** Template-Location of the Eastern Fluid Output Port. (2, 0, 2) */
 	public static final BlockPos East_Port = new BlockPos(2, 0, 2);
@@ -85,17 +86,17 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	
 	@Override
 	public void tick(){
-		super.tick();
-		
+
 		if((this.level.isClientSide || isDummy()) && this.wasActive){
 			this.activeTicks++;
 			return;
 		}
-		
+		super.tickServer();
+
 		boolean active = false;
 		
 		if(!isRSDisabled()){
-			BlockEntity teLow = this.getWorldNonnull().getBlockEntity(this.worldPosition.below());
+			BlockEntity teLow = this.getLevelNonnull().getBlockEntity(this.worldPosition.below());
 			
 			if(teLow instanceof WellPipeTileEntity){
 				WellTileEntity well = ((WellPipeTileEntity) teLow).getWell();
@@ -111,7 +112,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 						for(ColumnPos cPos:well.tappedIslands){
 							ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 							
-							if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0F){
+							if(island != null && island.getPressure(getLevelNonnull(), cPos.x, cPos.z) > 0.0F){
 								foundPressurizedIsland = true;
 								break;
 							}
@@ -174,16 +175,8 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	}
 	
 	@Override
-	public Set<BlockPos> getEnergyPos(){
+	public Set<MultiblockFace> getEnergyPos(){
 		return Energy_IN;
-	}
-	
-	@Override
-	public IOSideConfig getEnergySideConfig(Direction facing){
-		if(this.formed && this.isEnergyPos() && (facing == null || facing == Direction.UP))
-			return IOSideConfig.INPUT;
-		
-		return IOSideConfig.NONE;
 	}
 	
 	@Override

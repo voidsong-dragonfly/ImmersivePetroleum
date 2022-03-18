@@ -130,7 +130,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 			float r1 = (world.random.nextFloat() - .5F) * 2F;
 			float r2 = (world.random.nextFloat() - .5F) * 2F;
 			float r3 = world.random.nextFloat();
-			BlockState n = Fluids.lubricant.block.defaultBlockState();
+			BlockState n = Fluids.LUBRICANT.block().get().defaultBlockState();
 			world.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}

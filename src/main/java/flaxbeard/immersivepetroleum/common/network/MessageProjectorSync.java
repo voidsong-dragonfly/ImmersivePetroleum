@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.NetworkEvent;
 
 public class MessageProjectorSync implements INetMessage{
 	
@@ -49,15 +50,15 @@ public class MessageProjectorSync implements INetMessage{
 	}
 	
 	@Override
-	public void process(Supplier<Context> context){
+	public void process(Supplier<NetworkEvent.Context> context){
 		context.get().enqueueWork(() -> {
-			Context con = context.get();
+			NetworkEvent.Context con = context.get();
 			
 			if(con.getDirection().getReceptionSide() == getSide() && con.getSender() != null){
 				Player player = con.getSender();
 				ItemStack held = player.getItemInHand(this.hand);
 				
-				if(!held.isEmpty() && held.getItem() == IPContent.Items.projector){
+				if(held.is(IPContent.Items.PROJECTOR.get())){
 					Settings settings = new Settings(this.nbt);
 					settings.applyTo(held);
 				}

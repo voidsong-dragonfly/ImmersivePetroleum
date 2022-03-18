@@ -376,11 +376,11 @@ public class ProjectorItem extends IPItemBase{
 					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
 					ItemStack secondItem = mc.player.getOffhandItem();
-					boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "settings");
+					boolean off = secondItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(secondItem, "settings");
 					
 					for(int i = 0;i <= 10;i++){
 						ItemStack stack = (i == 10 ? secondItem : mc.player.getInventory().getItem(i));
-						if(!stack.isEmpty() && stack.getItem() == Items.projector && ItemNBTHelper.hasKey(stack, "settings")){
+						if(stack.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(stack, "settings")){
 							Settings settings = getSettings(stack);
 							matrix.pushPose();
 							{
@@ -762,8 +762,8 @@ public class ProjectorItem extends IPItemBase{
 				ItemStack mainItem = player.getMainHandItem();
 				ItemStack secondItem = player.getOffhandItem();
 				
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.projector && ItemNBTHelper.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
+				boolean main = mainItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
+				boolean off = secondItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
 				
 				if(main || off){
 					ItemStack target = main ? mainItem : secondItem;
@@ -810,8 +810,8 @@ public class ProjectorItem extends IPItemBase{
 			ItemStack mainItem = player.getMainHandItem();
 			ItemStack secondItem = player.getOffhandItem();
 			
-			boolean main = !mainItem.isEmpty() && mainItem.getItem() == Items.projector && ItemNBTHelper.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
-			boolean off = !secondItem.isEmpty() && secondItem.getItem() == Items.projector && ItemNBTHelper.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
+			boolean main = mainItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
+			boolean off = secondItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
 			ItemStack target = main ? mainItem : secondItem;
 			
 			if(main || off){

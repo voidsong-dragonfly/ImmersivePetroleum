@@ -8,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.NetworkEvent;
 
 public class MessageDebugSync implements INetMessage{
 	
@@ -26,9 +27,9 @@ public class MessageDebugSync implements INetMessage{
 	}
 	
 	@Override
-	public void process(Supplier<Context> context){
+	public void process(Supplier<NetworkEvent.Context> context){
 		context.get().enqueueWork(() -> {
-			Context con = context.get();
+			NetworkEvent.Context con = context.get();
 			
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER && con.getSender() != null){
 				Player player = con.getSender();

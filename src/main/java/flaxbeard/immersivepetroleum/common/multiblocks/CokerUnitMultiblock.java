@@ -22,18 +22,12 @@ public class CokerUnitMultiblock extends IETemplateMultiblock{
 	public CokerUnitMultiblock(){
 		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/cokerunit"),
 				new BlockPos(4, 0, 2), new BlockPos(4, 1, 4), new BlockPos(9, 23, 5),
-				() -> IPContent.Multiblock.cokerunit.defaultBlockState());
+				() -> IPContent.Multiblock.COKERUNIT.get().defaultBlockState());
 	}
 	
 	@Override
 	public float getManualScale(){
 		return 4.0F;
-	}
-	
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public boolean canRenderFormedStructure(){
-		return true;
 	}
 	
 	@OnlyIn(Dist.CLIENT)
@@ -42,7 +36,7 @@ public class CokerUnitMultiblock extends IETemplateMultiblock{
 	@Override
 	public void renderFormedStructure(PoseStack transform, MultiBufferSource buffer){
 		if(renderStack == null)
-			renderStack = new ItemStack(Multiblock.cokerunit);
+			renderStack = new ItemStack(Multiblock.COKERUNIT.get());
 		
 		// "Undo" the GUI Perspective Transform
 		transform.translate(4.5, 0.5, 2.5);

@@ -131,8 +131,8 @@ public class ClientEventHandler{
 				ItemStack mainItem = mc.player.getMainHandItem();
 				ItemStack secondItem = mc.player.getOffhandItem();
 				
-				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.auto_lubricator.asItem();
-				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.auto_lubricator.asItem();
+				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
+				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
 				
 				if(main || off){
 					BlockRenderDispatcher blockDispatcher = Minecraft.getInstance().getBlockRenderer();
@@ -164,7 +164,7 @@ public class ClientEventHandler{
 												{
 													matrix.translate(targetPos.getX(), targetPos.getY() - 1, targetPos.getZ());
 													
-													BlockState state = IPContent.Blocks.auto_lubricator.defaultBlockState().setValue(AutoLubricatorBlock.FACING, targetFacing);
+													BlockState state = IPContent.Blocks.AUTO_LUBRICATOR.get().defaultBlockState().setValue(AutoLubricatorBlock.FACING, targetFacing);
 													BakedModel model = blockDispatcher.getBlockModel(state);
 													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
 													

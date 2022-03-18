@@ -24,11 +24,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
-public class OilTankRenderer extends BlockEntityRenderer<OilTankTileEntity>{
-	public OilTankRenderer(BlockEntityRenderDispatcher rendererDispatcherIn){
-		super(rendererDispatcherIn);
-	}
-	
+public class OilTankRenderer implements BlockEntityRenderer<OilTankTileEntity>{
 	@Override
 	public boolean shouldRenderOffScreen(OilTankTileEntity te){
 		return true;
@@ -37,7 +33,7 @@ public class OilTankRenderer extends BlockEntityRenderer<OilTankTileEntity>{
 	@SuppressWarnings("deprecation")
 	@Override
 	public void render(OilTankTileEntity te, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
-		if(te != null && te.formed && te.getWorldNonnull().hasChunkAt(te.getBlockPos())){
+		if(te != null && te.formed && te.getLevelNonnull().hasChunkAt(te.getBlockPos())){
 			combinedOverlay = OverlayTexture.NO_OVERLAY;
 			
 			matrix.pushPose();

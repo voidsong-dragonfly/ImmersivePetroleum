@@ -172,15 +172,15 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			for(ItemStack upgrade:upgrades){
 				if(upgrade != null && upgrade != ItemStack.EMPTY){
 					Item item = upgrade.getItem();
-					if(item == BoatUpgrades.reinforced_hull){
+					if(item == BoatUpgrades.REINFORCED_HULL.get()){
 						this.isFireproof = true;
-					}else if(item == BoatUpgrades.ice_breaker){
+					}else if(item == BoatUpgrades.ICE_BREAKER.get()){
 						this.hasIcebreaker = true;
-					}else if(item == BoatUpgrades.tank){
+					}else if(item == BoatUpgrades.TANK.get()){
 						this.hasTank = true;
-					}else if(item == BoatUpgrades.rudders){
+					}else if(item == BoatUpgrades.RUDDERS.get()){
 						this.hasRudders = true;
-					}else if(item == BoatUpgrades.paddles){
+					}else if(item == BoatUpgrades.PADDLES.get()){
 						this.hasPaddles = true;
 					}
 				}
@@ -414,7 +414,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		
 		{ // From Entity.tick()
 			if(!this.level.isClientSide){
-				this.setSharedFlag(6, this.isGlowing());
+				this.setSharedFlag(6, this.isCurrentlyGlowing());
 			}
 			this.baseTick();
 		}
@@ -450,22 +450,22 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				if(this.inputUp && this.level.random.nextInt(2) == 0){
 					if(isInLava()){
 						if(this.level.random.nextInt(3) == 0){
-							float xO = (float) (Mth.sin(-this.yRot * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-							float zO = (float) (Mth.cos(this.yRot * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
+							float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
+							float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
 							float yO = .4F + (level.random.nextFloat() - .5F) * .3F;
 							Vec3 motion = getDeltaMovement();
 							level.addParticle(ParticleTypes.LAVA, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, -2 * motion.x(), 0, -2 * motion.z());
 						}
 					}else{
-						float xO = (float) (Mth.sin(-this.yRot * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-						float zO = (float) (Mth.cos(this.yRot * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
+						float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
+						float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
 						float yO = .1F + (level.random.nextFloat() - .5F) * .3F;
 						level.addParticle(ParticleTypes.BUBBLE, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, 0, 0, 0);
 					}
 				}
 				if(isBoosting && this.level.random.nextInt(2) == 0){
-					float xO = (float) (Mth.sin(-this.yRot * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-					float zO = (float) (Mth.cos(this.yRot * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
+					float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
+					float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
 					float yO = .8F + (level.random.nextFloat() - .5F) * .3F;
 					level.addParticle(ParticleTypes.SMOKE, getX() - xO * 1.3F, getY() + yO, getZ() - zO * 1.3F, 0, 0, 0);
 				}
@@ -490,8 +490,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			}
 		}
 		
-		float xO = (float) (Mth.sin(-this.yRot * 0.017453292F));
-		float zO = (float) (Mth.cos(this.yRot * 0.017453292F));
+		float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F));
+		float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F));
 		Vector3f vec = normalizeVector(new Vector3f(xO, zO, 0.0F));
 		
 		if(this.hasIcebreaker && !isEmergency()){
@@ -590,8 +590,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				if(this.inputRight != this.inputLeft && !this.inputUp && !this.inputDown){
 					f += 0.005F;
 				}
-				
-				this.yRot += this.deltaRotation;
+
+				this.setYRot(this.getYRot() + this.deltaRotation);
 				if(this.inputUp){
 					f += 0.04F;
 				}
@@ -600,7 +600,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					f -= 0.005F;
 				}
 				
-				this.setDeltaMovement(this.getDeltaMovement().add((double) (Mth.sin(-this.yRot * ((float) Math.PI / 180F)) * f), 0.0D, (double) (Mth.cos(this.yRot * ((float) Math.PI / 180F)) * f)));
+				this.setDeltaMovement(this.getDeltaMovement().add((double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f), 0.0D, (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f)));
 				this.setPaddleState(this.inputRight && !this.inputLeft || this.inputUp, this.inputLeft && !this.inputRight || this.inputUp);
 			}else{
 				FluidStack fluid = getContainedFluid();
@@ -634,10 +634,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					setPaddleState(false, false);
 				}
 				
-				Vec3 motion = this.getDeltaMovement().add((double) (Mth.sin(-this.yRot * ((float) Math.PI / 180F)) * f), 0.0D, (double) (Mth.cos(this.yRot * ((float) Math.PI / 180F)) * f));
+				Vec3 motion = this.getDeltaMovement().add((double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f), 0.0D, (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f));
 				
 				if(this.inputLeft || this.inputRight){
-					float speed = Mth.sqrt(motion.x * motion.x + motion.z * motion.z);
+					float speed = Mth.sqrt((float) (motion.x * motion.x + motion.z * motion.z));
 					
 					if(this.inputRight){
 						this.deltaRotation += 1.1F * speed * (this.hasRudders ? 1.5F : 1F) * (this.isBoosting ? 0.5F : 1) * (this.inputDown && !this.inputUp ? 2F : 1F);
@@ -658,9 +658,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 						this.propellerRotation = 0;
 					}
 				}
-				
-				this.yRot += this.deltaRotation;
-				
+
+				this.setYRot(this.getYRot() + this.deltaRotation);
+
 				this.setDeltaMovement(motion);
 				this.setPaddleState((this.inputRight && !this.inputLeft || this.inputUp), (this.inputLeft && !this.inputRight || this.inputUp));
 			}
@@ -673,7 +673,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	@Override
 	public Item getDropItem(){
-		return Items.speedboat;
+		return Items.SPEEDBOAT.get();
 	}
 	
 	@Override

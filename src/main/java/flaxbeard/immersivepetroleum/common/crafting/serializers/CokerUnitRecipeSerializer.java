@@ -56,6 +56,6 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 	
 	@Override
 	public ItemStack getIcon(){
-		return new ItemStack(IPContent.Multiblock.cokerunit);
+		return new ItemStack(IPContent.Multiblock.COKERUNIT.get());
 	}
 }

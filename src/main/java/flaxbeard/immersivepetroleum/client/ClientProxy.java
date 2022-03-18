@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import blusunrize.lib.manual.ManualEntry.SpecialElementData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -22,7 +23,6 @@ import blusunrize.immersiveengineering.client.manual.ManualElementMultiblock;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IEMultiblocks;
-import blusunrize.immersiveengineering.common.gui.GuiHandler;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualElementCrafting;
@@ -174,7 +174,7 @@ public class ClientProxy extends CommonProxy{
 					return Double.valueOf(1.25D);
 				}
 				case "portablegenerator_flux":{
-					return FuelHandler.getFluxGeneratedPerTick(IPContent.Fluids.gasoline.getFluid());
+					return FuelHandler.getFluxGeneratedPerTick(IPContent.Fluids.GASOLINE.still().get());
 				}
 				default:
 					break;
@@ -322,8 +322,8 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("flarestack0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.flarestack)));
-		builder.addSpecialElement("flarestack1", 0, () -> {
+		builder.addSpecialElement(new SpecialElementData("flarestack0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.FLARESTACK.get()))));
+		builder.addSpecialElement(new SpecialElementData("flarestack1", 0, () -> {
 			Set<Tag<Fluid>> fluids = FlarestackHandler.getSet();
 			List<Component[]> list = new ArrayList<Component[]>();
 			for(Tag<Fluid> tag:fluids){
@@ -340,7 +340,7 @@ public class ClientProxy extends CommonProxy{
 			}
 			
 			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
-		});
+		}));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -349,7 +349,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("automaticlubricator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.auto_lubricator)));
+		builder.addSpecialElement(new SpecialElementData("automaticlubricator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.AUTO_LUBRICATOR.get()))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -358,7 +358,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("portablegenerator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.gas_generator)));
+		builder.addSpecialElement(new SpecialElementData("portablegenerator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.GAS_GENERATOR.get()))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -367,12 +367,12 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("speedboat0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.speedboat)));
-		builder.addSpecialElement("speedboat1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.tank)));
-		builder.addSpecialElement("speedboat2", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.rudders)));
-		builder.addSpecialElement("speedboat3", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.ice_breaker)));
-		builder.addSpecialElement("speedboat4", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.reinforced_hull)));
-		builder.addSpecialElement("speedboat5", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.paddles)));
+		builder.addSpecialElement(new SpecialElementData("speedboat0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.SPEEDBOAT.get()))));
+		builder.addSpecialElement(new SpecialElementData("speedboat1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.TANK.get()))));
+		builder.addSpecialElement(new SpecialElementData("speedboat2", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.RUDDERS.get()))));
+		builder.addSpecialElement(new SpecialElementData("speedboat3", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.ICE_BREAKER.get()))));
+		builder.addSpecialElement(new SpecialElementData("speedboat4", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.REINFORCED_HULL.get()))));
+		builder.addSpecialElement(new SpecialElementData("speedboat5", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.PADDLES.get()))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -381,7 +381,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("lubricant1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.oil_can)));
+		builder.addSpecialElement(new SpecialElementData("lubricant1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.OIL_CAN.get()))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -390,7 +390,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("pumpjack0", 0, () -> new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE));
+		builder.addSpecialElement(new SpecialElementData("pumpjack0", 0, () -> new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -399,8 +399,8 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
-		builder.addSpecialElement("distillationtower1", 0, () -> {
+		builder.addSpecialElement(new SpecialElementData("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE)));
+		builder.addSpecialElement(new SpecialElementData("distillationtower1", 0, () -> {
 			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
 			List<Component[]> list = new ArrayList<Component[]>();
 			for(DistillationRecipe recipe:recipeList){
@@ -419,7 +419,7 @@ public class ClientProxy extends CommonProxy{
 			}
 			
 			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
-		});
+		}));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -428,7 +428,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("cokerunit0", 0, () -> new ManualElementMultiblock(man, CokerUnitMultiblock.INSTANCE));
+		builder.addSpecialElement(new SpecialElementData("cokerunit0", 0, () -> new ManualElementMultiblock(man, CokerUnitMultiblock.INSTANCE)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -437,7 +437,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("hydrotreater0", 0, () -> new ManualElementMultiblock(man, HydroTreaterMultiblock.INSTANCE));
+		builder.addSpecialElement(new SpecialElementData("hydrotreater0", 0, () -> new ManualElementMultiblock(man, HydroTreaterMultiblock.INSTANCE)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -445,12 +445,12 @@ public class ClientProxy extends CommonProxy{
 	protected static void projector(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
-		ItemStack projectorWithNBT = new ItemStack(Items.projector);
+		ItemStack projectorWithNBT = new ItemStack(Items.PROJECTOR.get());
 		ItemNBTHelper.putString(projectorWithNBT, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement("projector0", 0, new ManualElementCrafting(man, new ItemStack(Items.projector)));
-		builder.addSpecialElement("projector1", 0, new ManualElementCrafting(man, projectorWithNBT));
+		builder.addSpecialElement(new SpecialElementData("projector0", 0, new ManualElementCrafting(man, new ItemStack(Items.PROJECTOR.get()))));
+		builder.addSpecialElement(new SpecialElementData("projector1", 0, new ManualElementCrafting(man, projectorWithNBT)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -464,13 +464,8 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	protected static EntryData createContentTest(TextSplitter splitter){
-		return new EntryData("title", "subtext", "content");
-	}
-	
 	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
-	static ManualEntry entry;
-	protected static EntryData createContent(TextSplitter splitter){
+	protected static EntryData createContent(){
 		ArrayList<ItemStack> list = new ArrayList<>();
 		final Reservoir[] reservoirs = Reservoir.map.values().toArray(new Reservoir[0]);
 		
@@ -549,6 +544,6 @@ public class ClientProxy extends CommonProxy{
 		String translatedTitle = I18n.get("ie.manual.entry.reservoirs.title");
 		String tanslatedSubtext = I18n.get("ie.manual.entry.reservoirs.subtitle");
 		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
-		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent);
+		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent, List.of());
 	}
 }

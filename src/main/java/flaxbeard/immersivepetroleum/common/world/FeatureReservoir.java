@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.world;
 
+import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -13,8 +14,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
@@ -24,11 +27,13 @@ public class FeatureReservoir extends Feature<NoneFeatureConfiguration>{
 	public FeatureReservoir(){
 		super(NoneFeatureConfiguration.CODEC);
 	}
-	
+
 	@Override
-	public boolean place(WorldGenLevel reader, ChunkGenerator generator, Random rand, BlockPos pos, NoneFeatureConfiguration config){
+	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> pContext){
+		WorldGenLevel reader = pContext.level();
+		BlockPos pos = pContext.origin();
 		if(ReservoirHandler.generator == null){
-			ReservoirHandler.generator = new PerlinSimplexNoise(new WorldgenRandom(reader.getSeed()), IntStream.of(0));
+			ReservoirHandler.generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(reader.getSeed())), List.of(0));
 		}
 		
 		ResourceKey<Level> dimension = reader.getLevel().dimension();
@@ -36,7 +41,7 @@ public class FeatureReservoir extends Feature<NoneFeatureConfiguration>{
 		if(!generatedReservoirChunks.containsEntry(dimension, chunk.getPos())){
 			generatedReservoirChunks.put(dimension, chunk.getPos());
 			
-			ReservoirHandler.scanChunkForNewReservoirs(reader.getLevel(), chunk.getPos(), rand);
+			ReservoirHandler.scanChunkForNewReservoirs(reader.getLevel(), chunk.getPos(), pContext.random());
 			return true;
 		}
 		return false;

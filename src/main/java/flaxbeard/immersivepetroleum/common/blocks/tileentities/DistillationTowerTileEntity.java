@@ -5,8 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -75,7 +76,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	public static final BlockPos Item_OUT = new BlockPos(0, 0, 1);
 	
 	/** Template-Location of the Energy Input Port. (3 1 3) */
-	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(3, 1, 3));
+	public static final Set<MultiblockFace> Energy_IN = ImmutableSet.of(new MultiblockFace(3, 1, 3, RelativeBlockFace.UP));
 	
 	/** Template-Location of the Redstone Input Port. (0 1 3) */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 3));
@@ -290,17 +291,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	public Set<BlockPos> getEnergyPos(){
+	public Set<MultiblockFace> getEnergyPos(){
 		return Energy_IN;
-	}
-	
-	@Override
-	public IOSideConfig getEnergySideConfig(Direction facing){
-		if(this.formed && this.isEnergyPos() && (facing == null || facing == Direction.UP)){
-			return IOSideConfig.INPUT;
-		}
-		
-		return IOSideConfig.NONE;
 	}
 	
 	@Override

@@ -18,11 +18,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 
-public class AutoLubricatorRenderer extends BlockEntityRenderer<AutoLubricatorTileEntity>{
-	
-	public AutoLubricatorRenderer(BlockEntityRenderDispatcher dispatcher){
-		super(dispatcher);
-	}
+public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricatorTileEntity>{
 	
 	@Override
 	public boolean shouldRenderOffScreen(AutoLubricatorTileEntity te){

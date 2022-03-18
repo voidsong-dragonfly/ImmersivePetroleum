@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -42,7 +43,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IInteractionObjectIE<HydrotreaterTileEntity>, IBlockBounds, TickableBE{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -65,7 +66,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	public static final BlockPos Item_OUT = new BlockPos(0, 0, 2);
 	
 	/** Template-Location of the Energy Input Ports. (2 2 3)<br> */
-	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 2, 3));
+	public static final Set<MultiblockFace> Energy_IN = ImmutableSet.of(new MultiblockFace(2, 2, 3, RelativeBlockFace.UP));
 	
 	/** Template-Location of the Redstone Input Port. (0 1 3)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 3));
@@ -121,21 +122,13 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public Set<BlockPos> getEnergyPos(){
+	public Set<MultiblockFace> getEnergyPos(){
 		return Energy_IN;
 	}
 	
 	@Override
 	public Set<BlockPos> getRedstonePos(){
 		return Redstone_IN;
-	}
-	
-	@Override
-	public IOSideConfig getEnergySideConfig(Direction facing){
-		if(this.formed && this.isEnergyPos() && (facing == null || facing == Direction.UP))
-			return IOSideConfig.INPUT;
-		
-		return IOSideConfig.NONE;
 	}
 	
 	@Override
@@ -248,7 +241,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 			update = true;
 		}
 		
-		super.tick();
+		super.tickServer();
 		
 		if(this.tanks[TANK_OUTPUT].getFluidAmount() > 0){
 			BlockPos outPos = getBlockPosForPos(Fluid_OUT).above();
@@ -344,7 +337,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public IInteractionObjectIE getGuiMaster(){
+	public HydrotreaterTileEntity getGuiMaster(){
 		return master();
 	}
 	

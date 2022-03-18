@@ -65,6 +65,6 @@ public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRec
 	
 	@Override
 	public ItemStack getIcon(){
-		return new ItemStack(IPContent.Multiblock.hydrotreater);
+		return new ItemStack(IPContent.Multiblock.HYDROTREATER.get());
 	}
 }

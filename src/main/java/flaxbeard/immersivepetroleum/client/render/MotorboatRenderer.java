@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -26,7 +27,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	/** instance of ModelBoat for rendering */
 	protected final ModelMotorboat modelBoat = new ModelMotorboat();
 	
-	public MotorboatRenderer(EntityRenderDispatcher renderManagerIn){
+	public MotorboatRenderer(EntityRendererProvider.Context renderManagerIn){
 		super(renderManagerIn);
 		this.shadowRadius = 0.8F;
 	}

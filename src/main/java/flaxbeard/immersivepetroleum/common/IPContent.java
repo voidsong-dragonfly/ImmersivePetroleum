@@ -1,11 +1,5 @@
 package flaxbeard.immersivepetroleum.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import blusunrize.immersiveengineering.common.register.IEFluids;
-import blusunrize.immersiveengineering.common.register.IEFluids.FluidEntry;
-import flaxbeard.immersivepetroleum.common.blocks.IPBlockSlab;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid.IPFluidEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +17,6 @@ import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
-import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.CokerUnitBlock;
@@ -75,7 +68,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -142,7 +134,7 @@ public class IPContent{
 		public static final RegistryObject<BlockDummy> DUMMYCONVEYOR = IPRegisters.registerIPBlock("dummy_conveyor", BlockDummy::new);
 		
 		public static final RegistryObject<WellBlock> WELL = IPRegisters.registerIPBlock("well", WellBlock::new);
-		public static final RegistryObject<WellPipeBlock> WELLPIPE = IPRegisters.registerIPBlock("well_pipe", WellPipeBlock::new);
+		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerIPBlock("well_pipe", WellPipeBlock::new);
 		
 		private static void forceClassLoad(){
 		}

@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.NetworkEvent;
 
 public class MessageConsumeBoatFuel implements INetMessage{
 	public int amount;
@@ -25,15 +26,14 @@ public class MessageConsumeBoatFuel implements INetMessage{
 	}
 	
 	@Override
-	public void process(Supplier<Context> context){
+	public void process(Supplier<NetworkEvent.Context> context){
 		context.get().enqueueWork(() -> {
-			Context con = context.get();
+			NetworkEvent.Context con = context.get();
 			
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER && con.getSender() != null){
 				Entity entity = con.getSender().getVehicle();
 				
-				if(entity instanceof MotorboatEntity){
-					MotorboatEntity boat = (MotorboatEntity) entity;
+				if(entity instanceof MotorboatEntity boat){
 					FluidStack fluid = boat.getContainedFluid();
 					
 					if(fluid != null && fluid != FluidStack.EMPTY)

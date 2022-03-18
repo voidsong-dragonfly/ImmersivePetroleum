@@ -19,11 +19,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
-public class MultiblockDistillationTowerRenderer extends BlockEntityRenderer<DistillationTowerTileEntity>{
-	public MultiblockDistillationTowerRenderer(BlockEntityRenderDispatcher dispatcher){
-		super(dispatcher);
-	}
-	
+public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<DistillationTowerTileEntity>{
 	@Override
 	public boolean shouldRenderOffScreen(DistillationTowerTileEntity te){
 		return true;

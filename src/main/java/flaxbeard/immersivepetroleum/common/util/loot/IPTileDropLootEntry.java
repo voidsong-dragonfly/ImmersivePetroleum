@@ -4,10 +4,10 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -30,8 +30,8 @@ public class IPTileDropLootEntry extends LootPoolSingletonContainer{
 	protected void createItemStack(Consumer<ItemStack> stackConsumer, LootContext context){
 		if(context.hasParam(LootContextParams.BLOCK_ENTITY)){
 			BlockEntity te = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
-			if(te instanceof ITileDrop){
-				((ITileDrop) te).getTileDrops(context).forEach(stackConsumer);
+			if(te instanceof IEBlockInterfaces.IBlockEntityDrop){
+				((IEBlockInterfaces.IBlockEntityDrop) te).getBlockEntityDrop(context).forEach(stackConsumer);
 			}
 		}
 	}

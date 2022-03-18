@@ -80,8 +80,8 @@ public class IPRegisters{
 		return FLUID_REGISTER.register(name, fluidConstructor);
 	}
 
-	public static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerTE(String name, BlockEntityType.BlockEntitySupplier<T> factory, Block... valid){
-		return TE_REGISTER.register(name, () -> new BlockEntityType<T>(factory, ImmutableSet.copyOf(valid), null));
+	public static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerTE(String name, BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> valid){
+		return TE_REGISTER.register(name, () -> new BlockEntityType<T>(factory, ImmutableSet.of(valid.get()), null));
 	}
 
 	public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock>

@@ -97,6 +97,6 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 	
 	@Override
 	public ItemStack getIcon(){
-		return new ItemStack(IPContent.Multiblock.distillationtower);
+		return new ItemStack(IPContent.Multiblock.DISTILLATIONTOWER.get());
 	}
 }

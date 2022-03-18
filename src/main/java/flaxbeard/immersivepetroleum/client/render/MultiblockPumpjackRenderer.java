@@ -17,11 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class MultiblockPumpjackRenderer extends BlockEntityRenderer<PumpjackTileEntity>{
-	public MultiblockPumpjackRenderer(BlockEntityRenderDispatcher dispatcher){
-		super(dispatcher);
-	}
-	
+public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackTileEntity>{
 	private static Supplier<IPModel> pumpjackarm = IPModels.getSupplier(ModelPumpjack.ID);
 	
 	@Override

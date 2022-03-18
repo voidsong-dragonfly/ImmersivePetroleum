@@ -33,8 +33,8 @@ import net.minecraftforge.client.model.data.IModelData;
 public class ModelCoresampleExtended extends ModelCoresample{
 	private Fluid fluid;
 	
-	public ModelCoresampleExtended(@Nullable MineralMix[] mineral, VertexFormat format, @Nullable Fluid fluid){
-		super(mineral, format);
+	public ModelCoresampleExtended(@Nullable MineralMix[] mineral, @Nullable Fluid fluid){
+		super(mineral);
 		this.fluid = fluid;
 	}
 	
@@ -70,9 +70,9 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	}
 	
 	ItemOverrides overrideList2 = new ItemOverrides(){
-		
+
 		@Override
-		public BakedModel resolve(BakedModel originalModel, ItemStack stack, ClientLevel worldIn, LivingEntity entityIn){
+		public BakedModel resolve(BakedModel originalModel, ItemStack stack, ClientLevel worldIn, LivingEntity entityIn, int seed){
 			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
 			if(ItemNBTHelper.hasKey(stack, "resAmount") && resName == null && ItemNBTHelper.getInt(stack, "resAmount") > 0){
 				resName = "resAmount";
@@ -86,15 +86,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 						cacheKey += (i > 0 ? "_" : "") + minerals[i].getId().toString();
 					}
 					
-					return getSampleCache().get(cacheKey, () -> {
-						VertexFormat format;
-						if(originalModel instanceof ModelCoresample){
-							format = getVertexFormat((ModelCoresample) originalModel);
-						}else{
-							format = DefaultVertexFormat.BLOCK;
-						}
-						return new ModelCoresampleExtended(minerals, format, null);
-					});
+					return getSampleCache().get(cacheKey, () -> new ModelCoresampleExtended(minerals, null));
 				}catch(ExecutionException e){
 					throw new RuntimeException(e);
 				}

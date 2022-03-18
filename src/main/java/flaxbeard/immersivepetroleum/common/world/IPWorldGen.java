@@ -1,9 +1,5 @@
 package flaxbeard.immersivepetroleum.common.world;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
@@ -11,11 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.DecoratorConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.minecraft.world.level.levelgen.placement.ConfiguredDecorator;
-import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -23,6 +16,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class IPWorldGen{
 	public static Map<String, ConfiguredFeature<?, ?>> features = new HashMap<>();
@@ -36,10 +33,10 @@ public class IPWorldGen{
 	}
 	
 	public static void registerReservoirGen(){
+		// TODO test that this isn't broken
 		ConfiguredFeature<?, ?> reservoirFeature = register(new ResourceLocation(ImmersivePetroleum.MODID, "reservoir"),
 				RESERVOIR_FEATURE.get()
 					.configured(new NoneFeatureConfiguration())
-					.decorated(new ConfiguredDecorator<>(FeatureDecorator.NOPE, DecoratorConfiguration.NONE))
 				);
 		features.put("reservoirs", reservoirFeature);
 	}
@@ -48,7 +45,7 @@ public class IPWorldGen{
 	public void onBiomeLoad(BiomeLoadingEvent event){
 		BiomeGenerationSettingsBuilder generation = event.getGeneration();
 		for(Entry<String, ConfiguredFeature<?, ?>> entry:features.entrySet()){
-			generation.addFeature(Decoration.UNDERGROUND_ORES, entry.getValue());
+			generation.addFeature(Decoration.UNDERGROUND_ORES, entry.getValue().placed());
 		}
 	}
 	

@@ -7,8 +7,10 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -24,7 +26,6 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
@@ -51,7 +52,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -82,7 +82,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	public static final BlockPos Fluid_OUT = new BlockPos(4, 0, 2);
 	
 	/** Template-Location of the Energy Input Ports.<br><pre>2 1 0</pre><br> */
-	public static final Set<BlockPos> Energy_IN = ImmutableSet.of(new BlockPos(2, 1, 0));
+	public static final Set<MultiblockFace> Energy_IN = ImmutableSet.of(new MultiblockFace(2, 1, 0, RelativeBlockFace.UP));
 	
 	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
@@ -119,7 +119,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		
 		this.tank.readFromNBT(nbt.getCompound("tank"));
 		
-		if(nbt.contains("grid", NBT.TAG_COMPOUND)){
+		if(nbt.contains("grid", Tag.TAG_COMPOUND)){
 			this.gridStorage = PipeConfig.Grid.fromCompound(nbt.getCompound("grid"));
 		}
 		
@@ -279,11 +279,11 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 													BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
 													BlockState state = world.getBlockState(current);
 													
-													if(state.getBlock() == Blocks.BEDROCK || state.getBlock() == IPContent.Blocks.well){
+													if(state.getBlock() == Blocks.BEDROCK || state.getBlock() == IPContent.Blocks.WELL.get()){
 														break;
-													}else if(!(state.getBlock() == IPContent.Blocks.wellPipe && !state.getValue(WellPipeBlock.BROKEN))){
+													}else if(!(state.getBlock() == IPContent.Blocks.WELL_PIPE.get() && !state.getValue(WellPipeBlock.BROKEN))){
 														world.destroyBlock(current, false);
-														world.setBlockAndUpdate(current, IPContent.Blocks.wellPipe.defaultBlockState());
+														world.setBlockAndUpdate(current, IPContent.Blocks.WELL_PIPE.get().defaultBlockState());
 														
 														well.phyiscalPipesList.add(Integer.valueOf(y));
 														
@@ -350,9 +350,9 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		for(int i = 1;i < min;i++){
 			BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
 			BlockState state = getLevelNonnull().getBlockState(current);
-			if(state.getBlock() != IPContent.Blocks.wellPipe){
+			if(state.getBlock() != IPContent.Blocks.WELL_PIPE.get()){
 				getLevelNonnull().destroyBlock(current, false);
-				getLevelNonnull().setBlockAndUpdate(current, IPContent.Blocks.wellPipe.defaultBlockState());
+				getLevelNonnull().setBlockAndUpdate(current, IPContent.Blocks.WELL_PIPE.get().defaultBlockState());
 			}
 		}
 	}
@@ -423,11 +423,11 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				BlockPos current = new BlockPos(this.getBlockPos().getX(), y, this.getBlockPos().getZ());
 				BlockState state = world.getBlockState(current);
 				
-				if(state.getBlock() == IPContent.Blocks.well){
+				if(state.getBlock() == IPContent.Blocks.WELL.get()){
 					well = (WellTileEntity) world.getBlockEntity(current);
 					break;
 				}else if(state.getBlock() == Blocks.BEDROCK){
-					world.setBlockAndUpdate(current, IPContent.Blocks.well.defaultBlockState());
+					world.setBlockAndUpdate(current, IPContent.Blocks.WELL.get().defaultBlockState());
 					well = (WellTileEntity) world.getBlockEntity(current);
 					break;
 				}
@@ -546,7 +546,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	}
 	
 	@Override
-	public IInteractionObjectIE getGuiMaster(){
+	public BlockEntity getGuiMaster(){
 		return master();
 	}
 	
@@ -581,21 +581,13 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	}
 	
 	@Override
-	public Set<BlockPos> getEnergyPos(){
+	public Set<MultiblockFace> getEnergyPos(){
 		return Energy_IN;
 	}
 	
 	@Override
 	public Set<BlockPos> getRedstonePos(){
 		return Redstone_IN;
-	}
-	
-	@Override
-	public IOSideConfig getEnergySideConfig(Direction facing){
-		if(this.formed && this.isEnergyPos() && (facing == null || facing == Direction.UP))
-			return IOSideConfig.INPUT;
-		
-		return IOSideConfig.NONE;
 	}
 	
 	@Override
@@ -654,7 +646,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	public boolean isInWorldProcessingMachine(){
 		return false;
 	}
-	
+
 	@Override
 	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
 		DerrickTileEntity master = master();

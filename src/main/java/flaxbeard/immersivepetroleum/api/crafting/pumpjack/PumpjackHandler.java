@@ -3,9 +3,9 @@ package flaxbeard.immersivepetroleum.api.crafting.pumpjack;
 import java.util.HashMap;
 import java.util.Map;
 
-import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
@@ -20,9 +20,9 @@ public class PumpjackHandler{
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
 	@Deprecated
-	public static Map<DimensionChunkCoords, Long> timeCache = new HashMap<>();
+	public static Map<GlobalPos, Long> timeCache = new HashMap<>();
 	@Deprecated
-	public static Map<DimensionChunkCoords, ReservoirWorldInfo> reservoirsCache = new HashMap<>();
+	public static Map<GlobalPos, ReservoirWorldInfo> reservoirsCache = new HashMap<>();
 	
 	/**
 	 * Gets amount of fluid in a specific chunk's reservoir in mB
@@ -81,7 +81,7 @@ public class PumpjackHandler{
 	 * @param force Force creation on an empty chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
-	public static ReservoirWorldInfo getOrCreateOilWorldInfo(Level world, DimensionChunkCoords coords, boolean force){
+	public static ReservoirWorldInfo getOrCreateOilWorldInfo(Level world, GlobalPos coords, boolean force){
 		return null;
 	}
 	

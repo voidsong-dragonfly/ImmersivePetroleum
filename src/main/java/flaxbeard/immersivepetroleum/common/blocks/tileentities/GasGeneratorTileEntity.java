@@ -1,19 +1,10 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-
 import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.TargetingInfo;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
+import blusunrize.immersiveengineering.api.utils.CapabilityUtils;
 import blusunrize.immersiveengineering.api.wires.Connection;
 import blusunrize.immersiveengineering.api.wires.ConnectionPoint;
 import blusunrize.immersiveengineering.api.wires.IImmersiveConnectable;
@@ -24,10 +15,9 @@ import blusunrize.immersiveengineering.api.wires.utils.WireUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
+import com.google.common.collect.ImmutableList;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import net.minecraft.core.BlockPos;
@@ -35,6 +25,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -44,7 +35,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -53,6 +44,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -60,13 +53,18 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IEBlockInterfaces.IDirectionalTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.ISoundTile, EnergyHelper.IIEInternalFluxConnector, EnergyHelper.IIEInternalFluxHandler, EnergyTransferHandler.EnergyConnector, TickableBE{
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IEBlockInterfaces.IDirectionalBE, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.ISoundBE, EnergyTransferHandler.EnergyConnector, TickableBE{
 	public static final int FLUX_CAPACITY = 8000;
 	
 	protected WireType wireType;
 	protected boolean isActive = false;
 	protected Direction facing = Direction.NORTH;
-	protected FluxStorage energyStorage = new FluxStorage(getMaxStorage(), Integer.MAX_VALUE, getMaxOutput());
+	protected MutableEnergyStorage energyStorage = new MutableEnergyStorage(getMaxStorage(), Integer.MAX_VALUE, getMaxOutput());
 	protected FluidTank tank = new FluidTank(FLUX_CAPACITY, fluid -> (fluid != null && fluid != FluidStack.EMPTY && FuelHandler.isValidFuel(fluid.getFluid())));
 	
 	public GasGeneratorTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
@@ -80,14 +78,14 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	private int getMaxStorage(){
 		return IEServerConfig.MACHINES.lvCapConfig.storage.getAsInt();
 	}
-	
+
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		
 		this.isActive = nbt.getBoolean("isActive");
 		this.tank.readFromNBT(nbt.getCompound("tank"));
-		this.energyStorage.readFromNBT(nbt.getCompound("buffer"));
+		this.energyStorage.deserializeNBT(nbt.get("buffer"));
 		this.wireType = nbt.contains("wiretype") ? WireUtils.getWireTypeFromNBT(nbt, "wiretype") : null;
 	}
 	
@@ -97,7 +95,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		
 		nbt.putBoolean("isActive", this.isActive);
 		nbt.put("tank", this.tank.writeToNBT(new CompoundTag()));
-		nbt.put("buffer", this.energyStorage.writeToNBT(new CompoundTag()));
+		nbt.put("buffer", this.energyStorage.serializeNBT());
 		
 		if(this.wireType != null){
 			nbt.putString("wiretype", this.wireType.getUniqueName());
@@ -108,22 +106,24 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket(){
-		return new ClientboundBlockEntityDataPacket(this.worldPosition, 3, getUpdateTag());
+		return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
 	}
-	
+
 	@Override
-	public void handleUpdateTag(BlockState state, CompoundTag tag){
-		load(state, tag);
+	public void handleUpdateTag(CompoundTag tag){
+		load(tag);
 	}
 	
 	@Override
 	public CompoundTag getUpdateTag(){
 		return save(new CompoundTag());
 	}
-	
+
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt){
-		load(getBlockState(), pkt.getTag());
+	public void onDataPacket(net.minecraft.network.Connection net, ClientboundBlockEntityDataPacket pkt){
+		if (pkt.getTag() != null){
+			load(pkt.getTag());
+		}
 	}
 	
 	@Override
@@ -132,7 +132,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			CompoundTag nbt = stack.getOrCreateTag();
 			
 			this.tank.readFromNBT(nbt.getCompound("tank"));
-			this.energyStorage.readFromNBT(nbt.getCompound("energy"));
+			this.energyStorage.deserializeNBT(nbt.get("energy"));
 		}
 	}
 	
@@ -144,9 +144,9 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		level.sendBlockUpdated(worldPosition, state, state, 3);
 		level.updateNeighborsAt(worldPosition, state.getBlock());
 	}
-	
+
 	@Override
-	public List<ItemStack> getTileDrops(LootContext context){
+	public List<ItemStack> getBlockEntityDrop(@Nullable LootContext context){
 		ItemStack stack;
 		if(context != null){
 			stack = new ItemStack(context.getParamOrNull(LootContextParams.BLOCK_STATE).getBlock());
@@ -162,7 +162,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		}
 		
 		if(this.energyStorage.getEnergyStored() > 0){
-			CompoundTag energyNbt = this.energyStorage.writeToNBT(new CompoundTag());
+			Tag energyNbt = this.energyStorage.serializeNBT();
 			nbt.put("energy", energyNbt);
 		}
 		
@@ -196,52 +196,23 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		return this.isActive;
 	}
 	
-	@Override
-	public FluxStorage getFluxStorage(){
-		return this.energyStorage;
-	}
-	
-	@Override
-	public IOSideConfig getEnergySideConfig(Direction facing){
-		return IOSideConfig.OUTPUT;
-	}
-	
-	IEForgeEnergyWrapper energyWrapper;
-	@Override
-	public IEForgeEnergyWrapper getCapabilityWrapper(Direction facing){
-		if(facing != this.facing)
-			return null;
-		
-		if(this.energyWrapper == null || this.energyWrapper.side != this.facing)
-			this.energyWrapper = new IEForgeEnergyWrapper(this, this.facing);
-		
-		return this.energyWrapper;
-	}
-	
-	private LazyOptional<IFluidHandler> fluidHandler;
+	private final LazyOptional<IFluidHandler> fluidHandler = CapabilityUtils.constantOptional(this.tank);
+	private final LazyOptional<IEnergyStorage> energyHandler = CapabilityUtils.constantOptional(this.energyStorage);
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == Direction.UP)){
-			if(this.fluidHandler == null){
-				fluidHandler = LazyOptional.of(() -> this.tank);
-			}
 			return this.fluidHandler.cast();
+		} else if (cap == CapabilityEnergy.ENERGY && (side == null || side == this.facing)) {
+			return this.energyHandler.cast();
 		}
 		return super.getCapability(cap, side);
 	}
 	
 	@Override
-	protected void invalidateCaps(){
+	public void invalidateCaps(){
 		super.invalidateCaps();
-		if(this.fluidHandler != null)
-			this.fluidHandler.invalidate();
-	}
-	
-	@Override
-	public void setRemoved(){
-		super.setRemoved();
-		if(this.fluidHandler != null)
-			this.fluidHandler.invalidate();
+		this.fluidHandler.invalidate();
+		this.energyHandler.invalidate();
 	}
 	
 	@Override
@@ -269,11 +240,11 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			return true;
 		}else if(player.isShiftKeyDown()){
 			boolean added = false;
-			if(player.inventory.getSelected().isEmpty()){
+			if(player.getInventory().getSelected().isEmpty()){
 				added = true;
-				player.inventory.setItem(player.inventory.selected, getTileDrops(null).get(0));
+				player.getInventory().setItem(player.getInventory().selected, getBlockEntityDrop(null).get(0));
 			}else{
-				added = player.inventory.add(getTileDrops(null).get(0));
+				added = player.getInventory().add(getBlockEntityDrop(null).get(0));
 			}
 			
 			if(added){
@@ -306,11 +277,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	@Override
 	public boolean canHammerRotate(Direction side, Vec3 hit, LivingEntity entity){
-		return true;
-	}
-	
-	@Override
-	public boolean canRotate(Direction axis){
 		return true;
 	}
 	
@@ -388,9 +354,14 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	public Collection<ConnectionPoint> getConnectionPoints(){
 		return Arrays.asList(new ConnectionPoint(worldPosition, 0));
 	}
-	
+
 	@Override
-	public Vec3 getConnectionOffset(@Nonnull Connection con, ConnectionPoint here){
+	public BlockPos getPosition(){
+		return worldPosition;
+	}
+
+	@Override
+	public Vec3 getConnectionOffset(ConnectionPoint here, ConnectionPoint other, WireType type){
 		float xo = facing.getNormal().getX() * .5f + .5f;
 		float zo = facing.getNormal().getZ() * .5f + .5f;
 		return new Vec3(xo, .5f, zo);
