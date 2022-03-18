@@ -18,8 +18,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	private Set<String> set;
-	public IPUpgradeItem(String name, String type){
-		super("upgrade_" + name, new Item.Properties().stacksTo(1));
+	public IPUpgradeItem(String type){
+		super(new Item.Properties().stacksTo(1));
+//		super("upgrade_" + name, new Item.Properties().stacksTo(1));
 		this.set = ImmutableSet.of(type);
 	}
 	

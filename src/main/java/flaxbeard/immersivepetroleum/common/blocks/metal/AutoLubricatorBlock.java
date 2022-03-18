@@ -46,8 +46,8 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty SLAVE = BooleanProperty.create("slave");
 	
-	public AutoLubricatorBlock(String name){
-		super(name, Block.Properties.of(material)
+	public AutoLubricatorBlock(){
+		super(Block.Properties.of(material)
 				.strength(5.0F, 6.0F)
 				//.harvestTool(ToolType.AXE) // TODO Harvest Tool tag stuff
 				.sound(SoundType.METAL)

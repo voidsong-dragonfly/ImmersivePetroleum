@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.stone;
 
+import java.util.function.Supplier;
+
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
@@ -19,12 +21,11 @@ import javax.annotation.Nullable;
 
 public class WellBlock extends IPBlockBase implements EntityBlock{
 	public WellBlock(){
-		super("well", Block.Properties.of(Material.STONE).strength(-1.0F, 3600000.0F).noDrops().isValidSpawn((s, r, p, e) -> false));
+		super(Block.Properties.of(Material.STONE).strength(-1.0F, 3600000.0F).noDrops().isValidSpawn((s, r, p, e) -> false));
 	}
 	
 	@Override
-	protected BlockItem createBlockItem(){
-		// Nobody is supposed to have this in their inventory
+	public Supplier<BlockItem> blockItemSupplier(){
 		return null;
 	}
 	

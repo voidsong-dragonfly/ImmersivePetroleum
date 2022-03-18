@@ -83,8 +83,8 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
 public class ProjectorItem extends IPItemBase{
-	public ProjectorItem(String name){
-		super(name, new Item.Properties().stacksTo(1));
+	public ProjectorItem(){
+		super(new Item.Properties().stacksTo(1));
 	}
 	
 	@Override

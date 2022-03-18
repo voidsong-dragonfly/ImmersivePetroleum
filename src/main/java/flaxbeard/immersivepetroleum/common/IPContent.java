@@ -101,13 +101,12 @@ public class IPContent{
 		@Deprecated public static Block derrick;
 		@Deprecated public static Block oiltank;
 
-		// TODO why aren't these initialized anywhere????
-		public static RegistryObject<Block> DISTILLATIONTOWER;
-		public static RegistryObject<Block> PUMPJACK;
-		public static RegistryObject<Block> COKERUNIT;
-		public static RegistryObject<Block> HYDROTREATER;
-		public static RegistryObject<Block> DERRICK;
-		public static RegistryObject<Block> OILTANK;
+		public static RegistryObject<DistillationTowerBlock> DISTILLATIONTOWER;
+		public static RegistryObject<PumpjackBlock> PUMPJACK;
+		public static RegistryObject<CokerUnitBlock> COKERUNIT;
+		public static RegistryObject<HydrotreaterBlock> HYDROTREATER;
+		public static RegistryObject<DerrickBlock> DERRICK;
+		public static RegistryObject<OilTankBlock> OILTANK;
 		
 		private static void forceClassLoad(){
 		}
@@ -152,18 +151,18 @@ public class IPContent{
 		public static RegistryObject<Block> ASPHALT;
 		public static RegistryObject<Block> ASPHALT_SLAB;
 		public static RegistryObject<Block> ASPHALT_STAIR;
-		public static RegistryObject<Block> PETCOKE;
+		public static final RegistryObject<PetcokeBlock> PETCOKE = IPRegisters.registerIPBlock("petcoke_block", PetcokeBlock::new);
 		
-		public static RegistryObject<Block> GAS_GENERATOR;
-		public static RegistryObject<Block> AUTO_LUBRICATOR;
-		public static RegistryObject<Block> FLARESTACK;
+		public static final RegistryObject<GasGeneratorBlock> GAS_GENERATOR = IPRegisters.registerIPBlock("gas_generator", GasGeneratorBlock::new);
+		public static final RegistryObject<AutoLubricatorBlock> AUTO_LUBRICATOR = IPRegisters.registerIPBlock("auto_lubricator", AutoLubricatorBlock::new);
+		public static final RegistryObject<FlarestackBlock> FLARESTACK = IPRegisters.registerIPBlock("flarestack", FlarestackBlock::new);
 		
-		public static RegistryObject<Block> DUMMYOILORE;
-		public static RegistryObject<Block> DUMMYPIPE;
-		public static RegistryObject<Block> DUMMYCONVEYOR;
+		public static final RegistryObject<BlockDummy> DUMMYOILORE = IPRegisters.registerIPBlock("dummy_oil_ore", BlockDummy::new);
+		public static final RegistryObject<BlockDummy> DUMMYPIPE = IPRegisters.registerIPBlock("dummy_pipe", BlockDummy::new);
+		public static final RegistryObject<BlockDummy> DUMMYCONVEYOR = IPRegisters.registerIPBlock("dummy_conveyor", BlockDummy::new);
 		
-		public static RegistryObject<Block> WELL;
-		public static RegistryObject<Block> WELLPIPE;
+		public static final RegistryObject<WellBlock> WELL = IPRegisters.registerIPBlock("well", WellBlock::new);
+		public static final RegistryObject<WellPipeBlock> WELLPIPE = IPRegisters.registerIPBlock("well_pipe", WellPipeBlock::new);
 		
 		private static void forceClassLoad(){
 		}
@@ -177,12 +176,17 @@ public class IPContent{
 		@Deprecated public static IPItemBase petcoke;
 		@Deprecated public static IPItemBase petcokedust;
 		
-		public static RegistryObject<Item> BITUMEN;
-		public static RegistryObject<Item> PROJECTOR;
-		public static RegistryObject<Item> SPEEDBOAT;
-		public static RegistryObject<Item> OIL_CAN;
-		public static RegistryObject<Item> PETCOKE;
-		public static RegistryObject<Item> PETCOKEDUST;
+		public static final RegistryObject<Item> BITUMEN = IPRegisters.registerItem("bitumen", IPItemBase::new);
+		public static RegistryObject<Item> PROJECTOR = IPRegisters.registerItem("projector", ProjectorItem::new);
+		public static final RegistryObject<MotorboatItem> SPEEDBOAT = IPRegisters.registerItem("speedboat", MotorboatItem::new);
+		public static final RegistryObject<OilCanItem> OIL_CAN = IPRegisters.registerItem("oil_can", OilCanItem::new);
+		public static final RegistryObject<Item> PETCOKE = IPRegisters.registerItem("petcoke", () -> new IPItemBase(){
+			@Override
+			public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
+				return 3200;
+			}
+		});
+		public static final RegistryObject<Item> PETCOKEDUST = IPRegisters.registerItem("petcoke_dust", IPItemBase::new);
 		
 		private static void forceClassLoad(){
 		}
@@ -195,13 +199,17 @@ public class IPContent{
 		@Deprecated public static IPUpgradeItem rudders;
 		@Deprecated public static IPUpgradeItem paddles;
 		
-		public static RegistryObject<Item> REINFORCED_HULL;
-		public static RegistryObject<Item> ICE_BREAKER;
-		public static RegistryObject<Item> TANK;
-		public static RegistryObject<Item> RUDDERS;
-		public static RegistryObject<Item> PADDLES;
+		public static RegistryObject<IPUpgradeItem> REINFORCED_HULL = createBoatUpgrade("reinforced_hull");
+		public static RegistryObject<IPUpgradeItem> ICE_BREAKER = createBoatUpgrade("icebreaker");
+		public static RegistryObject<IPUpgradeItem> TANK = createBoatUpgrade("tank");
+		public static RegistryObject<IPUpgradeItem> RUDDERS = createBoatUpgrade("rudders");
+		public static RegistryObject<IPUpgradeItem> PADDLES = createBoatUpgrade("paddles");
 		
 		private static void forceClassLoad(){
+		}
+
+		private static <T extends Item> RegistryObject<IPUpgradeItem> createBoatUpgrade(String name){
+			return IPRegisters.registerItem("upgrade_" + name, () -> new IPUpgradeItem(MotorboatItem.UPGRADE_TYPE));
 		}
 	}
 	
@@ -210,7 +218,6 @@ public class IPContent{
 	public static RegistryObject<Item> DEBUGITEM = IPRegisters.registerItem("debug", DebugItem::new);
 	
 	/** block/item/fluid population */
-	@SuppressWarnings("deprecation")
 	public static void populate(){
 		Blocks.forceClassLoad();
 		Fluids.forceClassLoad();
@@ -220,59 +227,25 @@ public class IPContent{
 		
 		// TODO Remove below later
 		// ##############################################
-		
-		//IPContent.debugItem = new DebugItem();
-		
+
 		Fluids.crudeOil = new CrudeOilFluid();
 		Fluids.diesel = new DieselFluid("diesel");
 		Fluids.diesel_sulfur = new DieselFluid("diesel_sulfur");
 		Fluids.lubricant = new IPFluid("lubricant", 925, 1000);
 		Fluids.gasoline = new IPFluid("gasoline", 789, 1200);
 		Fluids.napalm = new NapalmFluid();
-		
-		Blocks.dummyOilOre = new BlockDummy("dummy_oil_ore");
-		Blocks.dummyPipe = new BlockDummy("dummy_pipe");
-		Blocks.dummyConveyor = new BlockDummy("dummy_conveyor");
-		
-		Blocks.petcoke = new PetcokeBlock();
-		Blocks.gas_generator = new GasGeneratorBlock();
-		
+
 		AsphaltBlock asphalt = new AsphaltBlock();
 		Blocks.asphalt = asphalt;
 		Blocks.asphalt_slab = new AsphaltSlab(asphalt);
 		Blocks.asphalt_stair = new AsphaltStairs(asphalt);
-		
-		Blocks.well = new WellBlock();
-		Blocks.wellPipe = new WellPipeBlock();
-		
-		Blocks.auto_lubricator = new AutoLubricatorBlock("auto_lubricator");
-		Blocks.flarestack = new FlarestackBlock();
-		
+
 		Multiblock.distillationtower = new DistillationTowerBlock();
 		Multiblock.pumpjack = new PumpjackBlock();
 		Multiblock.cokerunit = new CokerUnitBlock();
 		Multiblock.hydrotreater = new HydrotreaterBlock();
 		Multiblock.derrick = new DerrickBlock();
 		Multiblock.oiltank = new OilTankBlock();
-		
-		Items.bitumen = new IPItemBase("bitumen");
-		Items.oil_can = new OilCanItem("oil_can");
-		Items.speedboat = new MotorboatItem("speedboat");
-		Items.petcoke = new IPItemBase("petcoke"){
-			@Override
-			public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
-				return 3200;
-			}
-		};
-		Items.petcokedust = new IPItemBase("petcoke_dust");
-		
-		BoatUpgrades.reinforced_hull = new IPUpgradeItem("reinforced_hull", MotorboatItem.UPGRADE_TYPE);
-		BoatUpgrades.ice_breaker = new IPUpgradeItem("icebreaker", MotorboatItem.UPGRADE_TYPE);
-		BoatUpgrades.tank = new IPUpgradeItem("tank", MotorboatItem.UPGRADE_TYPE);
-		BoatUpgrades.rudders = new IPUpgradeItem("rudders", MotorboatItem.UPGRADE_TYPE);
-		BoatUpgrades.paddles = new IPUpgradeItem("paddles", MotorboatItem.UPGRADE_TYPE);
-		
-		Items.projector = new ProjectorItem("projector");
 	}
 	
 	public static void preInit(){
