@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class TweakerUtils{
 	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/CT-Compat");

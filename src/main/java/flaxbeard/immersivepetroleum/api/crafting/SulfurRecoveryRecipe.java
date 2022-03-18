@@ -13,15 +13,16 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
-	public static final IRecipeType<SulfurRecoveryRecipe> TYPE = IRecipeType.register(ImmersivePetroleum.MODID + ":hydrotreater");
+	public static final RecipeType<SulfurRecoveryRecipe> TYPE = RecipeType.register(ImmersivePetroleum.MODID + ":hydrotreater");
 	
 	public static Map<ResourceLocation, SulfurRecoveryRecipe> recipes = new HashMap<>();
 	
@@ -106,9 +107,10 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	}
 	
 	@Override
-	public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile){
+	public NonNullList<ItemStack> getActualItemOutputs(BlockEntity tile){
 		NonNullList<ItemStack> list = NonNullList.create();
-		if(tile.getWorld().rand.nextFloat() <= chance){
+		Level level = tile.getLevel();
+		if(level.random.nextFloat() <= chance){
 			list.add(this.outputItem);
 		}
 		return list;

@@ -4,35 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.MaterialColor;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.MaterialColor;
 
 public class PipeConfig extends Button{
-	static final Button.IPressable NO_ACTION = b -> {
+	static final Button.OnPress NO_ACTION = b -> {
 	};
 	
 	public static final int EMPTY = 0x00;
@@ -56,20 +56,20 @@ public class PipeConfig extends Button{
 	protected int gridWidthScaled, gridHeightScaled;
 	protected int gridScale;
 	public PipeConfig(DerrickTileEntity tile, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
-		super(x, y, width, height, StringTextComponent.EMPTY, NO_ACTION);
-		this.tilePos = new ColumnPos(tile.getPos());
+		super(x, y, width, height, TextComponent.EMPTY, NO_ACTION);
+		this.tilePos = new ColumnPos(tile.getBlockPos());
 		
 		this.grid = new Grid(gridWidth, gridHeight);
 		copyGridFrom(tile.gridStorage);
 		this.gridWidthScaled = gridWidth * gridScale;
 		this.gridHeightScaled = gridHeight * gridScale;
-		this.gridScale = MathHelper.clamp(gridScale, 1, Integer.MAX_VALUE);
+		this.gridScale = Mth.clamp(gridScale, 1, Integer.MAX_VALUE);
 		
 		this.dynTextureWidth = gridWidth;
 		this.dynTextureHeight = gridHeight;
 		this.gridTexture = new DynamicTexture(this.dynTextureWidth, this.dynTextureHeight, true);
-		ResourceLocation loc = Minecraft.getInstance().textureManager.getDynamicTextureLocation("pipegrid/" + this.hashCode(), this.gridTexture);
-		this.gridTextureRenderType = RenderType.getText(loc);
+		ResourceLocation loc = MCUtil.getTextureManager().register("pipegrid/" + this.hashCode(), this.gridTexture);
+		this.gridTextureRenderType = RenderType.text(loc);
 		
 		this.pipeNormalColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_normal_color.get(), 16);
 		this.pipePerforatedColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_perforated_color.get(), 16);
@@ -102,11 +102,11 @@ public class PipeConfig extends Button{
 	}
 	
 	public void updateTexture(){
-		NativeImage image = this.gridTexture.getTextureData();
+		NativeImage image = this.gridTexture.getPixels();
 		int texCenterX = this.grid.width / this.gridScale;
 		int texCenterY = this.grid.height / this.gridScale;
 		
-		ClientWorld world = Minecraft.getInstance().world;
+		ClientLevel world = MCUtil.getLevel();
 		
 		for(int gy = 0;gy < this.grid.getHeight();gy++){
 			for(int gx = 0;gx < this.grid.getWidth();gx++){
@@ -121,7 +121,7 @@ public class PipeConfig extends Button{
 							int py = gy - (this.grid.getHeight() / 2);
 							
 							ColumnPos c = new ColumnPos(this.tilePos.x + px, this.tilePos.z + py);
-							int y = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(c.x, 0, c.z)).getY();
+							int y = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(c.x, 0, c.z)).getY();
 							
 							BlockPos p;
 							BlockState state;
@@ -129,9 +129,9 @@ public class PipeConfig extends Button{
 								--y;
 								p = new BlockPos(c.x, y, c.z);
 								state = world.getBlockState(p);
-							}while(state.getMaterialColor(world, p) == MaterialColor.AIR && y > 0);
+							}while(state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
 							
-							int tmp = world.getBlockState(p).getMaterialColor(world, p).colorValue;
+							int tmp = world.getBlockState(p).getMapColor(world, p).col;
 							float f = 0.5F;
 							int r = (int) (((tmp >> 16) & 0xFF) * f);
 							int g = (int) (((tmp >> 8) & 0xFF) * f);
@@ -159,30 +159,29 @@ public class PipeConfig extends Button{
 			}
 		}
 		
-		this.gridTexture.updateDynamicTexture();
+		this.gridTexture.upload();
 	}
 	
 	@Override
-	public void render(MatrixStack matrix, int mx, int my, float partialTicks){
-		Minecraft mc = Minecraft.getInstance();
-		IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+	public void render(PoseStack matrix, int mx, int my, float partialTicks){
+		MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 		
-		IVertexBuilder builder = buffer.getBuffer(this.gridTextureRenderType);
-		matrix.push();
+		VertexConsumer builder = buffer.getBuffer(this.gridTextureRenderType);
+		matrix.pushPose();
 		{
 			matrix.translate(this.x, this.y, 0);
-			Matrix4f mat = matrix.getLast().getMatrix();
+			Matrix4f mat = matrix.last().pose();
 			int x = this.grid.width * this.gridScale;
 			int y = this.grid.height * this.gridScale;
-			builder.pos(mat, 0, y, 0).color(1.0F, 1.0F, 1.0F, 1.0F).tex(0.0F, 1.0F).lightmap(0xF000F0).endVertex();
-			builder.pos(mat, x, y, 0).color(1.0F, 1.0F, 1.0F, 1.0F).tex(1.0F, 1.0F).lightmap(0xF000F0).endVertex();
-			builder.pos(mat, x, 0, 0).color(1.0F, 1.0F, 1.0F, 1.0F).tex(1.0F, 0.0F).lightmap(0xF000F0).endVertex();
-			builder.pos(mat, 0, 0, 0).color(1.0F, 1.0F, 1.0F, 1.0F).tex(0.0F, 0.0F).lightmap(0xF000F0).endVertex();
+			builder.vertex(mat, 0, y, 0).color(1.0F, 1.0F, 1.0F, 1.0F).uv(0.0F, 1.0F).uv2(0xF000F0).endVertex();
+			builder.vertex(mat, x, y, 0).color(1.0F, 1.0F, 1.0F, 1.0F).uv(1.0F, 1.0F).uv2(0xF000F0).endVertex();
+			builder.vertex(mat, x, 0, 0).color(1.0F, 1.0F, 1.0F, 1.0F).uv(1.0F, 0.0F).uv2(0xF000F0).endVertex();
+			builder.vertex(mat, 0, 0, 0).color(1.0F, 1.0F, 1.0F, 1.0F).uv(0.0F, 0.0F).uv2(0xF000F0).endVertex();
 		}
-		matrix.pop();
-		buffer.finish();
+		matrix.popPose();
+		buffer.endBatch();
 		
-		List<ITextComponent> tooltip = new ArrayList<>();
+		List<Component> tooltip = new ArrayList<>();
 		
 		if((mx >= this.x && mx < (this.x + this.width)) && (my >= this.y && my < (this.y + this.height))){
 			int x = (mx - this.x) / this.gridScale;
@@ -192,7 +191,7 @@ public class PipeConfig extends Button{
 			int py = y - (this.grid.getHeight() / 2);
 			
 			if((px >= -2 && px <= 2) && (py >= -2 && py <= 2)){
-				tooltip.add(new StringTextComponent("Center (Derrick)"));
+				tooltip.add(new TextComponent("Center (Derrick)"));
 			}else{
 				String dir = "";
 				if(py < 0){
@@ -212,32 +211,36 @@ public class PipeConfig extends Button{
 					}
 				}
 				
-				tooltip.add(new StringTextComponent("§n" + dir));
+				tooltip.add(new TextComponent("§n" + dir));
 			}
 			
-			tooltip.add(new StringTextComponent(String.format(Locale.ENGLISH, "X: %d §7(%d)", (this.tilePos.x + px), px)));
-			tooltip.add(new StringTextComponent(String.format(Locale.ENGLISH, "Z: %d §7(%d)", (this.tilePos.z + py), py)));
+			tooltip.add(new TextComponent(String.format(Locale.ENGLISH, "X: %d §7(%d)", (this.tilePos.x + px), px)));
+			tooltip.add(new TextComponent(String.format(Locale.ENGLISH, "Z: %d §7(%d)", (this.tilePos.z + py), py)));
 			
 			int i = this.grid.get(x, y);
 			if(i > EMPTY){
 				if(i == PIPE_NORMAL){
-					tooltip.add(new StringTextComponent("Normal Pipe"));
+					tooltip.add(new TextComponent("Normal Pipe"));
 				}else if(i == PIPE_PERFORATED){
-					tooltip.add(new StringTextComponent("Perforated Pipe"));
+					tooltip.add(new TextComponent("Perforated Pipe"));
 				}else if(i == PIPE_PERFORATED_FIXED){
-					tooltip.add(new StringTextComponent("Perforated Pipe §c(Fixed)§r"));
+					tooltip.add(new TextComponent("Perforated Pipe §c(Fixed)§r"));
 				}
 			}
 			
 			int xa = this.x + (x * this.gridScale);
 			int ya = this.y + (y * this.gridScale);
-			AbstractGui.fill(matrix, xa, ya, xa + this.gridScale, ya + this.gridScale, 0x7FFFFFFF);
+			GuiComponent.fill(matrix, xa, ya, xa + this.gridScale, ya + this.gridScale, 0x7FFFFFFF);
 		}
 		
 		if(!tooltip.isEmpty()){
-			int width = mc.getMainWindow().getScaledWidth();
-			int height = mc.getMainWindow().getScaledHeight();
-			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, mc.fontRenderer);
+			// FIXME GuiUtils.drawHoveringText doesnt exist anymore!
+			/*
+			Minecraft mc = Minecraft.getInstance();
+			int width = mc.getWindow().getGuiScaledWidth();
+			int height = mc.getWindow().getGuiScaledHeight();
+			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, mc.font);
+			*/
 		}
 	}
 	
@@ -246,7 +249,7 @@ public class PipeConfig extends Button{
 		if(isValidClickButton(button)){
 			boolean flag = this.clicked(mouseX, mouseY);
 			if(flag){
-				this.playDownSound(Minecraft.getInstance().getSoundHandler());
+				this.playDownSound(Minecraft.getInstance().getSoundManager());
 				onGridClick((int) (mouseX - this.x) / this.gridScale, (int) (mouseY - this.y) / this.gridScale, button);
 				return true;
 			}
@@ -268,7 +271,7 @@ public class PipeConfig extends Button{
 			this.grid.clearGrid();
 			this.grid.drawLine(this.grid.getWidth() / 2, this.grid.getHeight() / 2, x, y, 1);
 			this.grid.set(this.grid.getWidth() / 2, this.grid.getHeight() / 2, PIPE_PERFORATED_FIXED);
-			this.grid.set(MathHelper.clamp(x, 0, this.grid.getWidth() - 1), MathHelper.clamp(y, 0, this.grid.getHeight() - 1), PIPE_PERFORATED_FIXED);
+			this.grid.set(Mth.clamp(x, 0, this.grid.getWidth() - 1), Mth.clamp(y, 0, this.grid.getHeight() - 1), PIPE_PERFORATED_FIXED);
 		}
 		updateTexture();
 	}
@@ -363,10 +366,10 @@ public class PipeConfig extends Button{
 		}
 		
 		public void drawLine(int xa, int ya, int xb, int yb, int value){
-			xa = MathHelper.clamp(xa, 0, this.width - 1);
-			xb = MathHelper.clamp(xb, 0, this.width - 1);
-			ya = MathHelper.clamp(ya, 0, this.height - 1);
-			yb = MathHelper.clamp(yb, 0, this.height - 1);
+			xa = Mth.clamp(xa, 0, this.width - 1);
+			xb = Mth.clamp(xb, 0, this.width - 1);
+			ya = Mth.clamp(ya, 0, this.height - 1);
+			yb = Mth.clamp(yb, 0, this.height - 1);
 			
 			int dx = xb - xa;
 			int dy = yb - ya;
@@ -396,15 +399,15 @@ public class PipeConfig extends Button{
 			return this.width * y + x;
 		}
 		
-		public CompoundNBT toCompound(){
-			CompoundNBT nbt = new CompoundNBT();
+		public CompoundTag toCompound(){
+			CompoundTag nbt = new CompoundTag();
 			nbt.putInt("width", this.width);
 			nbt.putInt("height", this.height);
 			nbt.putByteArray("grid", this.array);
 			return nbt;
 		}
 		
-		public static Grid fromCompound(CompoundNBT nbt){
+		public static Grid fromCompound(CompoundTag nbt){
 			Grid grid = new Grid();
 			grid.width = nbt.getInt("width");
 			grid.height = nbt.getInt("height");

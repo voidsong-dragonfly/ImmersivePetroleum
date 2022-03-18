@@ -2,10 +2,9 @@ package flaxbeard.immersivepetroleum.common.network;
 
 import java.util.function.Supplier;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.network.FriendlyByteBuf;
 
 public interface INetMessage{
-	void toBytes(PacketBuffer buf);
+	void toBytes(FriendlyByteBuf buf);
 	void process(Supplier<Context> context);
 }

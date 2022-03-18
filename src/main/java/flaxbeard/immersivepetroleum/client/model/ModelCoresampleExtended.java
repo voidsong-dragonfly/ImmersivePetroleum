@@ -8,28 +8,27 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.Nullable;
 
 import com.google.common.cache.Cache;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.excavator.MineralMix;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.items.CoresampleItem;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.client.model.data.IModelData;
 
-// TODO Get the Coresample to display shit
 @SuppressWarnings("unused")
 public class ModelCoresampleExtended extends ModelCoresample{
 	private Fluid fluid;
@@ -45,7 +44,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 		return bakedQuads;
 	}
 	
-	protected final void putVertexDataSpr(List<BakedQuad> bakedQuads, Vector3f normal, Vector3f[] vertices, Vector2f[] uvs, TextureAtlasSprite sprite)
+	protected final void putVertexDataSpr(List<BakedQuad> bakedQuads, Vector3f normal, Vector3f[] vertices, Vec2[] uvs, TextureAtlasSprite sprite)
 	{
 		/*
 		UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
@@ -66,14 +65,14 @@ public class ModelCoresampleExtended extends ModelCoresample{
 	}
 	
 	@Override
-	public ItemOverrideList getOverrides(){
+	public ItemOverrides getOverrides(){
 		return overrideList2;
 	}
 	
-	ItemOverrideList overrideList2 = new ItemOverrideList(){
+	ItemOverrides overrideList2 = new ItemOverrides(){
 		
 		@Override
-		public IBakedModel getOverrideModel(IBakedModel originalModel, ItemStack stack, ClientWorld worldIn, LivingEntity entityIn){
+		public BakedModel resolve(BakedModel originalModel, ItemStack stack, ClientLevel worldIn, LivingEntity entityIn){
 			String resName = ItemNBTHelper.hasKey(stack, "resType") ? ItemNBTHelper.getString(stack, "resType") : null;
 			if(ItemNBTHelper.hasKey(stack, "resAmount") && resName == null && ItemNBTHelper.getInt(stack, "resAmount") > 0){
 				resName = "resAmount";
@@ -92,7 +91,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 						if(originalModel instanceof ModelCoresample){
 							format = getVertexFormat((ModelCoresample) originalModel);
 						}else{
-							format = DefaultVertexFormats.BLOCK;
+							format = DefaultVertexFormat.BLOCK;
 						}
 						return new ModelCoresampleExtended(minerals, format, null);
 					});

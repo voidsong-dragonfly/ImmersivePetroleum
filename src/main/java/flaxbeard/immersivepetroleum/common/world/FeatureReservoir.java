@@ -6,37 +6,37 @@ import java.util.stream.IntStream;
 import com.google.common.collect.HashMultimap;
 
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.SharedSeedRandom;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.PerlinNoiseGenerator;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
-public class FeatureReservoir extends Feature<NoFeatureConfig>{
-	public static HashMultimap<RegistryKey<World>, ChunkPos> generatedReservoirChunks = HashMultimap.create();
+public class FeatureReservoir extends Feature<NoneFeatureConfiguration>{
+	public static HashMultimap<ResourceKey<Level>, ChunkPos> generatedReservoirChunks = HashMultimap.create();
 	
 	public FeatureReservoir(){
-		super(NoFeatureConfig.CODEC);
+		super(NoneFeatureConfiguration.CODEC);
 	}
 	
 	@Override
-	public boolean generate(ISeedReader reader, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config){
+	public boolean place(WorldGenLevel reader, ChunkGenerator generator, Random rand, BlockPos pos, NoneFeatureConfiguration config){
 		if(ReservoirHandler.generator == null){
-			ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(reader.getSeed()), IntStream.of(0));
+			ReservoirHandler.generator = new PerlinSimplexNoise(new WorldgenRandom(reader.getSeed()), IntStream.of(0));
 		}
 		
-		RegistryKey<World> dimension = reader.getWorld().getDimensionKey();
-		IChunk chunk = reader.getChunk(pos);
+		ResourceKey<Level> dimension = reader.getLevel().dimension();
+		ChunkAccess chunk = reader.getChunk(pos);
 		if(!generatedReservoirChunks.containsEntry(dimension, chunk.getPos())){
 			generatedReservoirChunks.put(dimension, chunk.getPos());
 			
-			ReservoirHandler.scanChunkForNewReservoirs(reader.getWorld(), chunk.getPos(), rand);
+			ReservoirHandler.scanChunkForNewReservoirs(reader.getLevel(), chunk.getPos(), rand);
 			return true;
 		}
 		return false;

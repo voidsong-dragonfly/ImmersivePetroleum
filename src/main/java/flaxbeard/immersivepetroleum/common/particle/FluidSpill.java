@@ -1,33 +1,33 @@
 package flaxbeard.immersivepetroleum.common.particle;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.client.particle.IParticleRenderType;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.SpriteTexturedParticle;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidSpill extends SpriteTexturedParticle{
+public class FluidSpill extends TextureSheetParticle{
 	final double ogMotionX, ogMotionY, ogMotionZ;
-	protected FluidSpill(Fluid fluid, ClientWorld world, double x, double y, double z, double motionX, double motionY, double motionZ){
+	protected FluidSpill(Fluid fluid, ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ){
 		super(world, x, y, z, motionX, motionY, motionZ);
 		setSize(0.5F, 0.5F);
-		setMaxAge(50);
-		this.particleScale = 4 / 16F;
+		setLifetime(50);
+		this.quadSize = 4 / 16F;
 		
-		this.motionY = motionY;
+		this.yd = motionY;
 		
 		this.ogMotionX = motionX;
 		this.ogMotionY = motionY;
@@ -36,55 +36,55 @@ public class FluidSpill extends SpriteTexturedParticle{
 		FluidStack fs = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
 		
 		ResourceLocation location = fluid.getAttributes().getStillTexture(fs);
-		TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlasTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE).getSprite(location);
+		TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(location);
 		if(sprite == null){
-			sprite = Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(MissingTextureSprite.getLocation());
+			sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(MissingTextureAtlasSprite.getLocation());
 		}
 		setSprite(sprite);
 		
-		int argb = fluid.getFluid().getAttributes().getColor(fs);
-		this.particleAlpha = ((argb >> 24) & 255) / 255F;
-		this.particleRed = ((argb >> 16) & 255) / 255F;
-		this.particleGreen = ((argb >> 8 & 255)) / 255F;
-		this.particleBlue = (argb & 255) / 255F;
+		int argb = fluid.getAttributes().getColor(fs);
+		this.alpha = ((argb >> 24) & 255) / 255F;
+		this.rCol = ((argb >> 16) & 255) / 255F;
+		this.gCol = ((argb >> 8 & 255)) / 255F;
+		this.bCol = (argb & 255) / 255F;
 	}
 	
 	@Override
 	public void tick(){
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
-		if(this.age++ >= this.maxAge){
-			this.setExpired();
+		this.xo = this.x;
+		this.yo = this.y;
+		this.zo = this.z;
+		if(this.age++ >= this.lifetime){
+			this.remove();
 		}else{
-			this.motionY -= 0.04D;
-			this.move(this.motionX, this.motionY, this.motionZ);
-			this.motionX *= 0.98D;
-			this.motionY *= 0.98D;
-			this.motionZ *= 0.98D;
+			this.yd -= 0.04D;
+			this.move(this.xd, this.yd, this.zd);
+			this.xd *= 0.98D;
+			this.yd *= 0.98D;
+			this.zd *= 0.98D;
 			if(this.onGround){
-				this.motionX *= 0.7D;
-				this.motionZ *= 0.7D;
+				this.xd *= 0.7D;
+				this.zd *= 0.7D;
 			}
 			
-			this.particleScale *= 0.97D;
+			this.quadSize *= 0.97D;
 		}
 	}
 	
 	@Override
-	public void renderParticle(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks){
-		super.renderParticle(buffer, renderInfo, partialTicks);
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
+		super.render(buffer, renderInfo, partialTicks);
 	}
 	
 	@Override
-	public IParticleRenderType getRenderType(){
-		return IParticleRenderType.TERRAIN_SHEET;
+	public ParticleRenderType getRenderType(){
+		return ParticleRenderType.TERRAIN_SHEET;
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public static class Factory implements IParticleFactory<FluidParticleData>{
+	public static class Factory implements ParticleProvider<FluidParticleData>{
 		@Override
-		public Particle makeParticle(FluidParticleData type, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+		public Particle createParticle(FluidParticleData type, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
 			FluidSpill fluidSpill = new FluidSpill(type.getFluid(), world, x, y, z, xSpeed, ySpeed, zSpeed);
 			return fluidSpill;
 		}

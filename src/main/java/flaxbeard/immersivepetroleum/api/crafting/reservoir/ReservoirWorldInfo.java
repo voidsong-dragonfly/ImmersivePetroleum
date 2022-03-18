@@ -1,6 +1,6 @@
 package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * @deprecated Will be nuked as part of a complete rewrite.
@@ -15,8 +15,8 @@ public class ReservoirWorldInfo{
 		return (overrideType == null) ? type : overrideType;
 	}
 	
-	public CompoundNBT writeToNBT(){
-		CompoundNBT tag = new CompoundNBT();
+	public CompoundTag writeToNBT(){
+		CompoundTag tag = new CompoundTag();
 		tag.putInt("capacity", capacity);
 		tag.putInt("resAmount", current);
 		if(type != null){
@@ -28,7 +28,7 @@ public class ReservoirWorldInfo{
 		return tag;
 	}
 	
-	public static ReservoirWorldInfo readFromNBT(CompoundNBT tag){
+	public static ReservoirWorldInfo readFromNBT(CompoundTag tag){
 		ReservoirWorldInfo info = new ReservoirWorldInfo();
 		info.capacity = tag.getInt("capacity");
 		info.current = tag.getInt("resAmount");

@@ -12,26 +12,28 @@ import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
+import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPCommonConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
-import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.commands.IslandCommand;
 import flaxbeard.immersivepetroleum.common.util.loot.IPLootFunctions;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -39,9 +41,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(ImmersivePetroleum.MODID)
@@ -50,10 +49,10 @@ public class ImmersivePetroleum{
 	
 	public static final Logger log = LogManager.getLogger(MODID);
 	
-	public static final ItemGroup creativeTab = new ItemGroup(MODID){
+	public static final CreativeModeTab creativeTab = new CreativeModeTab(MODID){
 		@Override
-		public ItemStack createIcon(){
-			return new ItemStack(Fluids.crudeOil.getFilledBucket());
+		public ItemStack makeIcon(){
+			return new ItemStack(Fluids.CRUDEOIL.get().getBucket());
 		}
 	};
 	
@@ -76,12 +75,13 @@ public class ImmersivePetroleum{
 		MinecraftForge.EVENT_BUS.addListener(this::addReloadListeners);
 		
 		IEventBus eBus = FMLJavaModLoadingContext.get().getModEventBus();
-		Serializers.RECIPE_SERIALIZERS.register(eBus);
+		IPRegisters.addRegistersToEventBus(eBus);
+		//Serializers.RECIPE_SERIALIZERS.register(eBus);
 		
 		IPContent.populate();
 		IPLootFunctions.modConstruction();
 		
-		IPTileTypes.REGISTER.register(eBus);
+		//IPTileTypes.REGISTER.register(eBus);
 		
 		MinecraftForge.EVENT_BUS.register(new IPWorldGen());
 		IPWorldGen.init(eBus);
@@ -121,16 +121,16 @@ public class ImmersivePetroleum{
 		proxy.completed();
 	}
 	
-	public void serverAboutToStart(FMLServerAboutToStartEvent event){
+	public void serverAboutToStart(ServerAboutToStartEvent event){
 		proxy.serverAboutToStart();
 	}
 	
-	public void serverStarting(FMLServerStartingEvent event){
+	public void serverStarting(ServerStartingEvent event){
 		proxy.serverStarting();
 	}
 	
 	public void registerCommand(RegisterCommandsEvent event){
-		LiteralArgumentBuilder<CommandSource> ip = Commands.literal("ip");
+		LiteralArgumentBuilder<CommandSourceStack> ip = Commands.literal("ip");
 		
 		ip.then(IslandCommand.create());
 		
@@ -141,12 +141,12 @@ public class ImmersivePetroleum{
 		event.addListener(new RecipeReloadListener(event.getDataPackRegistries()));
 	}
 	
-	public void serverStarted(FMLServerStartedEvent event){
+	public void serverStarted(ServerStartedEvent event){
 		proxy.serverStarted();
 		
-		ServerWorld world = event.getServer().getWorld(World.OVERWORLD);
-		if(!world.isRemote){
-			IPSaveData worldData = world.getSavedData().getOrCreate(IPSaveData::new, IPSaveData.dataName);
+		ServerLevel world = event.getServer().getLevel(Level.OVERWORLD);
+		if(!world.isClientSide){
+			IPSaveData worldData = world.getDataStorage().computeIfAbsent(IPSaveData::new, IPSaveData::new, IPSaveData.dataName);
 			IPSaveData.setInstance(worldData);
 		}
 		

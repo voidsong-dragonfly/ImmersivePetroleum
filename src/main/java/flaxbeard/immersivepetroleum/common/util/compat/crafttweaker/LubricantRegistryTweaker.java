@@ -4,12 +4,12 @@ import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
 
 import com.blamejared.crafttweaker.api.CraftTweakerAPI;
-import com.blamejared.crafttweaker.api.annotations.ZenRegister;
+import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.impl.tag.MCTagWithAmount;
 
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.material.Fluid;
 
 @ZenRegister
 @Name("mods.immersivepetroleum.Lubricant")
@@ -28,6 +28,6 @@ public class LubricantRegistryTweaker{
 			return;
 		}
 		
-		LubricantHandler.register((ITag<Fluid>) tag.getTag().getInternal(), tag.getAmount());
+		LubricantHandler.register((Tag<Fluid>) tag.getTag().getInternal(), tag.getAmount());
 	}
 }

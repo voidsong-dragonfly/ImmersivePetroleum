@@ -3,11 +3,11 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class OilTankBlock extends IPMetalMultiblock<OilTankTileEntity>{
 	public OilTankBlock(){
@@ -15,8 +15,8 @@ public class OilTankBlock extends IPMetalMultiblock<OilTankTileEntity>{
 	}
 	
 	@Override
-	public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity){
-		TileEntity te = world.getTileEntity(pos);
+	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity){
+		BlockEntity te = world.getBlockEntity(pos);
 		if(te instanceof OilTankTileEntity){
 			return ((OilTankTileEntity) te).isLadder();
 		}

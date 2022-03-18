@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
@@ -18,43 +18,43 @@ import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.client.gui.GuiUtils;
 
 public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/coker.png");
 	
 	CokerUnitTileEntity tile;
-	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, PlayerInventory inv, ITextComponent title){
+	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title);
-		this.tile = container.tile;
+		this.tile = menu.tile;
 		
-		this.xSize = 200;
-		this.ySize = 187;
+		this.imageWidth = 200;
+		this.imageHeight = 187;
 	}
 	
 	@Override
-	public void render(MatrixStack matrix, int mx, int my, float partialTicks){
+	public void render(PoseStack matrix, int mx, int my, float partialTicks){
 		this.renderBackground(matrix);
 		super.render(matrix, mx, my, partialTicks);
-		this.renderHoveredTooltip(matrix, mx, my);
+		this.renderTooltip(matrix, mx, my);
 		
-		List<ITextComponent> tooltip = new ArrayList<>();
+		List<Component> tooltip = new ArrayList<>();
 		
 		// Buffer tank displays
-		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], guiLeft + 32, guiTop + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
-		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_OUTPUT], guiLeft + 152, guiTop + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], leftPos + 32, topPos + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_OUTPUT], leftPos + 152, topPos + 14, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
 		
 		// Chamber Stats
-		chamberDisplay(matrix, guiLeft + 74, guiTop + 24, 6, 38, CHAMBER_A, mx, my, partialTicks, tooltip);
-		chamberDisplay(matrix, guiLeft + 120, guiTop + 24, 6, 38, CHAMBER_B, mx, my, partialTicks, tooltip);
+		chamberDisplay(matrix, leftPos + 74, topPos + 24, 6, 38, CHAMBER_A, mx, my, partialTicks, tooltip);
+		chamberDisplay(matrix, leftPos + 120, topPos + 24, 6, 38, CHAMBER_B, mx, my, partialTicks, tooltip);
 		
 		// Power Stored
-		if(mx > guiLeft + 167 && mx < guiLeft + 175 && my > guiTop + 66 && my < guiTop + 88){
-			tooltip.add(new StringTextComponent(tile.energyStorage.getEnergyStored() + "/" + tile.energyStorage.getMaxEnergyStored() + " IF"));
+		if(mx > leftPos + 167 && mx < leftPos + 175 && my > topPos + 66 && my < topPos + 88){
+			tooltip.add(new TextComponent(tile.energyStorage.getEnergyStored() + "/" + tile.energyStorage.getMaxEnergyStored() + " IF"));
 		}
 		
 		if(!tooltip.isEmpty()){
@@ -62,7 +62,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		}
 	}
 	
-	private void chamberDisplay(MatrixStack matrix, int x, int y, int w, int h, int chamberId, int mx, int my, float partialTicks, List<ITextComponent> tooltip){
+	private void chamberDisplay(PoseStack matrix, int x, int y, int w, int h, int chamberId, int mx, int my, float partialTicks, List<Component> tooltip){
 		CokingChamber chamber = tile.chambers[chamberId];
 		
 		// Vertical Bar for Content amount.
@@ -95,16 +95,16 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	}
 	
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mx, int my){
+	protected void renderBg(PoseStack matrix, float partialTicks, int mx, int my){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture(GUI_TEXTURE);
-		this.blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
+		this.blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		
-		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], guiLeft + 32, guiTop + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
-		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_OUTPUT], guiLeft + 152, guiTop + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_INPUT], leftPos + 32, topPos + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
+		GuiHelper.handleGuiTank(matrix, tile.bufferTanks[TANK_OUTPUT], leftPos + 152, topPos + 14, 16, 47, 202, 2, 16, 47, mx, my, GUI_TEXTURE, null);
 		
-		int x = guiLeft + 168;
-		int y = guiTop + 67;
+		int x = leftPos + 168;
+		int y = topPos + 67;
 		int stored = (int) (tile.energyStorage.getEnergyStored() / (float) tile.energyStorage.getMaxEnergyStored() * 21);
 		fillGradient(matrix, x, y + 21 - stored, x + 7, y + 21, 0xffb51500, 0xff600b00);
 	}

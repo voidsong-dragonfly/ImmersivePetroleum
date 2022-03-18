@@ -4,34 +4,36 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 
-public class WellPipeBlock extends IPBlockBase{
+public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	
 	public static final BooleanProperty BROKEN = BooleanProperty.create("broken");
 	
 	public WellPipeBlock(){
-		super("well_pipe", Block.Properties.create(Material.ROCK, MaterialColor.OBSIDIAN).hardnessAndResistance(75.0F, 10.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.STONE));
+		super("well_pipe", Block.Properties.of(Material.STONE, MaterialColor.PODZOL).strength(75.0F, 10.0F)
+				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
+				.sound(SoundType.STONE));
 		
-		setDefaultState(getStateContainer().getBaseState().with(BROKEN, false));
+		registerDefaultState(getStateDefinition().any().setValue(BROKEN, false));
 	}
 	
 	@Override
-	protected void fillStateContainer(Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(BROKEN);
 	}
 	
@@ -42,52 +44,52 @@ public class WellPipeBlock extends IPBlockBase{
 	}
 	
 	@Override
-	public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor){
+	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor){
 //		int d = pos.getY() - neighbor.getY();
 //		if(d > 0 && world.getBlockState(pos.up()).getBlock() != this){
 //		}
 	}
 	
 	@Override
-	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
+	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
 	}
 	
 	@Override
-	public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos){
-		float f = state.getBlockHardness(worldIn, pos);
+	public float getDestroyProgress(BlockState state, Player player, BlockGetter worldIn, BlockPos pos){
+		float f = state.getDestroySpeed(worldIn, pos);
 		
-		if(state.get(BROKEN)){
+		if(state.getValue(BROKEN)){
 			f /= 5F;
 		}
 		
 		if(f == -1.0F){
 			return 0.0F;
 		}else{
-			int i = net.minecraftforge.common.ForgeHooks.canHarvestBlock(state, player, worldIn, pos) ? 30 : 100;
+			int i = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(state, player) ? 30 : 100;
 			return player.getDigSpeed(state, pos) / f / (float) i;
 		}
 	}
 	
 	@Override
-	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){
-		if(state.hasTileEntity() && (!state.matchesBlock(newState.getBlock()) || !newState.hasTileEntity())){
+	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())){
 			removed(state, world, pos);
-			world.removeTileEntity(pos);
+			world.removeBlockEntity(pos);
 		}
 	}
 	
-	private void removed(BlockState state, World world, BlockPos pos){
-		if(world.isRemote){
+	private void removed(BlockState state, Level world, BlockPos pos){
+		if(world.isClientSide){
 			return;
 		}
 		
-		TileEntity te = world.getTileEntity(pos);
+		BlockEntity te = world.getBlockEntity(pos);
 		if(te instanceof WellPipeTileEntity){
 			WellTileEntity well = null;
 			
 			// TODO !Replace "y >= 0" in 1.18 with something that can go negative
 			for(int y = pos.getY() - 1;y >= 0;y--){
-				TileEntity teLow = world.getTileEntity(new BlockPos(pos.getX(), y, pos.getZ()));
+				BlockEntity teLow = world.getBlockEntity(new BlockPos(pos.getX(), y, pos.getZ()));
 				
 				if(teLow instanceof WellTileEntity){
 					well = (WellTileEntity) teLow;
@@ -100,19 +102,14 @@ public class WellPipeBlock extends IPBlockBase{
 				if(well.wellPipeLength > 0){
 					well.wellPipeLength -= 1;
 				}
-				well.markDirty();
+				well.setChanged();
 			}
 		}
 	}
 	
 	@Override
-	public boolean hasTileEntity(BlockState state){
-		return true;
-	}
-	
-	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world){
-		WellPipeTileEntity tile = IPTileTypes.WELL_PIPE.get().create();
+	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
+		WellPipeTileEntity tile = IPTileTypes.WELL_PIPE.get().create(pPos, pState);
 		return tile;
 	}
 }

@@ -5,16 +5,16 @@ import java.util.OptionalDouble;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderState;
-import net.minecraft.client.renderer.RenderState.CullState;
-import net.minecraft.client.renderer.RenderState.LineState;
-import net.minecraft.client.renderer.RenderState.TextureState;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderStateShard.CullStateShard;
+import net.minecraft.client.renderer.RenderStateShard.LineStateShard;
+import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class IPRenderTypes{
 	static final ResourceLocation activeTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/distillation_tower_active.png");
@@ -29,111 +29,111 @@ public class IPRenderTypes{
 	public static final RenderType TRANSLUCENT_POSITION_COLOR;
 	public static final RenderType ISLAND_DEBUGGING_POSITION_COLOR;
 
-	static final RenderState.TextureState TEXTURE_ACTIVE_TOWER = new RenderState.TextureState(activeTexture, false, false);
-	static final RenderState.TextureState TEXTURE_OIL_TANK = new RenderState.TextureState(oilTankTexture, false, false);
-	static final RenderState.ShadeModelState SHADE_ENABLED = new RenderState.ShadeModelState(true);
-	static final RenderState.LightmapState LIGHTMAP_ENABLED = new RenderState.LightmapState(true);
-	static final RenderState.OverlayState OVERLAY_ENABLED = new RenderState.OverlayState(true);
-	static final RenderState.OverlayState OVERLAY_DISABLED = new RenderState.OverlayState(false);
-	static final RenderState.DepthTestState DEPTH_ALWAYS = new RenderState.DepthTestState("always", GL11.GL_ALWAYS);
-	static final RenderState.TransparencyState TRANSLUCENT_TRANSPARENCY = new RenderState.TransparencyState("translucent_transparency", () -> {
+	static final RenderStateShard.TextureStateShard TEXTURE_ACTIVE_TOWER = new RenderStateShard.TextureStateShard(activeTexture, false, false);
+	static final RenderStateShard.TextureStateShard TEXTURE_OIL_TANK = new RenderStateShard.TextureStateShard(oilTankTexture, false, false);
+	static final RenderStateShard.ShadeModelStateShard SHADE_ENABLED = new RenderStateShard.ShadeModelStateShard(true);
+	static final RenderStateShard.LightmapStateShard LIGHTMAP_ENABLED = new RenderStateShard.LightmapStateShard(true);
+	static final RenderStateShard.OverlayStateShard OVERLAY_ENABLED = new RenderStateShard.OverlayStateShard(true);
+	static final RenderStateShard.OverlayStateShard OVERLAY_DISABLED = new RenderStateShard.OverlayStateShard(false);
+	static final RenderStateShard.DepthTestStateShard DEPTH_ALWAYS = new RenderStateShard.DepthTestStateShard("always", GL11.GL_ALWAYS);
+	static final RenderStateShard.TransparencyStateShard TRANSLUCENT_TRANSPARENCY = new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 	}, RenderSystem::disableBlend);
-	static final RenderState.TransparencyState NO_TRANSPARENCY = new RenderState.TransparencyState("no_transparency", () -> {
+	static final RenderStateShard.TransparencyStateShard NO_TRANSPARENCY = new RenderStateShard.TransparencyStateShard("no_transparency", () -> {
 		RenderSystem.disableBlend();
 	}, () -> {
 	});
-	static final RenderState.DiffuseLightingState DIFFUSE_LIGHTING_ENABLED = new RenderState.DiffuseLightingState(true);
+	static final RenderStateShard.DiffuseLightingStateShard DIFFUSE_LIGHTING_ENABLED = new RenderStateShard.DiffuseLightingStateShard(true);
 	
 	static{
-		TRANSLUCENT_LINES = RenderType.makeType(
+		TRANSLUCENT_LINES = RenderType.create(
 				ImmersivePetroleum.MODID+":translucent_lines",
-				DefaultVertexFormats.POSITION_COLOR,
+				DefaultVertexFormat.POSITION_COLOR,
 				GL11.GL_LINES,
 				256,
-				RenderType.State.getBuilder().transparency(TRANSLUCENT_TRANSPARENCY)
-					.line(new LineState(OptionalDouble.of(3.5)))
-					.texture(new TextureState())
-					.depthTest(DEPTH_ALWAYS)
-					.build(false)
+				RenderType.CompositeState.builder().setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setLineState(new LineStateShard(OptionalDouble.of(3.5)))
+					.setTextureState(new TextureStateShard())
+					.setDepthTestState(DEPTH_ALWAYS)
+					.createCompositeState(false)
 		);
 
-		DISTILLATION_TOWER_ACTIVE = RenderType.makeType(
+		DISTILLATION_TOWER_ACTIVE = RenderType.create(
 				ImmersivePetroleum.MODID+":distillation_tower_active",
-				DefaultVertexFormats.BLOCK,
+				DefaultVertexFormat.BLOCK,
 				GL11.GL_QUADS,
 				256,
 				true,
 				false,
-				RenderType.State.getBuilder()
-					.texture(TEXTURE_ACTIVE_TOWER)
-					.shadeModel(SHADE_ENABLED)
-					.lightmap(LIGHTMAP_ENABLED)
-					.overlay(OVERLAY_DISABLED)
-					.build(false)
+				RenderType.CompositeState.builder()
+					.setTextureState(TEXTURE_ACTIVE_TOWER)
+					.setShadeModelState(SHADE_ENABLED)
+					.setLightmapState(LIGHTMAP_ENABLED)
+					.setOverlayState(OVERLAY_DISABLED)
+					.createCompositeState(false)
 		);
 		
-		OIL_TANK = RenderType.makeType(
+		OIL_TANK = RenderType.create(
 				ImmersivePetroleum.MODID+":oil_tank",
-				DefaultVertexFormats.BLOCK,
+				DefaultVertexFormat.BLOCK,
 				GL11.GL_QUADS,
 				256,
 				true,
 				false,
-				RenderType.State.getBuilder()
-					.texture(TEXTURE_OIL_TANK)
-					.transparency(TRANSLUCENT_TRANSPARENCY)
-					.shadeModel(SHADE_ENABLED)
-					.lightmap(LIGHTMAP_ENABLED)
-					.overlay(OVERLAY_DISABLED)
-					.build(false)
+				RenderType.CompositeState.builder()
+					.setTextureState(TEXTURE_OIL_TANK)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setShadeModelState(SHADE_ENABLED)
+					.setLightmapState(LIGHTMAP_ENABLED)
+					.setOverlayState(OVERLAY_DISABLED)
+					.createCompositeState(false)
 		);
 		
-		TRANSLUCENT_POSITION_COLOR = RenderType.makeType(
+		TRANSLUCENT_POSITION_COLOR = RenderType.create(
 				ImmersivePetroleum.MODID+":translucent_pos_color",
-				DefaultVertexFormats.POSITION_COLOR,
+				DefaultVertexFormat.POSITION_COLOR,
 				GL11.GL_QUADS,
 				256,
-				RenderType.State.getBuilder()
-					.transparency(TRANSLUCENT_TRANSPARENCY)
-					.texture(new TextureState())
-					.build(false)
+				RenderType.CompositeState.builder()
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setTextureState(new TextureStateShard())
+					.createCompositeState(false)
 		);
 		
-		ISLAND_DEBUGGING_POSITION_COLOR = RenderType.makeType(
+		ISLAND_DEBUGGING_POSITION_COLOR = RenderType.create(
 				ImmersivePetroleum.MODID+":translucent_pos_color",
-				DefaultVertexFormats.POSITION_COLOR,
+				DefaultVertexFormat.POSITION_COLOR,
 				GL11.GL_QUADS,
 				256,
-				RenderType.State.getBuilder()
-					.cull(new CullState(false))
-					.texture(new TextureState())
-					.build(false)
+				RenderType.CompositeState.builder()
+					.setCullState(new CullStateShard(false))
+					.setTextureState(new TextureStateShard())
+					.createCompositeState(false)
 		);
 	}
 	
 	/** Same as vanilla, just without an overlay */
 	public static RenderType getEntitySolid(ResourceLocation locationIn){
-		RenderType.State renderState = RenderType.State.getBuilder()
-				.texture(new RenderState.TextureState(locationIn, false, false))
-				.transparency(NO_TRANSPARENCY)
-				.diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-				.lightmap(LIGHTMAP_ENABLED)
-				.overlay(OVERLAY_DISABLED)
-				.build(true);
-		return RenderType.makeType("entity_solid", DefaultVertexFormats.ENTITY, 7, 256, true, false, renderState);
+		RenderType.CompositeState renderState = RenderType.CompositeState.builder()
+				.setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false))
+				.setTransparencyState(NO_TRANSPARENCY)
+				.setDiffuseLightingState(DIFFUSE_LIGHTING_ENABLED)
+				.setLightmapState(LIGHTMAP_ENABLED)
+				.setOverlayState(OVERLAY_DISABLED)
+				.createCompositeState(true);
+		return RenderType.create("entity_solid", DefaultVertexFormat.NEW_ENTITY, 7, 256, true, false, renderState);
 	}
 	
-	public static IRenderTypeBuffer disableLighting(IRenderTypeBuffer in){
+	public static MultiBufferSource disableLighting(MultiBufferSource in){
 		return type -> {
 			@SuppressWarnings("deprecation")
 			RenderType rt = new RenderType(
 					ImmersivePetroleum.MODID + ":" + type + "_no_lighting",
-					type.getVertexFormat(),
-					type.getDrawMode(),
-					type.getBufferSize(),
-					type.isUseDelegate(),
+					type.format(),
+					type.mode(),
+					type.bufferSize(),
+					type.affectsCrumbling(),
 					false,
 					() -> {
 						type.setupRenderState();

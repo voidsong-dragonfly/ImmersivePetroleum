@@ -12,21 +12,20 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class Reservoir extends IESerializableRecipe{
-	public static final IRecipeType<Reservoir> TYPE = IRecipeType.register(ImmersivePetroleum.MODID + ":reservoir");
+	public static final RecipeType<Reservoir> TYPE = RecipeType.register(ImmersivePetroleum.MODID + ":reservoir");
 	
 	public static Map<ResourceLocation, Reservoir> map = new HashMap<>();
 	
@@ -85,7 +84,7 @@ public class Reservoir extends IESerializableRecipe{
 		this.weight = weight;
 	}
 	
-	public Reservoir(CompoundNBT nbt){
+	public Reservoir(CompoundTag nbt){
 		super(ItemStack.EMPTY, TYPE, new ResourceLocation(nbt.getString("id")));
 		
 		this.name = nbt.getString("name");
@@ -97,11 +96,11 @@ public class Reservoir extends IESerializableRecipe{
 		this.maxSize = nbt.getInt("maxSize");
 		this.residual = nbt.getInt("residual");
 		
-		this.dimWhitelist = toList(nbt.getList("dimensionWhitelist", NBT.TAG_STRING));
-		this.dimBlacklist = toList(nbt.getList("dimensionBlacklist", NBT.TAG_STRING));
+		this.dimWhitelist = toList(nbt.getList("dimensionWhitelist", Tag.TAG_STRING));
+		this.dimBlacklist = toList(nbt.getList("dimensionBlacklist", Tag.TAG_STRING));
 		
-		this.bioWhitelist = toList(nbt.getList("biomeWhitelist", NBT.TAG_STRING));
-		this.bioBlacklist = toList(nbt.getList("biomeBlacklist", NBT.TAG_STRING));
+		this.bioWhitelist = toList(nbt.getList("biomeWhitelist", Tag.TAG_STRING));
+		this.bioBlacklist = toList(nbt.getList("biomeBlacklist", Tag.TAG_STRING));
 	}
 	
 	@Override
@@ -109,11 +108,11 @@ public class Reservoir extends IESerializableRecipe{
 		return Serializers.RESERVOIR_SERIALIZER.get();
 	}
 	
-	public CompoundNBT writeToNBT(){
-		return writeToNBT(new CompoundNBT());
+	public CompoundTag writeToNBT(){
+		return writeToNBT(new CompoundTag());
 	}
 	
-	public CompoundNBT writeToNBT(CompoundNBT nbt){
+	public CompoundTag writeToNBT(CompoundTag nbt){
 		nbt.putString("name", this.name);
 		nbt.putString("id", this.id.toString());
 		nbt.putString("fluid", this.fluidLocation.toString());
@@ -155,11 +154,11 @@ public class Reservoir extends IESerializableRecipe{
 		}
 	}
 	
-	public boolean isValidDimension(@Nonnull World world){
+	public boolean isValidDimension(@Nonnull Level world){
 		if(world == null)
 			return false;
 		
-		return isValidDimension(world.getDimensionKey().getRegistryName());
+		return isValidDimension(world.dimension().getRegistryName());
 	}
 	
 	public boolean isValidDimension(@Nonnull ResourceLocation rl){
@@ -189,7 +188,7 @@ public class Reservoir extends IESerializableRecipe{
 	}
 	
 	@Override
-	public ItemStack getRecipeOutput(){
+	public ItemStack getResultItem(){
 		return ItemStack.EMPTY;
 	}
 	
@@ -202,22 +201,22 @@ public class Reservoir extends IESerializableRecipe{
 		return this.writeToNBT().toString();
 	}
 	
-	private List<ResourceLocation> toList(ListNBT nbtList){
+	private List<ResourceLocation> toList(ListTag nbtList){
 		List<ResourceLocation> list = new ArrayList<>(0);
 		if(nbtList.size() > 0){
-			for(INBT tag:nbtList){
-				if(tag instanceof StringNBT){
-					list.add(new ResourceLocation(((StringNBT) tag).getString()));
+			for(Tag tag:nbtList){
+				if(tag instanceof StringTag){
+					list.add(new ResourceLocation(((StringTag) tag).getAsString()));
 				}
 			}
 		}
 		return list;
 	}
 	
-	private ListNBT toNbt(List<ResourceLocation> list){
-		ListNBT nbtList = new ListNBT();
+	private ListTag toNbt(List<ResourceLocation> list){
+		ListTag nbtList = new ListTag();
 		for(ResourceLocation rl:list){
-			nbtList.add(StringNBT.valueOf(rl.toString()));
+			nbtList.add(StringTag.valueOf(rl.toString()));
 		}
 		return nbtList;
 	}

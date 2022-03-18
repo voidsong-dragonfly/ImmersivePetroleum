@@ -29,12 +29,12 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.data.SingleItemRecipeBuilder;
-import net.minecraft.fluid.Fluids;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
@@ -49,13 +49,13 @@ import net.minecraftforge.fluids.FluidStack;
 public class IPRecipes extends RecipeProvider{
 	private final Map<String, Integer> PATH_COUNT = new HashMap<>();
 	
-	protected Consumer<IFinishedRecipe> out;
+	protected Consumer<FinishedRecipe> out;
 	public IPRecipes(DataGenerator generatorIn){
 		super(generatorIn);
 	}
 	
 	@Override
-	protected void registerRecipes(Consumer<IFinishedRecipe> out){
+	protected void registerRecipes(Consumer<FinishedRecipe> out){
 		this.out = out;
 		
 		itemRecipes();

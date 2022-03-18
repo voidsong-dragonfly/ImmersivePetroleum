@@ -7,20 +7,20 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEnti
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.Inventory;
 import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTileEntity>{
-	public CokerUnitContainer(int id, PlayerInventory playerInventory, final CokerUnitTileEntity tile){
-		super(tile, id, CokerUnitMultiblock.INSTANCE);
+	public CokerUnitContainer(int id, net.minecraft.world.entity.player.Inventory playerInventory, final CokerUnitTileEntity tile){
+		super(null, tile, id, CokerUnitMultiblock.INSTANCE);
+		// TODO MenuType
 		
 		addSlot(new IPSlot.CokerInput(this, this.inv, Inventory.INPUT.id(), 20, 71));
 		addSlot(new IPSlot(this.inv, Inventory.INPUT_FILLED.id(), 9, 14){
 			@Override
-			public boolean isItemValid(ItemStack stack){
+			public boolean mayPlace(ItemStack stack){
 				return FluidUtil.getFluidHandler(stack).map(h -> {
 					if(h.getTanks() <= 0 || h.getFluidInTank(0).isEmpty()){
 						return false;

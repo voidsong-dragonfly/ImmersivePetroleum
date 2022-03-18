@@ -5,29 +5,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SharedSeedRandom;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.INoiseGenerator;
-import net.minecraft.world.gen.PerlinNoiseGenerator;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
 /**
  * This takes care of dealing with generating, storing and caching (Faster access for regulary queried positions) reservoir islands.
@@ -36,20 +36,20 @@ import net.minecraft.world.server.ServerWorld;
  */
 // FIXME There is a leak *SOMEWHERE* that causes islands from an existing world to carry over to freshly created worlds
 public class ReservoirHandler{
-	private static final Multimap<RegistryKey<World>, ReservoirIsland> RESERVOIR_ISLAND_LIST = ArrayListMultimap.create();
-	private static final Map<Pair<RegistryKey<World>, ColumnPos>, ReservoirIsland> CACHE = new HashMap<>();
+	private static final Multimap<ResourceKey<Level>, ReservoirIsland> RESERVOIR_ISLAND_LIST = ArrayListMultimap.create();
+	private static final Map<Pair<ResourceKey<Level>, ColumnPos>, ReservoirIsland> CACHE = new HashMap<>();
 	
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
 	static long lastSeed;
-	public static INoiseGenerator generator;
+	public static PerlinSimplexNoise generator;
 	public static double noiseThreshold = 0;
 	
-	public static void scanChunkForNewReservoirs(ServerWorld world, ChunkPos chunkPos, Random random){
-		int chunkX = chunkPos.getXStart();
-		int chunkZ = chunkPos.getZStart();
+	public static void scanChunkForNewReservoirs(ServerLevel world, ChunkPos chunkPos, Random random){
+		int chunkX = chunkPos.getMinBlockX();
+		int chunkZ = chunkPos.getMinBlockZ();
 		
-		RegistryKey<World> dimensionKey = world.getDimensionKey();
+		ResourceKey<Level> dimensionKey = world.dimension();
 		ResourceLocation dimensionRL = dimensionKey.getRegistryName();
 		
 		for(int j = 0;j < 16;j++){
@@ -86,9 +86,9 @@ public class ReservoirHandler{
 						next(world, poly, x, z);
 						poly = optimizeIsland(world, poly);
 						
-						int amount = (int) MathHelper.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
+						int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
 						ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
-						RESERVOIR_ISLAND_LIST.put(world.getDimensionKey(), island);
+						RESERVOIR_ISLAND_LIST.put(world.dimension(), island);
 						IPSaveData.markInstanceAsDirty();
 					}
 				}
@@ -113,7 +113,7 @@ public class ReservoirHandler{
 		
 		Integer totalWeight = map.get(biome);
 		if(totalWeight == null){
-			totalWeight = new Integer(0);
+			totalWeight = Integer.valueOf(0);
 			
 			for(Reservoir reservoir:Reservoir.map.values()){
 				if(reservoir.isValidDimension(dimension) && reservoir.isValidBiome(biome)){
@@ -127,19 +127,19 @@ public class ReservoirHandler{
 		return totalWeight;
 	}
 	
-	public static ReservoirIsland getIsland(World world, BlockPos pos){
+	public static ReservoirIsland getIsland(Level world, BlockPos pos){
 		return getIsland(world, new ColumnPos(pos));
 	}
 	
-	public static ReservoirIsland getIsland(World world, ColumnPos pos){
-		if(world.isRemote){
+	public static ReservoirIsland getIsland(Level world, ColumnPos pos){
+		if(world.isClientSide){
 			return null;
 		}
 		
 		// TODO Maybe do this better somehow? It'll do for testing, but not for real-world stuff probably
 		
-		RegistryKey<World> dimension = world.getDimensionKey();
-		Pair<RegistryKey<World>, ColumnPos> cacheKey = Pair.of(dimension, pos);
+		ResourceKey<Level> dimension = world.dimension();
+		Pair<ResourceKey<Level>, ColumnPos> cacheKey = Pair.of(dimension, pos);
 		synchronized(RESERVOIR_ISLAND_LIST){
 			ReservoirIsland ret = CACHE.get(cacheKey);
 			
@@ -186,15 +186,16 @@ public class ReservoirHandler{
 	 * @param z Block Position
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
-	public static double noiseFor(@Nonnull World world, int x, int z){
-		if(!world.isRemote){
-			if(generator == null || ((ISeedReader) world).getSeed() != lastSeed){
-				lastSeed = ((ISeedReader) world).getSeed();
-				generator = new PerlinNoiseGenerator(new SharedSeedRandom(lastSeed), IntStream.of(0));
+	public static double noiseFor(@Nonnull Level world, int x, int z){
+		if(!world.isClientSide){
+			if(generator == null || ((WorldGenLevel) world).getSeed() != lastSeed){
+				lastSeed = ((WorldGenLevel) world).getSeed();
+				generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(lastSeed)), ImmutableList.of(0));
 			}
 		}
 		
-		double noise = Math.abs(generator.noiseAt(x * scale, z * scale, scale, x * scale)) / .55;
+		double noise = Math.abs(generator.getValue(x * scale, z * scale, false));
+//		double noise = Math.abs(generator.getSurfaceNoiseValue(x * scale, z * scale, scale, x * scale)) / .55;
 		
 		if(noise > d0){
 			return (noise - d0) / d1;
@@ -204,7 +205,7 @@ public class ReservoirHandler{
 	}
 	
 	/** Recursively discover the whole island */
-	static void next(World world, List<ColumnPos> list, int x, int z){
+	static void next(Level world, List<ColumnPos> list, int x, int z){
 		if(ReservoirHandler.noiseFor(world, x, z) > -1 && !list.contains(new ColumnPos(x, z))){
 			list.add(new ColumnPos(x, z));
 			
@@ -230,7 +231,7 @@ public class ReservoirHandler{
 	 * 
 	 * @return
 	 */
-	public static Multimap<RegistryKey<World>, ReservoirIsland> getReservoirIslandList(){
+	public static Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
 		return RESERVOIR_ISLAND_LIST;
 	}
 	
@@ -238,7 +239,7 @@ public class ReservoirHandler{
 	// Optimization methods below. Warning, overengineered!
 	// ####################################################
 	
-	private static List<ColumnPos> optimizeIsland(World world, List<ColumnPos> poly){
+	private static List<ColumnPos> optimizeIsland(Level world, List<ColumnPos> poly){
 		poly = keepOutline(world, poly);
 		poly = makeDirectional(poly);
 		poly = cullLines(poly);
@@ -247,7 +248,7 @@ public class ReservoirHandler{
 	}
 	
 	/** Keep edges/corners and dump the rest */
-	private static List<ColumnPos> keepOutline(World world, List<ColumnPos> poly){
+	private static List<ColumnPos> keepOutline(Level world, List<ColumnPos> poly){
 		final List<ColumnPos> list = new ArrayList<>();
 		poly.forEach(pos -> {
 			for(int z = -1;z <= 1;z++){

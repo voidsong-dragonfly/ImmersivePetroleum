@@ -7,19 +7,19 @@ import blusunrize.immersiveengineering.common.util.loot.MBOriginalBlockLootEntry
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.data.loot.LootGenerator;
 import flaxbeard.immersivepetroleum.common.util.loot.IPTileDropLootEntry;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.data.DataProvider;
 import net.minecraft.loot.ConstantRange;
 import net.minecraft.loot.ItemLootEntry;
 import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.conditions.SurvivesExplosion;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 
-public class IPBlockLoot extends LootGenerator implements IDataProvider{
+public class IPBlockLoot extends LootGenerator implements DataProvider{
 	public IPBlockLoot(DataGenerator gen){
 		super(gen);
 	}

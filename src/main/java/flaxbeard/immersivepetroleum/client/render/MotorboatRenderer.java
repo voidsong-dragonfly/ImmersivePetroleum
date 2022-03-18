@@ -1,22 +1,24 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import flaxbeard.immersivepetroleum.client.model.ModelMotorboat;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;;
+
+import ResourceLocation;
 
 @OnlyIn(Dist.CLIENT)
 public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
@@ -26,18 +28,18 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	/** instance of ModelBoat for rendering */
 	protected final ModelMotorboat modelBoat = new ModelMotorboat();
 	
-	public MotorboatRenderer(EntityRendererManager renderManagerIn){
+	public MotorboatRenderer(EntityRenderDispatcher renderManagerIn){
 		super(renderManagerIn);
-		this.shadowSize = 0.8F;
+		this.shadowRadius = 0.8F;
 	}
 	
 	@Override
-	public void render(MotorboatEntity entity, float entityYaw, float partialTicks, MatrixStack matrix, IRenderTypeBuffer bufferIn, int packedLight){
-		matrix.push();
+	public void render(MotorboatEntity entity, float entityYaw, float partialTicks, PoseStack matrix, MultiBufferSource bufferIn, int packedLight){
+		matrix.pushPose();
 		{
 			matrix.translate(0.0D, 0.375D, 0.0D);
 			this.setupRotation(entity, entityYaw, partialTicks, matrix);
-			this.modelBoat.setRotationAngles(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F);
+			this.modelBoat.setupAnim(entity, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F);
 			
 			if(entity.isInLava()){
 				matrix.translate(0, -3.9F / 16F, 0);
@@ -48,34 +50,34 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 					float a = entity.getRowingTime(0, partialTicks);
 					float b = entity.getRowingTime(1, partialTicks);
 					
-					modelBoat.propeller.rotateAngleX = (a > 0 ? b : a) * 15.0F;
+					modelBoat.propeller.xRot = (a > 0 ? b : a) * 15.0F;
 				}else{
-					modelBoat.propeller.rotateAngleX = 0;
+					modelBoat.propeller.xRot = 0;
 				}
 				
 				float pr = entity.isEmergency() ? 0F : entity.propellerRotation;
 				if(entity.isLeftInDown() && pr > -1)
-					pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+					pr = pr - 0.1F * Minecraft.getInstance().getFrameTime();
 				
 				if(entity.isRightInDown() && pr < 1)
-					pr = pr + 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+					pr = pr + 0.1F * Minecraft.getInstance().getFrameTime();
 				
 				if(!entity.isLeftInDown() && !entity.isRightInDown())
-					pr = (float) (pr * Math.pow(0.7, Minecraft.getInstance().getRenderPartialTicks()));
+					pr = (float) (pr * Math.pow(0.7, Minecraft.getInstance().getFrameTime()));
 				
-				modelBoat.propellerAssembly.rotateAngleY = (float) Math.toRadians(pr * 15);
+				modelBoat.propellerAssembly.yRot = (float) Math.toRadians(pr * 15);
 			}
 			
-			this.modelBoat.render(matrix, bufferIn.getBuffer(this.modelBoat.getRenderType(getEntityTexture(entity.isFireproof))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+			this.modelBoat.renderToBuffer(matrix, bufferIn.getBuffer(this.modelBoat.renderType(getEntityTexture(entity.isFireproof))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			
 			if(entity.hasPaddles){
-				IVertexBuilder vbuilder_normal = bufferIn.getBuffer(this.modelBoat.getRenderType(texture));
+				VertexConsumer vbuilder_normal = bufferIn.getBuffer(this.modelBoat.renderType(texture));
 				
 				this.modelBoat.paddles[0].render(matrix, vbuilder_normal, packedLight, OverlayTexture.NO_OVERLAY);
 				this.modelBoat.paddles[1].render(matrix, vbuilder_normal, packedLight, OverlayTexture.NO_OVERLAY);
 			}
 			
-			IVertexBuilder vbuilder_armored = bufferIn.getBuffer(this.modelBoat.getRenderType(textureArmor));
+			VertexConsumer vbuilder_armored = bufferIn.getBuffer(this.modelBoat.renderType(textureArmor));
 			
 			if(entity.hasIcebreaker){
 				this.modelBoat.icebreak.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
@@ -86,19 +88,19 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				
 				float pr = entity.propellerRotation;
 				if(entity.isLeftInDown() && pr > -1){
-					pr = pr - 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+					pr = pr - 0.1F * Minecraft.getInstance().getFrameTime();
 				}
 				
 				if(entity.isRightInDown() && pr < 1){
-					pr = pr + 0.1F * Minecraft.getInstance().getRenderPartialTicks();
+					pr = pr + 0.1F * Minecraft.getInstance().getFrameTime();
 				}
 				
 				if(!entity.isLeftInDown() && !entity.isRightInDown()){
-					pr = (float) (pr * Math.pow(0.7F, Minecraft.getInstance().getRenderPartialTicks()));
+					pr = (float) (pr * Math.pow(0.7F, Minecraft.getInstance().getFrameTime()));
 				}
 				
-				this.modelBoat.rudder1.rotateAngleY = (float) Math.toRadians(pr * 20f);
-				this.modelBoat.rudder2.rotateAngleY = (float) Math.toRadians(pr * 20f);
+				this.modelBoat.rudder1.yRot = (float) Math.toRadians(pr * 20f);
+				this.modelBoat.rudder2.yRot = (float) Math.toRadians(pr * 20f);
 				
 				this.modelBoat.rudder1.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 				this.modelBoat.rudder2.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
@@ -108,18 +110,18 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				this.modelBoat.tank.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 			}
 			
-			if(!entity.canSwim()){
-				IVertexBuilder vbuilder_mask = bufferIn.getBuffer(RenderType.getWaterMask());
+			if(!entity.isUnderWater()){
+				VertexConsumer vbuilder_mask = bufferIn.getBuffer(RenderType.waterMask());
 				this.modelBoat.noWaterRenderer().render(matrix, vbuilder_mask, packedLight, OverlayTexture.NO_OVERLAY);
 			}
 		}
-		matrix.pop();
+		matrix.popPose();
 		
 		super.render(entity, entityYaw, partialTicks, matrix, bufferIn, packedLight);
 	}
 	
 	@Override
-	public ResourceLocation getEntityTexture(MotorboatEntity entity){
+	public ResourceLocation getTextureLocation(MotorboatEntity entity){
 		return texture;
 	}
 	
@@ -127,25 +129,25 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 		return armored ? textureArmor : texture;
 	}
 	
-	public void setupRotation(MotorboatEntity boat, float entityYaw, float partialTicks, MatrixStack matrix){
-		matrix.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
-		float f = (float) boat.getTimeSinceHit() - partialTicks;
-		float f1 = boat.getDamageTaken() - partialTicks;
+	public void setupRotation(MotorboatEntity boat, float entityYaw, float partialTicks, PoseStack matrix){
+		matrix.mulPose(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
+		float f = (float) boat.getHurtTime() - partialTicks;
+		float f1 = boat.getDamage() - partialTicks;
 		
 		if(f1 < 0.0F){
 			f1 = 0.0F;
 		}
 		
 		if(f > 0.0F){
-			matrix.rotate(new Quaternion(MathHelper.sin(f) * f * f1 / 10.0F * (float) boat.getForwardDirection(), 0.0F, 0.0F, true));
+			matrix.mulPose(new Quaternion(Mth.sin(f) * f * f1 / 10.0F * (float) boat.getHurtDir(), 0.0F, 0.0F, true));
 		}
 		
 		if(boat.isBoosting){
-			matrix.rotate(new Quaternion(3, 0, 0, true));
+			matrix.mulPose(new Quaternion(3, 0, 0, true));
 		}
 		
 		matrix.scale(-1.0F, -1.0F, 1.0F);
-		matrix.rotate(Vector3f.YP.rotationDegrees(90.0F));
+		matrix.mulPose(Vector3f.YP.rotationDegrees(90.0F));
 	}
 	
 	private static ResourceLocation rl(String str){

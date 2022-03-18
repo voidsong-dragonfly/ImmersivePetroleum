@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

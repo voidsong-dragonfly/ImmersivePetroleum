@@ -13,25 +13,27 @@ import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -39,7 +41,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds{
+public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds{
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 5));
 	
@@ -61,17 +63,17 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	public FluidTank fakeTank = new FluidTank(0);
 	public boolean wasActive = false;
 	public float activeTicks = 0;
-	public PumpjackTileEntity(){
-		super(PumpjackMultiblock.INSTANCE, 16000, true, null);
+	public PumpjackTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
+		super(PumpjackMultiblock.INSTANCE, 16000, true, IPTileTypes.PUMP.get(), pWorldPosition, pBlockState);
 	}
 	
 	@Override
-	public TileEntityType<?> getType(){
+	public BlockEntityType<?> getType(){
 		return IPTileTypes.PUMP.get();
 	}
 	
 	@Override
-	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
 		boolean lastActive = this.wasActive;
 		this.wasActive = nbt.getBoolean("wasActive");
@@ -81,7 +83,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	}
 	
 	@Override
-	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.putBoolean("wasActive", this.wasActive);
 	}
@@ -90,7 +92,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	public void tick(){
 		super.tick();
 		
-		if((this.world.isRemote || isDummy()) && this.wasActive){
+		if((this.level.isClientSide || isDummy()) && this.wasActive){
 			this.activeTicks++;
 			return;
 		}
@@ -98,7 +100,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		boolean active = false;
 		
 		if(!isRSDisabled()){
-			TileEntity teLow = this.getWorldNonnull().getTileEntity(this.pos.down());
+			BlockEntity teLow = this.getWorldNonnull().getBlockEntity(this.worldPosition.below());
 			
 			if(teLow instanceof WellPipeTileEntity){
 				WellTileEntity well = ((WellPipeTileEntity) teLow).getWell();
@@ -112,7 +114,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						// Does any island still have pressure?
 						boolean foundPressurizedIsland = false;
 						for(ColumnPos cPos:well.tappedIslands){
-							ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+							ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 							
 							if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0F){
 								foundPressurizedIsland = true;
@@ -123,17 +125,17 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 						if(!foundPressurizedIsland){
 							int extractSpeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
 							
-							Direction portEast_facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-							Direction portWest_facing = getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
+							Direction portEast_facing = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
+							Direction portWest_facing = getIsMirrored() ? getFacing().getClockWise() : getFacing().getCounterClockWise();
 							
-							BlockPos portEast_pos = getBlockPosForPos(East_Port).offset(portEast_facing);
-							BlockPos portWest_pos = getBlockPosForPos(West_Port).offset(portWest_facing);
+							BlockPos portEast_pos = getBlockPosForPos(East_Port).relative(portEast_facing);
+							BlockPos portWest_pos = getBlockPosForPos(West_Port).relative(portWest_facing);
 							
-							IFluidHandler portEast_output = FluidUtil.getFluidHandler(this.world, portEast_pos, portEast_facing.getOpposite()).orElse(null);
-							IFluidHandler portWest_output = FluidUtil.getFluidHandler(this.world, portWest_pos, portWest_facing.getOpposite()).orElse(null);
+							IFluidHandler portEast_output = FluidUtil.getFluidHandler(this.level, portEast_pos, portEast_facing.getOpposite()).orElse(null);
+							IFluidHandler portWest_output = FluidUtil.getFluidHandler(this.level, portWest_pos, portWest_facing.getOpposite()).orElse(null);
 							
 							for(ColumnPos cPos:well.tappedIslands){
-								ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+								ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 								if(island != null){
 									FluidStack fluid = new FluidStack(island.getType().getFluid(), island.extract(extractSpeed, FluidAction.SIMULATE));
 									
@@ -169,7 +171,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		}
 		
 		if(active != this.wasActive){
-			this.markDirty();
+			this.setChanged();
 			this.markContainingBlockForUpdate(null);
 		}
 		
@@ -253,7 +255,7 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	
 	@Override
 	public void doGraphicalUpdates(){
-		this.markDirty();
+		this.setChanged();
 		this.markContainingBlockForUpdate(null);
 	}
 	
@@ -283,14 +285,14 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		if(master != null){
 			// East Port
 			if(this.posInMultiblock.equals(East_Port)){
-				if(side == null || (getIsMirrored() ? (side == getFacing().rotateYCCW()) : (side == getFacing().rotateY()))){
+				if(side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
 					return new FluidTank[]{master.fakeTank};
 				}
 			}
 			
 			// West Port
 			if(this.posInMultiblock.equals(West_Port)){
-				if(side == null || (getIsMirrored() ? (side == getFacing().rotateY()) : (side == getFacing().rotateYCCW()))){
+				if(side == null || (getIsMirrored() ? (side == getFacing().getClockWise()) : (side == getFacing().getCounterClockWise()))){
 					return new FluidTank[]{master.fakeTank};
 				}
 			}
@@ -310,11 +312,11 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(PumpjackTileEntity::getShape);
 	@Override
-	public VoxelShape getBlockBounds(ISelectionContext ctx){
+	public VoxelShape getBlockBounds(CollisionContext ctx){
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	
-	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
+	private static List<AABB> getShape(BlockPos posInMultiblock){
 		final int bX = posInMultiblock.getX();
 		final int bY = posInMultiblock.getY();
 		final int bZ = posInMultiblock.getZ();
@@ -326,14 +328,14 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		
 		// Motor
 		if(bY < 3 && bX == 1 && bZ == 4){
-			List<AxisAlignedBB> list = new ArrayList<>();
+			List<AABB> list = new ArrayList<>();
 			if(bY == 2){
-				list.add(new AxisAlignedBB(0.25, 0.0, 0.0, 0.75, 0.25, 1.0));
+				list.add(new AABB(0.25, 0.0, 0.0, 0.75, 0.25, 1.0));
 			}else{
-				list.add(new AxisAlignedBB(0.25, 0.0, 0.0, 0.75, 1.0, 1.0));
+				list.add(new AABB(0.25, 0.0, 0.0, 0.75, 1.0, 1.0));
 			}
 			if(bY == 0){
-				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+				list.add(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 			}
 			return list;
 		}
@@ -342,39 +344,39 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		if(bZ == 2 && bY > 0){
 			if(bX == 0){
 				if(bY == 1){
-					List<AxisAlignedBB> list = new ArrayList<>();
-					list.add(new AxisAlignedBB(0.6875, 0.0, 0.0, 1.0, 1.0, 0.25));
-					list.add(new AxisAlignedBB(0.6875, 0.0, 0.75, 1.0, 1.0, 1.0));
+					List<AABB> list = new ArrayList<>();
+					list.add(new AABB(0.6875, 0.0, 0.0, 1.0, 1.0, 0.25));
+					list.add(new AABB(0.6875, 0.0, 0.75, 1.0, 1.0, 1.0));
 					return list;
 				}
 				if(bY == 2){
-					List<AxisAlignedBB> list = new ArrayList<>();
-					list.add(new AxisAlignedBB(0.8125, 0.0, 0.0, 1.0, 0.5, 1.0));
-					list.add(new AxisAlignedBB(0.8125, 0.5, 0.25, 1.0, 1.0, 0.75));
+					List<AABB> list = new ArrayList<>();
+					list.add(new AABB(0.8125, 0.0, 0.0, 1.0, 0.5, 1.0));
+					list.add(new AABB(0.8125, 0.5, 0.25, 1.0, 1.0, 0.75));
 					return list;
 				}
 				if(bY == 3){
-					return Arrays.asList(new AxisAlignedBB(0.9375, 0.0, 0.375, 1.0, 0.125, 0.625));
+					return Arrays.asList(new AABB(0.9375, 0.0, 0.375, 1.0, 0.125, 0.625));
 				}
 			}
 			if(bX == 1 && bY == 3){
-				return Arrays.asList(new AxisAlignedBB(0.0, -0.125, 0.375, 1.0, 0.125, 0.625));
+				return Arrays.asList(new AABB(0.0, -0.125, 0.375, 1.0, 0.125, 0.625));
 			}
 			if(bX == 2){
 				if(bY == 1){
-					List<AxisAlignedBB> list = new ArrayList<>();
-					list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.3125, 1.0, 0.25));
-					list.add(new AxisAlignedBB(0.0, 0.0, 0.75, 0.3125, 1.0, 1.0));
+					List<AABB> list = new ArrayList<>();
+					list.add(new AABB(0.0, 0.0, 0.0, 0.3125, 1.0, 0.25));
+					list.add(new AABB(0.0, 0.0, 0.75, 0.3125, 1.0, 1.0));
 					return list;
 				}
 				if(bY == 2){
-					List<AxisAlignedBB> list = new ArrayList<>();
-					list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.1875, 0.5, 1.0));
-					list.add(new AxisAlignedBB(0.0, 0.5, 0.25, 0.1875, 1.0, 0.75));
+					List<AABB> list = new ArrayList<>();
+					list.add(new AABB(0.0, 0.0, 0.0, 0.1875, 0.5, 1.0));
+					list.add(new AABB(0.0, 0.5, 0.25, 0.1875, 1.0, 0.75));
 					return list;
 				}
 				if(bY == 3){
-					return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.375, 0.0625, 0.125, 0.625));
+					return Arrays.asList(new AABB(0.0, 0.0, 0.375, 0.0625, 0.125, 0.625));
 				}
 			}
 		}
@@ -383,19 +385,19 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 		if(bX == 0 && bZ == 5){
 			if(bY == 0){ // Bottom
 				return Arrays.asList(
-						new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0),
-						new AxisAlignedBB(0.75, 0.0, 0.625, 0.875, 1.0, 0.875),
-						new AxisAlignedBB(0.125, 0.0, 0.625, 0.25, 1.0, 0.875)
+						new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0),
+						new AABB(0.75, 0.0, 0.625, 0.875, 1.0, 0.875),
+						new AABB(0.125, 0.0, 0.625, 0.25, 1.0, 0.875)
 				);
 			}
 			if(bY == 1){ // Top
-				return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
+				return Arrays.asList(new AABB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
 			}
 		}
 		
 		// Below the power-in block, base height
 		if(bX == 2 && bY == 0 && bZ == 5){
-			return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+			return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		}
 		
 		// Misc
@@ -403,15 +405,15 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			
 			// Legs Bottom Front
 			if(bZ == 1 && (bX == 0 || bX == 2)){
-				List<AxisAlignedBB> list = new ArrayList<>();
+				List<AABB> list = new ArrayList<>();
 				
-				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+				list.add(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 				
 				if(bX == 0){
-					list.add(new AxisAlignedBB(0.5, 0.5, 0.5, 1.0, 1.0, 1.0));
+					list.add(new AABB(0.5, 0.5, 0.5, 1.0, 1.0, 1.0));
 				}
 				if(bX == 2){
-					list.add(new AxisAlignedBB(0.0, 0.5, 0.5, 0.5, 1.0, 1.0));
+					list.add(new AABB(0.0, 0.5, 0.5, 0.5, 1.0, 1.0));
 				}
 				
 				return list;
@@ -419,15 +421,15 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			
 			// Legs Bottom Back
 			if(bZ == 3 && (bX == 0 || bX == 2)){
-				List<AxisAlignedBB> list = new ArrayList<>();
+				List<AABB> list = new ArrayList<>();
 				
-				list.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+				list.add(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 				
 				if(bX == 0){
-					list.add(new AxisAlignedBB(0.5, 0.5, 0.0, 1.0, 1.0, 0.5));
+					list.add(new AABB(0.5, 0.5, 0.0, 1.0, 1.0, 0.5));
 				}
 				if(bX == 2){
-					list.add(new AxisAlignedBB(0.0, 0.5, 0.0, 0.5, 1.0, 0.5));
+					list.add(new AABB(0.0, 0.5, 0.0, 0.5, 1.0, 0.5));
 				}
 				
 				return list;
@@ -435,34 +437,34 @@ public class PumpjackTileEntity extends PoweredMultiblockTileEntity<PumpjackTile
 			
 			// Fluid Outputs
 			if(bZ == 2 && (bX == 0 || bX == 2)){
-				return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+				return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 			}
 			
 			if(bX == 1){
 				// Well
 				if(bZ == 0){
-					return Arrays.asList(new AxisAlignedBB(0.3125, 0.5, 0.8125, 0.6875, 0.875, 1.0), new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 1.0, 0.8125));
+					return Arrays.asList(new AABB(0.3125, 0.5, 0.8125, 0.6875, 0.875, 1.0), new AABB(0.1875, 0, 0.1875, 0.8125, 1.0, 0.8125));
 				}
 				
 				// Pipes
 				if(bZ == 1){
 					return Arrays.asList(
-							new AxisAlignedBB(0.3125, 0.5, 0.0, 0.6875, 0.875, 1.0),
-							new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0)
+							new AABB(0.3125, 0.5, 0.0, 0.6875, 0.875, 1.0),
+							new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0)
 					);
 				}
 				if(bZ == 2){
 					return Arrays.asList(
-							new AxisAlignedBB(0.3125, 0.5, 0.0, 0.6875, 0.875, 0.6875),
-							new AxisAlignedBB(0.0, 0.5, 0.3125, 1.0, 0.875, 0.6875),
-							new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0)
+							new AABB(0.3125, 0.5, 0.0, 0.6875, 0.875, 0.6875),
+							new AABB(0.0, 0.5, 0.3125, 1.0, 0.875, 0.6875),
+							new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0)
 					);
 				}
 			}
 			
-			return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+			return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 		}
 		
-		return Arrays.asList(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+		return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 	}
 }

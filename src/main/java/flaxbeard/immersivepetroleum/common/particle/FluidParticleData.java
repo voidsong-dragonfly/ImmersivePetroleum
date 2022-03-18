@@ -5,31 +5,31 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.fluid.Fluid;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class FluidParticleData implements IParticleData{
+public class FluidParticleData implements ParticleOptions{
 	public static final Codec<FluidParticleData> CODEC = RecordCodecBuilder.create(instance -> {
 		return instance.group(Codec.STRING.fieldOf("fluid").forGetter(data -> data.fluid.getRegistryName().toString())).apply(instance, FluidParticleData::new);
 	});
 	
 	@SuppressWarnings("deprecation")
-	public static final IParticleData.IDeserializer<FluidParticleData> DESERIALIZER = new IParticleData.IDeserializer<FluidParticleData>(){
+	public static final ParticleOptions.Deserializer<FluidParticleData> DESERIALIZER = new ParticleOptions.Deserializer<FluidParticleData>(){
 		@Override
-		public FluidParticleData deserialize(ParticleType<FluidParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
+		public FluidParticleData fromCommand(ParticleType<FluidParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
 			String name = reader.getString();
 			return new FluidParticleData(name);
 		}
 		
 		@Override
-		public FluidParticleData read(ParticleType<FluidParticleData> particleTypeIn, PacketBuffer buffer){
-			String name = buffer.readString();
+		public FluidParticleData fromNetwork(ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer){
+			String name = buffer.readUtf();
 			return new FluidParticleData(name);
 		}
 	};
@@ -49,12 +49,12 @@ public class FluidParticleData implements IParticleData{
 	}
 	
 	@Override
-	public void write(PacketBuffer buffer){
-		buffer.writeString(this.fluid.getRegistryName().toString());
+	public void writeToNetwork(FriendlyByteBuf buffer){
+		buffer.writeUtf(this.fluid.getRegistryName().toString());
 	}
 	
 	@Override
-	public String getParameters(){
+	public String writeToString(){
 		return this.fluid.getRegistryName().toString();
 	}
 	

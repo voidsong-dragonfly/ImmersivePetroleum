@@ -17,26 +17,27 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBou
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
+import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -44,18 +45,18 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction{
+public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction{
 	
-	public static enum PortState implements IStringSerializable{
+	public static enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;
 		
 		@Override
-		public String getString(){
+		public String getSerializedName(){
 			return this.toString().toLowerCase(Locale.ENGLISH);
 		}
 		
-		public ITextComponent getText(){
-			return new TranslationTextComponent("desc.immersivepetroleum.info.oiltank." + getString());
+		public Component getText(){
+			return new TranslatableComponent("desc.immersivepetroleum.info.oiltank." + getSerializedName());
 		}
 		
 		public PortState next(){
@@ -63,7 +64,7 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		}
 	}
 	
-	public static enum Port implements IStringSerializable{
+	public static enum Port implements StringRepresentable{
 		TOP(new BlockPos(2, 2, 3)),
 		BOTTOM(new BlockPos(2, 0, 3)),
 		DYNAMIC_A(new BlockPos(0, 1, 2)),
@@ -86,7 +87,7 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		}
 		
 		@Override
-		public String getString(){
+		public String getSerializedName(){
 			return this.toString().toLowerCase(Locale.ENGLISH);
 		}
 		
@@ -104,8 +105,8 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 	
 	public FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME, f -> !f.getFluid().getAttributes().isGaseous());
 	public EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
-	public OilTankTileEntity(){
-		super(OilTankMultiblock.INSTANCE, IPTileTypes.OILTANK.get(), true);
+	public OilTankTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
+		super(OilTankMultiblock.INSTANCE, IPTileTypes.OILTANK.get(), true, pWorldPosition, pBlockState);
 		this.redstoneControlInverted = true;
 		for(Port port:Port.values()){
 			if(port == Port.DYNAMIC_B || port == Port.DYNAMIC_C || port == Port.BOTTOM){
@@ -117,29 +118,29 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 	}
 	
 	@Override
-	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
 		this.tank.readFromNBT(nbt.getCompound("tank"));
 		
 		for(Port port:Port.DYNAMIC_PORTS){
-			portConfig.put(port, PortState.values()[nbt.getInt(port.getString())]);
+			portConfig.put(port, PortState.values()[nbt.getInt(port.getSerializedName())]);
 		}
 	}
 	
 	@Override
-	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.put("tank", this.tank.writeToNBT(new CompoundNBT()));
+		nbt.put("tank", this.tank.writeToNBT(new CompoundTag()));
 		
 		for(Port port:Port.DYNAMIC_PORTS){
-			nbt.putInt(port.getString(), getPortStateFor(port).ordinal());
+			nbt.putInt(port.getSerializedName(), getPortStateFor(port).ordinal());
 		}
 	}
 	
 	@Override
 	public void tick(){
 		checkForNeedlessTicking();
-		if(isDummy() || world.isRemote){
+		if(isDummy() || level.isClientSide){
 			return;
 		}
 		int threshold = 5;
@@ -163,9 +164,9 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 			for(Port port:Port.values()){
 				if((!wasBalancing && getPortStateFor(port) == PortState.OUTPUT) || (wasBalancing && port == Port.BOTTOM)){
 					Direction facing = getPortDirection(port);
-					BlockPos pos = getBlockPosForPos(port.posInMultiblock).offset(facing);
+					BlockPos pos = getBlockPosForPos(port.posInMultiblock).relative(facing);
 					
-					FluidUtil.getFluidHandler(this.world, pos, facing.getOpposite()).map(out -> {
+					FluidUtil.getFluidHandler(this.level, pos, facing.getOpposite()).map(out -> {
 						if(this.tank.getFluidAmount() > 0){
 							FluidStack fs = FluidHelper.copyFluid(this.tank.getFluid(), Math.min(tank.getFluidAmount(), 432), true);
 							int accepted = out.fill(fs, FluidAction.SIMULATE);
@@ -185,8 +186,8 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 	
 	private boolean equalize(Port port, int threshold, int maxTransfer){
 		Direction facing = getPortDirection(port);
-		BlockPos pos = getBlockPosForPos(port.posInMultiblock).offset(facing);
-		TileEntity te = getWorld().getTileEntity(pos);
+		BlockPos pos = getBlockPosForPos(port.posInMultiblock).relative(facing);
+		BlockEntity te = getLevel().getBlockEntity(pos);
 		
 		if(te instanceof OilTankTileEntity){
 			OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
@@ -221,11 +222,11 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		switch(port){
 			case DYNAMIC_B:
 			case DYNAMIC_D:{
-				return getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
+				return getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
 			}
 			case DYNAMIC_A:
 			case DYNAMIC_C:{
-				return getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW();
+				return getIsMirrored() ? getFacing().getClockWise() : getFacing().getCounterClockWise();
 			}
 			case TOP:{
 				return Direction.UP;
@@ -236,7 +237,7 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 	}
 	
 	@Override
-	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
+	public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
 		OilTankTileEntity master = this.master();
 		if(master != null){
 			if(FluidUtils.interactWithFluidHandler(player, hand, master.tank)){
@@ -248,8 +249,8 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 	}
 	
 	@Override
-	public boolean hammerUseSide(Direction side, PlayerEntity player, Hand hand, Vector3d hitVec){
-		if(!this.getWorldNonnull().isRemote){
+	public boolean hammerUseSide(Direction side, Player player, InteractionHand hand, Vec3 hitVec){
+		if(!this.getWorldNonnull().isClientSide){
 			for(Port port:Port.DYNAMIC_PORTS){
 				if(port.posInMultiblock.equals(this.posInMultiblock)){
 					OilTankTileEntity master = master();
@@ -316,24 +317,24 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 	}
 	
 	@Override
-	public ITextComponent[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer){
-		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))){
+	public Component[] getOverlayText(Player player, HitResult mop, boolean hammer){
+		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
 			OilTankTileEntity master = master();
 			FluidStack fs = master != null ? master.tank.getFluid() : this.tank.getFluid();
-			return new ITextComponent[]{TextUtils.formatFluidStack(fs)};
+			return new Component[]{TextUtils.formatFluidStack(fs)};
 		}
 		return null;
 	}
 	
 	@Override
-	public boolean useNixieFont(PlayerEntity player, RayTraceResult mop){
+	public boolean useNixieFont(Player player, HitResult mop){
 		return false;
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
 	public static boolean updateShapes = false;
 	@Override
-	public VoxelShape getBlockBounds(ISelectionContext ctx){
+	public VoxelShape getBlockBounds(CollisionContext ctx){
 		if(updateShapes){
 			updateShapes = false;
 			SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
@@ -341,40 +342,40 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	
-	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
+	private static List<AABB> getShape(BlockPos posInMultiblock){
 		int x = posInMultiblock.getX();
 		int y = posInMultiblock.getY();
 		int z = posInMultiblock.getZ();
 		
-		List<AxisAlignedBB> main = new ArrayList<>();
+		List<AABB> main = new ArrayList<>();
 		
 		// Corner Supports
 		if(y == 0){
 			if(x == 0 && z == 0){
-				main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.25, 1.0, 0.25));
+				main.add(new AABB(0.0, 0.0, 0.0, 0.25, 1.0, 0.25));
 				
 			}else if(x == 4 && z == 0){
-				main.add(new AxisAlignedBB(0.75, 0.0, 0.0, 1.0, 1.0, 0.25));
+				main.add(new AABB(0.75, 0.0, 0.0, 1.0, 1.0, 0.25));
 				
 			}else if(x == 0 && z == 4){
-				main.add(new AxisAlignedBB(0.0, 0.0, 0.75, 0.25, 1.0, 1.0));
+				main.add(new AABB(0.0, 0.0, 0.75, 0.25, 1.0, 1.0));
 				
 			}else if(x == 4 && z == 4){
-				main.add(new AxisAlignedBB(0.75, 0.0, 0.75, 1.0, 1.0, 1.0));
+				main.add(new AABB(0.75, 0.0, 0.75, 1.0, 1.0, 1.0));
 			}
 		}
 		
 		// Easy Access Ladders™
 		if(x == 3 && z == 0){
 			if(y == 1 || y == 2){
-				main.add(new AxisAlignedBB(0.125, 0.0, 0.9375, 0.875, 1.0, 1.0));
+				main.add(new AABB(0.125, 0.0, 0.9375, 0.875, 1.0, 1.0));
 			}
 		}
 		
 		// Easy Access Slabs™
 		if(y == 2){
 			if(z == 0 && (x == 2 || x == 4)){
-				main.add(new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
+				main.add(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
 			}
 		}
 		
@@ -382,23 +383,23 @@ public class OilTankTileEntity extends MultiblockPartTileEntity<OilTankTileEntit
 		if(y == 3){
 			if(z >= 1 && z <= 5){
 				if(x == 0){
-					main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 0.0625, 1.0, 1.0));
+					main.add(new AABB(0.0, 0.0, 0.0, 0.0625, 1.0, 1.0));
 				}else if(x == 4){
-					main.add(new AxisAlignedBB(0.9375, 0.0, 0.0, 1.0, 1.0, 1.0));
+					main.add(new AABB(0.9375, 0.0, 0.0, 1.0, 1.0, 1.0));
 				}
 			}
 			if(x >= 0 && x <= 4){
 				if(z == 5){
-					main.add(new AxisAlignedBB(0.0, 0.0, 0.9375, 1.0, 1.0, 1.0));
+					main.add(new AABB(0.0, 0.0, 0.9375, 1.0, 1.0, 1.0));
 				}else if(z == 1 && x != 4){
-					main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.0625));
+					main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.0625));
 				}
 			}
 		}
 		
 		// Use default cube shape if nessesary
 		if(main.isEmpty()){
-			main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+			main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		}
 		return main;
 	}

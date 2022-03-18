@@ -9,29 +9,29 @@ import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.Property;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.state.StateHolder;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.StateHolder;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
@@ -98,7 +98,7 @@ public class IPFluid extends FlowingFluid{
 	protected FluidAttributes createAttributes(){
 		FluidAttributes.Builder builder = FluidAttributes.builder(this.stillTexture, this.flowingTexture)
 				.overlay(this.stillTexture)
-				.sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY);
+				.sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
 		
 		if(this.buildAttributes != null)
 			this.buildAttributes.accept(builder);
@@ -107,46 +107,46 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected void beforeReplacingBlock(IWorld arg0, BlockPos arg1, BlockState arg2){
+	protected void beforeDestroyingBlock(LevelAccessor arg0, BlockPos arg1, BlockState arg2){
 	}
 	
 	@Override
-	protected boolean canSourcesMultiply(){
+	protected boolean canConvertToSource(){
 		return false;
 	}
 	
 	@Override
-	public Fluid getFlowingFluid(){
+	public Fluid getFlowing(){
 		return this.flowing;
 	}
 	
 	@Override
-	public Fluid getStillFluid(){
+	public Fluid getSource(){
 		return this.source;
 	}
 	
 	@Override
-	public Item getFilledBucket(){
+	public Item getBucket(){
 		return this.bucket;
 	}
 	
 	@Override
-	protected int getLevelDecreasePerBlock(IWorldReader arg0){
+	protected int getDropOff(LevelReader arg0){
 		return 1;
 	}
 	
 	@Override
-	protected int getSlopeFindDistance(IWorldReader arg0){
+	protected int getSlopeFindDistance(LevelReader arg0){
 		return 4;
 	}
 	
 	@Override
-	protected boolean canDisplace(FluidState p_215665_1_, IBlockReader p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
-		return p_215665_5_ == Direction.DOWN && !isEquivalentTo(p_215665_4_);
+	protected boolean canBeReplacedWith(FluidState p_215665_1_, BlockGetter p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
+		return p_215665_5_ == Direction.DOWN && !isSame(p_215665_4_);
 	}
 	
 	@Override
-	public int getTickRate(IWorldReader p_205569_1_){
+	public int getTickDelay(LevelReader p_205569_1_){
 		return 5;
 	}
 	
@@ -156,22 +156,22 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected BlockState getBlockState(FluidState state){
-		return this.block.getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
+	protected BlockState createLegacyBlock(FluidState state){
+		return this.block.defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
 	}
 	
 	@Override
 	public boolean isSource(FluidState state){
-		return state.getFluid() == this.source;
+		return state.getType() == this.source;
 	}
 	
 	@Override
-	public int getLevel(FluidState state){
-		return isSource(state) ? 8 : state.get(LEVEL_1_8);
+	public int getAmount(FluidState state){
+		return isSource(state) ? 8 : state.getValue(LEVEL);
 	}
 	
 	@Override
-	public boolean isEquivalentTo(Fluid fluidIn){
+	public boolean isSame(Fluid fluidIn){
 		return fluidIn == this.source || fluidIn == this.flowing;
 	}
 	
@@ -181,34 +181,34 @@ public class IPFluid extends FlowingFluid{
 	
 	// STATIC CLASSES
 	
-	public static class IPFluidBlock extends FlowingFluidBlock{
+	public static class IPFluidBlock extends LiquidBlock{
 		private static IPFluid tmp = null;
 		
 		private IPFluid fluid;
 		public IPFluidBlock(IPFluid fluid, String fluidName){
-			super(supplier(fluid), AbstractBlock.Properties.create(Material.WATER));
+			super(supplier(fluid), BlockBehaviour.Properties.of(Material.WATER));
 			this.fluid = fluid;
 			setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, fluidName + "_fluid_block"));
 		}
 		
 		@Override
-		protected void fillStateContainer(Builder<Block, BlockState> builder){
-			super.fillStateContainer(builder);
+		protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
+			super.createBlockStateDefinition(builder);
 			IPFluid f = this.fluid != null ? this.fluid : tmp;
-			builder.add(f.getStateContainer().getProperties().toArray(new Property[0]));
+			builder.add(f.getStateDefinition().getProperties().toArray(new Property[0]));
 		}
 		
 		@Override
 		public FluidState getFluidState(BlockState state){
 			FluidState baseState = super.getFluidState(state);
-			for(Property<?> prop:this.fluid.getStateContainer().getProperties())
-				if(prop != FlowingFluidBlock.LEVEL)
+			for(Property<?> prop:this.fluid.getStateDefinition().getProperties())
+				if(prop != LiquidBlock.LEVEL)
 					baseState = withCopiedValue(prop, baseState, state);
 			return baseState;
 		}
 		
 		private <T extends StateHolder<?, T>, S extends Comparable<S>> T withCopiedValue(Property<S> prop, T oldState, StateHolder<?, ?> copyFrom){
-			return oldState.with(prop, copyFrom.get(prop));
+			return oldState.setValue(prop, copyFrom.getValue(prop));
 		}
 		
 		private static Supplier<IPFluid> supplier(IPFluid fluid){
@@ -218,7 +218,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	public static class IPBucketItem extends BucketItem{
-		private static final Item.Properties PROPS = new Item.Properties().maxStackSize(1).group(ImmersivePetroleum.creativeTab);
+		private static final Item.Properties PROPS = new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab);
 		
 		public IPBucketItem(IPFluid fluid, String fluidName){
 			super(() -> fluid, PROPS);
@@ -236,7 +236,7 @@ public class IPFluid extends FlowingFluid{
 		}
 		
 		@Override
-		public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt){
+		public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt){
 			return new FluidBucketWrapper(stack);
 		}
 	}
@@ -247,13 +247,13 @@ public class IPFluid extends FlowingFluid{
 			this.source = source;
 			this.bucket = source.bucket;
 			this.block = source.block;
-			setDefaultState(this.getStateContainer().getBaseState().with(LEVEL_1_8, 7));
+			registerDefaultState(this.getStateDefinition().any().setValue(LEVEL, 7));
 		}
 		
 		@Override
-		protected void fillStateContainer(Builder<Fluid, FluidState> builder){
-			super.fillStateContainer(builder);
-			builder.add(LEVEL_1_8);
+		protected void createFluidStateDefinition(Builder<Fluid, FluidState> builder){
+			super.createFluidStateDefinition(builder);
+			builder.add(LEVEL);
 		}
 	}
 }

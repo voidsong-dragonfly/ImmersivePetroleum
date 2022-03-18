@@ -26,19 +26,19 @@ import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblo
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import net.minecraft.block.Block;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.Property;
-import net.minecraft.state.properties.SlabType;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -150,7 +150,7 @@ public class IPBlockStates extends BlockStateProvider{
 		stairsWithItem(IPContent.Blocks.asphalt_stair, texture);
 	}
 	
-	private void stairsWithItem(StairsBlock block, ResourceLocation texture){
+	private void stairsWithItem(StairBlock block, ResourceLocation texture){
 		String name = block.getRegistryName().toString();
 		
 		ModelFile stairs = models().stairs(name, texture, texture, texture);
@@ -246,12 +246,12 @@ public class IPBlockStates extends BlockStateProvider{
 	private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror){
 		UnaryOperator<BlockPos> transform = UnaryOperator.identity();
 		if(mirror){
-			Vector3i size = mb.getSize(null);
+			Vec3i size = mb.getSize(null);
 			transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
 		}
-		final Vector3i offset = mb.getMasterFromOriginOffset();
+		final Vec3i offset = mb.getMasterFromOriginOffset();
 		@SuppressWarnings("deprecation")
-		Stream<Vector3i> partsStream = mb.getStructure(null).stream()
+		Stream<Vec3i> partsStream = mb.getStructure(null).stream()
 				.filter(info -> !info.state.isAir())
 				.map(info -> info.pos)
 				.map(transform)

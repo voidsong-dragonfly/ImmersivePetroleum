@@ -9,7 +9,9 @@ import java.util.function.Consumer;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
@@ -19,33 +21,31 @@ import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.AbstractButton;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.template.Template;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.util.Lazy;
@@ -53,14 +53,14 @@ import net.minecraftforge.common.util.Lazy;
 public class ProjectorScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation(MODID, "textures/gui/projector.png");
 	
-	static final ITextComponent GUI_CONFIRM = translation("gui.immersivepetroleum.projector.button.confirm");
-	static final ITextComponent GUI_CANCEL = translation("gui.immersivepetroleum.projector.button.cancel");
-	static final ITextComponent GUI_MIRROR = translation("gui.immersivepetroleum.projector.button.mirror");
-	static final ITextComponent GUI_ROTATE_CW = translation("gui.immersivepetroleum.projector.button.rcw");
-	static final ITextComponent GUI_ROTATE_CCW = translation("gui.immersivepetroleum.projector.button.rccw");
-	static final ITextComponent GUI_UP = translation("gui.immersivepetroleum.projector.button.up");
-	static final ITextComponent GUI_DOWN = translation("gui.immersivepetroleum.projector.button.down");
-	static final ITextComponent GUI_SEARCH = translation("gui.immersivepetroleum.projector.search");
+	static final Component GUI_CONFIRM = translation("gui.immersivepetroleum.projector.button.confirm");
+	static final Component GUI_CANCEL = translation("gui.immersivepetroleum.projector.button.cancel");
+	static final Component GUI_MIRROR = translation("gui.immersivepetroleum.projector.button.mirror");
+	static final Component GUI_ROTATE_CW = translation("gui.immersivepetroleum.projector.button.rcw");
+	static final Component GUI_ROTATE_CCW = translation("gui.immersivepetroleum.projector.button.rccw");
+	static final Component GUI_UP = translation("gui.immersivepetroleum.projector.button.up");
+	static final Component GUI_DOWN = translation("gui.immersivepetroleum.projector.button.down");
+	static final Component GUI_SEARCH = translation("gui.immersivepetroleum.projector.search");
 	
 	private int xSize = 256;
 	private int ySize = 166;
@@ -68,7 +68,7 @@ public class ProjectorScreen extends Screen{
 	private int guiTop;
 	
 	private Lazy<List<IMultiblock>> multiblocks;
-	private World templateWorld;
+	private Level templateWorld;
 	private IMultiblock multiblock;
 	private GuiReactiveList list;
 	private String[] listEntries;
@@ -76,11 +76,11 @@ public class ProjectorScreen extends Screen{
 	private SearchField searchField;
 	
 	Settings settings;
-	Hand hand;
+	InteractionHand hand;
 	
 	float rotation = 0.0F, move = 0.0F;
-	public ProjectorScreen(Hand hand, ItemStack projector){
-		super(new StringTextComponent("projector"));
+	public ProjectorScreen(InteractionHand hand, ItemStack projector){
+		super(new TextComponent("projector"));
 		this.settings = new Settings(projector);
 		this.hand = hand;
 		this.multiblocks = Lazy.of(() -> MultiblockHandler.getMultiblocks());
@@ -92,8 +92,8 @@ public class ProjectorScreen extends Screen{
 	
 	@Override
 	protected void init(){
-		this.width = Minecraft.getInstance().getMainWindow().getScaledWidth();
-		this.height = Minecraft.getInstance().getMainWindow().getScaledHeight();
+		this.width = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+		this.height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 		
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
@@ -101,19 +101,19 @@ public class ProjectorScreen extends Screen{
 		this.searchField = addButton(new SearchField(this.font, this.guiLeft + 25, this.guiTop + 13));
 		
 		addButton(new ConfirmButton(this.guiLeft + 115, this.guiTop + 10, but -> {
-			ClientPlayerEntity player = Minecraft.getInstance().player;
+			LocalPlayer player = Minecraft.getInstance().player;
 			
 			this.settings.setMode(Settings.Mode.PROJECTION);
 			
-			ItemStack held = player.getHeldItem(this.hand);
+			ItemStack held = player.getItemInHand(this.hand);
 			this.settings.applyTo(held);
 			this.settings.sendPacketToServer(this.hand);
-			Minecraft.getInstance().currentScreen.closeScreen();
+			Minecraft.getInstance().screen.onClose();
 			
-			player.sendStatusMessage(this.settings.getMode().getTranslated(), true);
+			player.displayClientMessage(this.settings.getMode().getTranslated(), true);
 		}));
 		addButton(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
-			Minecraft.getInstance().currentScreen.closeScreen();
+			Minecraft.getInstance().screen.onClose();
 		}));
 		addButton(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> {
 			this.settings.flip();
@@ -159,7 +159,7 @@ public class ProjectorScreen extends Screen{
 		// Lazy search based on content
 		list.removeIf(str -> {
 			String name = getMBName(Integer.valueOf(str));
-			return !name.toLowerCase().contains(this.searchField.getText().toLowerCase());
+			return !name.toLowerCase().contains(this.searchField.getValue().toLowerCase());
 		});
 		
 		this.listEntries = list.toArray(new String[0]);
@@ -184,13 +184,13 @@ public class ProjectorScreen extends Screen{
 	private String getMBName(int index){
 		IMultiblock mb = this.multiblocks.get().get(index);
 		if(mb instanceof UnionMultiblock && mb.getUniqueName().getPath().contains("excavator_demo")){
-			return I18n.format("desc.immersiveengineering.info.multiblock.IE:Excavator") + "2";
+			return I18n.get("desc.immersiveengineering.info.multiblock.IE:Excavator") + "2";
 		}
-		return I18n.format("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
+		return I18n.get("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
 	}
 	
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		// Over-GUI Text
 		if(this.settings.getMultiblock() != null){
 			IMultiblock mb = this.settings.getMultiblock();
@@ -202,26 +202,26 @@ public class ProjectorScreen extends Screen{
 			}
 			
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
+			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
 			blit(matrix, x, y, 0, 166, 200, 13);
 			
-			ITextComponent text;
+			Component text;
 			if(mb instanceof UnionMultiblock && this.settings.getMultiblock().getUniqueName().getPath().contains("excavator_demo")){
-				text = new TranslationTextComponent("desc.immersiveengineering.info.multiblock.IE:Excavator").appendString("2");
+				text = new TranslatableComponent("desc.immersiveengineering.info.multiblock.IE:Excavator").append("2");
 			}else{
-				text = new TranslationTextComponent("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
+				text = new TranslatableComponent("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
 			}
 			
 			x += 100;
 			y += 3;
-			IReorderingProcessor re = text.func_241878_f();
-			this.font.func_238422_b_(matrix, re, (x - this.font.func_243245_a(re) / 2), y, 0x3F3F3F);
+			FormattedCharSequence re = text.getVisualOrderText();
+			this.font.draw(matrix, re, (x - this.font.width(re) / 2), y, 0x3F3F3F);
 		}
 		background(matrix, mouseX, mouseY, partialTicks);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		this.searchField.render(matrix, mouseX, mouseY, partialTicks);
 		
-		for(Widget widget:this.buttons){
+		for(AbstractWidget widget:this.buttons){
 			if(widget.isHovered()){
 				widget.renderToolTip(matrix, mouseX, mouseY);
 				break;
@@ -232,12 +232,12 @@ public class ProjectorScreen extends Screen{
 			int x = this.guiLeft + 115;
 			int y = this.guiTop + 82;
 			
-			Direction dir = Direction.byHorizontalIndex(this.settings.getRotation().ordinal());
-			StringTextComponent dirText = new StringTextComponent(dir.toString().toUpperCase().substring(0, 1));
+			Direction dir = Direction.from2DDataValue(this.settings.getRotation().ordinal());
+			TextComponent dirText = new TextComponent(dir.toString().toUpperCase().substring(0, 1));
 			drawCenteredString(matrix, this.font, dirText, x + 5, y + 1, -1);
 			
 			if(mouseX > x && mouseX < x + 10 && mouseY > y && mouseY < y + 10){
-				ITextComponent rotText = new TranslationTextComponent("desc.immersivepetroleum.info.projector.rotated." + dir);
+				Component rotText = new TranslatableComponent("desc.immersivepetroleum.info.projector.rotated." + dir);
 				renderTooltip(matrix, rotText, mouseX, mouseY);
 			}
 		}
@@ -245,65 +245,65 @@ public class ProjectorScreen extends Screen{
 		if(this.settings.getMultiblock() != null){
 			IMultiblock mb = this.settings.getMultiblock();
 			
-			IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			try{
 				
 				this.rotation += 1.5F * partialTicks;
 				
-				Vector3i size = mb.getSize(null);
-				matrix.push();
+				Vec3i size = mb.getSize(null);
+				matrix.pushPose();
 				{
 					matrix.translate(this.guiLeft + 190, this.guiTop + 80, 64);
 					matrix.scale(mb.getManualScale(), -mb.getManualScale(), 1);
-					matrix.rotate(new Quaternion(25, 0, 0, true));
-					matrix.rotate(new Quaternion(0, (int) (45 - this.rotation), 0, true));
+					matrix.mulPose(new Quaternion(25, 0, 0, true));
+					matrix.mulPose(new Quaternion(0, (int) (45 - this.rotation), 0, true));
 					matrix.translate(size.getX() / -2F, size.getY() / -2F, size.getZ() / -2F);
 					
 					boolean tempDisable = true;
 					if(tempDisable && mb.canRenderFormedStructure()){
-						matrix.push();
+						matrix.pushPose();
 						{
 							mb.renderFormedStructure(matrix, IPRenderTypes.disableLighting(buffer));
 						}
-						matrix.pop();
+						matrix.popPose();
 					}else{
 						if(this.templateWorld == null || (!this.multiblock.getUniqueName().equals(mb.getUniqueName()))){
 							this.templateWorld = TemplateWorldCreator.CREATOR.getValue().makeWorld(mb.getStructure(null), pos -> true);
 							this.multiblock = mb;
 						}
 						
-						final BlockRendererDispatcher blockRender = Minecraft.getInstance().getBlockRendererDispatcher();
+						final BlockRenderDispatcher blockRender = Minecraft.getInstance().getBlockRenderer();
 						int it = 0;
-						List<Template.BlockInfo> infos = mb.getStructure(null);
-						for(Template.BlockInfo info:infos){
+						List<StructureTemplate.StructureBlockInfo> infos = mb.getStructure(null);
+						for(StructureTemplate.StructureBlockInfo info:infos){
 							if(info.state.getMaterial() != Material.AIR && !mb.overwriteBlockRender(info.state, it++)){
-								matrix.push();
+								matrix.pushPose();
 								{
 									matrix.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
 									int overlay = OverlayTexture.NO_OVERLAY;
 									IModelData modelData = EmptyModelData.INSTANCE;
-									TileEntity te = this.templateWorld.getTileEntity(info.pos);
+									BlockEntity te = this.templateWorld.getBlockEntity(info.pos);
 									if(te != null){
 										modelData = te.getModelData();
 									}
 									blockRender.renderBlock(info.state, matrix, IPRenderTypes.disableLighting(buffer), 0xF000F0, overlay, modelData);
 								}
-								matrix.pop();
+								matrix.popPose();
 							}
 						}
 					}
 				}
-				matrix.pop();
+				matrix.popPose();
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-			buffer.finish();
+			buffer.endBatch();
 		}
 	}
 	
-	private void background(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	private void background(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
+		Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 	
@@ -344,8 +344,8 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
-			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
+		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
 			if(isHovered()){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}
@@ -371,40 +371,40 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	class ControlButton extends ProjectorScreen.PButton{
-		ITextComponent hoverText;
-		public ControlButton(int x, int y, int width, int height, int overlayX, int overlayY, Consumer<PButton> action, ITextComponent hoverText){
+		Component hoverText;
+		public ControlButton(int x, int y, int width, int height, int overlayX, int overlayY, Consumer<PButton> action, Component hoverText){
 			super(x, y, width, height, overlayX, overlayY, action);
 			this.hoverText = hoverText;
 		}
 		
 		@Override
-		public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY){
+		public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY){
 			if(this.hoverText != null){
 				ProjectorScreen.this.renderTooltip(matrixStack, this.hoverText, mouseX, mouseY);
 			}
 		}
 	}
 	
-	class SearchField extends TextFieldWidget{
-		public SearchField(FontRenderer font, int x, int y){
+	class SearchField extends EditBox{
+		public SearchField(Font font, int x, int y){
 			super(font, x, y, 60, 14, GUI_SEARCH); // Font, x, y, width, height, tooltip
-			setMaxStringLength(50);
-			setEnableBackgroundDrawing(false);
+			setMaxLength(50);
+			setBordered(false);
 			setVisible(true);
 			setTextColor(0xFFFFFF);
 		}
 		
 		@Override
 		public boolean keyPressed(int keyCode, int scanCode, int modifiers){
-			String s = getText();
+			String s = getValue();
 			if(super.keyPressed(keyCode, scanCode, modifiers)){
-				if(!Objects.equals(s, getText())){
+				if(!Objects.equals(s, getValue())){
 					ProjectorScreen.this.updatelist();
 				}
 				
 				return true;
 			}else{
-				return isFocused() && getVisible() && keyCode != 256 ? true : super.keyPressed(keyCode, scanCode, modifiers);
+				return isFocused() && isVisible() && keyCode != 256 ? true : super.keyPressed(keyCode, scanCode, modifiers);
 			}
 		}
 		
@@ -412,12 +412,12 @@ public class ProjectorScreen extends Screen{
 		public boolean charTyped(char codePoint, int modifiers){
 			if(!isFocused()){
 				changeFocus(true);
-				setFocused2(true);
+				setFocus(true);
 			}
 			
-			String s = getText();
+			String s = getValue();
 			if(super.charTyped(codePoint, modifiers)){
-				if(!Objects.equals(s, getText())){
+				if(!Objects.equals(s, getValue())){
 					ProjectorScreen.this.updatelist();
 				}
 				
@@ -430,8 +430,8 @@ public class ProjectorScreen extends Screen{
 	
 	// STATIC METHODS
 	
-	static ITextComponent translation(String key){
-		return new TranslationTextComponent(key);
+	static Component translation(String key){
+		return new TranslatableComponent(key);
 	}
 	
 	// STATIC CLASSES
@@ -443,15 +443,15 @@ public class ProjectorScreen extends Screen{
 		protected int bgStartX = 0, bgStartY = 166;
 		protected Consumer<PButton> action;
 		public PButton(int x, int y, int width, int height, int overlayX, int overlayY, Consumer<PButton> action){
-			super(x, y, width, height, StringTextComponent.EMPTY);
+			super(x, y, width, height, TextComponent.EMPTY);
 			this.action = action;
 			this.xOverlay = overlayX;
 			this.yOverlay = overlayY;
 		}
 		
 		@Override
-		public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
-			Minecraft.getInstance().getTextureManager().bindTexture(GUI_TEXTURE);
+		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
 			if(isHovered()){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}

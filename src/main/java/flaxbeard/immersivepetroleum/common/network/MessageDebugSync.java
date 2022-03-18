@@ -3,27 +3,26 @@ package flaxbeard.immersivepetroleum.common.network;
 import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.common.IPContent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 public class MessageDebugSync implements INetMessage{
 	
-	CompoundNBT nbt;
-	public MessageDebugSync(CompoundNBT nbt){
+	CompoundTag nbt;
+	public MessageDebugSync(CompoundTag nbt){
 		this.nbt = nbt;
 	}
 	
-	public MessageDebugSync(PacketBuffer buf){
-		this.nbt = buf.readCompoundTag();
+	public MessageDebugSync(FriendlyByteBuf buf){
+		this.nbt = buf.readNbt();
 	}
 	
 	@Override
-	public void toBytes(PacketBuffer buf){
-		buf.writeCompoundTag(this.nbt);
+	public void toBytes(FriendlyByteBuf buf){
+		buf.writeNbt(this.nbt);
 	}
 	
 	@Override
@@ -32,16 +31,16 @@ public class MessageDebugSync implements INetMessage{
 			Context con = context.get();
 			
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER && con.getSender() != null){
-				PlayerEntity player = con.getSender();
-				ItemStack mainItem = player.getHeldItemMainhand();
-				ItemStack secondItem = player.getHeldItemOffhand();
+				Player player = con.getSender();
+				ItemStack mainItem = player.getMainHandItem();
+				ItemStack secondItem = player.getOffhandItem();
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.debugItem;
 				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.debugItem;
 				
 				if(main || off){
 					ItemStack target = main ? mainItem : secondItem;
 					
-					CompoundNBT targetNBT = target.getOrCreateChildTag("settings");
+					CompoundTag targetNBT = target.getOrCreateTagElement("settings");
 					targetNBT.merge(this.nbt);
 				}
 			}

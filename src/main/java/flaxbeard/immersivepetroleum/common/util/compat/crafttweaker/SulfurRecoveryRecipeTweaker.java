@@ -3,27 +3,26 @@ package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
 
-import com.blamejared.crafttweaker.api.annotations.ZenRegister;
+import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
-import com.blamejared.crafttweaker.api.item.IIngredient;
+import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import com.blamejared.crafttweaker.api.item.IItemStack;
-import com.blamejared.crafttweaker.api.managers.IRecipeManager;
-import com.blamejared.crafttweaker.impl.item.MCItemStack;
+import com.blamejared.crafttweaker.api.item.MCItemStack;
 import com.blamejared.crafttweaker.impl.tag.MCTagWithAmount;
 import com.blamejared.crafttweaker_annotations.annotations.Document;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.material.Fluid;
 
 @ZenRegister
 @Document("mods/immersivepetroleum/SRU")
 @Name("mods.immersivepetroleum.Hydrotreater")
 public class SulfurRecoveryRecipeTweaker implements IRecipeManager{
 	@Override
-	public IRecipeType<SulfurRecoveryRecipe> getRecipeType(){
+	public RecipeType<SulfurRecoveryRecipe> getRecipeType(){
 		return SulfurRecoveryRecipe.TYPE;
 	}
 	

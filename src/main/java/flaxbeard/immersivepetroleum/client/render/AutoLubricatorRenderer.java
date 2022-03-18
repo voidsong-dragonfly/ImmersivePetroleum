@@ -1,37 +1,37 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 
-public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTileEntity>{
+public class AutoLubricatorRenderer extends BlockEntityRenderer<AutoLubricatorTileEntity>{
 	
-	public AutoLubricatorRenderer(TileEntityRendererDispatcher dispatcher){
+	public AutoLubricatorRenderer(BlockEntityRenderDispatcher dispatcher){
 		super(dispatcher);
 	}
 	
 	@Override
-	public boolean isGlobalRenderer(AutoLubricatorTileEntity te){
+	public boolean shouldRenderOffScreen(AutoLubricatorTileEntity te){
 		return true;
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void render(AutoLubricatorTileEntity te, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
+	public void render(AutoLubricatorTileEntity te, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
 		if(te == null || te.isSlave)
 			return;
 		
@@ -44,48 +44,48 @@ public class AutoLubricatorRenderer extends TileEntityRenderer<AutoLubricatorTil
 		if(level > 0){
 			float height = 16;
 			
-			transform.push();
+			transform.pushPose();
 			{
 				float scale = 0.0625f;
 				transform.translate(0.25, 0.875, 0.25);
 				transform.scale(scale, scale, scale);
 				
-				IVertexBuilder builder = bufferIn.getBuffer(RenderType.getTranslucent());
+				VertexConsumer builder = bufferIn.getBuffer(RenderType.translucent());
 				
 				float h = height * level;
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
-				transform.rotate(new Quaternion(0, 90, 0, true));
+				transform.mulPose(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
-				transform.rotate(new Quaternion(0, 90, 0, true));
+				transform.mulPose(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
-				transform.rotate(new Quaternion(0, 90, 0, true));
+				transform.mulPose(new Quaternion(0, 90, 0, true));
 				transform.translate(-7.98, 0, 0);
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				if(h < height){
-					transform.rotate(new Quaternion(90, 0, 0, true));
+					transform.mulPose(new Quaternion(90, 0, 0, true));
 					transform.translate(0, 0, -h);
 					GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, 8);
 				}
 			}
-			transform.pop();
+			transform.popPose();
 		}
 		
-		transform.push();
+		transform.pushPose();
 		{
-			BlockPos target = te.getPos().offset(te.getFacing());
-			TileEntity test = te.getWorld().getTileEntity(target);
+			BlockPos target = te.getBlockPos().relative(te.getFacing());
+			BlockEntity test = te.getLevel().getBlockEntity(target);
 			
-			ILubricationHandler<TileEntity> handler = LubricatedHandler.getHandlerForTile(test);
+			ILubricationHandler<BlockEntity> handler = LubricatedHandler.getHandlerForTile(test);
 			if(handler != null){
-				TileEntity master = handler.isPlacedCorrectly(te.getWorld(), te, te.getFacing());
+				BlockEntity master = handler.isPlacedCorrectly(te.getLevel(), te, te.getFacing());
 				if(master != null){
 					handler.renderPipes(te, master, transform, bufferIn, combinedLightIn, combinedOverlayIn);
 				}
 			}
 		}
-		transform.pop();
+		transform.popPose();
 		
 		/*
 		GlStateManager.pushMatrix();

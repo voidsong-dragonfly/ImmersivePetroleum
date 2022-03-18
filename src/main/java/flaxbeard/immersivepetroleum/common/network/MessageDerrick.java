@@ -5,13 +5,12 @@ import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 public class MessageDerrick implements INetMessage{
 	
@@ -20,21 +19,21 @@ public class MessageDerrick implements INetMessage{
 	}
 	
 	BlockPos derrickPos;
-	CompoundNBT nbt;
+	CompoundTag nbt;
 	
 	private MessageDerrick(BlockPos derrick, PipeConfig.Grid grid){
 		this.derrickPos = derrick;
 		this.nbt = grid.toCompound();
 	}
 	
-	public MessageDerrick(PacketBuffer buf){
-		this.nbt = buf.readCompoundTag();
+	public MessageDerrick(FriendlyByteBuf buf){
+		this.nbt = buf.readNbt();
 		this.derrickPos = buf.readBlockPos();
 	}
 	
 	@Override
-	public void toBytes(PacketBuffer buf){
-		buf.writeCompoundTag(this.nbt);
+	public void toBytes(FriendlyByteBuf buf){
+		buf.writeNbt(this.nbt);
 		buf.writeBlockPos(this.derrickPos);
 	}
 	
@@ -44,9 +43,9 @@ public class MessageDerrick implements INetMessage{
 			Context con = context.get();
 			
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER){
-				ServerWorld world = Objects.requireNonNull(con.getSender()).getServerWorld();
+				ServerLevel world = Objects.requireNonNull(con.getSender()).getLevel();
 				if(world.isAreaLoaded(this.derrickPos, 2)){
-					TileEntity te = world.getTileEntity(this.derrickPos);
+					BlockEntity te = world.getBlockEntity(this.derrickPos);
 					if(te instanceof DerrickTileEntity){
 						DerrickTileEntity derrick = (DerrickTileEntity) te;
 						

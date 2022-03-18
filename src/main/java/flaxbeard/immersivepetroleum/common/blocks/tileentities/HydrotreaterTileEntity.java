@@ -12,24 +12,26 @@ import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
@@ -39,7 +41,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IInteractionObjectIE, IBlockBounds{
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IInteractionObjectIE, IBlockBounds{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -69,17 +71,12 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	
 	
 	public final FluidTank[] tanks = new FluidTank[]{new FluidTank(12000), new FluidTank(12000), new FluidTank(12000)};
-	public HydrotreaterTileEntity(){
-		super(HydroTreaterMultiblock.INSTANCE, 8000, true, null);
+	public HydrotreaterTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
+		super(HydroTreaterMultiblock.INSTANCE, 8000, true, IPTileTypes.TREATER.get(), pWorldPosition, pBlockState);
 	}
 	
 	@Override
-	public TileEntityType<?> getType(){
-		return IPTileTypes.TREATER.get();
-	}
-	
-	@Override
-	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
 
 		this.tanks[TANK_INPUT_A].readFromNBT(nbt.getCompound("tank0"));
@@ -88,12 +85,12 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	}
 	
 	@Override
-	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
 
-		nbt.put("tank0", this.tanks[TANK_INPUT_A].writeToNBT(new CompoundNBT()));
-		nbt.put("tank1", this.tanks[TANK_INPUT_B].writeToNBT(new CompoundNBT()));
-		nbt.put("tank2", this.tanks[TANK_OUTPUT].writeToNBT(new CompoundNBT()));
+		nbt.put("tank0", this.tanks[TANK_INPUT_A].writeToNBT(new CompoundTag()));
+		nbt.put("tank1", this.tanks[TANK_INPUT_B].writeToNBT(new CompoundTag()));
+		nbt.put("tank2", this.tanks[TANK_OUTPUT].writeToNBT(new CompoundTag()));
 	}
 	
 	@Override
@@ -118,7 +115,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	
 	@Override
 	public void doGraphicalUpdates(){
-		this.markDirty();
+		this.setChanged();
 		this.markContainingBlockForUpdate(null);
 	}
 	
@@ -172,10 +169,10 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	
 	@Override
 	public void doProcessOutput(ItemStack output){
-		Direction outputdir = (getIsMirrored() ? getFacing().rotateY() : getFacing().rotateYCCW());
-		BlockPos outputpos = getBlockPosForPos(Item_OUT).offset(outputdir);
+		Direction outputdir = (getIsMirrored() ? getFacing().getClockWise() : getFacing().getCounterClockWise());
+		BlockPos outputpos = getBlockPosForPos(Item_OUT).relative(outputdir);
 		
-		TileEntity te = world.getTileEntity(outputpos);
+		BlockEntity te = level.getBlockEntity(outputpos);
 		if(te != null){
 			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputdir.getOpposite()).orElse(null);
 			if(handler != null){
@@ -196,9 +193,9 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 				z = outputpos.getZ() + (facing == Direction.WEST ? 0.15 : 0.85);
 			}
 			
-			ItemEntity ei = new ItemEntity(world, x, y, z, output.copy());
-			ei.setMotion(0.075 * outputdir.getXOffset(), 0.025, 0.075 * outputdir.getZOffset());
-			world.addEntity(ei);
+			ItemEntity ei = new ItemEntity(level, x, y, z, output.copy());
+			ei.setDeltaMovement(0.075 * outputdir.getStepX(), 0.025, 0.075 * outputdir.getStepZ());
+			level.addFreshEntity(ei);
 		}
 	}
 	
@@ -214,7 +211,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	public void tick(){
 		checkForNeedlessTicking();
 		
-		if(this.world.isRemote || isDummy() || isRSDisabled()){
+		if(this.level.isClientSide || isDummy() || isRSDisabled()){
 			return;
 		}
 		
@@ -255,8 +252,8 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 		super.tick();
 		
 		if(this.tanks[TANK_OUTPUT].getFluidAmount() > 0){
-			BlockPos outPos = getBlockPosForPos(Fluid_OUT).up();
-			update |= FluidUtil.getFluidHandler(this.world, outPos, Direction.DOWN).map(output -> {
+			BlockPos outPos = getBlockPosForPos(Fluid_OUT).above();
+			update |= FluidUtil.getFluidHandler(this.level, outPos, Direction.DOWN).map(output -> {
 				boolean ret = false;
 				FluidStack target = this.tanks[TANK_OUTPUT].getFluid();
 				target = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 1000));
@@ -353,35 +350,35 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 	}
 	
 	@Override
-	public boolean canUseGui(PlayerEntity player){
+	public boolean canUseGui(Player player){
 		return this.formed;
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(HydrotreaterTileEntity::getShape);
 	
 	@Override
-	public VoxelShape getBlockBounds(ISelectionContext ctx){
+	public VoxelShape getBlockBounds(CollisionContext ctx){
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	
-	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
+	private static List<AABB> getShape(BlockPos posInMultiblock){
 		int x = posInMultiblock.getX();
 		int y = posInMultiblock.getY();
 		int z = posInMultiblock.getZ();
 		
-		List<AxisAlignedBB> main = new ArrayList<>();
+		List<AABB> main = new ArrayList<>();
 		
 		// Baseplate
 		if(y == 0 && !(x == 0 && z == 2) && !(z == 3 && (x == 1 || x == 2))){
-			main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+			main.add(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 		}
 		
 		// Redstone Controller
 		if(y == 0 && x == 0 && z == 3){
-			main.add(new AxisAlignedBB(0.75, 0.5, 0.625, 0.875, 1.0, 0.875));
-			main.add(new AxisAlignedBB(0.125, 0.5, 0.625, 0.25, 1.0, 0.875));
+			main.add(new AABB(0.75, 0.5, 0.625, 0.875, 1.0, 0.875));
+			main.add(new AABB(0.125, 0.5, 0.625, 0.25, 1.0, 0.875));
 		}else if(y == 1 && x == 0 && z == 3){
-			main.add(new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
+			main.add(new AABB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
 		}
 		
 		// Small Tank
@@ -389,14 +386,14 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 			// Bottom half
 			if(y == 0){
 				if(z == 0){
-					main.add(new AxisAlignedBB(0.125, 0.75, 0.5, 1.0, 1.0, 1.0));
-					main.add(new AxisAlignedBB(0.25, 0.5, 0.75, 0.875, 0.75, 1.0));
+					main.add(new AABB(0.125, 0.75, 0.5, 1.0, 1.0, 1.0));
+					main.add(new AABB(0.25, 0.5, 0.75, 0.875, 0.75, 1.0));
 				}
 				if(z == 1){
-					main.add(new AxisAlignedBB(0.125, 0.75, 0.0, 1.0, 1.0, 1.0));
+					main.add(new AABB(0.125, 0.75, 0.0, 1.0, 1.0, 1.0));
 				}
 				if(z == 3){
-					main.add(new AxisAlignedBB(0.125, 0.75, 0.0, 1.0, 1.0, 0.25));
+					main.add(new AABB(0.125, 0.75, 0.0, 1.0, 1.0, 0.25));
 				}
 				
 			}
@@ -404,13 +401,13 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 			// Top half
 			if(y == 1){
 				if(z == 0){
-					main.add(new AxisAlignedBB(0.125, 0.0, 0.5, 1.0, 0.75, 1.0));
+					main.add(new AABB(0.125, 0.0, 0.5, 1.0, 0.75, 1.0));
 				}
 				if(z == 1){
-					main.add(new AxisAlignedBB(0.125, 0.0, 0.0, 1.0, 0.75, 1.0));
+					main.add(new AABB(0.125, 0.0, 0.0, 1.0, 0.75, 1.0));
 				}
 				if(z == 3){
-					main.add(new AxisAlignedBB(0.125, 0.0, 0.0, 1.0, 0.75, 0.25));
+					main.add(new AABB(0.125, 0.0, 0.0, 1.0, 0.75, 0.25));
 				}
 			}
 		}
@@ -421,29 +418,29 @@ public class HydrotreaterTileEntity extends PoweredMultiblockTileEntity<Hydrotre
 			if(y == 0){
 				if(z == 0){
 					if(x == 1){
-						main.add(new AxisAlignedBB(0.125, 0.3125, 0.0625, 0.375, 1.0, 0.3125));
+						main.add(new AABB(0.125, 0.3125, 0.0625, 0.375, 1.0, 0.3125));
 					}
 					if(x == 2){
-						main.add(new AxisAlignedBB(0.625, 0.3125, 0.0625, 0.875, 1.0, 0.3125));
+						main.add(new AABB(0.625, 0.3125, 0.0625, 0.875, 1.0, 0.3125));
 					}
 				}
 				if(z == 1){
 					if(x == 1){
-						main.add(new AxisAlignedBB(0.125, 0.3125, 0.875, 0.375, 1.0, 1.0));
+						main.add(new AABB(0.125, 0.3125, 0.875, 0.375, 1.0, 1.0));
 					}
 					if(x == 2){
-						main.add(new AxisAlignedBB(0.625, 0.3125, 0.875, 0.875, 1.0, 1.0));
+						main.add(new AABB(0.625, 0.3125, 0.875, 0.875, 1.0, 1.0));
 					}
 				}
 				if(z == 2 && x == 2){
-					main.add(new AxisAlignedBB(0.625, 0.3125, 0.0, 0.875, 1.0, 0.125));
+					main.add(new AABB(0.625, 0.3125, 0.0, 0.875, 1.0, 0.125));
 				}
 			}
 		}
 		
 		// Use default cube shape if nessesary
 		if(main.isEmpty()){
-			main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+			main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		}
 		return main;
 	}

@@ -4,12 +4,12 @@ import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
 
 import com.blamejared.crafttweaker.api.CraftTweakerAPI;
-import com.blamejared.crafttweaker.api.annotations.ZenRegister;
-import com.blamejared.crafttweaker.impl.tag.MCTag;
+import com.blamejared.crafttweaker.api.annotation.ZenRegister;
+import com.blamejared.crafttweaker.api.tag.MCTag;
 
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.material.Fluid;
 
 @ZenRegister
 @Name("mods.immersivepetroleum.Flarestack")
@@ -30,6 +30,6 @@ public class FlarestackRegistryTweaker{
 			return;
 		}
 		
-		FlarestackHandler.register((ITag<Fluid>) tag.getInternal());
+		FlarestackHandler.register((Tag<Fluid>) tag.getInternal());
 	}
 }

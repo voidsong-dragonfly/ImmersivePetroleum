@@ -3,15 +3,18 @@ buildscript {
 		maven { url = 'https://files.minecraftforge.net/maven' }
 		jcenter()
 		mavenCentral()
+		maven { url 'https://maven.parchmentmc.org' }
 	}
 	dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+		classpath 'org.parchmentmc:librarian:1.+'
 	}
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17'
 //----------------------------------------------------------------------------------------------------------------------
 
 version = '3.3.0-10'
@@ -44,7 +47,7 @@ sourceSets {
 }
 
 minecraft {
-	mappings channel: 'snapshot', version: '20210309-1.16.5'
+    mappings channel: 'parchment', version: '2021.12.19-1.18.1'
 	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 	
 	runs {
@@ -105,16 +108,16 @@ minecraft {
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:1.16.5-36.2.0"
+	minecraft "net.minecraftforge:forge:1.18.1-39.0.36"
 	
-	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.8-pre.8")
-	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135:api")
-	datagenCompile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.8-pre.8:datagen")
+	implementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145")
+	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145:api")
+	datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145:datagen")
 	
-	compile fg.deobf(group: "com.blamejared.crafttweaker", name: "CraftTweaker-1.16.5", version: "7.1.0.103")
+	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.1:9.0.0+15")
 	
-	runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.4.88")
-	compileOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.4.88:api")
+	runtimeOnly fg.deobf("mezz.jei:jei-1.18.1:9.3.2.94")
+	compileOnly fg.deobf("mezz.jei:jei-1.18.1:9.3.2.94:api")
 }
 
 processResources {

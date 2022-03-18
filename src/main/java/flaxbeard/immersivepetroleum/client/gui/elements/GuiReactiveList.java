@@ -10,15 +10,16 @@ package flaxbeard.immersivepetroleum.client.gui.elements;
 
 import java.util.function.Function;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
 @SuppressWarnings("unused")
 public class GuiReactiveList extends Button{
@@ -40,15 +41,15 @@ public class GuiReactiveList extends Button{
 	private int targetEntry = -1;
 	private float hoverTimer = 0;
 	
-	public GuiReactiveList(Screen gui, int x, int y, int w, int h, IPressable handler, String... entries){
-		super(x, y, w, h, StringTextComponent.EMPTY, handler);
+	public GuiReactiveList(Screen gui, int x, int y, int w, int h, OnPress handler, String... entries){
+		super(x, y, w, h, TextComponent.EMPTY, handler);
 		this.gui = gui;
 		this.entries = entries;
 		recalculateEntries();
 	}
 	
 	private void recalculateEntries(){
-		perPage = (int) ((this.height - padding[0] - padding[1]) / (ClientUtils.mc().fontRenderer.FONT_HEIGHT * textScale));
+		perPage = (int) ((this.height - padding[0] - padding[1]) / (MCUtil.getFont().lineHeight * textScale));
 		if(perPage < entries.length){
 			needsSlider = true;
 			maxOffset = entries.length - perPage;
@@ -122,8 +123,8 @@ public class GuiReactiveList extends Button{
 	static final ResourceLocation TEXTURE = new ResourceLocation("immersiveengineering", "textures/gui/hud_elements.png");
 	
 	@Override
-	public void render(MatrixStack transform, int mx, int my, float partialTicks){
-		FontRenderer fr = ClientUtils.mc().fontRenderer;
+	public void render(PoseStack transform, int mx, int my, float partialTicks){
+		Font fr = MCUtil.getFont();
 		
 		int mmY = my - this.y;
 		int strWidth = width - padding[2] - padding[3] - (needsSlider ? 6 : 0);
@@ -134,7 +135,7 @@ public class GuiReactiveList extends Button{
 			for(int i = 0;i < height - 8;i += 2)
 				this.blit(transform, x + width - 6, y + 4 + i, 16, 141, 6, 2);
 			
-			int sliderSize = Math.max(6, height - maxOffset * fr.FONT_HEIGHT);
+			int sliderSize = Math.max(6, height - maxOffset * fr.lineHeight);
 			float silderShift = (height - sliderSize) / (float) maxOffset * offset;
 			
 			this.blit(transform, x + width - 5, (int) (y + silderShift + 1), 20, 129, 4, 2);
@@ -149,7 +150,7 @@ public class GuiReactiveList extends Button{
 		for(int i = 0;i < Math.min(perPage, entries.length);i++){
 			int j = offset + i;
 			int col = textColor;
-			boolean selectionHover = isHovered && mmY >= i * fr.FONT_HEIGHT && mmY < (i + 1) * fr.FONT_HEIGHT;
+			boolean selectionHover = isHovered && mmY >= i * fr.lineHeight && mmY < (i + 1) * fr.lineHeight;
 			if(selectionHover){
 				hasTarget = true;
 				if(targetEntry != j){
@@ -162,19 +163,19 @@ public class GuiReactiveList extends Button{
 			if(j > entries.length - 1)
 				j = entries.length - 1;
 			String s = translationFunction != null ? translationFunction.apply(entries[j]) : entries[j];
-			int overLength = s.length() - fr.trimStringToWidth(s, strWidth).length();
+			int overLength = s.length() - fr.plainSubstrByWidth(s, strWidth).length();
 			if(overLength > 0)// String is too long
 			{
 				if(selectionHover && hoverTimer > 20){
 					int textOffset = ((int) hoverTimer / 10) % (s.length());
 					s = s.substring(textOffset) + " " + s.substring(0, textOffset);
 				}
-				s = fr.trimStringToWidth(s, strWidth);
+				s = fr.plainSubstrByWidth(s, strWidth);
 			}
 			float tx = ((x + padding[2]) / textScale);
-			float ty = ((y + padding[0] + (fr.FONT_HEIGHT * i)) / textScale);
+			float ty = ((y + padding[0] + (fr.lineHeight * i)) / textScale);
 			transform.translate(tx, ty, 0);
-			fr.drawString(transform, s, 0, 0, col);
+			fr.draw(transform, s, 0, 0, col);
 			transform.translate(-tx, -ty, 0);
 		}
 		transform.scale(1 / textScale, 1 / textScale, 1);
@@ -204,10 +205,10 @@ public class GuiReactiveList extends Button{
 		if(this.active && this.visible)
 			if(this.isValidClickButton(key) && this.clicked(mx, my)){
 				
-				FontRenderer fr = ClientUtils.mc().fontRenderer;
+				Font fr = MCUtil.getFont();
 				double mmY = my - this.y;
 				for(int i = 0;i < Math.min(perPage, entries.length);i++)
-					if(mmY >= i * fr.FONT_HEIGHT && mmY < (i + 1) * fr.FONT_HEIGHT)
+					if(mmY >= i * fr.lineHeight && mmY < (i + 1) * fr.lineHeight)
 						selectedOption = offset + i;
 			}
 		super.mouseClicked(mx, my, key);

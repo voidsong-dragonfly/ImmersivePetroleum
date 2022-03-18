@@ -1,8 +1,8 @@
 package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.ColumnPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ColumnPos;
 import net.minecraftforge.common.util.Lazy;
 
 public class ReservoirVein{
@@ -23,8 +23,8 @@ public class ReservoirVein{
 		return this.reservoir.get();
 	}
 	
-	public CompoundNBT writeToNBT(){
-		CompoundNBT nbt = new CompoundNBT();
+	public CompoundTag writeToNBT(){
+		CompoundTag nbt = new CompoundTag();
 		
 		nbt.putInt("x", this.pos.x);
 		nbt.putInt("z", this.pos.z);

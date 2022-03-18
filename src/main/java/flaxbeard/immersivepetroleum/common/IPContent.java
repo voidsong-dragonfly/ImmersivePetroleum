@@ -10,9 +10,9 @@ import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
-import blusunrize.immersiveengineering.common.blocks.metal.CrusherTileEntity;
-import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
-import blusunrize.immersiveengineering.common.util.IEPotions;
+import blusunrize.immersiveengineering.common.blocks.metal.CrusherBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorBlockEntity;
+import blusunrize.immersiveengineering.common.register.IEPotions;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
@@ -61,16 +61,17 @@ import flaxbeard.immersivepetroleum.common.particle.FlareFire;
 import flaxbeard.immersivepetroleum.common.particle.FluidSpill;
 import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.entity.EntityType;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.potion.Effect;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -79,73 +80,147 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPContent{
 	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/Content");
 	
+	/** @deprecated Switch to {@link IPRegisters#BLOCK_REGISTER}. */
 	public static final List<Block> registeredIPBlocks = new ArrayList<>();
+	/** @deprecated Switch to {@link IPRegisters#ITEM_REGISTER}. */
 	public static final List<Item> registeredIPItems = new ArrayList<>();
+	/** @deprecated Switch to {@link IPRegisters#FLUID_REGISTER}. */
 	public static final List<Fluid> registeredIPFluids = new ArrayList<>();
 	
 	public static class Multiblock{
-		public static Block distillationtower;
-		public static Block pumpjack;
-		public static Block cokerunit;
-		public static Block hydrotreater;
-		public static Block derrick;
-		public static Block oiltank;
+		@Deprecated public static Block distillationtower;
+		@Deprecated public static Block pumpjack;
+		@Deprecated public static Block cokerunit;
+		@Deprecated public static Block hydrotreater;
+		@Deprecated public static Block derrick;
+		@Deprecated public static Block oiltank;
+		
+		public static RegistryObject<Block> DISTILLATIONTOWER;
+		public static RegistryObject<Block> PUMPJACK;
+		public static RegistryObject<Block> COKERUNIT;
+		public static RegistryObject<Block> HYDROTREATER;
+		public static RegistryObject<Block> DERRICK;
+		public static RegistryObject<Block> OILTANK;
+		
+		private static void forceClassLoad(){
+		}
 	}
 	
 	public static class Fluids{
-		public static IPFluid crudeOil;
-		public static IPFluid diesel;
-		public static IPFluid diesel_sulfur;
-		public static IPFluid lubricant;
-		public static IPFluid gasoline;
-		public static IPFluid napalm;
+		@Deprecated public static IPFluid crudeOil;
+		@Deprecated public static IPFluid diesel;
+		@Deprecated public static IPFluid diesel_sulfur;
+		@Deprecated public static IPFluid lubricant;
+		@Deprecated public static IPFluid gasoline;
+		@Deprecated public static IPFluid napalm;
+		
+		public static RegistryObject<Fluid> CRUDEOIL;
+		public static RegistryObject<Fluid> DIESEL;
+		public static RegistryObject<Fluid> DIESEL_SULFUR;
+		public static RegistryObject<Fluid> LUBRICANT;
+		public static RegistryObject<Fluid> GASOLINE;
+		public static RegistryObject<Fluid> NAPALM;
+		
+		private static void forceClassLoad(){
+		}
 	}
 	
 	public static class Blocks{
-		public static IPBlockBase asphalt;
-		public static AsphaltSlab asphalt_slab;
-		public static AsphaltStairs asphalt_stair;
-		public static IPBlockBase petcoke;
+		@Deprecated public static IPBlockBase asphalt;
+		@Deprecated public static AsphaltSlab asphalt_slab;
+		@Deprecated public static AsphaltStairs asphalt_stair;
+		@Deprecated public static IPBlockBase petcoke;
 		
-		public static IPBlockBase gas_generator;
-		public static IPBlockBase auto_lubricator;
-		public static IPBlockBase flarestack;
+		@Deprecated public static IPBlockBase gas_generator;
+		@Deprecated public static IPBlockBase auto_lubricator;
+		@Deprecated public static IPBlockBase flarestack;
 		
-		public static BlockDummy dummyOilOre;
-		public static BlockDummy dummyPipe;
-		public static BlockDummy dummyConveyor;
+		@Deprecated public static BlockDummy dummyOilOre;
+		@Deprecated public static BlockDummy dummyPipe;
+		@Deprecated public static BlockDummy dummyConveyor;
 		
-		public static WellBlock well;
-		public static WellPipeBlock wellPipe;
+		@Deprecated public static WellBlock well;
+		@Deprecated public static WellPipeBlock wellPipe;
+		
+		public static RegistryObject<Block> ASPHALT;
+		public static RegistryObject<Block> ASPHALT_SLAB;
+		public static RegistryObject<Block> ASPHALT_STAIR;
+		public static RegistryObject<Block> PETCOKE;
+		
+		public static RegistryObject<Block> GAS_GENERATOR;
+		public static RegistryObject<Block> AUTO_LUBRICATOR;
+		public static RegistryObject<Block> FLARESTACK;
+		
+		public static RegistryObject<Block> DUMMYOILORE;
+		public static RegistryObject<Block> DUMMYPIPE;
+		public static RegistryObject<Block> DUMMYCONVEYOR;
+		
+		public static RegistryObject<Block> WELL;
+		public static RegistryObject<Block> WELLPIPE;
+		
+		private static void forceClassLoad(){
+		}
 	}
 	
 	public static class Items{
-		public static IPItemBase bitumen;
-		public static IPItemBase projector;
-		public static IPItemBase speedboat;
-		public static IPItemBase oil_can;
-		public static IPItemBase petcoke;
-		public static IPItemBase petcokedust;
+		@Deprecated public static IPItemBase bitumen;
+		@Deprecated public static IPItemBase projector;
+		@Deprecated public static IPItemBase speedboat;
+		@Deprecated public static IPItemBase oil_can;
+		@Deprecated public static IPItemBase petcoke;
+		@Deprecated public static IPItemBase petcokedust;
+		
+		public static RegistryObject<Item> BITUMEN;
+		public static RegistryObject<Item> PROJECTOR;
+		public static RegistryObject<Item> SPEEDBOAT;
+		public static RegistryObject<Item> OIL_CAN;
+		public static RegistryObject<Item> PETCOKE;
+		public static RegistryObject<Item> PETCOKEDUST;
+		
+		private static void forceClassLoad(){
+		}
 	}
 	
 	public static class BoatUpgrades{
-		public static IPUpgradeItem reinforced_hull;
-		public static IPUpgradeItem ice_breaker;
-		public static IPUpgradeItem tank;
-		public static IPUpgradeItem rudders;
-		public static IPUpgradeItem paddles;
+		@Deprecated public static IPUpgradeItem reinforced_hull;
+		@Deprecated public static IPUpgradeItem ice_breaker;
+		@Deprecated public static IPUpgradeItem tank;
+		@Deprecated public static IPUpgradeItem rudders;
+		@Deprecated public static IPUpgradeItem paddles;
+		
+		public static RegistryObject<Item> REINFORCED_HULL;
+		public static RegistryObject<Item> ICE_BREAKER;
+		public static RegistryObject<Item> TANK;
+		public static RegistryObject<Item> RUDDERS;
+		public static RegistryObject<Item> PADDLES;
+		
+		private static void forceClassLoad(){
+		}
 	}
 	
+	@Deprecated
 	public static DebugItem debugItem;
+	public static RegistryObject<Item> DEBUGITEM = IPRegisters.registerItem("debug", DebugItem::new);
 	
 	/** block/item/fluid population */
+	@SuppressWarnings("deprecation")
 	public static void populate(){
-		IPContent.debugItem = new DebugItem();
+		Blocks.forceClassLoad();
+		Fluids.forceClassLoad();
+		Items.forceClassLoad();
+		BoatUpgrades.forceClassLoad();
+		Multiblock.forceClassLoad();
+		
+		// TODO Remove below later
+		// ##############################################
+		
+		//IPContent.debugItem = new DebugItem();
 		
 		Fluids.crudeOil = new CrudeOilFluid();
 		Fluids.diesel = new DieselFluid("diesel");
@@ -184,7 +259,7 @@ public class IPContent{
 		Items.speedboat = new MotorboatItem("speedboat");
 		Items.petcoke = new IPItemBase("petcoke"){
 			@Override
-			public int getBurnTime(ItemStack itemStack){
+			public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
 				return 3200;
 			}
 		};
@@ -213,17 +288,17 @@ public class IPContent{
 		//blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable, 140, 2));
 		
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new LubricantEffect());
-		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.slippery, 60, 1));
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.SLIPPERY.get(), 60, 1));
 		ChemthrowerHandler.registerEffect(IETags.fluidPlantoil, new LubricantEffect());
 		
 		ChemthrowerHandler.registerFlammable(IPTags.Fluids.crudeOil);
-		ChemthrowerHandler.registerEffect(IPTags.Fluids.crudeOil, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.crudeOil, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 1));
 		
 		ChemthrowerHandler.registerFlammable(IPTags.Fluids.gasoline);
-		ChemthrowerHandler.registerEffect(IPTags.Fluids.gasoline, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 1));
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.gasoline, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 1));
 		
 		ChemthrowerHandler.registerFlammable(IPTags.Fluids.napalm);
-		ChemthrowerHandler.registerEffect(IPTags.Fluids.napalm, new ChemthrowerEffect_Potion(null, 0, IEPotions.flammable, 60, 2));
+		ChemthrowerHandler.registerEffect(IPTags.Fluids.napalm, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 2));
 		
 		MultiblockHandler.registerMultiblock(DistillationTowerMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(PumpjackMultiblock.INSTANCE);
@@ -241,44 +316,8 @@ public class IPContent{
 		FlarestackHandler.register(IPTags.Utility.burnableInFlarestack);
 		
 		LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, PumpjackLubricationHandler::new);
-		LubricatedHandler.registerLubricatedTile(ExcavatorTileEntity.class, ExcavatorLubricationHandler::new);
-		LubricatedHandler.registerLubricatedTile(CrusherTileEntity.class, CrusherLubricationHandler::new);
-	}
-	
-	@SubscribeEvent
-	public static void registerBlocks(RegistryEvent.Register<Block> event){
-		for(Block block:registeredIPBlocks){
-			try{
-				event.getRegistry().register(block);
-			}catch(Throwable e){
-				log.error("Failed to register a block. ({})", block);
-				throw e;
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public static void registerItems(RegistryEvent.Register<Item> event){
-		for(Item item:registeredIPItems){
-			try{
-				event.getRegistry().register(item);
-			}catch(Throwable e){
-				log.error("Failed to register an item. ({}, {})", item, item.getRegistryName());
-				throw e;
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public static void registerFluids(RegistryEvent.Register<Fluid> event){
-		for(Fluid fluid:registeredIPFluids){
-			try{
-				event.getRegistry().register(fluid);
-			}catch(Throwable e){
-				log.error("Failed to register a fluid. ({}, {})", fluid, fluid.getRegistryName());
-				throw e;
-			}
-		}
+		LubricatedHandler.registerLubricatedTile(ExcavatorBlockEntity.class, ExcavatorLubricationHandler::new);
+		LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
 	}
 	
 	@SubscribeEvent
@@ -292,7 +331,7 @@ public class IPContent{
 	}
 	
 	@SubscribeEvent
-	public static void registerEffects(RegistryEvent.Register<Effect> event){
+	public static void registerEffects(RegistryEvent.Register<MobEffect> event){
 		IPEffects.init();
 	}
 	
@@ -305,9 +344,9 @@ public class IPContent{
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event){
-		ParticleManager manager = Minecraft.getInstance().particles;
+		ParticleEngine manager = MCUtil.getParticleEngine();
 
-		manager.registerFactory(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
-		manager.registerFactory(IPParticleTypes.FLUID_SPILL, new FluidSpill.Factory());
+		manager.register(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
+		manager.register(IPParticleTypes.FLUID_SPILL, new FluidSpill.Factory());
 	}
 }

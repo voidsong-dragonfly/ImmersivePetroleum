@@ -3,11 +3,10 @@ package flaxbeard.immersivepetroleum.common.network;
 import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 public class MessageConsumeBoatFuel implements INetMessage{
 	public int amount;
@@ -16,12 +15,12 @@ public class MessageConsumeBoatFuel implements INetMessage{
 		this.amount = amount;
 	}
 	
-	public MessageConsumeBoatFuel(PacketBuffer buf){
+	public MessageConsumeBoatFuel(FriendlyByteBuf buf){
 		this.amount = buf.readInt();
 	}
 	
 	@Override
-	public void toBytes(PacketBuffer buf){
+	public void toBytes(FriendlyByteBuf buf){
 		buf.writeInt(amount);
 	}
 	
@@ -31,7 +30,7 @@ public class MessageConsumeBoatFuel implements INetMessage{
 			Context con = context.get();
 			
 			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER && con.getSender() != null){
-				Entity entity = con.getSender().getRidingEntity();
+				Entity entity = con.getSender().getVehicle();
 				
 				if(entity instanceof MotorboatEntity){
 					MotorboatEntity boat = (MotorboatEntity) entity;

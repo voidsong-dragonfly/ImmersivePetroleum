@@ -1,36 +1,31 @@
 package flaxbeard.immersivepetroleum.common.crafting;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.CokerUnitRecipeSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.DistillationRecipeSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.ReservoirSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.SulfurRecoveryRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class Serializers{
-	public static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ImmersivePetroleum.MODID);
-	
-	public static final RegistryObject<IERecipeSerializer<DistillationRecipe>> DISTILLATION_SERIALIZER = RECIPE_SERIALIZERS.register(
+	public static final RegistryObject<IERecipeSerializer<DistillationRecipe>> DISTILLATION_SERIALIZER = IPRegisters.registerSerializer(
 			"distillation", DistillationRecipeSerializer::new
 	);
 	
-	public static final RegistryObject<IERecipeSerializer<CokerUnitRecipe>> COKER_SERIALIZER = RECIPE_SERIALIZERS.register(
+	public static final RegistryObject<IERecipeSerializer<CokerUnitRecipe>> COKER_SERIALIZER = IPRegisters.registerSerializer(
 			"coker", CokerUnitRecipeSerializer::new
 	);
 	
-	public static final RegistryObject<IERecipeSerializer<SulfurRecoveryRecipe>> HYDROTREATER_SERIALIZER = RECIPE_SERIALIZERS.register(
+	public static final RegistryObject<IERecipeSerializer<SulfurRecoveryRecipe>> HYDROTREATER_SERIALIZER = IPRegisters.registerSerializer(
 			"hydrotreater", SulfurRecoveryRecipeSerializer::new
 	);
 	
-	public static final RegistryObject<IERecipeSerializer<Reservoir>> RESERVOIR_SERIALIZER = RECIPE_SERIALIZERS.register(
+	public static final RegistryObject<IERecipeSerializer<Reservoir>> RESERVOIR_SERIALIZER = IPRegisters.registerSerializer(
 			"reservoirs", ReservoirSerializer::new
 	);
 }

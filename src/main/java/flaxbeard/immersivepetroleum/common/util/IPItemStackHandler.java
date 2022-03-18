@@ -4,11 +4,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.utils.CapabilityUtils;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -37,12 +37,12 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		return 4;
 	}
 	
-	public void setTile(TileEntity tile){
-		this.onChange = tile != null ? tile::markDirty : EMPTY_RUN;
+	public void setTile(BlockEntity tile){
+		this.onChange = tile != null ? tile::setChanged : EMPTY_RUN;
 	}
 	
-	public void setInventoryForUpdate(IInventory inv){
-		this.onChange = inv != null ? inv::markDirty : EMPTY_RUN;
+	public void setInventoryForUpdate(Container inv){
+		this.onChange = inv != null ? inv::setChanged : EMPTY_RUN;
 	}
 	
 	protected void onContentsChanged(int slot){

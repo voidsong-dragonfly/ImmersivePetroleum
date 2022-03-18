@@ -10,19 +10,20 @@ import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 public class DistillationTowerContainer extends MultiblockAwareGuiContainer<DistillationTowerTileEntity>{
-	public DistillationTowerContainer(int id, PlayerInventory playerInventory, final DistillationTowerTileEntity tile){
-		super(tile, id, DistillationTowerMultiblock.INSTANCE);
+	public DistillationTowerContainer(int id, Inventory playerInventory, final DistillationTowerTileEntity tile){
+		super(null, tile, id, DistillationTowerMultiblock.INSTANCE);
+		// TODO MenuType
 		
 		addSlot(new IPSlot(this.inv, INV_0, 12, 17){
 			@Override
-			public boolean isItemValid(ItemStack stack){
+			public boolean mayPlace(ItemStack stack){
 				return FluidUtil.getFluidHandler(stack).map(h -> {
 					if(h.getTanks() <= 0){
 						return false;

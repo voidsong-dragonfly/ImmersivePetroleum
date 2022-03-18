@@ -1,7 +1,7 @@
 package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * TODO Move to flaxbeard.immersivepetroleum.common.util ?
@@ -34,8 +34,8 @@ public class IslandAxisAlignedBB{
 		return x >= this.minX && x <= this.maxX && z >= this.minZ && z <= this.maxZ;
 	}
 	
-	public CompoundNBT writeToNBT(){
-		CompoundNBT bounds = new CompoundNBT();
+	public CompoundTag writeToNBT(){
+		CompoundTag bounds = new CompoundTag();
 		bounds.putInt("minX", this.minX);
 		bounds.putInt("minZ", this.minZ);
 		bounds.putInt("maxX", this.maxX);
@@ -43,7 +43,7 @@ public class IslandAxisAlignedBB{
 		return bounds;
 	}
 	
-	public static IslandAxisAlignedBB readFromNBT(CompoundNBT nbt){
+	public static IslandAxisAlignedBB readFromNBT(CompoundTag nbt){
 		int minX = nbt.getInt("minX");
 		int minZ = nbt.getInt("minZ");
 		int maxX = nbt.getInt("maxX");

@@ -11,20 +11,20 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.ColumnPosArgument;
-import net.minecraft.util.math.ColumnPos;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
+import net.minecraft.server.level.ColumnPos;
 
 public class IslandCommand{
 	private IslandCommand(){
 	}
 	
-	public static LiteralArgumentBuilder<CommandSource> create(){
-		LiteralArgumentBuilder<CommandSource> main = Commands.literal("reservoir").executes(source -> {
+	public static LiteralArgumentBuilder<CommandSourceStack> create(){
+		LiteralArgumentBuilder<CommandSourceStack> main = Commands.literal("reservoir").executes(source -> {
 			return Command.SINGLE_SUCCESS;
-		}).requires(source -> source.hasPermissionLevel(4));
+		}).requires(source -> source.hasPermission(4));
 		
 		main.then(Commands.literal("findnear").executes(source -> {
 			return Command.SINGLE_SUCCESS;
@@ -35,10 +35,10 @@ public class IslandCommand{
 		return main;
 	}
 	
-	static LiteralArgumentBuilder<CommandSource> setters(){
-		LiteralArgumentBuilder<CommandSource> set = Commands.literal("set").executes(source -> {
+	static LiteralArgumentBuilder<CommandSourceStack> setters(){
+		LiteralArgumentBuilder<CommandSourceStack> set = Commands.literal("set").executes(source -> {
 			return Command.SINGLE_SUCCESS;
-		}).requires(source -> source.hasPermissionLevel(4));
+		}).requires(source -> source.hasPermission(4));
 		
 		set.then(Commands.literal("amount").executes(source -> {
 			return Command.SINGLE_SUCCESS;
@@ -51,15 +51,15 @@ public class IslandCommand{
 		return set;
 	}
 	
-	static RequiredArgumentBuilder<CommandSource, String> typesetter(){
-		RequiredArgumentBuilder<CommandSource, String> nameArg = Commands.argument("name", StringArgumentType.string());
+	static RequiredArgumentBuilder<CommandSourceStack, String> typesetter(){
+		RequiredArgumentBuilder<CommandSourceStack, String> nameArg = Commands.argument("name", StringArgumentType.string());
 		
-		nameArg.suggests((context, builder) -> ISuggestionProvider.suggest(Reservoir.map.values().stream().map(type -> type.name), builder)).executes(command -> {
-			ColumnPos pos = new ColumnPos(command.getSource().asPlayer().getPosition());
+		nameArg.suggests((context, builder) -> SharedSuggestionProvider.suggest(Reservoir.map.values().stream().map(type -> type.name), builder)).executes(command -> {
+			ColumnPos pos = new ColumnPos(command.getSource().getPlayerOrException().blockPosition());
 			setReservoirType(command, pos);
 			return Command.SINGLE_SUCCESS;
 		}).then(Commands.argument("location", ColumnPosArgument.columnPos()).executes(command -> {
-			ColumnPos pos = ColumnPosArgument.fromBlockPos(command, "location");
+			ColumnPos pos = ColumnPosArgument.getColumnPos(command, "location");
 			setReservoirType(command, pos);
 			return Command.SINGLE_SUCCESS;
 		}));
@@ -67,10 +67,10 @@ public class IslandCommand{
 		return nameArg;
 	}
 	
-	static void setReservoirType(CommandContext<CommandSource> context, ColumnPos pos){
-		CommandSource sender = context.getSource();
+	static void setReservoirType(CommandContext<CommandSourceStack> context, ColumnPos pos){
+		CommandSourceStack sender = context.getSource();
 		
-		ReservoirIsland island = ReservoirHandler.getIsland(sender.getWorld(), pos);
+		ReservoirIsland island = ReservoirHandler.getIsland(sender.getLevel(), pos);
 		if(island == null){
 			CommandUtils.sendString(sender, "The island you seek is in another castle!");
 			return;

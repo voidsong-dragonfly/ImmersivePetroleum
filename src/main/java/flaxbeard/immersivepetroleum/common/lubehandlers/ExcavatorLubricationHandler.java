@@ -2,10 +2,11 @@ package flaxbeard.immersivepetroleum.common.lubehandlers;
 
 import java.util.function.Supplier;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
 
-import blusunrize.immersiveengineering.common.blocks.metal.BucketWheelTileEntity;
-import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorTileEntity;
+import blusunrize.immersiveengineering.common.blocks.metal.BucketWheelBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorBlockEntity;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
@@ -14,38 +15,37 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.particles.BlockParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
-import net.minecraft.util.Direction.AxisDirection;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorTileEntity>{
-	private static Vector3i size = new Vector3i(3, 6, 3);
+public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorBlockEntity>{
+	private static Vec3i size = new Vec3i(3, 6, 3);
 	
 	@Override
-	public Vector3i getStructureDimensions(){
+	public Vec3i getStructureDimensions(){
 		return size;
 	}
 	
 	@Override
-	public boolean isMachineEnabled(World world, ExcavatorTileEntity mbte){
+	public boolean isMachineEnabled(Level world, ExcavatorBlockEntity mbte){
 		BlockPos wheelPos = mbte.getWheelCenterPos();
-		TileEntity center = world.getTileEntity(wheelPos);
+		BlockEntity center = world.getBlockEntity(wheelPos);
 		
-		if(center instanceof BucketWheelTileEntity){
-			BucketWheelTileEntity wheel = (BucketWheelTileEntity) center;
+		if(center instanceof BucketWheelBlockEntity){
+			BucketWheelBlockEntity wheel = (BucketWheelBlockEntity) center;
 			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
 				// Just to make absolutely sure it's the master
 				wheel = wheel.master();
@@ -57,15 +57,15 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public TileEntity isPlacedCorrectly(World world, AutoLubricatorTileEntity lubricator, Direction facing){
-		BlockPos target = lubricator.getPos().offset(facing);
-		TileEntity te = world.getTileEntity(target);
+	public BlockEntity isPlacedCorrectly(Level world, AutoLubricatorTileEntity lubricator, Direction facing){
+		BlockPos target = lubricator.getBlockPos().relative(facing);
+		BlockEntity te = world.getBlockEntity(target);
 		
-		if(te instanceof ExcavatorTileEntity){
-			ExcavatorTileEntity master = ((ExcavatorTileEntity) te).master();
+		if(te instanceof ExcavatorBlockEntity){
+			ExcavatorBlockEntity master = ((ExcavatorBlockEntity) te).master();
 			
 			if(master != null){
-				Direction dir = master.getIsMirrored() ? master.getFacing().rotateY() : master.getFacing().rotateYCCW();
+				Direction dir = master.getIsMirrored() ? master.getFacing().getClockWise() : master.getFacing().getCounterClockWise();
 				if(dir == facing){
 					return master;
 				}
@@ -76,18 +76,18 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void lubricate(World world, int ticks, ExcavatorTileEntity mbte){
+	public void lubricate(Level world, int ticks, ExcavatorBlockEntity mbte){
 		BlockPos wheelPos = mbte.getWheelCenterPos();
-		TileEntity center = world.getTileEntity(wheelPos);
+		BlockEntity center = world.getBlockEntity(wheelPos);
 		
-		if(center instanceof BucketWheelTileEntity){
-			BucketWheelTileEntity wheel = (BucketWheelTileEntity) center;
+		if(center instanceof BucketWheelBlockEntity){
+			BucketWheelBlockEntity wheel = (BucketWheelBlockEntity) center;
 			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
 				// Just to make absolutely sure it's the master
 				wheel = wheel.master();
 			}
 			
-			if(!world.isRemote && ticks % 4 == 0){
+			if(!world.isClientSide && ticks % 4 == 0){
 				int consumed = IEServerConfig.MACHINES.excavator_consumption.get();
 				int extracted = mbte.energyStorage.extractEnergy(consumed, true);
 				if(extracted >= consumed){
@@ -101,10 +101,10 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void spawnLubricantParticles(World world, AutoLubricatorTileEntity lubricator, Direction facing, ExcavatorTileEntity mbte){
+	public void spawnLubricantParticles(Level world, AutoLubricatorTileEntity lubricator, Direction facing, ExcavatorBlockEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
-		float location = world.rand.nextFloat();
+		float location = world.random.nextFloat();
 		
 		boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !mbte.getIsMirrored();
 		float xO = 1.2F;
@@ -122,26 +122,26 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		if(!flip)
 			zO = -zO + 1;
 		
-		float x = lubricator.getPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
-		float y = lubricator.getPos().getY() + yO;
-		float z = lubricator.getPos().getZ() + (f.getAxis() == Axis.X ? zO : xO);
+		float x = lubricator.getBlockPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
+		float y = lubricator.getBlockPos().getY() + yO;
+		float z = lubricator.getBlockPos().getZ() + (f.getAxis() == Axis.X ? zO : xO);
 		
 		for(int i = 0;i < 3;i++){
-			float r1 = (world.rand.nextFloat() - .5F) * 2F;
-			float r2 = (world.rand.nextFloat() - .5F) * 2F;
-			float r3 = world.rand.nextFloat();
-			BlockState n = Fluids.lubricant.block.getDefaultState();
-			world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
+			float r1 = (world.random.nextFloat() - .5F) * 2F;
+			float r2 = (world.random.nextFloat() - .5F) * 2F;
+			float r3 = world.random.nextFloat();
+			BlockState n = Fluids.lubricant.block.defaultBlockState();
+			world.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}
 	
 	@Override
-	public Tuple<BlockPos, Direction> getGhostBlockPosition(World world, ExcavatorTileEntity mbte){
+	public Tuple<BlockPos, Direction> getGhostBlockPosition(Level world, ExcavatorBlockEntity mbte){
 		if(!mbte.isDummy()){
-			BlockPos pos = mbte.getPos()
-					.offset(mbte.getFacing(), 4)
-					.offset(mbte.getIsMirrored() ? mbte.getFacing().rotateYCCW() : mbte.getFacing().rotateY(), 2);
-			Direction f = mbte.getIsMirrored() ? mbte.getFacing().rotateY() : mbte.getFacing().rotateYCCW();
+			BlockPos pos = mbte.getBlockPos()
+					.relative(mbte.getFacing(), 4)
+					.relative(mbte.getIsMirrored() ? mbte.getFacing().getCounterClockWise() : mbte.getFacing().getClockWise(), 2);
+			Direction f = mbte.getIsMirrored() ? mbte.getFacing().getClockWise() : mbte.getFacing().getCounterClockWise();
 			return new Tuple<BlockPos, Direction>(pos, f);
 		}
 		return null;
@@ -153,20 +153,20 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(AutoLubricatorTileEntity lubricator, ExcavatorTileEntity mbte, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay){
+	public void renderPipes(AutoLubricatorTileEntity lubricator, ExcavatorBlockEntity mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
 		matrix.translate(0, -1, 0);
-		Vector3i offset = mbte.getPos().subtract(lubricator.getPos());
+		Vec3i offset = mbte.getBlockPos().subtract(lubricator.getBlockPos());
 		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
 		switch(rotation){
 			case NORTH:{
-				matrix.rotate(new Quaternion(0, 90F, 0, true));
+				matrix.mulPose(new Quaternion(0, 90F, 0, true));
 				matrix.translate(-1, 0, -1);
 				break;
 			}
 			case SOUTH:{
-				matrix.rotate(new Quaternion(0, 270F, 0, true));
+				matrix.mulPose(new Quaternion(0, 270F, 0, true));
 				matrix.translate(0, 0, -2);
 				break;
 			}
@@ -175,7 +175,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 				break;
 			}
 			case WEST:{
-				matrix.rotate(new Quaternion(0, 180F, 0, true));
+				matrix.mulPose(new Quaternion(0, 180F, 0, true));
 				matrix.translate(-1, 0, -2);
 				break;
 			}
@@ -197,7 +197,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		}
 		
 		if(model != null){
-			model.render(matrix, buffer.getBuffer(model.getRenderType(TEXTURE)), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+			model.renderToBuffer(matrix, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
 		}
 	}
 }

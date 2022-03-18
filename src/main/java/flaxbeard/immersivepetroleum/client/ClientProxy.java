@@ -11,16 +11,19 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import com.electronwill.nightconfig.core.Config;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.client.manual.ManualElementMultiblock;
 import blusunrize.immersiveengineering.client.models.ModelCoresample;
-import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IEMultiblocks;
 import blusunrize.immersiveengineering.common.gui.GuiHandler;
+import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualElementCrafting;
 import blusunrize.lib.manual.ManualElementTable;
@@ -41,7 +44,6 @@ import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
 import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
-import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
@@ -53,47 +55,45 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
-import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import net.minecraft.block.BlockState;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.ScreenManager.IScreenFactory;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.MenuScreens.ScreenConstructor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ITag.INamedTag;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.Tag.Named;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -102,8 +102,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -113,11 +111,12 @@ public class ClientProxy extends CommonProxy{
 	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/ClientProxy");
 	public static final String CAT_IP = "ip";
 	
-	public static final KeyBinding keybind_preview_flip = new KeyBinding("key.immersivepetroleum.projector.flip", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.immersivepetroleum");
+	public static final KeyMapping keybind_preview_flip = new KeyMapping("key.immersivepetroleum.projector.flip", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.immersivepetroleum");
 	
 	@Override
 	public void setup(){
-		RenderingRegistry.registerEntityRenderingHandler(MotorboatEntity.TYPE, MotorboatRenderer::new);
+		// FIXME !"RenderingRegistry" does not exist anymore! (Again the fucking boat... jesus)
+//		RenderingRegistry.registerEntityRenderingHandler(MotorboatEntity.TYPE, MotorboatRenderer::new);
 	}
 	
 	@Override
@@ -131,9 +130,9 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <C extends Container, S extends Screen & IHasContainer<C>> void registerScreen(ResourceLocation name, IScreenFactory<C, S> factory){
-		ContainerType<C> type = (ContainerType<C>) GuiHandler.getContainerType(name);
-		ScreenManager.registerFactory(type, factory);
+	public <C extends AbstractContainerMenu, S extends Screen & MenuAccess<C>> void registerScreen(ResourceLocation name, ScreenConstructor<C, S> factory){
+		MenuType<C> type = (MenuType<C>) GuiHandler.getContainerType(name);
+		MenuScreens.register(type, factory);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -169,7 +168,7 @@ public class ClientProxy extends CommonProxy{
 					
 					float averageSize = (oil_min + oil_max) / 2F;
 					float pumpspeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
-					return Integer.valueOf(MathHelper.floor((averageSize / pumpspeed) / 24000F));
+					return Integer.valueOf(Mth.floor((averageSize / pumpspeed) / 24000F));
 				}
 				case "autolubricant_speedup":{
 					return Double.valueOf(1.25D);
@@ -221,8 +220,8 @@ public class ClientProxy extends CommonProxy{
 	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onModelBakeEvent(ModelBakeEvent event){
-		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.coresample.getRegistryName(), "inventory");
-		IBakedModel model = event.getModelRegistry().get(mLoc);
+		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.CORESAMPLE.get().getRegistryName(), "inventory");
+		BakedModel model = event.getModelRegistry().get(mLoc);
 		if(model instanceof ModelCoresample){
 			// It'll be a while until that is in working conditions again
 			// event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
@@ -230,61 +229,61 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
-	public void renderTile(TileEntity te, IVertexBuilder iVertexBuilder, MatrixStack transform, IRenderTypeBuffer buffer){
-		TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
+	public void renderTile(BlockEntity te, VertexConsumer iVertexBuilder, PoseStack transform, MultiBufferSource buffer){
+		BlockEntityRenderer<BlockEntity> tesr = BlockEntityRenderDispatcher.instance.getRenderer((BlockEntity) te);
 		
 		if(te instanceof PumpjackTileEntity){
-			transform.push();
-			transform.rotate(new Quaternion(0, -90, 0, true));
+			transform.pushPose();
+			transform.mulPose(new Quaternion(0, -90, 0, true));
 			transform.translate(1, 1, -2);
 			
 			float pt = 0;
-			if(Minecraft.getInstance().player != null){
-				((PumpjackTileEntity) te).activeTicks = Minecraft.getInstance().player.ticksExisted;
-				pt = Minecraft.getInstance().getRenderPartialTicks();
+			if(MCUtil.getPlayer() != null){
+				((PumpjackTileEntity) te).activeTicks = MCUtil.getPlayer().tickCount;
+				pt = Minecraft.getInstance().getFrameTime();
 			}
 			
 			tesr.render(te, pt, transform, buffer, 0xF000F0, 0);
-			transform.pop();
+			transform.popPose();
 		}else{
-			transform.push();
-			transform.rotate(new Quaternion(0, -90, 0, true));
+			transform.pushPose();
+			transform.mulPose(new Quaternion(0, -90, 0, true));
 			transform.translate(0, 1, -4);
 			
 			tesr.render(te, 0, transform, buffer, 0xF000F0, 0);
-			transform.pop();
+			transform.popPose();
 		}
 	}
 	
 	@Override
-	public void drawUpperHalfSlab(MatrixStack transform, ItemStack stack){
+	public void drawUpperHalfSlab(PoseStack transform, ItemStack stack){
 		
 		// Render slabs on top half
-		BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
-		BlockState state = IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD).getDefaultState();
-		IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
+		BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
+		BlockState state = IEBlocks.MetalDecoration.STEEL_SCAFFOLDING.get(MetalScaffoldingType.STANDARD).defaultBlockState();
+		BakedModel model = blockRenderer.getBlockModelShaper().getBlockModel(state);
 		
-		IRenderTypeBuffer.Impl buffers = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+		MultiBufferSource.BufferSource buffers = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 		
-		transform.push();
+		transform.pushPose();
 		transform.translate(0.0F, 0.5F, 1.0F);
-		blockRenderer.getBlockModelRenderer().renderModel(transform.getLast(), buffers.getBuffer(RenderType.getSolid()), state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
-		transform.pop();
+		blockRenderer.getModelRenderer().renderModel(transform.last(), buffers.getBuffer(RenderType.solid()), state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
+		transform.popPose();
 	}
 	
 	@Override
-	public void openProjectorGui(Hand hand, ItemStack held){
-		Minecraft.getInstance().displayGuiScreen(new ProjectorScreen(hand, held));
+	public void openProjectorGui(InteractionHand hand, ItemStack held){
+		Minecraft.getInstance().setScreen(new ProjectorScreen(hand, held));
 	}
 	
 	@Override
-	public World getClientWorld(){
-		return Minecraft.getInstance().world;
+	public Level getClientWorld(){
+		return MCUtil.getLevel();
 	}
 	
 	@Override
-	public PlayerEntity getClientPlayer(){
-		return Minecraft.getInstance().player;
+	public Player getClientPlayer(){
+		return MCUtil.getPlayer();
 	}
 	
 	@Override
@@ -293,7 +292,7 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
-	public void handleTileSound(SoundEvent soundEvent, TileEntity te, boolean active, float volume, float pitch){
+	public void handleTileSound(SoundEvent soundEvent, BlockEntity te, boolean active, float volume, float pitch){
 		// TODO Sound: Perhaps give some MBs some audio
 	}
 	
@@ -325,14 +324,14 @@ public class ClientProxy extends CommonProxy{
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement("flarestack0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.flarestack)));
 		builder.addSpecialElement("flarestack1", 0, () -> {
-			Set<ITag<Fluid>> fluids = FlarestackHandler.getSet();
-			List<ITextComponent[]> list = new ArrayList<ITextComponent[]>();
-			for(ITag<Fluid> tag:fluids){
-				if(tag instanceof INamedTag){
-					List<Fluid> fl = ((INamedTag<Fluid>) tag).getAllElements();
+			Set<Tag<Fluid>> fluids = FlarestackHandler.getSet();
+			List<Component[]> list = new ArrayList<Component[]>();
+			for(Tag<Fluid> tag:fluids){
+				if(tag instanceof Named){
+					List<Fluid> fl = ((Named<Fluid>) tag).getValues();
 					for(Fluid f:fl){
-						ITextComponent[] entry = new ITextComponent[]{
-								StringTextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()
+						Component[] entry = new Component[]{
+								TextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()
 						};
 						
 						list.add(entry);
@@ -340,7 +339,7 @@ public class ClientProxy extends CommonProxy{
 				}
 			}
 			
-			return new ManualElementTable(man, list.toArray(new ITextComponent[0][]), false);
+			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
 		});
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
@@ -403,15 +402,15 @@ public class ClientProxy extends CommonProxy{
 		builder.addSpecialElement("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE));
 		builder.addSpecialElement("distillationtower1", 0, () -> {
 			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
-			List<ITextComponent[]> list = new ArrayList<ITextComponent[]>();
+			List<Component[]> list = new ArrayList<Component[]>();
 			for(DistillationRecipe recipe:recipeList){
 				boolean first = true;
 				for(FluidStack output:recipe.getFluidOutputs()){
-					ITextComponent outputName = output.getDisplayName();
+					Component outputName = output.getDisplayName();
 					
-					ITextComponent[] entry = new ITextComponent[]{
-							first ? new StringTextComponent(recipe.getInputFluid().getAmount() + "mB ").appendSibling(recipe.getInputFluid().getMatchingFluidStacks().get(0).getDisplayName()) : StringTextComponent.EMPTY,
-									new StringTextComponent(output.getAmount() + "mB ").appendSibling(outputName)
+					Component[] entry = new Component[]{
+							first ? new TextComponent(recipe.getInputFluid().getAmount() + "mB ").append(recipe.getInputFluid().getMatchingFluidStacks().get(0).getDisplayName()) : TextComponent.EMPTY,
+									new TextComponent(output.getAmount() + "mB ").append(outputName)
 					};
 					
 					list.add(entry);
@@ -419,7 +418,7 @@ public class ClientProxy extends CommonProxy{
 				}
 			}
 			
-			return new ManualElementTable(man, list.toArray(new ITextComponent[0][]), false);
+			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
 		});
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
@@ -476,8 +475,8 @@ public class ClientProxy extends CommonProxy{
 		final Reservoir[] reservoirs = Reservoir.map.values().toArray(new Reservoir[0]);
 		
 		StringBuilder contentBuilder = new StringBuilder();
-		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil0"));
-		contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.oil1"));
+		contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.oil0"));
+		contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.oil1"));
 		
 		for(int i = 0;i < reservoirs.length;i++){
 			Reservoir reservoir = reservoirs[i];
@@ -485,13 +484,13 @@ public class ClientProxy extends CommonProxy{
 			ImmersivePetroleum.log.debug("Creating entry for " + reservoir);
 			
 			String name = "desc.immersivepetroleum.info.reservoir." + reservoir.name;
-			String localizedName = I18n.format(name);
+			String localizedName = I18n.get(name);
 			if(localizedName.equalsIgnoreCase(name))
 				localizedName = reservoir.name;
 			
 			char c = localizedName.toLowerCase().charAt(0);
 			boolean isVowel = (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
-			String aOrAn = I18n.format(isVowel ? "ie.manual.entry.reservoirs.vowel" : "ie.manual.entry.reservoirs.consonant");
+			String aOrAn = I18n.get(isVowel ? "ie.manual.entry.reservoirs.vowel" : "ie.manual.entry.reservoirs.consonant");
 			
 			String dimBLWL = "";
 			if(reservoir.dimWhitelist != null && reservoir.dimWhitelist.size() > 0){
@@ -499,15 +498,15 @@ public class ClientProxy extends CommonProxy{
 				for(ResourceLocation rl:reservoir.dimWhitelist){
 					validDims += (!validDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
 				}
-				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.valid", localizedName, validDims, aOrAn);
+				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.valid", localizedName, validDims, aOrAn);
 			}else if(reservoir.dimBlacklist != null && reservoir.dimBlacklist.size() > 0){
 				String invalidDims = "";
 				for(ResourceLocation rl:reservoir.dimBlacklist){
 					invalidDims += (!invalidDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
 				}
-				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.invalid", localizedName, invalidDims, aOrAn);
+				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.invalid", localizedName, invalidDims, aOrAn);
 			}else{
-				dimBLWL = I18n.format("ie.manual.entry.reservoirs.dim.any", localizedName, aOrAn);
+				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.any", localizedName, aOrAn);
 			}
 			
 			String bioBLWL = "";
@@ -517,16 +516,16 @@ public class ClientProxy extends CommonProxy{
 					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
 					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
-				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.valid", validBiomes);
+				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.valid", validBiomes);
 			}else if(reservoir.bioBlacklist != null && reservoir.bioBlacklist.size() > 0){
 				String invalidBiomes = "";
 				for(ResourceLocation rl:reservoir.bioBlacklist){
 					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
 					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
 				}
-				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes);
+				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes);
 			}else{
-				bioBLWL = I18n.format("ie.manual.entry.reservoirs.bio.any");
+				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.any");
 			}
 			
 			String fluidName = "";
@@ -537,18 +536,18 @@ public class ClientProxy extends CommonProxy{
 			
 			String repRate = "";
 			if(reservoir.residual > 0){
-				repRate = I18n.format("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName);
+				repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName);
 			}
-			contentBuilder.append(I18n.format("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(reservoir.minSize), FORMATTER.format(reservoir.maxSize), repRate, bioBLWL));
+			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(reservoir.minSize), FORMATTER.format(reservoir.maxSize), repRate, bioBLWL));
 			
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");
 			
-			list.add(new ItemStack(fluid.getFilledBucket()));
+			list.add(new ItemStack(fluid.getBucket()));
 		}
 		
-		String translatedTitle = I18n.format("ie.manual.entry.reservoirs.title");
-		String tanslatedSubtext = I18n.format("ie.manual.entry.reservoirs.subtitle");
+		String translatedTitle = I18n.get("ie.manual.entry.reservoirs.title");
+		String tanslatedSubtext = I18n.get("ie.manual.entry.reservoirs.subtitle");
 		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
 		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent);
 	}

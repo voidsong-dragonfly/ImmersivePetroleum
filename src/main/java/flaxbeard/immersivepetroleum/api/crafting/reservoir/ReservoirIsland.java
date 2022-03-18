@@ -7,14 +7,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
@@ -170,7 +170,7 @@ public class ReservoirIsland{
 	 * @param z
 	 * @return How much was extracted
 	 */
-	public int extractWithPressure(World world, int x, int z){
+	public int extractWithPressure(Level world, int x, int z){
 		float pressure = getPressure(world, x, z);
 		
 		if(pressure > 0.0 && this.amount > 0){
@@ -189,10 +189,10 @@ public class ReservoirIsland{
 	 * @return mb
 	 */
 	public int getFlow(float pressure){
-		return MIN_MBPT + (int) Math.floor((MAX_MBPT - MIN_MBPT) * MathHelper.clamp(pressure, 0.0F, 1.0F));
+		return MIN_MBPT + (int) Math.floor((MAX_MBPT - MIN_MBPT) * Mth.clamp(pressure, 0.0F, 1.0F));
 	}
 	
-	public float getPressure(World world, int x, int z){
+	public float getPressure(Level world, int x, int z){
 		// prevents outside use
 		double noise = ReservoirHandler.noiseFor(world, x, z);
 		
@@ -204,7 +204,7 @@ public class ReservoirIsland{
 			if(debug){
 				float modifier = (this.amount - (this.capacity * 0.75F)) / ((float) this.capacity);
 				
-				modifier = MathHelper.clamp(modifier, 0.0F, 1.0F);
+				modifier = Mth.clamp(modifier, 0.0F, 1.0F);
 				
 				// Slightly modified version of what TeamSpen210 gave me, thank you!
 				float min = 1F;
@@ -226,20 +226,20 @@ public class ReservoirIsland{
 		return 0.0F;
 	}
 	
-	public CompoundNBT writeToNBT(){
-		CompoundNBT nbt = new CompoundNBT();
+	public CompoundTag writeToNBT(){
+		CompoundTag nbt = new CompoundTag();
 		nbt.putString("reservoir", this.reservoir.getId().toString());
 		nbt.putInt("amount", (int)(this.getAmount() & MAX_AMOUNT));
 		nbt.putInt("capacity", (int)(this.getCapacity() & MAX_AMOUNT));
 		nbt.put("bounds", this.getBoundingBox().writeToNBT());
 		
 		final IslandAxisAlignedBB bounds = this.getBoundingBox();
-		final ListNBT points = new ListNBT();
+		final ListTag points = new ListTag();
 		this.poly.forEach(pos -> {
 			byte x = (byte) ((pos.x - bounds.minX) & 0xFF);
 			byte z = (byte) ((pos.z - bounds.minZ) & 0xFF);
 			
-			CompoundNBT point = new CompoundNBT();
+			CompoundTag point = new CompoundTag();
 			point.putByte("x", x);
 			point.putByte("z", z);
 			points.add(point);
@@ -250,7 +250,7 @@ public class ReservoirIsland{
 		return nbt;
 	}
 	
-	public static ReservoirIsland readFromNBT(CompoundNBT nbt){
+	public static ReservoirIsland readFromNBT(CompoundTag nbt){
 		try{
 			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
@@ -259,9 +259,9 @@ public class ReservoirIsland{
 				IslandAxisAlignedBB bounds = IslandAxisAlignedBB.readFromNBT(nbt.getCompound("bounds"));
 				
 				final List<ColumnPos> points = new ArrayList<>();
-				final ListNBT list = nbt.getList("points", NBT.TAG_COMPOUND);
+				final ListTag list = nbt.getList("points", Tag.TAG_COMPOUND);
 				list.forEach(tag -> {
-					CompoundNBT point = (CompoundNBT) tag;
+					CompoundTag point = (CompoundTag) tag;
 					int x = bounds.minX + ((int) point.getByte("x") & 0xFF);
 					int z = bounds.minZ + ((int) point.getByte("z") & 0xFF);
 					points.add(new ColumnPos(x, z));

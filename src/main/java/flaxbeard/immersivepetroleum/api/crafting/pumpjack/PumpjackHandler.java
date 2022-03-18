@@ -6,9 +6,9 @@ import java.util.Map;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirWorldInfo;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 
 /**
  * @deprecated Will be nuked as part of a complete rewrite.
@@ -32,7 +32,7 @@ public class PumpjackHandler{
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return mB of fluid in the given reservoir
 	 */
-	public static int getFluidAmount(World world, int chunkX, int chunkZ){
+	public static int getFluidAmount(Level world, int chunkX, int chunkZ){
 		return 0;
 	}
 	
@@ -44,7 +44,7 @@ public class PumpjackHandler{
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return Fluid in given reservoir (or null if none)
 	 */
-	public static Fluid getFluid(World world, int chunkX, int chunkZ){
+	public static Fluid getFluid(Level world, int chunkX, int chunkZ){
 		return null;
 	}
 	
@@ -57,7 +57,7 @@ public class PumpjackHandler{
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return mB of fluid that can be extracted "residually"
 	 */
-	public static int getResidualFluid(World world, int chunkX, int chunkZ){
+	public static int getResidualFluid(Level world, int chunkX, int chunkZ){
 		return 0;
 	}
 	
@@ -69,7 +69,7 @@ public class PumpjackHandler{
 	 * @param chunkZ Z coordinate of desired chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
-	public static ReservoirWorldInfo getOrCreateOilWorldInfo(World world, int chunkX, int chunkZ){
+	public static ReservoirWorldInfo getOrCreateOilWorldInfo(Level world, int chunkX, int chunkZ){
 		return null;
 	}
 	
@@ -81,7 +81,7 @@ public class PumpjackHandler{
 	 * @param force Force creation on an empty chunk
 	 * @return The OilWorldInfo corresponding w/ given chunk
 	 */
-	public static ReservoirWorldInfo getOrCreateOilWorldInfo(World world, DimensionChunkCoords coords, boolean force){
+	public static ReservoirWorldInfo getOrCreateOilWorldInfo(Level world, DimensionChunkCoords coords, boolean force){
 		return null;
 	}
 	
@@ -93,7 +93,7 @@ public class PumpjackHandler{
 	 * @param chunkZ Chunk z
 	 * @param amount Amount of fluid in mB to drain
 	 */
-	public static void depleteFluid(World world, int chunkX, int chunkZ, int amount){
+	public static void depleteFluid(Level world, int chunkX, int chunkZ, int amount){
 	}
 	
 	/**

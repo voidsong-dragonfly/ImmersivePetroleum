@@ -3,17 +3,17 @@ package flaxbeard.immersivepetroleum.common.gui;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEntity>{
-	public DerrickContainer(int id, PlayerInventory playerInventory, DerrickTileEntity tile){
-		super(tile, id, DerrickMultiblock.INSTANCE);
+	public DerrickContainer(int id, net.minecraft.world.entity.player.Inventory playerInventory, DerrickTileEntity tile){
+		super(null, tile, id, DerrickMultiblock.INSTANCE);
+		// TODO MenuType
 		
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
-			public boolean isItemValid(ItemStack stack){
+			public boolean mayPlace(ItemStack stack){
 				return ExternalModContent.isIEPipeItem(stack);
 			}
 		});

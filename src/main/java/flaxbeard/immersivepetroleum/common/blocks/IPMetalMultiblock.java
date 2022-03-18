@@ -1,22 +1,16 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
-import java.util.Iterator;
-import java.util.function.Supplier;
-
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.BlockItemIE;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
+import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
+import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalMultiblockBlock;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPContent;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.loading.FMLLoader;
 
-public class IPMetalMultiblock<T extends MultiblockPartTileEntity<T>> extends MetalMultiblockBlock<T>{
-	public IPMetalMultiblock(String name, Supplier<TileEntityType<T>> te){
+public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T>> extends MetalMultiblockBlock<T>{
+	public IPMetalMultiblock(MultiblockBEType<T> te, Properties props){
+		super(te, props);
+	}
+	
+	/*
+	public IPMetalMultiblock(String name, Supplier<BlockEntityType<T>> te){
 		super(name, te);
 		
 		// Nessesary hacks
@@ -34,12 +28,8 @@ public class IPMetalMultiblock<T extends MultiblockPartTileEntity<T>> extends Me
 		
 		IPContent.registeredIPBlocks.add(this);
 		
-		BlockItem bItem = new BlockItemIE(this, new Item.Properties().group(ImmersivePetroleum.creativeTab));
+		BlockItem bItem = new BlockItemIE(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
 		IPContent.registeredIPItems.add(bItem.setRegistryName(getRegistryName()));
 	}
-	
-	@Override
-	public ResourceLocation createRegistryName(){
-		return new ResourceLocation(ImmersivePetroleum.MODID, name);
-	}
+	*/
 }

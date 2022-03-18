@@ -16,7 +16,8 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
+import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
@@ -27,27 +28,26 @@ import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.World;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -62,7 +62,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * @author TwistedGate
  */
-public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
+public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
 	public enum Inventory{
 		/** Item Pipe Input */
 		INPUT;
@@ -98,17 +98,12 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	@Nullable
 	public PipeConfig.Grid gridStorage;
 	
-	public DerrickTileEntity(){
-		super(DerrickMultiblock.INSTANCE, 16000, true, null);
+	public DerrickTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
+		super(DerrickMultiblock.INSTANCE, 16000, true, IPTileTypes.DERRICK.get(), pWorldPosition, pBlockState);
 	}
 	
 	@Override
-	public TileEntityType<?> getType(){
-		return IPTileTypes.DERRICK.get();
-	}
-	
-	@Override
-	public void readCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
 		
 		this.drilling = nbt.getBoolean("drilling");
@@ -133,7 +128,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	}
 	
 	@Override
-	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket){
+	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
 		
 		nbt.putBoolean("drilling", this.drilling);
@@ -142,7 +137,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		
 		nbt.putString("spillingfluid", this.fluidSpilled.getRegistryName().toString());
 		
-		nbt.put("tank", this.tank.writeToNBT(new CompoundNBT()));
+		nbt.put("tank", this.tank.writeToNBT(new CompoundTag()));
 		
 		if(this.gridStorage != null){
 			nbt.put("grid", this.gridStorage.toCompound());
@@ -153,9 +148,9 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 	}
 	
-	protected void readInventory(CompoundNBT nbt){
+	protected void readInventory(CompoundTag nbt){
 		NonNullList<ItemStack> list = NonNullList.create();
-		ItemStackHelper.loadAllItems(nbt, list);
+		ContainerHelper.loadAllItems(nbt, list);
 		
 		for(int i = 0;i < this.inventory.size();i++){
 			ItemStack stack = ItemStack.EMPTY;
@@ -167,8 +162,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 	}
 	
-	protected CompoundNBT writeInventory(NonNullList<ItemStack> list){
-		return ItemStackHelper.saveAllItems(new CompoundNBT(), list);
+	protected CompoundTag writeInventory(NonNullList<ItemStack> list){
+		return ContainerHelper.saveAllItems(new CompoundTag(), list);
 	}
 	
 	private boolean acceptsFluid(FluidStack fs){
@@ -176,7 +171,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(well == null)
 			return false;
 		
-		int realPipeLength = (getPos().getY() - 1) - well.getPos().getY();
+		int realPipeLength = (getBlockPos().getY() - 1) - well.getBlockPos().getY();
 		int concreteNeeded = (CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength));
 		
 		if(ExternalModContent.isIEConcrete(fs) && concreteNeeded > 0){
@@ -200,49 +195,47 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
 	static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
 	
-	@Override
 	public void tick(){
-		checkForNeedlessTicking();
 		if(isDummy()){
 			return;
 		}
 		
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			// Drilling Particles
 			if(this.drilling){
 				for(int i = 0;i < 10;i++){
-					float rx = (this.world.rand.nextFloat() - .5F) * 1.5F;
-					float rz = (this.world.rand.nextFloat() - .5F) * 1.5F;
+					float rx = (this.level.random.nextFloat() - .5F) * 1.5F;
+					float rz = (this.level.random.nextFloat() - .5F) * 1.5F;
 					
 					if(!(rx > -0.625 && rx < 0.625) || !(rz > -0.625 && rz < 0.625)){
-						float xa = (this.world.rand.nextFloat() - .5F) / 16;
-						float ya = 0.01F * this.world.rand.nextFloat();
-						float za = (this.world.rand.nextFloat() - .5F) / 16;
+						float xa = (this.level.random.nextFloat() - .5F) / 16;
+						float ya = 0.01F * this.level.random.nextFloat();
+						float za = (this.level.random.nextFloat() - .5F) / 16;
 						
-						double x = (this.pos.getX() + 0.5) + rx;
-						double y = (this.pos.getY() + 1.625) + this.world.rand.nextFloat();
-						double z = (this.pos.getZ() + 0.5) + rz;
+						double x = (this.worldPosition.getX() + 0.5) + rx;
+						double y = (this.worldPosition.getY() + 1.625) + this.level.random.nextFloat();
+						double z = (this.worldPosition.getZ() + 0.5) + rz;
 						
-						this.world.addParticle(this.world.rand.nextFloat() < 0.5F ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, x, y, z, xa, ya, za);
+						this.level.addParticle(this.level.random.nextFloat() < 0.5F ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, x, y, z, xa, ya, za);
 					}
 				}
 			}
 			
 			if(this.spilling){
-				spawnSpillParticles(world, this.pos, this.fluidSpilled, 5, 15.75F);
+				spawnSpillParticles(level, this.worldPosition, this.fluidSpilled, 5, 15.75F);
 			}
 			
 			return;
 		}
 		
-		if(this.world.isAreaLoaded(this.getPos(), 2)){
+		if(this.level.isAreaLoaded(this.getBlockPos(), 2)){
 			boolean forceUpdate = false;
 			boolean lastDrilling = this.drilling;
 			boolean lastSpilling = this.spilling;
 			this.drilling = this.spilling = false;
 			
 			// Check if lower than 64 and stop working, then also display a message as to why in GUI
-			if(this.pos.getY() < 64){
+			if(this.worldPosition.getY() < 64){
 				if(this.fluidSpilled == Fluids.EMPTY){
 					this.fluidSpilled = Fluids.WATER;
 				}
@@ -264,11 +257,11 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 											setInventory(Inventory.INPUT, ItemStack.EMPTY);
 										}
 										
-										well.markDirty();
+										well.setChanged();
 									}
 								}else if(well.pipes > 0){
-									final BlockPos dPos = getPos();
-									final BlockPos wPos = well.getPos();
+									final BlockPos dPos = getBlockPos();
+									final BlockPos wPos = well.getBlockPos();
 									int realPipeLength = ((dPos.getY() - 1) - wPos.getY());
 									
 									if(well.phyiscalPipesList.size() < realPipeLength && well.wellPipeLength < realPipeLength){
@@ -278,7 +271,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 											if(advanceTimer()){
 												//restorePhysicalPipeProgress(dPos, realPipeLength);
 												
-												World world = getWorldNonnull();
+												Level world = getLevelNonnull();
 												int y = dPos.getY() - 1;
 												for(;y > wPos.getY();y--){
 													BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
@@ -286,9 +279,9 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 													
 													if(state.getBlock() == Blocks.BEDROCK || state.getBlock() == IPContent.Blocks.well){
 														break;
-													}else if(!(state.getBlock() == IPContent.Blocks.wellPipe && !state.get(WellPipeBlock.BROKEN))){
+													}else if(!(state.getBlock() == IPContent.Blocks.wellPipe && !state.getValue(WellPipeBlock.BROKEN))){
 														world.destroyBlock(current, false);
-														world.setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+														world.setBlockAndUpdate(current, IPContent.Blocks.wellPipe.defaultBlockState());
 														
 														well.phyiscalPipesList.add(Integer.valueOf(y));
 														
@@ -301,7 +294,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 												
 												if(well.phyiscalPipesList.size() >= realPipeLength && well.wellPipeLength >= realPipeLength){
 													well.pastPhyiscalPart = true;
-													well.markDirty();
+													well.setChanged();
 												}
 											}
 											
@@ -354,10 +347,10 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		int min = Math.min(this.wellCache.wellPipeLength, realPipeLength);
 		for(int i = 1;i < min;i++){
 			BlockPos current = new BlockPos(dPos.getX(), dPos.getY() - i, dPos.getZ());
-			BlockState state = getWorldNonnull().getBlockState(current);
+			BlockState state = getLevelNonnull().getBlockState(current);
 			if(state.getBlock() != IPContent.Blocks.wellPipe){
-				getWorldNonnull().destroyBlock(current, false);
-				getWorldNonnull().setBlockState(current, IPContent.Blocks.wellPipe.getDefaultState());
+				getLevelNonnull().destroyBlock(current, false);
+				getLevelNonnull().setBlockAndUpdate(current, IPContent.Blocks.wellPipe.defaultBlockState());
 			}
 		}
 	}
@@ -371,7 +364,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		Fluid extractedFluid = Fluids.EMPTY;
 		int extractedAmount = 0;
 		for(ColumnPos cPos:well.tappedIslands){
-			ReservoirIsland island = ReservoirHandler.getIsland(this.world, cPos);
+			ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 			if(island != null){
 				if(extractedFluid == Fluids.EMPTY){
 					extractedFluid = island.getType().getFluid();
@@ -379,14 +372,14 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 					continue;
 				}
 				
-				extractedAmount += island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
+				extractedAmount += island.extractWithPressure(getLevelNonnull(), cPos.x, cPos.z);
 			}
 		}
 		
 		if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
-			Direction facing = getIsMirrored() ? getFacing().rotateYCCW() : getFacing().rotateY();
-			BlockPos outputPos = getBlockPosForPos(Fluid_OUT).offset(facing, 2);
-			IFluidHandler output = FluidUtil.getFluidHandler(this.world, outputPos, facing.getOpposite()).orElse(null);
+			Direction facing = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
+			BlockPos outputPos = getBlockPosForPos(Fluid_OUT).relative(facing, 2);
+			IFluidHandler output = FluidUtil.getFluidHandler(this.level, outputPos, facing.getOpposite()).orElse(null);
 			if(output != null){
 				FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
 				
@@ -420,20 +413,20 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		}
 		
 		if(this.wellCache == null){
-			World world = this.getWorldNonnull();
+			Level world = this.getLevelNonnull();
 			WellTileEntity well = null;
 			
 			// TODO !Replace "y >= 0" in 1.18 with something that can go negative
-			for(int y = getPos().getY() - 1;y >= 0;y--){
-				BlockPos current = new BlockPos(this.getPos().getX(), y, this.getPos().getZ());
+			for(int y = getBlockPos().getY() - 1;y >= 0;y--){
+				BlockPos current = new BlockPos(this.getBlockPos().getX(), y, this.getBlockPos().getZ());
 				BlockState state = world.getBlockState(current);
 				
 				if(state.getBlock() == IPContent.Blocks.well){
-					well = (WellTileEntity) world.getTileEntity(current);
+					well = (WellTileEntity) world.getBlockEntity(current);
 					break;
 				}else if(state.getBlock() == Blocks.BEDROCK){
-					world.setBlockState(current, IPContent.Blocks.well.getDefaultState());
-					well = (WellTileEntity) world.getTileEntity(current);
+					world.setBlockAndUpdate(current, IPContent.Blocks.well.defaultBlockState());
+					well = (WellTileEntity) world.getBlockEntity(current);
 					break;
 				}
 			}
@@ -443,8 +436,8 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 					if(this.gridStorage != null){
 						transferGridDataToWell(well);
 					}else{
-						well.tappedIslands.add(new ColumnPos(this.pos.getX(), this.pos.getZ()));
-						well.markDirty();
+						well.tappedIslands.add(new ColumnPos(this.worldPosition.getX(), this.worldPosition.getZ()));
+						well.setChanged();
 					}
 				}
 			}
@@ -471,7 +464,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 							case PipeConfig.PIPE_PERFORATED_FIXED:{
 								int x = i - (grid.getWidth() / 2);
 								int z = j - (grid.getHeight() / 2);
-								ColumnPos pos = new ColumnPos(this.pos.getX() + x, this.pos.getZ() + z);
+								ColumnPos pos = new ColumnPos(this.worldPosition.getX() + x, this.worldPosition.getZ() + z);
 								list.add(pos);
 							}
 							case PipeConfig.PIPE_NORMAL:{
@@ -484,23 +477,23 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			
 			well.tappedIslands = list;
 			well.additionalPipes = additionalPipes;
-			well.markDirty();
+			well.setChanged();
 		}
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public static void spawnSpillParticles(World world, BlockPos pos, Fluid fluid, int particles, float yOffset){
+	public static void spawnSpillParticles(Level world, BlockPos pos, Fluid fluid, int particles, float yOffset){
 		if(fluid == null || fluid == Fluids.EMPTY){
 			return;
 		}
 		
 		for(int i = 0;i < particles;i++){
-			float xa = (world.rand.nextFloat() - .5F) / 2F;
-			float ya = 0.75F + (world.rand.nextFloat() * 0.25F);
-			float za = (world.rand.nextFloat() - .5F) / 2F;
+			float xa = (world.random.nextFloat() - .5F) / 2F;
+			float ya = 0.75F + (world.random.nextFloat() * 0.25F);
+			float za = (world.random.nextFloat() - .5F) / 2F;
 			
-			float rx = (world.rand.nextFloat() - .5F) * 0.5F;
-			float rz = (world.rand.nextFloat() - .5F) * 0.5F;
+			float rx = (world.random.nextFloat() - .5F) * 0.5F;
+			float rz = (world.random.nextFloat() - .5F) * 0.5F;
 			
 			double x = (pos.getX() + 0.5) + rx;
 			double y = (pos.getY() + yOffset);
@@ -512,16 +505,16 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	
 	@Override
 	public void disassemble(){
-		if(this.formed && !this.world.isRemote){
+		if(this.formed && !this.level.isClientSide){
 			// Do this even if this is the master itself
 			DerrickTileEntity master = master();
 			
-			World world = master.getWorldNonnull();
-			BlockPos dPos = master.getPos();
+			Level world = master.getLevelNonnull();
+			BlockPos dPos = master.getBlockPos();
 			// TODO !Replace "y >= 0" in 1.18 with something that can go negative
-			for(int y = getPos().getY() - 1;y >= 0;y--){
+			for(int y = getBlockPos().getY() - 1;y >= 0;y--){
 				BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
-				TileEntity teLow = world.getTileEntity(current);
+				BlockEntity teLow = world.getBlockEntity(current);
 				
 				if(teLow instanceof WellTileEntity){
 					WellTileEntity well = (WellTileEntity) teLow;
@@ -530,7 +523,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 						if(well.wellPipeLength > 0){
 							well.startSelfDestructSequence();
 						}else{
-							world.setBlockState(current, Blocks.BEDROCK.getDefaultState());
+							world.setBlockAndUpdate(current, Blocks.BEDROCK.defaultBlockState());
 						}
 						break;
 					}
@@ -556,7 +549,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	}
 	
 	@Override
-	public boolean canUseGui(PlayerEntity player){
+	public boolean canUseGui(Player player){
 		return this.formed;
 	}
 	
@@ -671,7 +664,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			}
 			
 			if(this.posInMultiblock.equals(Fluid_OUT)){
-				if(side == null || (getIsMirrored() ? side == getFacing().rotateYCCW() : side == getFacing().rotateY())){
+				if(side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
 					return new IFluidTank[]{DUMMY_TANK};
 				}
 			}
@@ -721,7 +714,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DerrickTileEntity::getShape);
 	public static boolean updateShapes = false;
 	@Override
-	public VoxelShape getBlockBounds(ISelectionContext ctx){
+	public VoxelShape getBlockBounds(CollisionContext ctx){
 		if(updateShapes){
 			updateShapes = false;
 			SHAPES = CachedShapesWithTransform.createForMultiblock(DerrickTileEntity::getShape);
@@ -729,12 +722,12 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	
-	private static List<AxisAlignedBB> getShape(BlockPos posInMultiblock){
+	private static List<AABB> getShape(BlockPos posInMultiblock){
 		int x = posInMultiblock.getX();
 		int y = posInMultiblock.getY();
 		int z = posInMultiblock.getZ();
 		
-		List<AxisAlignedBB> main = new ArrayList<>();
+		List<AABB> main = new ArrayList<>();
 		
 		// Base
 		if(y == 0){
@@ -773,7 +766,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		if(x == 2 && z == 2 && y >= 0 && y <= 13){
 			if(y == 0){
 				main.add(box(-4, 8, -4, 20, 16, 20));
-				main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+				main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 			}else if(y > 1){
 				// Pipe
 				main.add(box(4, 0, 4, 12, 16, 12));
@@ -781,7 +774,7 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 			
 			if(y == 1){
 				main.add(box(-4, 0, -4, 20, 8, 20));
-				main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+				main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 			}
 			if(y == 2){
 				main.add(box(0, 0, 0, 16, 8, 16));
@@ -1000,13 +993,13 @@ public class DerrickTileEntity extends PoweredMultiblockTileEntity<DerrickTileEn
 		
 		// Use default cube shape if nessesary
 		if(main.isEmpty()){
-			main.add(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+			main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		}
 		return main;
 	}
 	
 	/** Makes a box using texture pixel space (Assuming 16x16 p texture) */
-	private static AxisAlignedBB box(double x0, double y0, double z0, double x1, double y1, double z1){
-		return new AxisAlignedBB(x0 / 16D, y0 / 16D, z0 / 16D, x1 / 16D, y1 / 16D, z1 / 16D);
+	private static AABB box(double x0, double y0, double z0, double x1, double y1, double z1){
+		return new AABB(x0 / 16D, y0 / 16D, z0 / 16D, x1 / 16D, y1 / 16D, z1 / 16D);
 	}
 }

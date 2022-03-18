@@ -9,11 +9,11 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang3.tuple.Pair;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.material.Fluid;
 
 public class LubricantHandler{
-	static final Set<Pair<ITag<Fluid>, Integer>> lubricants = new HashSet<>();
+	static final Set<Pair<Tag<Fluid>, Integer>> lubricants = new HashSet<>();
 	
 	/**
 	 * Registers a lubricant to be used in the Lubricant Can and Automatic
@@ -34,7 +34,7 @@ public class LubricantHandler{
 	 * @param fluid The fluid to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
-	public static void register(@Nonnull ITag<Fluid> fluid, int amount){
+	public static void register(@Nonnull Tag<Fluid> fluid, int amount){
 		if(fluid != null && !lubricants.stream().anyMatch(pair -> pair.getLeft() == fluid)){
 			lubricants.add(Pair.of(fluid, amount));
 		}
@@ -50,7 +50,7 @@ public class LubricantHandler{
 	 */
 	public static int getLubeAmount(@Nonnull Fluid toCheck){
 		if(toCheck != null){
-			for(Map.Entry<ITag<Fluid>, Integer> entry:lubricants){
+			for(Map.Entry<Tag<Fluid>, Integer> entry:lubricants){
 				if(entry.getKey().contains(toCheck)){
 					return entry.getValue();
 				}

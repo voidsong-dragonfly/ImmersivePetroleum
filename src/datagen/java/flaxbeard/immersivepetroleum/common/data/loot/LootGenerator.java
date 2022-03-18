@@ -11,15 +11,15 @@ import com.google.gson.GsonBuilder;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
 import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
-import net.minecraft.loot.ValidationTracker;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.resources.ResourceLocation;
 
-public abstract class LootGenerator implements IDataProvider{
+public abstract class LootGenerator implements DataProvider{
 	private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 	
 	private final DataGenerator gen;
@@ -30,13 +30,13 @@ public abstract class LootGenerator implements IDataProvider{
 	}
 	
 	@Override
-	public void act(DirectoryCache cache) throws IOException{
+	public void act(HashCache cache) throws IOException{
 		this.tables.clear();
 		Path outFolder = this.gen.getOutputFolder();
 		
 		registerTables();
 		
-		ValidationTracker validator = new ValidationTracker(LootParameterSets.GENERIC, (rl) -> null, this.tables::get);
+		ValidationContext validator = new ValidationContext(LootParameterSets.GENERIC, (rl) -> null, this.tables::get);
 		this.tables.forEach((name, table) -> {
 			LootTableManager.validateLootTable(validator, name, table);
 		});

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ConfigUtils{

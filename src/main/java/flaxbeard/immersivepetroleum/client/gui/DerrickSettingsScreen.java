@@ -7,17 +7,17 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.network.MessageDerrick;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.GuiUtils;
 
 public class DerrickSettingsScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation(MODID, "textures/gui/derrick_settings.png");
@@ -30,14 +30,14 @@ public class DerrickSettingsScreen extends Screen{
 	
 	final DerrickScreen derrickScreen;
 	public DerrickSettingsScreen(DerrickScreen derrickScreen){
-		super(new StringTextComponent("DerrickSettings"));
+		super(new TextComponent("DerrickSettings"));
 		this.derrickScreen = derrickScreen;
 	}
 	
 	@Override
 	protected void init(){
-		this.width = this.minecraft.getMainWindow().getScaledWidth();
-		this.height = this.minecraft.getMainWindow().getScaledHeight();
+		this.width = this.minecraft.getWindow().getGuiScaledWidth();
+		this.height = this.minecraft.getWindow().getGuiScaledHeight();
 		
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
@@ -45,27 +45,27 @@ public class DerrickSettingsScreen extends Screen{
 		this.pipeConfig = new PipeConfig(this.derrickScreen.tile, this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
 		addButton(this.pipeConfig);
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new StringTextComponent("Set"), b -> {
-			MessageDerrick.sendToServer(this.derrickScreen.tile.getPos(), this.pipeConfig.getGrid());
+		addButton(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Set"), b -> {
+			MessageDerrick.sendToServer(this.derrickScreen.tile.getBlockPos(), this.pipeConfig.getGrid());
 		}, (button, matrix, mx, my) -> {
-			List<ITextComponent> list = new ArrayList<>();
-			list.add(new StringTextComponent("Applies the Path to Derrick"));
+			List<Component> list = new ArrayList<>();
+			list.add(new TextComponent("Applies the Path to Derrick"));
 			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
 		}));
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new StringTextComponent("Reload"), b -> {
+		addButton(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Reload"), b -> {
 			this.pipeConfig.reset(this.derrickScreen.tile);
 		}, (button, matrix, mx, my) -> {
-			List<ITextComponent> list = new ArrayList<>();
-			list.add(new StringTextComponent("Loads the already saved config again."));
+			List<Component> list = new ArrayList<>();
+			list.add(new TextComponent("Loads the already saved config again."));
 			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
 		}));
 		
-		addButton(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new StringTextComponent("Close"), b -> {
-			DerrickSettingsScreen.this.closeScreen();
+		addButton(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Close"), b -> {
+			DerrickSettingsScreen.this.onClose();
 		}, (button, matrix, mx, my) -> {
-			List<ITextComponent> list = new ArrayList<>();
-			list.add(new StringTextComponent("Return to Derrick"));
+			List<Component> list = new ArrayList<>();
+			list.add(new TextComponent("Return to Derrick"));
 			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
 		}));
 	}
@@ -76,8 +76,8 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
-	public void render(MatrixStack matrix, int mx, int my, float partialTicks){
-		List<ITextComponent> tooltip = new ArrayList<>();
+	public void render(PoseStack matrix, int mx, int my, float partialTicks){
+		List<Component> tooltip = new ArrayList<>();
 		
 		background(matrix, mx, my, partialTicks);
 		super.render(matrix, mx, my, partialTicks);
@@ -88,8 +88,8 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
-	public void closeScreen(){
-		this.minecraft.displayGuiScreen(this.derrickScreen);
+	public void onClose(){
+		this.minecraft.setScreen(this.derrickScreen);
 		this.pipeConfig.dispose();
 	}
 	
@@ -101,9 +101,9 @@ public class DerrickSettingsScreen extends Screen{
 		oldGrid.dispose();
 	}
 	
-	private void background(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	private void background(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
+		this.minecraft.getTextureManager().bind(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 }

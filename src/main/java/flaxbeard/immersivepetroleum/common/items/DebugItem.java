@@ -5,7 +5,6 @@ import java.util.Locale;
 
 import org.lwjgl.glfw.GLFW;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
@@ -19,26 +18,27 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -66,68 +66,68 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	public DebugItem(){
-		super("debug");
+		super();
 	}
 	
 	@Override
-	public ITextComponent getDisplayName(ItemStack stack){
-		return new StringTextComponent("IP Debugging Tool").mergeStyle(TextFormatting.LIGHT_PURPLE);
+	public Component getName(ItemStack stack){
+		return new TextComponent("IP Debugging Tool").withStyle(ChatFormatting.LIGHT_PURPLE);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new StringTextComponent("[Shift + Scroll-UP/DOWN] Change mode.").mergeStyle(TextFormatting.GRAY));
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+		tooltip.add(new TextComponent("[Shift + Scroll-UP/DOWN] Change mode.").withStyle(ChatFormatting.GRAY));
 		Modes mode = getMode(stack);
 		if(mode == Modes.DISABLED){
-			tooltip.add(new StringTextComponent("  Disabled.").mergeStyle(TextFormatting.DARK_GRAY));
+			tooltip.add(new TextComponent("  Disabled.").withStyle(ChatFormatting.DARK_GRAY));
 		}else{
-			tooltip.add(new StringTextComponent("  " + mode.display).mergeStyle(TextFormatting.DARK_GRAY));
+			tooltip.add(new TextComponent("  " + mode.display).withStyle(ChatFormatting.DARK_GRAY));
 		}
 		
-		tooltip.add(new StringTextComponent("You're not supposed to have this.").mergeStyle(TextFormatting.DARK_RED));
-		super.addInformation(stack, worldIn, tooltip, flagIn);
+		tooltip.add(new TextComponent("You're not supposed to have this.").withStyle(ChatFormatting.DARK_RED));
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 	
 	@Override
-	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items){
+	public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items){
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
-		if(!worldIn.isRemote){
-			Modes mode = DebugItem.getMode(playerIn.getHeldItem(handIn));
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
+		if(!worldIn.isClientSide){
+			Modes mode = DebugItem.getMode(playerIn.getItemInHand(handIn));
 			
 			switch(mode){
 				case GENERAL_TEST:{
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				case REFRESH_ALL_IPMODELS:{
 					IPModels.getModels().forEach(m -> m.init());
 					
-					playerIn.sendStatusMessage(new StringTextComponent("Models refreshed."), true);
+					playerIn.displayClientMessage(new TextComponent("Models refreshed."), true);
 					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				case SEEDBASED_RESERVOIR:{
-					BlockPos playerPos = playerIn.getPosition();
+					BlockPos playerPos = playerIn.blockPosition();
 					
 					ChunkPos cPos = new ChunkPos(playerPos);
-					int chunkX = cPos.getXStart();
-					int chunkZ = cPos.getZStart();
+					int chunkX = cPos.getMinBlockX();
+					int chunkZ = cPos.getMinBlockZ();
 					
 					// Does the whole 0-15 local chunk block thing
-					int x = playerPos.getX() - cPos.getXStart();
-					int z = playerPos.getZ() - cPos.getZStart();
+					int x = playerPos.getX() - cPos.getMinBlockX();
+					int z = playerPos.getZ() - cPos.getMinBlockZ();
 					
 					double noise = ReservoirHandler.noiseFor(worldIn, (chunkX + x), (chunkZ + z));
 					
-					playerIn.sendStatusMessage(new StringTextComponent((chunkX + " " + chunkZ) + ": " + noise), true);
+					playerIn.displayClientMessage(new TextComponent((chunkX + " " + chunkZ) + ": " + noise), true);
 					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				case SEEDBASED_RESERVOIR_AREA_TEST:{
-					BlockPos playerPos = playerIn.getPosition();
+					BlockPos playerPos = playerIn.blockPosition();
 					
 					ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
 					if(island != null){
@@ -136,11 +136,11 @@ public class DebugItem extends IPItemBase{
 						
 						float pressure = island.getPressure(worldIn, x, z);
 						
-						if(playerIn.isSneaking()){
+						if(playerIn.isShiftKeyDown()){
 							island.setAmount(island.getCapacity());
 							IPSaveData.markInstanceAsDirty();
-							playerIn.sendStatusMessage(new StringTextComponent("Island Refilled."), true);
-							return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+							playerIn.displayClientMessage(new TextComponent("Island Refilled."), true);
+							return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 						}
 						
 						String out = String.format(Locale.ENGLISH,
@@ -152,7 +152,7 @@ public class DebugItem extends IPItemBase{
 								island.getFlow(pressure),
 								new FluidStack(island.getType().getFluid(),1).getDisplayName().getString());
 						
-						playerIn.sendStatusMessage(new StringTextComponent(out), true);
+						playerIn.displayClientMessage(new TextComponent(out), true);
 					}
 					
 //					if(worldIn instanceof ServerWorld){
@@ -210,32 +210,32 @@ public class DebugItem extends IPItemBase{
 //						ImmersivePetroleum.log.info("Nothing here.");
 //					}
 					
-					return new ActionResult<ItemStack>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				default:
 					break;
 			}
-			return new ActionResult<ItemStack>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
+			return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
 		}
 		
-		return super.onItemRightClick(worldIn, playerIn, handIn);
+		return super.use(worldIn, playerIn, handIn);
 	}
 	
 	@Override
-	public ActionResultType onItemUse(ItemUseContext context){
-		PlayerEntity player = context.getPlayer();
+	public InteractionResult useOn(UseOnContext context){
+		Player player = context.getPlayer();
 		if(player == null){
-			return ActionResultType.PASS;
+			return InteractionResult.PASS;
 		}
 		
-		ItemStack held = player.getHeldItem(context.getHand());
+		ItemStack held = player.getItemInHand(context.getHand());
 		Modes mode = DebugItem.getMode(held);
 		
-		TileEntity te = context.getWorld().getTileEntity(context.getPos());
+		BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
 		switch(mode){
 			case GENERAL_TEST:{
-				World world = context.getWorld();
-				if(world.isRemote){
+				Level world = context.getLevel();
+				if(world.isClientSide){
 					// Client
 				}else{
 					// Server
@@ -244,82 +244,82 @@ public class DebugItem extends IPItemBase{
 						WellTileEntity well = (WellTileEntity) te;
 						
 						if(well.tappedIslands.isEmpty()){
-							well.tappedIslands.add(new ColumnPos(well.getPos()));
+							well.tappedIslands.add(new ColumnPos(well.getBlockPos()));
 						}
 						
 					}
 					
 				}
 				
-				return ActionResultType.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 			case UPDATE_SHAPES:{
 				if(te instanceof CokerUnitTileEntity){
 					CokerUnitTileEntity.updateShapes = true;
-					return ActionResultType.SUCCESS;
+					return InteractionResult.SUCCESS;
 				}
 				
 				if(te instanceof DerrickTileEntity){
 					DerrickTileEntity.updateShapes = true;
-					return ActionResultType.SUCCESS;
+					return InteractionResult.SUCCESS;
 				}
 				
 				if(te instanceof OilTankTileEntity){
 					OilTankTileEntity.updateShapes = true;
-					return ActionResultType.SUCCESS;
+					return InteractionResult.SUCCESS;
 				}
 				
-				return ActionResultType.PASS;
+				return InteractionResult.PASS;
 			}
 			default:
 				break;
 		}
 		
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 	
-	public void onSpeedboatClick(MotorboatEntity speedboatEntity, PlayerEntity player, ItemStack debugStack){
-		if(speedboatEntity.world.isRemote || DebugItem.getMode(debugStack) != Modes.INFO_SPEEDBOAT){
+	public void onSpeedboatClick(MotorboatEntity speedboatEntity, Player player, ItemStack debugStack){
+		if(speedboatEntity.level.isClientSide || DebugItem.getMode(debugStack) != Modes.INFO_SPEEDBOAT){
 			return;
 		}
 		
-		IFormattableTextComponent textOut = new StringTextComponent("-- Speedboat --\n");
+		MutableComponent textOut = new TextComponent("-- Speedboat --\n");
 		
 		FluidStack fluid = speedboatEntity.getContainedFluid();
 		if(fluid == FluidStack.EMPTY){
-			textOut.appendString("Tank: Empty");
+			textOut.append("Tank: Empty");
 		}else{
-			textOut.appendString("Tank: " + fluid.getAmount() + "/" + speedboatEntity.getMaxFuel() + "mB of ").appendSibling(fluid.getDisplayName());
+			textOut.append("Tank: " + fluid.getAmount() + "/" + speedboatEntity.getMaxFuel() + "mB of ").append(fluid.getDisplayName());
 		}
 		
-		IFormattableTextComponent upgradesText = new StringTextComponent("\n");
+		MutableComponent upgradesText = new TextComponent("\n");
 		NonNullList<ItemStack> upgrades = speedboatEntity.getUpgrades();
 		int i = 0;
 		for(ItemStack upgrade:upgrades){
 			if(upgrade == null || upgrade == ItemStack.EMPTY){
-				upgradesText.appendString("Upgrade " + (++i) + ": Empty\n");
+				upgradesText.append("Upgrade " + (++i) + ": Empty\n");
 			}else{
-				upgradesText.appendString("Upgrade " + (i++) + ": ").appendSibling(upgrade.getDisplayName()).appendString("\n");
+				upgradesText.append("Upgrade " + (i++) + ": ").append(upgrade.getHoverName()).append("\n");
 			}
 		}
-		textOut.appendSibling(upgradesText);
+		textOut.append(upgradesText);
 		
-		player.sendMessage(textOut, Util.DUMMY_UUID);
+		player.sendMessage(textOut, Util.NIL_UUID);
 	}
 	
 	public static void setModeServer(ItemStack stack, Modes mode){
-		CompoundNBT nbt = getSettings(stack);
+		CompoundTag nbt = getSettings(stack);
 		nbt.putInt("mode", mode.ordinal());
 	}
 	
 	public static void setModeClient(ItemStack stack, Modes mode){
-		CompoundNBT nbt = getSettings(stack);
+		CompoundTag nbt = getSettings(stack);
 		nbt.putInt("mode", mode.ordinal());
 		IPPacketHandler.sendToServer(new MessageDebugSync(nbt));
 	}
 	
 	public static Modes getMode(ItemStack stack){
-		CompoundNBT nbt = getSettings(stack);
+		CompoundTag nbt = getSettings(stack);
 		if(nbt.contains("mode")){
 			int mode = nbt.getInt("mode");
 			
@@ -331,8 +331,8 @@ public class DebugItem extends IPItemBase{
 		return Modes.DISABLED;
 	}
 	
-	public static CompoundNBT getSettings(ItemStack stack){
-		return stack.getOrCreateChildTag("settings");
+	public static CompoundTag getSettings(ItemStack stack){
+		return stack.getOrCreateTagElement("settings");
 	}
 	
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
@@ -344,9 +344,9 @@ public class DebugItem extends IPItemBase{
 			double delta = event.getScrollDelta();
 			
 			if(shiftHeld && delta != 0.0){
-				PlayerEntity player = ClientUtils.mc().player;
-				ItemStack mainItem = player.getHeldItemMainhand();
-				ItemStack secondItem = player.getHeldItemOffhand();
+				Player player = MCUtil.getPlayer();
+				ItemStack mainItem = player.getMainHandItem();
+				ItemStack secondItem = player.getOffhandItem();
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.debugItem;
 				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.debugItem;
 				
@@ -364,7 +364,7 @@ public class DebugItem extends IPItemBase{
 					mode = Modes.values()[id];
 					
 					DebugItem.setModeClient(target, mode);
-					player.sendStatusMessage(new StringTextComponent(mode.display), true);
+					player.displayClientMessage(new TextComponent(mode.display), true);
 					event.setCanceled(true);
 				}
 			}

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
@@ -27,32 +29,30 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.Port;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
-import net.minecraft.block.Block;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,9 +64,9 @@ public class DebugRenderHandler{
 	public DebugRenderHandler(){
 	}
 	
-	private boolean isHoldingDebugItem(PlayerEntity player){
-		ItemStack main = player.getHeldItem(Hand.MAIN_HAND);
-		ItemStack off = player.getHeldItem(Hand.OFF_HAND);
+	private boolean isHoldingDebugItem(Player player){
+		ItemStack main = player.getItemInHand(InteractionHand.MAIN_HAND);
+		ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
 		
 		return (main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem);
 	}
@@ -76,18 +76,18 @@ public class DebugRenderHandler{
 		Minecraft mc = Minecraft.getInstance();
 		
 		if(mc.player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
-			PlayerEntity player = mc.player;
+			Player player = mc.player;
 			
 			if(isHoldingDebugItem(player)){
-				RayTraceResult rt = mc.objectMouseOver;
+				HitResult rt = mc.hitResult;
 				if(rt != null){
 					switch(rt.getType()){
 						case BLOCK:{
-							BlockRayTraceResult result = (BlockRayTraceResult) rt;
-							World world = player.world;
+							BlockHitResult result = (BlockHitResult) rt;
+							Level world = player.level;
 							
-							List<ITextComponent> debugOut = new ArrayList<>();
-							TileEntity te = world.getTileEntity(result.getPos());
+							List<Component> debugOut = new ArrayList<>();
+							BlockEntity te = world.getBlockEntity(result.getBlockPos());
 							boolean isMBPart = te instanceof MultiblockPartTileEntity;
 							if(isMBPart){
 								MultiblockPartTileEntity<?> multiblock = (MultiblockPartTileEntity<?>) te;
@@ -130,16 +130,16 @@ public class DebugRenderHandler{
 										generic = generic.master();
 									}
 									
-									BlockPos hit = result.getPos();
+									BlockPos hit = result.getBlockPos();
 									Block block = generic.getBlockState().getBlock();
 									
 									debugOut.add(0, toText("World XYZ: " + hit.getX() + ", " + hit.getY() + ", " + hit.getZ()));
 									debugOut.add(1, toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
 									
-									IFormattableTextComponent name = toTranslation(block.getTranslationKey()).mergeStyle(TextFormatting.GOLD);
+									MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
 									
 									try{
-										name.appendSibling(toText(generic.isRSDisabled() ? " (Redstoned)" : "").mergeStyle(TextFormatting.RED));
+										name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
 									}catch(UnsupportedOperationException e){
 										// Don't care, skip if this is thrown
 									}
@@ -147,15 +147,15 @@ public class DebugRenderHandler{
 									if(generic instanceof PoweredMultiblockTileEntity<?, ?>){
 										PoweredMultiblockTileEntity<?, ?> poweredGeneric = (PoweredMultiblockTileEntity<?, ?>) generic;
 										
-										name.appendSibling(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").mergeStyle(TextFormatting.GREEN));
+										name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
 										
 										debugOut.add(2, toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
 									}
 									
 									synchronized(LubricatedHandler.lubricatedTiles){
 										for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
-											if(info.pos.equals(generic.getPos())){
-												name.appendSibling(toText(" (Lubricated " + info.ticks + ")").mergeStyle(TextFormatting.YELLOW));
+											if(info.pos.equals(generic.getBlockPos())){
+												name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
 											}
 										}
 									}
@@ -168,20 +168,20 @@ public class DebugRenderHandler{
 							break;
 						}
 						case ENTITY:{
-							EntityRayTraceResult result = (EntityRayTraceResult) rt;
+							EntityHitResult result = (EntityHitResult) rt;
 							
 							if(result.getEntity() instanceof MotorboatEntity){
 								MotorboatEntity boat = (MotorboatEntity) result.getEntity();
 								
-								List<ITextComponent> debugOut = new ArrayList<>();
+								List<Component> debugOut = new ArrayList<>();
 								
-								debugOut.add(toText("").appendSibling(boat.getDisplayName()).mergeStyle(TextFormatting.GOLD));
+								debugOut.add(toText("").append(boat.getDisplayName()).withStyle(ChatFormatting.GOLD));
 								
 								FluidStack fluid = boat.getContainedFluid();
 								if(fluid == FluidStack.EMPTY){
 									debugOut.add(toText("Tank: Empty"));
 								}else{
-									debugOut.add(toText("Tank: " + fluid.getAmount() + "/" + boat.getMaxFuel() + "mB of ").appendSibling(fluid.getDisplayName()));
+									debugOut.add(toText("Tank: " + fluid.getAmount() + "/" + boat.getMaxFuel() + "mB of ").append(fluid.getDisplayName()));
 								}
 								
 								NonNullList<ItemStack> upgrades = boat.getUpgrades();
@@ -190,7 +190,7 @@ public class DebugRenderHandler{
 									if(upgrade == null || upgrade == ItemStack.EMPTY){
 										debugOut.add(toText("Upgrade " + (++i) + ": Empty"));
 									}else{
-										debugOut.add(toText("Upgrade " + (++i) + ": ").appendSibling(upgrade.getDisplayName()));
+										debugOut.add(toText("Upgrade " + (++i) + ": ").append(upgrade.getHoverName()));
 									}
 								}
 								
@@ -212,10 +212,10 @@ public class DebugRenderHandler{
 			return;
 		}
 		
-		PlayerEntity player = ClientUtils.mc().player;
+		Player player = ClientUtils.mc().player;
 		
-		ItemStack main = player.getHeldItem(Hand.MAIN_HAND);
-		ItemStack off = player.getHeldItem(Hand.OFF_HAND);
+		ItemStack main = player.getItemInHand(InteractionHand.MAIN_HAND);
+		ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
 		
 		if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
 			DebugItem.Modes mode = null;
@@ -227,33 +227,33 @@ public class DebugRenderHandler{
 			}
 			
 			if(mode == DebugItem.Modes.SEEDBASED_RESERVOIR || mode == DebugItem.Modes.SEEDBASED_RESERVOIR_AREA_TEST){
-				MatrixStack matrix = event.getMatrixStack();
-				World world = player.getEntityWorld();
-				BlockPos playerPos = player.getPosition();
+				PoseStack matrix = event.getMatrixStack();
+				Level world = player.getCommandSenderWorld();
+				BlockPos playerPos = player.blockPosition();
 				
-				matrix.push();
+				matrix.pushPose();
 				{
 					// Anti-Jiggle when moving
-					Vector3d renderView = ClientUtils.mc().gameRenderer.getActiveRenderInfo().getProjectedView();
+					Vec3 renderView = ClientUtils.mc().gameRenderer.getMainCamera().getPosition();
 					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
-					matrix.push();
+					matrix.pushPose();
 					{
-						IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+						MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 						
 						int radius = 12;
 						for(int i = -radius;i <= radius;i++){
 							for(int j = -radius;j <= radius;j++){
-								ChunkPos cPos = new ChunkPos(playerPos.add(16*i, 0, 16*j));
-								int chunkX = cPos.getXStart();
-								int chunkZ = cPos.getZStart();
+								ChunkPos cPos = new ChunkPos(playerPos.offset(16*i, 0, 16*j));
+								int chunkX = cPos.getMinBlockX();
+								int chunkZ = cPos.getMinBlockZ();
 								
 								for(int cX = 0;cX < 16;cX++){
 									for(int cZ = 0;cZ < 16;cZ++){
 										int x = chunkX + cX;
 										int z = chunkZ + cZ;
 										
-										matrix.push();
+										matrix.pushPose();
 										{
 											DyeColor color = DyeColor.BLACK;
 											
@@ -289,39 +289,39 @@ public class DebugRenderHandler{
 												g/=1.5F;
 												b/=1.5F;
 												
-												int height = world.getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
+												int height = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
 												for(;height > 0;height--){
-													if(world.getBlockState(new BlockPos(x, height - 1, z)).isOpaqueCube(world, new BlockPos(x, height - 1, z))){
+													if(world.getBlockState(new BlockPos(x, height - 1, z)).isSolidRender(world, new BlockPos(x, height - 1, z))){
 														break;
 													}
 												}
 												
 												matrix.translate(x, Math.max(63, height) + 0.0625, z);
 												
-												Matrix4f mat = matrix.getLast().getMatrix();
+												Matrix4f mat = matrix.last().pose();
 												
-												IVertexBuilder builder = buffer.getBuffer(IPRenderTypes.ISLAND_DEBUGGING_POSITION_COLOR);
-												builder.pos(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
-												builder.pos(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
-												builder.pos(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
-												builder.pos(mat, 1, 0, 0).color(r, g, b, 255).endVertex();
+												VertexConsumer builder = buffer.getBuffer(IPRenderTypes.ISLAND_DEBUGGING_POSITION_COLOR);
+												builder.vertex(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
+												builder.vertex(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
+												builder.vertex(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
+												builder.vertex(mat, 1, 0, 0).color(r, g, b, 255).endVertex();
 											}
 										}
-										matrix.pop();
+										matrix.popPose();
 									}
 								}
 							}
 						}
-						buffer.finish();
+						buffer.endBatch();
 					}
-					matrix.pop();
+					matrix.popPose();
 					
-					matrix.push();
+					matrix.pushPose();
 					{
 						synchronized(ReservoirHandler.getReservoirIslandList()){
-							IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+							MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 							
-							Collection<ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList().get(player.getEntityWorld().getDimensionKey());
+							Collection<ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList().get(player.getCommandSenderWorld().dimension());
 							
 							if(islands != null && !islands.isEmpty()){
 								int radius = 128;
@@ -330,12 +330,12 @@ public class DebugRenderHandler{
 									BlockPos p = new BlockPos(playerPos.getX(), 0, playerPos.getZ());
 									BlockPos center = island.getBoundingBox().getCenter();
 									
-									if(center.distanceSq(p) <= radius){
+									if(center.distSqr(p) <= radius){
 										List<ColumnPos> poly = island.getPolygon();
 										
 										if(poly != null && !poly.isEmpty()){
-											IVertexBuilder builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
-											Matrix4f mat = matrix.getLast().getMatrix();
+											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
+											Matrix4f mat = matrix.last().pose();
 											
 											// Draw polygon as line
 											int j = poly.size() - 1;
@@ -344,63 +344,63 @@ public class DebugRenderHandler{
 												ColumnPos b = poly.get(i);
 												float f = i / (float) poly.size();
 												
-												builder.pos(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
-												builder.pos(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
+												builder.vertex(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
+												builder.vertex(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
 												
 												j = i;
 											}
 											
 											// Center Marker
-											builder.pos(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).endVertex();
-											builder.pos(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).endVertex();
-											builder.pos(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).endVertex();
-											builder.pos(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).endVertex();
-											builder.pos(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).endVertex();
-											builder.pos(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).endVertex();
+											builder.vertex(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).endVertex();
+											builder.vertex(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).endVertex();
 											
 										}
 									}
 								}
 							}
 							
-							buffer.finish();
+							buffer.endBatch();
 						}
 					}
-					matrix.pop();
+					matrix.popPose();
 				}
-				matrix.pop();
+				matrix.popPose();
 				
 			}
 		}
 	}
 		
-	private static void renderOverlay(MatrixStack matrix, List<ITextComponent> debugOut){
+	private static void renderOverlay(PoseStack matrix, List<Component> debugOut){
 		Minecraft mc = Minecraft.getInstance();
 		
-		matrix.push();
+		matrix.pushPose();
 		{
-			IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			for(int i = 0;i < debugOut.size();i++){
-				int w = mc.fontRenderer.getStringWidth(debugOut.get(i).getString());
-				int yOff = i * (mc.fontRenderer.FONT_HEIGHT + 2);
+				int w = mc.font.width(debugOut.get(i).getString());
+				int yOff = i * (mc.font.lineHeight + 2);
 				
-				matrix.push();
+				matrix.pushPose();
 				{
 					matrix.translate(0, 0, 1);
 					GuiHelper.drawColouredRect(1, 1 + yOff, w + 1, 10, 0xAF_000000, buffer, matrix);
-					buffer.finish();
+					buffer.endBatch();
 					// Draw string without shadow
-					mc.fontRenderer.drawText(matrix, debugOut.get(i), 2, 2 + yOff, -1);
+					mc.font.draw(matrix, debugOut.get(i), 2, 2 + yOff, -1);
 				}
-				matrix.pop();
+				matrix.popPose();
 			}
 		}
-		matrix.pop();
+		matrix.popPose();
 	}
 	
-	private static void distillationtower(List<ITextComponent> text, DistillationTowerTileEntity tower){
+	private static void distillationtower(List<Component> text, DistillationTowerTileEntity tower){
 		for(int i = 0;i < tower.tanks.length;i++){
-			text.add(toText("Tank " + (i + 1)).mergeStyle(TextFormatting.UNDERLINE));
+			text.add(toText("Tank " + (i + 1)).withStyle(ChatFormatting.UNDERLINE));
 			
 			MultiFluidTank tank = tower.tanks[i];
 			if(tank.fluids.size() > 0){
@@ -414,7 +414,7 @@ public class DebugRenderHandler{
 		}
 	}
 	
-	private static void cokerunit(List<ITextComponent> text, CokerUnitTileEntity coker){
+	private static void cokerunit(List<Component> text, CokerUnitTileEntity coker){
 		{
 			FluidTank tank = coker.bufferTanks[CokerUnitTileEntity.TANK_INPUT];
 			FluidStack fs = tank.getFluid();
@@ -434,16 +434,16 @@ public class DebugRenderHandler{
 			
 			float completed = chamber.getTotalAmount() > 0 ? 100 * (chamber.getOutputAmount() / (float) chamber.getTotalAmount()) : 0;
 			
-			text.add(toText("Chamber " + i).mergeStyle(TextFormatting.UNDERLINE, TextFormatting.AQUA));
+			text.add(toText("Chamber " + i).withStyle(ChatFormatting.UNDERLINE, ChatFormatting.AQUA));
 			text.add(toText("State: " + chamber.getState().toString()));
 			text.add(toText("  Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-			text.add(toText("  Content: " + chamber.getTotalAmount() + " / " + chamber.getCapacity()).appendString(" (" + chamber.getInputItem().getDisplayName().getString() + ")"));
-			text.add(toText("  Out: " + chamber.getOutputItem().getDisplayName().getString()));
-			text.add(toText("  " + MathHelper.floor(completed) + "% Completed. (Raw: " + completed + ")"));
+			text.add(toText("  Content: " + chamber.getTotalAmount() + " / " + chamber.getCapacity()).append(" (" + chamber.getInputItem().getHoverName().getString() + ")"));
+			text.add(toText("  Out: " + chamber.getOutputItem().getHoverName().getString()));
+			text.add(toText("  " + Mth.floor(completed) + "% Completed. (Raw: " + completed + ")"));
 		}
 	}
 	
-	private static void hydrotreater(List<ITextComponent> text, HydrotreaterTileEntity treater){
+	private static void hydrotreater(List<Component> text, HydrotreaterTileEntity treater){
 		IFluidTank[] tanks = treater.getInternalTanks();
 		if(tanks != null && tanks.length > 0){
 			for(int i = 0;i < tanks.length;i++){
@@ -453,7 +453,7 @@ public class DebugRenderHandler{
 		}
 	}
 	
-	private static void oiltank(List<ITextComponent> text, OilTankTileEntity tank){
+	private static void oiltank(List<Component> text, OilTankTileEntity tank){
 		{
 			BlockPos mbpos = tank.posInMultiblock;
 			Port port = null;
@@ -468,9 +468,9 @@ public class DebugRenderHandler{
 				OilTankTileEntity.PortState portState = tank.portConfig.get(port);
 				boolean isInput = portState == OilTankTileEntity.PortState.INPUT;
 				text.add(toText("Port: ")
-						.appendSibling(toText(port != null ? port.getString() : "None"))
-						.appendSibling(toText(" " + portState.getString())
-								.mergeStyle(isInput ? TextFormatting.AQUA : TextFormatting.GOLD)));
+						.append(toText(port != null ? port.getSerializedName() : "None"))
+						.append(toText(" " + portState.getSerializedName())
+								.withStyle(isInput ? ChatFormatting.AQUA : ChatFormatting.GOLD)));
 			}
 		}
 		
@@ -478,11 +478,11 @@ public class DebugRenderHandler{
 		text.add(toText("Fluid: " + (fs.getAmount() + "/" + tank.tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 	}
 	
-	static IFormattableTextComponent toText(String string){
-		return new StringTextComponent(string);
+	static MutableComponent toText(String string){
+		return new TextComponent(string);
 	}
 	
-	static IFormattableTextComponent toTranslation(String translationKey, Object... args){
-		return new TranslationTextComponent(translationKey, args);
+	static MutableComponent toTranslation(String translationKey, Object... args){
+		return new TranslatableComponent(translationKey, args);
 	}
 }
