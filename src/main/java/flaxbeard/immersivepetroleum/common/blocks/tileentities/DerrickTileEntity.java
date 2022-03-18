@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
@@ -62,7 +63,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * @author TwistedGate
  */
-public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds{
+public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
 	public enum Inventory{
 		/** Item Pipe Input */
 		INPUT;
@@ -98,8 +99,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Nullable
 	public PipeConfig.Grid gridStorage;
 	
-	public DerrickTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
-		super(DerrickMultiblock.INSTANCE, 16000, true, IPTileTypes.DERRICK.get(), pWorldPosition, pBlockState);
+	public DerrickTileEntity(BlockEntityType<DerrickTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
+		super(DerrickMultiblock.INSTANCE, 16000, true, type, pWorldPosition, pBlockState);
 	}
 	
 	@Override
@@ -194,7 +195,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	static final int POWER = 512;
 	static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
 	static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
-	
+
+	@Override
 	public void tick(){
 		if(isDummy()){
 			return;

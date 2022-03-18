@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class OilTankBlock extends IPMetalMultiblock<OilTankTileEntity>{
 	public OilTankBlock(){
-		super("oiltank", () -> IPTileTypes.OILTANK.get());
+		super(IPTileTypes.OILTANK);
 	}
 	
 	@Override

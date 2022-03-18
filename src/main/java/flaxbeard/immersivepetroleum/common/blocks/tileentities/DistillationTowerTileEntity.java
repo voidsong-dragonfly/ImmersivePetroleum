@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +46,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds{
+public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;
 	
@@ -84,8 +85,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	private int cooldownTicks = 0;
 	private boolean wasActive = false;
 	
-	public DistillationTowerTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
-		super(DistillationTowerMultiblock.INSTANCE, 16000, true, IPTileTypes.TOWER.get(), pWorldPosition, pBlockState);
+	public DistillationTowerTileEntity(BlockEntityType<DistillationTowerTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
+		super(DistillationTowerMultiblock.INSTANCE, 16000, true, type, pWorldPosition, pBlockState);
 	}
 	
 	@Override
@@ -129,7 +130,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	public void tickServer(){
+	public void tick(){
 		if(this.cooldownTicks > 0){
 			this.cooldownTicks--;
 		}
@@ -139,7 +140,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		if(this.level.isClientSide || isDummy()){
 			return;
 		}
-		
+		super.tickServer();
+
 		boolean update = false;
 		
 		if(!isRSDisabled()){

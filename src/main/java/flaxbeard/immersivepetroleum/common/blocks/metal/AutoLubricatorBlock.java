@@ -23,6 +23,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -34,6 +36,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	private static final Material material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
@@ -75,7 +80,15 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		te.facing = pState.getValue(FACING);
 		return te;
 	}
-	
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+			@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type
+	){
+		return createTickerHelper(type, IPTileTypes.AUTOLUBE);
+	}
+
 	@Override
 	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player){
 		if(state.getValue(SLAVE)){

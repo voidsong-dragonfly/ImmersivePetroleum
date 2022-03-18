@@ -100,7 +100,8 @@ public class IPContent{
 		@Deprecated public static Block hydrotreater;
 		@Deprecated public static Block derrick;
 		@Deprecated public static Block oiltank;
-		
+
+		// TODO why aren't these initialized anywhere????
 		public static RegistryObject<Block> DISTILLATIONTOWER;
 		public static RegistryObject<Block> PUMPJACK;
 		public static RegistryObject<Block> COKERUNIT;

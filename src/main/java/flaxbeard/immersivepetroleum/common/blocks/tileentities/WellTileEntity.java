@@ -27,7 +27,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class WellTileEntity extends IPTileEntityBase{
+public class WellTileEntity extends IPTileEntityBase implements TickableBE{
 	
 	static final int PIPE_WORTH = 6;
 	static final int DEFAULT_PIPELENGTH = PIPE_WORTH * 64;
@@ -138,8 +138,7 @@ public class WellTileEntity extends IPTileEntityBase{
 		}
 	}
 	
-	// TODO tick()
-	//@Override
+	@Override
 	public void tick(){
 		if(this.level.isClientSide){
 			if(this.spill && this.spillFType != Fluids.EMPTY){

@@ -5,6 +5,9 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import com.google.common.collect.ImmutableSet;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -68,9 +71,14 @@ public class IPRegisters{
 	public static final <T extends Fluid> RegistryObject<T> registerFluid(String name, Supplier<T> fluidConstructor){
 		return FLUID_REGISTER.register(name, fluidConstructor);
 	}
-	
+
 	public static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerTE(String name, BlockEntityType.BlockEntitySupplier<T> factory, Block... valid){
 		return TE_REGISTER.register(name, () -> new BlockEntityType<T>(factory, ImmutableSet.copyOf(valid), null));
+	}
+
+	public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock>
+	MultiblockBEType<T> registerMultiblockTE(String name, MultiblockBEType.BEWithTypeConstructor<T> factory, Supplier<? extends Block> valid){
+		return new MultiblockBEType<T>(name, TE_REGISTER, factory, valid, state -> state.hasProperty(IEProperties.MULTIBLOCKSLAVE)&&!state.getValue(IEProperties.MULTIBLOCKSLAVE));
 	}
 	
 	public static <T extends EntityType<?>> RegistryObject<T> registerEntity(String name, Supplier<T> entityConstructor){

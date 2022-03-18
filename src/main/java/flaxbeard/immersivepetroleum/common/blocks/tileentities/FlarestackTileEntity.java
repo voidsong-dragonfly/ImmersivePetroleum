@@ -25,7 +25,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE{
+public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE, TickableBE{
 	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").bypassArmor().setIsFire();
 	
 	protected boolean isRedstoneInverted;
@@ -116,8 +116,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE{
 		this.level.updateNeighborsAt(this.worldPosition, state.getBlock());
 	}
 	
-	// TODO tick()
-	//@Override
+	@Override
 	public void tick(){
 		if(this.level.isClientSide){
 			ImmersiveEngineering.proxy.handleTileSound(IPSounds.FLARESTACK, this, this.isActive, 1.0F, 0.75F);

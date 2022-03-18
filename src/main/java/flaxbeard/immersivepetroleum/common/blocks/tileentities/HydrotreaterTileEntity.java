@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +42,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IInteractionObjectIE, IBlockBounds{
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -71,8 +72,8 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	
 	
 	public final FluidTank[] tanks = new FluidTank[]{new FluidTank(12000), new FluidTank(12000), new FluidTank(12000)};
-	public HydrotreaterTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
-		super(HydroTreaterMultiblock.INSTANCE, 8000, true, IPTileTypes.TREATER.get(), pWorldPosition, pBlockState);
+	public HydrotreaterTileEntity(BlockEntityType<HydrotreaterTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
+		super(HydroTreaterMultiblock.INSTANCE, 8000, true, type, pWorldPosition, pBlockState);
 	}
 	
 	@Override
@@ -209,8 +210,6 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	
 	@Override
 	public void tick(){
-		checkForNeedlessTicking();
-		
 		if(this.level.isClientSide || isDummy() || isRSDisabled()){
 			return;
 		}

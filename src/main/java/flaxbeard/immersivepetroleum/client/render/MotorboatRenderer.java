@@ -18,8 +18,6 @@ import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;;
 
-import ResourceLocation;
-
 @OnlyIn(Dist.CLIENT)
 public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	private static ResourceLocation texture = rl("textures/models/boat_motor.png");

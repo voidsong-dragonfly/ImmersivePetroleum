@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
@@ -56,7 +57,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IInteractionObjectIE, IBlockBounds{
+public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
 	public static enum Inventory{
 		/** Inventory Item Input */
 		INPUT,
@@ -110,8 +111,8 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public final NonNullList<ItemStack> inventory = NonNullList.withSize(Inventory.values().length, ItemStack.EMPTY);
 	public final FluidTank[] bufferTanks = {new FluidTank(16000), new FluidTank(16000)};
 	public final CokingChamber[] chambers = {new CokingChamber(64, 8000), new CokingChamber(64, 8000)};
-	public CokerUnitTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
-		super(CokerUnitMultiblock.INSTANCE, 24000, true, IPTileTypes.COKER.get(), pWorldPosition, pBlockState);
+	public CokerUnitTileEntity(BlockEntityType<CokerUnitTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
+		super(CokerUnitMultiblock.INSTANCE, 24000, true, type, pWorldPosition, pBlockState);
 	}
 	
 	@Override
@@ -232,8 +233,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public void onProcessFinish(MultiblockProcess<CokerUnitRecipe> process){
 	}
 	
-	// TODO tick()
-	//@Override
+	@Override
 	public void tick(){
 		if(isDummy() || isRSDisabled()){
 			return;

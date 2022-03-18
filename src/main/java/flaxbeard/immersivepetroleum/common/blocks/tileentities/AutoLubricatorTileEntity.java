@@ -39,7 +39,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlayerInteraction, IBlockOverlayText{
+public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlayerInteraction, IBlockOverlayText, TickableBE{
 	public boolean isSlave;
 	public boolean isActive;
 	public boolean predictablyDraining = false;
@@ -220,8 +220,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 	int lastTankUpdate = 0;
 	int countClient = 0;
 	
-	// TODO tick()
-	//@Override
+	@Override
 	public void tick(){
 		if(this.isSlave){
 			// See ApiUtils.checkForNeedlessTicking(te);

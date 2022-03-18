@@ -6,6 +6,6 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntit
 
 public class PumpjackBlock extends IPMetalMultiblock<PumpjackTileEntity>{
 	public PumpjackBlock(){
-		super("pumpjack", () -> IPTileTypes.PUMP.get());
+		super(IPTileTypes.PUMP);
 	}
 }

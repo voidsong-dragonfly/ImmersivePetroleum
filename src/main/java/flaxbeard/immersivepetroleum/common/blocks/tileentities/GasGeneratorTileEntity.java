@@ -60,7 +60,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements TickableBlockEntity, IEBlockInterfaces.IDirectionalTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.ISoundTile, EnergyHelper.IIEInternalFluxConnector, EnergyHelper.IIEInternalFluxHandler, EnergyTransferHandler.EnergyConnector{
+public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IEBlockInterfaces.IDirectionalTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.ISoundTile, EnergyHelper.IIEInternalFluxConnector, EnergyHelper.IIEInternalFluxHandler, EnergyTransferHandler.EnergyConnector, TickableBE{
 	public static final int FLUX_CAPACITY = 8000;
 	
 	protected WireType wireType;

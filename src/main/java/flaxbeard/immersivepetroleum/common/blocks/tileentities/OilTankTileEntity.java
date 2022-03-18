@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +46,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction{
+public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction, TickableBE{
 	
 	public static enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;
@@ -105,8 +106,8 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	
 	public FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME, f -> !f.getFluid().getAttributes().isGaseous());
 	public EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
-	public OilTankTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
-		super(OilTankMultiblock.INSTANCE, IPTileTypes.OILTANK.get(), true, pWorldPosition, pBlockState);
+	public OilTankTileEntity(BlockEntityType<OilTankTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
+		super(OilTankMultiblock.INSTANCE, type, true, pWorldPosition, pBlockState);
 		this.redstoneControlInverted = true;
 		for(Port port:Port.values()){
 			if(port == Port.DYNAMIC_B || port == Port.DYNAMIC_C || port == Port.BOTTOM){

@@ -17,7 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class DerrickBlock extends IPMetalMultiblock<DerrickTileEntity>{
 	public DerrickBlock(){
-		super("derrick", () -> IPTileTypes.DERRICK.get());
+		super(IPTileTypes.DERRICK);
 	}
 	
 	@Override

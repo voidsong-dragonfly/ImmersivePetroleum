@@ -17,7 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class CokerUnitBlock extends IPMetalMultiblock<CokerUnitTileEntity>{
 	public CokerUnitBlock(){
-		super("cokerunit", () -> IPTileTypes.COKER.get());
+		super(IPTileTypes.COKER);
 	}
 	
 	@Override

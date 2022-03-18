@@ -41,7 +41,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds{
+public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds, TickableBE{
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 5));
 	
@@ -63,13 +63,8 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	public FluidTank fakeTank = new FluidTank(0);
 	public boolean wasActive = false;
 	public float activeTicks = 0;
-	public PumpjackTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
-		super(PumpjackMultiblock.INSTANCE, 16000, true, IPTileTypes.PUMP.get(), pWorldPosition, pBlockState);
-	}
-	
-	@Override
-	public BlockEntityType<?> getType(){
-		return IPTileTypes.PUMP.get();
+	public PumpjackTileEntity(BlockEntityType<PumpjackTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
+		super(PumpjackMultiblock.INSTANCE, 16000, true, type, pWorldPosition, pBlockState);
 	}
 	
 	@Override

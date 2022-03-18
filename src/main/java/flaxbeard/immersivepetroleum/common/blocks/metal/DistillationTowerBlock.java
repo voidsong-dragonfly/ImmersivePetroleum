@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import net.minecraft.core.BlockPos;
@@ -19,8 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerTileEntity>{
 	public DistillationTowerBlock(){
-		super(null, BlockBehaviour.Properties.of(Material.METAL, DyeColor.GRAY));
-//		super("distillationtower", () -> IPTileTypes.TOWER.get());
+		super(IPTileTypes.TOWER);
 	}
 	
 	@Override
