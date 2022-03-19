@@ -20,17 +20,9 @@ public class AsphaltBlock extends IPBlockBase{
 	protected static final float SPEED_FACTOR = 1.20F;
 	
 	public AsphaltBlock(){
-		this("asphalt");
-	}
-	
-	protected AsphaltBlock(String name){
-		this(name, Block.Properties.of(Material.STONE).speedFactor(SPEED_FACTOR).strength(2.0F, 10.0F)
+		super(Block.Properties.of(Material.STONE).speedFactor(SPEED_FACTOR).strength(2.0F, 10.0F)
 				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
 				.sound(SoundType.STONE));
-	}
-	
-	protected AsphaltBlock(String name, Block.Properties props){
-		super(name, props);
 	}
 	
 	@Override

@@ -85,8 +85,6 @@ public class ImmersivePetroleum{
 		
 		MinecraftForge.EVENT_BUS.register(new IPWorldGen());
 		IPWorldGen.init(eBus);
-		
-		proxy.registerContainersAndScreens();
 	}
 	
 	public void setup(FMLCommonSetupEvent event){
@@ -115,6 +113,8 @@ public class ImmersivePetroleum{
 		
 		ReservoirHandler.recalculateChances();
 		ExternalModContent.init();
+
+		proxy.registerContainersAndScreens();
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event){

@@ -60,12 +60,9 @@ public class IPRegisters{
 	
 	public static final <T extends IPBlockBase> RegistryObject<T> registerIPBlock(String name, Supplier<T> blockConstructor){
 		RegistryObject<T> block = BLOCK_REGISTER.register(name, blockConstructor);
-		
-		Supplier<BlockItem> iBlockSupplier = block.get().blockItemSupplier();
-		if(iBlockSupplier != null){
-			registerItem(name, iBlockSupplier);
-		}
-		
+
+		registerItem(name, () -> block.get().blockItemSupplier().get());
+
 		return block;
 	}
 	

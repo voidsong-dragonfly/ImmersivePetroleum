@@ -11,16 +11,18 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 
+import java.util.function.Supplier;
+
 public class PetcokeBlock extends IPBlockBase{
 	public PetcokeBlock(){
 		super(Block.Properties.of(Material.STONE).sound(SoundType.STONE).requiresCorrectToolForDrops()
 				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
 				.strength(2, 10));
 	}
-	
+
 	@Override
-	protected BlockItem createBlockItem(){
-		return new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab)){
+	public Supplier<BlockItem> blockItemSupplier(){
+		return () -> new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab)){
 			@Override
 			public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
 				return 32000;

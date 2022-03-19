@@ -96,6 +96,7 @@ minecraft {
 				 '--validate',
 				 '--existing', sourceSets.main.resources.srcDirs[0],
 				 '--existing-mod', 'immersiveengineering'
+            ideaModule project.name+".datagen"
 			
 			mods {
 				immersivepetroleum {
@@ -123,17 +124,6 @@ dependencies {
 def customGradle = rootProject.file('custom.gradle');
 if (customGradle.exists()) {
     apply from: customGradle;
-}
-
-processResources {
-	from(sourceSets.main.resources.srcDirs) {
-		include 'META-INF/mods.toml'
-		expand 'version': project.version
-	}
-	from(sourceSets.main.resources.srcDirs) {
-		exclude 'META-INF/mods.toml'
-	}
-	outputs.upToDateWhen { false }
 }
 
 jar {

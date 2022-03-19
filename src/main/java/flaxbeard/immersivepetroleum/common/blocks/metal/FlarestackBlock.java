@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
@@ -64,10 +65,10 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 		registerDefaultState(getStateDefinition().any()
 				.setValue(SLAVE, false));
 	}
-	
+
 	@Override
-	protected BlockItem createBlockItem(){
-		return new FlarestackBlockItem(this);
+	public Supplier<BlockItem> blockItemSupplier(){
+		return () -> new FlarestackBlockItem(this);
 	}
 	
 	@Override

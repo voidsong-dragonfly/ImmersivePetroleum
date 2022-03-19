@@ -24,6 +24,7 @@ import net.minecraft.world.level.material.MaterialColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	
@@ -41,11 +42,11 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(BROKEN);
 	}
-	
+
 	@Override
-	protected BlockItem createBlockItem(){
+	public Supplier<BlockItem> blockItemSupplier(){
 		// Nobody is supposed to have this in their inventory
-		return null;
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override

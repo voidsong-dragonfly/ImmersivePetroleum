@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common;
 
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
+import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid.IPFluidEntry;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
@@ -121,8 +123,7 @@ public class IPContent{
 	}
 	
 	public static class Blocks{
-		public static final RegistryObject<AsphaltBlock> ASPHALT = IPRegisters.registerBlock("asphalt", AsphaltBlock::new);
-		// TODO register block items
+		public static final RegistryObject<AsphaltBlock> ASPHALT = IPRegisters.registerIPBlock("asphalt", AsphaltBlock::new);
 		public static final RegistryObject<SlabBlock> ASPHALT_SLAB = IPRegisters.registerBlock("asphalt_slab", () -> new AsphaltSlab(ASPHALT.get()));
 		public static final RegistryObject<StairBlock> ASPHALT_STAIR = IPRegisters.registerBlock("asphalt_stair", () -> new AsphaltStairs(ASPHALT.get()));
 		public static final RegistryObject<PetcokeBlock> PETCOKE = IPRegisters.registerIPBlock("petcoke_block", PetcokeBlock::new);
@@ -135,10 +136,16 @@ public class IPContent{
 		public static final RegistryObject<BlockDummy> DUMMYPIPE = IPRegisters.registerIPBlock("dummy_pipe", BlockDummy::new);
 		public static final RegistryObject<BlockDummy> DUMMYCONVEYOR = IPRegisters.registerIPBlock("dummy_conveyor", BlockDummy::new);
 		
-		public static final RegistryObject<WellBlock> WELL = IPRegisters.registerIPBlock("well", WellBlock::new);
-		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerIPBlock("well_pipe", WellPipeBlock::new);
+		public static final RegistryObject<WellBlock> WELL = IPRegisters.registerBlock("well", WellBlock::new);
+		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerBlock("well_pipe", WellPipeBlock::new);
 		
 		private static void forceClassLoad(){
+			registerItemBlock(ASPHALT_SLAB);
+			registerItemBlock(ASPHALT_STAIR);
+		}
+
+		private static void registerItemBlock(RegistryObject<? extends Block> block) {
+			IPRegisters.registerItem(block.getId().getPath(), () -> new IPBlockItemBase(block.get(), new Item.Properties().tab(ImmersivePetroleum.creativeTab)));
 		}
 	}
 	
@@ -184,6 +191,7 @@ public class IPContent{
 		BoatUpgrades.forceClassLoad();
 		Multiblock.forceClassLoad();
 		IPMenuTypes.forceClassLoad();
+		Serializers.forceClassLoad();
 	}
 
 	public static void preInit(){

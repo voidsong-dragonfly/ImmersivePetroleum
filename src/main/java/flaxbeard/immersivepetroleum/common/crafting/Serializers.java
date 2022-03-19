@@ -16,16 +16,19 @@ public class Serializers{
 	public static final RegistryObject<IERecipeSerializer<DistillationRecipe>> DISTILLATION_SERIALIZER = IPRegisters.registerSerializer(
 			"distillation", DistillationRecipeSerializer::new
 	);
-	
+
 	public static final RegistryObject<IERecipeSerializer<CokerUnitRecipe>> COKER_SERIALIZER = IPRegisters.registerSerializer(
 			"coker", CokerUnitRecipeSerializer::new
 	);
-	
+
 	public static final RegistryObject<IERecipeSerializer<SulfurRecoveryRecipe>> HYDROTREATER_SERIALIZER = IPRegisters.registerSerializer(
 			"hydrotreater", SulfurRecoveryRecipeSerializer::new
 	);
-	
+
 	public static final RegistryObject<IERecipeSerializer<Reservoir>> RESERVOIR_SERIALIZER = IPRegisters.registerSerializer(
 			"reservoirs", ReservoirSerializer::new
 	);
+
+	public static void forceClassLoad(){
+	}
 }

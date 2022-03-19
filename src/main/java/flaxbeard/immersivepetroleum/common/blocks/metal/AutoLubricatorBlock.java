@@ -39,6 +39,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	private static final Material material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
@@ -62,10 +63,10 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(FACING, SLAVE);
 	}
-	
+
 	@Override
-	protected BlockItem createBlockItem(){
-		return new AutoLubricatorBlockItem(this);
+	public Supplier<BlockItem> blockItemSupplier(){
+		return () -> new AutoLubricatorBlockItem(this);
 	}
 	
 	@Override

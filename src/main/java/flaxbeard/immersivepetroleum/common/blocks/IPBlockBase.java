@@ -22,18 +22,6 @@ public class IPBlockBase extends Block{
 		return () -> new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
 	}
 	
-	@Deprecated
-	public IPBlockBase(String name, Block.Properties props){
-		super(props);
-		throw new UnsupportedOperationException();
-	}
-	
-	@Deprecated
-	protected BlockItem createBlockItem(){
-		throw new UnsupportedOperationException();
-//		return new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
-	}
-
 	@Nullable
 	public static <E extends BlockEntity & TickableBE, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
 			BlockEntityType<A> actual, Supplier<BlockEntityType<E>> expected

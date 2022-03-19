@@ -26,9 +26,9 @@ public class WellBlock extends IPBlockBase implements EntityBlock{
 	
 	@Override
 	public Supplier<BlockItem> blockItemSupplier(){
-		return null;
+		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
 		WellTileEntity tile = IPTileTypes.WELL.get().create(pPos, pState);
