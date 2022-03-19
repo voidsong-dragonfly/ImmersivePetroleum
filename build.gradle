@@ -120,6 +120,11 @@ dependencies {
 	compileOnly fg.deobf("mezz.jei:jei-1.18.1:9.3.2.94:api")
 }
 
+def customGradle = rootProject.file('custom.gradle');
+if (customGradle.exists()) {
+    apply from: customGradle;
+}
+
 processResources {
 	from(sourceSets.main.resources.srcDirs) {
 		include 'META-INF/mods.toml'
