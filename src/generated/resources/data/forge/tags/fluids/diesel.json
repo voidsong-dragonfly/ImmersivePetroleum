@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "immersivepetroleum:diesel_still",
-    "immersivepetroleum:diesel_sulfur_still"
+    "immersivepetroleum:diesel",
+    "immersivepetroleum:diesel_sulfur"
   ]
 }

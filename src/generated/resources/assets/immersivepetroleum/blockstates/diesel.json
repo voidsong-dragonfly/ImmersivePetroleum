@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "immersivepetroleum:block/fluid/diesel_still"
+      "model": "immersivepetroleum:block/fluid/diesel"
     }
   }
 }

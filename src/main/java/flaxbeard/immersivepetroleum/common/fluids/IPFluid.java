@@ -78,7 +78,7 @@ public class IPFluid extends FlowingFluid{
 
 		entry.setValue(new IPFluidEntry(
 				name,
-				IPRegisters.registerFluid(name+"_still", () -> factory.apply(entry.getValue())),
+				IPRegisters.registerFluid(name, () -> factory.apply(entry.getValue())),
 				IPRegisters.registerFluid(name+"_flowing", () -> new IPFluidFlowing(entry.getValue().still.get())),
 				IPRegisters.registerBlock(name, () -> blockFactory.apply(entry.getValue())),
 				IPRegisters.registerItem(name+"_bucket", () -> new IPBucketItem(entry.getValue().still()))

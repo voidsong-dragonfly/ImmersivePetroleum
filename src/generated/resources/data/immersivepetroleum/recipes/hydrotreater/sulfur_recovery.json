@@ -3,7 +3,7 @@
   "time": 1,
   "energy": 512,
   "result": {
-    "fluid": "immersivepetroleum:diesel_still",
+    "fluid": "immersivepetroleum:diesel",
     "amount": 7
   },
   "input": {

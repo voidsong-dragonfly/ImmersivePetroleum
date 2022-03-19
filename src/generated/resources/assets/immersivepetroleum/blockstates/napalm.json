@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "immersivepetroleum:block/fluid/napalm_still"
+      "model": "immersivepetroleum:block/fluid/napalm"
     }
   }
 }

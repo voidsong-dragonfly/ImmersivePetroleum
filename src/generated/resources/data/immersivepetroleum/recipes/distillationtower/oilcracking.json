@@ -8,15 +8,15 @@
   ],
   "results": [
     {
-      "fluid": "immersivepetroleum:lubricant_still",
+      "fluid": "immersivepetroleum:lubricant",
       "amount": 9
     },
     {
-      "fluid": "immersivepetroleum:diesel_sulfur_still",
+      "fluid": "immersivepetroleum:diesel_sulfur",
       "amount": 14
     },
     {
-      "fluid": "immersivepetroleum:gasoline_still",
+      "fluid": "immersivepetroleum:gasoline",
       "amount": 39
     }
   ],

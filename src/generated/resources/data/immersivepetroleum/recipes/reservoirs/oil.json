@@ -1,6 +1,6 @@
 {
   "type": "immersivepetroleum:reservoirs",
-  "fluid": "immersivepetroleum:oil_still",
+  "fluid": "immersivepetroleum:oil",
   "fluidminimum": 2500000,
   "fluidcapacity": 15000000,
   "fluidtrace": 6,
