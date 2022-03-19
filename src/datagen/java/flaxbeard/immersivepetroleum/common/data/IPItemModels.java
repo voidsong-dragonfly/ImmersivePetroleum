@@ -3,15 +3,16 @@ package flaxbeard.immersivepetroleum.common.data;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.common.register.IEFluids;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Vector3f;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -34,23 +35,23 @@ public class IPItemModels extends ItemModelProvider{
 	
 	@Override
 	protected void registerModels(){
-		String debugItem = name(IPContent.debugItem);
+		String debugItem = name(IPContent.DEBUGITEM.get());
 		
 		getBuilder(debugItem)
 			.parent(getExistingFile(mcLoc("item/generated")))
 			.texture("layer0", modLoc("item/schematic"));
 		
-		genericItem(IPContent.Items.bitumen);
-		genericItem(IPContent.Items.petcoke);
-		genericItem(IPContent.Items.petcokedust);
-		genericItem(IPContent.Items.oil_can);
-		genericItem(IPContent.Items.speedboat);
+		genericItem(IPContent.Items.BITUMEN.get());
+		genericItem(IPContent.Items.PETCOKE.get());
+		genericItem(IPContent.Items.PETCOKEDUST.get());
+		genericItem(IPContent.Items.OIL_CAN.get());
+		genericItem(IPContent.Items.SPEEDBOAT.get());
 		
-		genericItem(IPContent.BoatUpgrades.ice_breaker);
-		genericItem(IPContent.BoatUpgrades.reinforced_hull);
-		genericItem(IPContent.BoatUpgrades.paddles);
-		genericItem(IPContent.BoatUpgrades.rudders);
-		genericItem(IPContent.BoatUpgrades.tank);
+		genericItem(IPContent.BoatUpgrades.ICE_BREAKER.get());
+		genericItem(IPContent.BoatUpgrades.REINFORCED_HULL.get());
+		genericItem(IPContent.BoatUpgrades.PADDLES.get());
+		genericItem(IPContent.BoatUpgrades.RUDDERS.get());
+		genericItem(IPContent.BoatUpgrades.TANK.get());
 		
 		pumpjackItem();
 		distillationtowerItem();
@@ -60,15 +61,15 @@ public class IPItemModels extends ItemModelProvider{
 		autolubeItem();
 		flarestackItem();
 		
-		getBuilder(ImmersivePetroleum.MODID+":item/"+IPContent.Items.projector.getRegistryName().getPath())
+		getBuilder(ImmersivePetroleum.MODID+":item/"+IPContent.Items.PROJECTOR.get().getRegistryName().getPath())
 			.parent(getExistingFile(modLoc("item/mb_projector")));
 		
-		for(IPFluid f:IPFluid.FLUIDS)
-			createBucket(f);
+		for(IPFluid.IPFluidEntry f:IPFluid.FLUIDS)
+			createBucket(f.still().get());
 	}
 	
 	private void hydrotreaterItem(){
-		ItemModelBuilder model = obj(IPContent.Multiblock.hydrotreater, "multiblock/obj/hydrotreater.obj")
+		ItemModelBuilder model = obj(IPContent.Multiblock.HYDROTREATER.get(), "multiblock/obj/hydrotreater.obj")
 				.texture("texture", modLoc("multiblock/hydrotreater"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -83,7 +84,7 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void cokerunitItem(){
-		ItemModelBuilder model = obj(IPContent.Multiblock.cokerunit, "multiblock/obj/cokerunit.obj")
+		ItemModelBuilder model = obj(IPContent.Multiblock.COKERUNIT.get(), "multiblock/obj/cokerunit.obj")
 				.texture("texture", modLoc("multiblock/cokerunit"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -98,7 +99,7 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void flarestackItem(){
-		ItemModelBuilder model = obj(IPContent.Blocks.flarestack, "block/obj/flarestack.obj")
+		ItemModelBuilder model = obj(IPContent.Blocks.FLARESTACK.get(), "block/obj/flarestack.obj")
 				.texture("texture", modLoc("block/obj/flarestack"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -113,7 +114,7 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void generatorItem(){
-		ItemModelBuilder model = obj(IPContent.Blocks.gas_generator, "block/obj/generator.obj")
+		ItemModelBuilder model = obj(IPContent.Blocks.GAS_GENERATOR.get(), "block/obj/generator.obj")
 				.texture("texture", modLoc("block/obj/generator"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -128,7 +129,7 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void autolubeItem(){
-		ItemModelBuilder model = obj(IPContent.Blocks.auto_lubricator, "block/obj/autolubricator.obj")
+		ItemModelBuilder model = obj(IPContent.Blocks.AUTO_LUBRICATOR.get(), "block/obj/autolubricator.obj")
 			.texture("texture", modLoc("models/lubricator"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -143,7 +144,7 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void pumpjackItem(){
-		ItemModelBuilder model = obj(IPContent.Multiblock.pumpjack, "item/obj/pumpjack_itemmockup.obj")
+		ItemModelBuilder model = obj(IPContent.Multiblock.PUMPJACK.get(), "item/obj/pumpjack_itemmockup.obj")
 			.texture("texture_base", modLoc("multiblock/pumpjack_base"))
 			.texture("texture_armature", modLoc("models/pumpjack_armature"));
 		
@@ -159,7 +160,7 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void distillationtowerItem(){
-		ItemModelBuilder model = obj(IPContent.Multiblock.distillationtower, "multiblock/obj/distillationtower.obj")
+		ItemModelBuilder model = obj(IPContent.Multiblock.DISTILLATIONTOWER.get(), "multiblock/obj/distillationtower.obj")
 			.texture("texture", modLoc("multiblock/distillation_tower"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -180,13 +181,13 @@ public class IPItemModels extends ItemModelProvider{
 		}
 		
 		transform.transform(type)
-				.translation(translation.getX(), translation.getY(), translation.getZ())
-				.rotation(rotationAngle.getX(), rotationAngle.getY(), rotationAngle.getZ())
+				.translation(translation.x(), translation.y(), translation.z())
+				.rotation(rotationAngle.x(), rotationAngle.y(), rotationAngle.z())
 				.scale(scale)
 				.end();
 	}
 	
-	private ItemModelBuilder obj(IItemProvider item, String model){
+	private ItemModelBuilder obj(ItemLike item, String model){
 		return getBuilder(item.asItem().getRegistryName().toString())
 				.customLoader(OBJLoaderBuilder::begin)
 				.modelLocation(modLoc("models/" + model)).flipV(true).end();
@@ -206,12 +207,12 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void createBucket(Fluid f){
-		withExistingParent(f.getFilledBucket().asItem().getRegistryName().getPath(), forgeLoc("item/bucket"))
+		withExistingParent(f.getBucket().asItem().getRegistryName().getPath(), forgeLoc("item/bucket"))
 			.customLoader(DynamicBucketModelBuilder::begin)
 			.fluid(f);
 	}
 	
-	private String name(IItemProvider item){
+	private String name(ItemLike item){
 		return item.asItem().getRegistryName().getPath();
 	}
 	

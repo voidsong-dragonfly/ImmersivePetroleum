@@ -1,47 +1,41 @@
 package flaxbeard.immersivepetroleum.common.data;
 
 import java.util.Arrays;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.common.util.loot.DropInventoryLootEntry;
 import blusunrize.immersiveengineering.common.util.loot.MBOriginalBlockLootEntry;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.data.loot.LootGenerator;
 import flaxbeard.immersivepetroleum.common.util.loot.IPTileDropLootEntry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
-import net.minecraft.loot.ConstantRange;
-import net.minecraft.loot.ItemLootEntry;
-import net.minecraft.loot.LootParameterSets;
 import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.conditions.SurvivesExplosion;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
-public class IPBlockLoot extends LootGenerator implements DataProvider{
-	public IPBlockLoot(DataGenerator gen){
-		super(gen);
-	}
-	
+import static net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly;
+
+public class IPBlockLoot implements Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>{
+	private BiConsumer<ResourceLocation, LootTable.Builder> out;
+
 	@Override
-	public String getName(){
-		return "LootTablesBlock";
-	}
-	
-	@Override
-	protected void registerTables(){
-		registerSelfDropping(IPContent.Blocks.asphalt);
-		registerSelfDropping(IPContent.Blocks.asphalt_slab);
-		registerSelfDropping(IPContent.Blocks.asphalt_stair);
-		registerSelfDropping(IPContent.Blocks.flarestack);
+	public void accept(BiConsumer<ResourceLocation, LootTable.Builder> out){
+		this.out = out;
+		registerSelfDropping(IPContent.Blocks.ASPHALT.get());
+		registerSelfDropping(IPContent.Blocks.ASPHALT_SLAB.get());
+		registerSelfDropping(IPContent.Blocks.ASPHALT_STAIR.get());
+		registerSelfDropping(IPContent.Blocks.FLARESTACK.get());
 		
-		register(IPContent.Blocks.gas_generator, tileDrop());
-		register(IPContent.Blocks.auto_lubricator, tileDrop());
+		register(IPContent.Blocks.GAS_GENERATOR.get(), tileDrop());
+		register(IPContent.Blocks.AUTO_LUBRICATOR.get(), tileDrop());
 		
-		registerMultiblock(IPContent.Multiblock.distillationtower);
-		registerMultiblock(IPContent.Multiblock.pumpjack);
-		registerMultiblock(IPContent.Multiblock.hydrotreater);
+		registerMultiblock(IPContent.Multiblock.DISTILLATIONTOWER.get());
+		registerMultiblock(IPContent.Multiblock.PUMPJACK.get());
+		registerMultiblock(IPContent.Multiblock.HYDROTREATER.get());
 	}
 	
 	private void registerMultiblock(Block b){
@@ -49,15 +43,15 @@ public class IPBlockLoot extends LootGenerator implements DataProvider{
 	}
 	
 	private LootPool.Builder dropOriginalBlock(){
-		return createPoolBuilder().addEntry(MBOriginalBlockLootEntry.builder());
+		return createPoolBuilder().add(MBOriginalBlockLootEntry.builder());
 	}
 	
 	private LootPool.Builder dropInv(){
-		return createPoolBuilder().addEntry(DropInventoryLootEntry.builder());
+		return createPoolBuilder().add(DropInventoryLootEntry.builder());
 	}
 	
 	private LootPool.Builder tileDrop(){
-		return createPoolBuilder().addEntry(IPTileDropLootEntry.builder());
+		return createPoolBuilder().add(IPTileDropLootEntry.builder());
 	}
 	
 	private void registerSelfDropping(Block b, LootPool.Builder... pool){
@@ -65,15 +59,18 @@ public class IPBlockLoot extends LootGenerator implements DataProvider{
 		withSelf[withSelf.length - 1] = singleItem(b);
 		register(b, withSelf);
 	}
-	
-	private LootPool.Builder singleItem(IItemProvider in){
-		return createPoolBuilder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(in));
+
+	private LootPool.Builder singleItem(ItemLike in)
+	{
+		return createPoolBuilder()
+				.setRolls(ConstantValue.exactly(1))
+				.add(LootItem.lootTableItem(in));
 	}
-	
+
 	private void register(Block b, LootPool.Builder... pools){
-		LootTable.Builder builder = LootTable.builder();
+		LootTable.Builder builder = LootTable.lootTable();
 		for(LootPool.Builder pool:pools)
-			builder.addLootPool(pool);
+			builder.withPool(pool);
 		register(b, builder);
 	}
 	
@@ -82,12 +79,11 @@ public class IPBlockLoot extends LootGenerator implements DataProvider{
 	}
 	
 	private void register(ResourceLocation name, LootTable.Builder table){
-		if(tables.put(toTableLoc(name), table.setParameterSet(LootParameterSets.BLOCK).build()) != null)
-			throw new IllegalStateException("Duplicate loot table " + name);
+		out.accept(toTableLoc(name), table);
 	}
 	
 	private LootPool.Builder createPoolBuilder(){
-		return LootPool.builder().acceptCondition(SurvivesExplosion.builder());
+		return LootPool.lootPool().when(ExplosionCondition.survivesExplosion());
 	}
 	
 	private ResourceLocation toTableLoc(ResourceLocation in){

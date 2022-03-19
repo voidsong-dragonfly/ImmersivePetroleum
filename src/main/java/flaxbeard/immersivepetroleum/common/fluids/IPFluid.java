@@ -42,7 +42,7 @@ import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 public class IPFluid extends FlowingFluid{
-	public static final List<IPFluid> FLUIDS = new ArrayList<>();
+	public static final List<IPFluidEntry> FLUIDS = new ArrayList<>();
 	
 	protected final IPFluidEntry entry;
 	protected final ResourceLocation stillTexture;
@@ -83,6 +83,7 @@ public class IPFluid extends FlowingFluid{
 				IPRegisters.registerBlock(name, () -> blockFactory.apply(entry.getValue())),
 				IPRegisters.registerItem(name+"_bucket", () -> new IPBucketItem(entry.getValue().still()))
 		));
+		FLUIDS.add(entry.getValue());
 		return entry.getValue();
 	}
 	
@@ -221,5 +222,9 @@ public class IPFluid extends FlowingFluid{
 			RegistryObject<IPFluid> flowing,
 			RegistryObject<Block> block,
 			RegistryObject<Item> bucket
-	) {}
+	) {
+		public Fluid get() {
+			return still().get();
+		}
+	}
 }

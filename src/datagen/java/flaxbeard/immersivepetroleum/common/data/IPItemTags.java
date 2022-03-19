@@ -14,12 +14,12 @@ public class IPItemTags extends ItemTagsProvider{
 	}
 	
 	@Override
-	protected void registerTags(){
+	protected void addTags(){
 		IPTags.forAllBlocktags(this::copy);
 		
-		getOrCreateBuilder(IPTags.Items.bitumen).addItemEntry(IPContent.Items.bitumen);
-		getOrCreateBuilder(IPTags.Items.petcoke).addItemEntry(IPContent.Items.petcoke);
-		getOrCreateBuilder(IPTags.Items.petcokeDust).addItemEntry(IPContent.Items.petcokedust);
-		getOrCreateBuilder(IPTags.Items.petcokeStorage).addItemEntry(IPContent.Blocks.petcoke.asItem());
+		tag(IPTags.Items.bitumen).add(IPContent.Items.BITUMEN.get());
+		tag(IPTags.Items.petcoke).add(IPContent.Items.PETCOKE.get());
+		tag(IPTags.Items.petcokeDust).add(IPContent.Items.PETCOKEDUST.get());
+		tag(IPTags.Items.petcokeStorage).add(IPContent.Blocks.PETCOKE.get().asItem());
 	}
 }

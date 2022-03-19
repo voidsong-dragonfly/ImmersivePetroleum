@@ -1,6 +1,8 @@
 package flaxbeard.immersivepetroleum.common;
 
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid.IPFluidEntry;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -121,8 +123,8 @@ public class IPContent{
 	public static class Blocks{
 		public static final RegistryObject<AsphaltBlock> ASPHALT = IPRegisters.registerBlock("asphalt", AsphaltBlock::new);
 		// TODO register block items
-		public static final RegistryObject<Block> ASPHALT_SLAB = IPRegisters.registerBlock("asphalt_slab", () -> new AsphaltSlab(ASPHALT.get()));
-		public static final RegistryObject<Block> ASPHALT_STAIR = IPRegisters.registerBlock("asphalt_stair", () -> new AsphaltStairs(ASPHALT.get()));
+		public static final RegistryObject<SlabBlock> ASPHALT_SLAB = IPRegisters.registerBlock("asphalt_slab", () -> new AsphaltSlab(ASPHALT.get()));
+		public static final RegistryObject<StairBlock> ASPHALT_STAIR = IPRegisters.registerBlock("asphalt_stair", () -> new AsphaltStairs(ASPHALT.get()));
 		public static final RegistryObject<PetcokeBlock> PETCOKE = IPRegisters.registerIPBlock("petcoke_block", PetcokeBlock::new);
 		
 		public static final RegistryObject<GasGeneratorBlock> GAS_GENERATOR = IPRegisters.registerIPBlock("gas_generator", GasGeneratorBlock::new);
@@ -172,8 +174,6 @@ public class IPContent{
 		}
 	}
 	
-	@Deprecated
-	public static DebugItem debugItem;
 	public static RegistryObject<Item> DEBUGITEM = IPRegisters.registerItem("debug", DebugItem::new);
 	
 	/** block/item/fluid population */

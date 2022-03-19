@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import flaxbeard.immersivepetroleum.common.data.loot.IPLootGenerator;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +12,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 @EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPDataGenerator{
@@ -27,7 +28,7 @@ public class IPDataGenerator{
 			generator.addProvider(blockTags);
 			generator.addProvider(new IPItemTags(generator, blockTags, exhelper));
 			generator.addProvider(new IPFluidTags(generator, exhelper));
-			generator.addProvider(new IPBlockLoot(generator));
+			generator.addProvider(new IPLootGenerator(generator));
 			generator.addProvider(new IPRecipes(generator));
 		}
 		

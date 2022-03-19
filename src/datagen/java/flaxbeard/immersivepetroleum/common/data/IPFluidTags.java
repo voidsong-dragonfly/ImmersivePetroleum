@@ -15,27 +15,27 @@ public class IPFluidTags extends FluidTagsProvider{
 	}
 	
 	@Override
-	protected void registerTags(){
-		getOrCreateBuilder(IPTags.Fluids.diesel)
-			.add(IPContent.Fluids.diesel)
-			.add(IPContent.Fluids.diesel_sulfur);
+	protected void addTags(){
+		tag(IPTags.Fluids.diesel)
+			.add(IPContent.Fluids.DIESEL.still().get())
+			.add(IPContent.Fluids.DIESEL_SULFUR.still().get());
 		
-		getOrCreateBuilder(IPTags.Fluids.diesel_sulfur)
-			.add(IPContent.Fluids.diesel_sulfur);
+		tag(IPTags.Fluids.diesel_sulfur)
+			.add(IPContent.Fluids.DIESEL_SULFUR.still().get());
 		
-		getOrCreateBuilder(IPTags.Fluids.gasoline)
-			.add(IPContent.Fluids.gasoline);
+		tag(IPTags.Fluids.gasoline)
+			.add(IPContent.Fluids.GASOLINE.still().get());
 		
-		getOrCreateBuilder(IPTags.Fluids.lubricant)
-			.add(IPContent.Fluids.lubricant);
+		tag(IPTags.Fluids.lubricant)
+			.add(IPContent.Fluids.LUBRICANT.still().get());
 		
-		getOrCreateBuilder(IPTags.Fluids.napalm)
-			.add(IPContent.Fluids.napalm);
+		tag(IPTags.Fluids.napalm)
+			.add(IPContent.Fluids.NAPALM.still().get());
 		
-		getOrCreateBuilder(IPTags.Fluids.crudeOil)
-			.add(IPContent.Fluids.crudeOil);
+		tag(IPTags.Fluids.crudeOil)
+			.add(IPContent.Fluids.CRUDEOIL.still().get());
 		
-		getOrCreateBuilder(IPTags.Utility.burnableInFlarestack)
+		tag(IPTags.Utility.burnableInFlarestack)
 			.addTag(IPTags.Fluids.lubricant)
 			.addTag(IPTags.Fluids.diesel)
 			.addTag(IPTags.Fluids.diesel_sulfur)
@@ -44,7 +44,7 @@ public class IPFluidTags extends FluidTagsProvider{
 			.addTag(IETags.fluidCreosote)
 			.addTag(IETags.fluidEthanol);
 		
-		getOrCreateBuilder(IETags.drillFuel)
+		tag(IETags.drillFuel)
 			.addTag(IPTags.Fluids.diesel)
 			.addTag(IPTags.Fluids.diesel_sulfur);
 	}

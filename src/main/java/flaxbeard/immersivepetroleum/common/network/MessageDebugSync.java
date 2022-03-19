@@ -35,8 +35,8 @@ public class MessageDebugSync implements INetMessage{
 				Player player = con.getSender();
 				ItemStack mainItem = player.getMainHandItem();
 				ItemStack secondItem = player.getOffhandItem();
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.debugItem;
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.debugItem;
+				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.DEBUGITEM.get();
+				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.DEBUGITEM.get();
 				
 				if(main || off){
 					ItemStack target = main ? mainItem : secondItem;

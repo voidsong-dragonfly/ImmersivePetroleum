@@ -11,10 +11,10 @@ public class IPBlockTags extends BlockTagsProvider{
 	public IPBlockTags(DataGenerator dataGen, ExistingFileHelper exFileHelper){
 		super(dataGen, ImmersivePetroleum.MODID, exFileHelper);
 	}
-	
+
 	@Override
-	protected void registerTags(){
-		getOrCreateBuilder(IPTags.Blocks.asphalt).addItemEntry(IPContent.Blocks.asphalt);
-		getOrCreateBuilder(IPTags.Blocks.petcoke).addItemEntry(IPContent.Blocks.petcoke);
+	protected void addTags(){
+		tag(IPTags.Blocks.asphalt).add(IPContent.Blocks.ASPHALT.get());
+		tag(IPTags.Blocks.petcoke).add(IPContent.Blocks.PETCOKE.get());
 	}
 }

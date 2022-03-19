@@ -558,7 +558,7 @@ public class ProjectorItem extends IPItemBase{
 					matrix.popPose();
 					
 					// Debugging Stuff
-					if(!player.getOffhandItem().isEmpty() && player.getOffhandItem().getItem() == IPContent.debugItem){
+					if(!player.getOffhandItem().isEmpty() && player.getOffhandItem().getItem() == IPContent.DEBUGITEM.get()){
 						matrix.pushPose();
 						{
 							// Min (Red)

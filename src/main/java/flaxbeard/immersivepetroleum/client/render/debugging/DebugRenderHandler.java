@@ -68,7 +68,7 @@ public class DebugRenderHandler{
 		ItemStack main = player.getItemInHand(InteractionHand.MAIN_HAND);
 		ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
 		
-		return (main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem);
+		return (main != ItemStack.EMPTY && main.getItem() == IPContent.DEBUGITEM.get()) || (off != ItemStack.EMPTY && off.getItem() == IPContent.DEBUGITEM.get());
 	}
 	
 	@SubscribeEvent
@@ -216,7 +216,7 @@ public class DebugRenderHandler{
 		ItemStack main = player.getItemInHand(InteractionHand.MAIN_HAND);
 		ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
 		
-		if((main != ItemStack.EMPTY && main.getItem() == IPContent.debugItem) || (off != ItemStack.EMPTY && off.getItem() == IPContent.debugItem)){
+		if((main != ItemStack.EMPTY && main.getItem() == IPContent.DEBUGITEM.get()) || (off != ItemStack.EMPTY && off.getItem() == IPContent.DEBUGITEM.get())){
 			DebugItem.Modes mode = null;
 			if(main != ItemStack.EMPTY){
 				mode = DebugItem.getMode(main);
