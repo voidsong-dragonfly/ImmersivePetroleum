@@ -1,10 +1,13 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
+import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.InfoArea;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.util.FormattedCharSequence;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -23,12 +26,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.client.gui.GuiUtils;
 
+import javax.annotation.Nullable;
+
 public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/derrick.png");
 	
 	Button cfgButton;
 	
 	final DerrickTileEntity tile;
+	private List<InfoArea> areas;
 	
 	public DerrickScreen(DerrickContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title);
@@ -48,12 +54,16 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			this.minecraft.setScreen(new DerrickSettingsScreen(this));
 		}, (button, matrix, mx, my) -> {
 			if(!button.active){
-				GuiUtils.drawHoveringText(matrix, Arrays.asList(new TextComponent("Set in Stone.")), mx, my, width, height, -1, font);
+				renderTooltip(matrix, List.of(new TextComponent("Set in Stone.")), Optional.empty(), mx, my);
 			}
 		});
 		addRenderableWidget(this.cfgButton);
+		this.areas = List.of(
+				new FluidInfoArea(tile.tank, new Rect2i(leftPos + 11, topPos + 16, 16, 47), 200, 0, 20, 51, GUI_TEXTURE),
+				new EnergyInfoArea(leftPos + 185, topPos + 44, tile.energyStorage)
+		);
 	}
-	
+
 	@Override
 	public void render(PoseStack matrix, int mx, int my, float partialTicks){
 		this.inventoryLabelY = this.imageHeight - 40;
@@ -62,15 +72,13 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.renderTooltip(matrix, mx, my);
 		
 		List<Component> tooltip = new ArrayList<>();
-		GuiHelper.handleGuiTank(matrix, this.tile.tank, leftPos + 11, topPos + 16, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
-		
-		// Power Stored
-		if(mx > leftPos + 184 && mx < leftPos + 192 && my > topPos + 18 && my < topPos + 65){
-			tooltip.add(new TextComponent(this.tile.energyStorage.getEnergyStored() + "/" + this.tile.energyStorage.getMaxEnergyStored() + " IF"));
+
+		for (InfoArea area : areas) {
+			area.fillTooltip(mx, my, tooltip);
 		}
-		
+
 		if(!tooltip.isEmpty()){
-			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);
+			renderTooltip(matrix, tooltip, Optional.empty(), mx, my);
 		}
 	}
 	
@@ -135,15 +143,10 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int mx, int my){
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-		
-		GuiHelper.handleGuiTank(matrix, this.tile.tank, leftPos + 11, topPos + 16, 16, 47, 200, 0, 20, 51, mx, my, GUI_TEXTURE, null);
-		
-		int x = leftPos + 185;
-		int y = topPos + 44;
-		int stored = (int) (this.tile.energyStorage.getEnergyStored() / (float) this.tile.energyStorage.getMaxEnergyStored() * 46);
-		fillGradient(matrix, x, y + 21 - stored, x + 7, y + 21, 0xffb51500, 0xff600b00);
+		for (InfoArea area : areas){
+			area.draw(matrix);
+		}
 	}
 }

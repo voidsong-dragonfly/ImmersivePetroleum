@@ -4,7 +4,9 @@ import static flaxbeard.immersivepetroleum.ImmersivePetroleum.MODID;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -50,7 +52,7 @@ public class DerrickSettingsScreen extends Screen{
 		}, (button, matrix, mx, my) -> {
 			List<Component> list = new ArrayList<>();
 			list.add(new TextComponent("Applies the Path to Derrick"));
-			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
+			renderTooltip(matrix, list, Optional.empty(), mx, my);
 		}));
 		
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Reload"), b -> {
@@ -58,7 +60,7 @@ public class DerrickSettingsScreen extends Screen{
 		}, (button, matrix, mx, my) -> {
 			List<Component> list = new ArrayList<>();
 			list.add(new TextComponent("Loads the already saved config again."));
-			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
+			renderTooltip(matrix, list, Optional.empty(), mx, my);
 		}));
 		
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Close"), b -> {
@@ -66,7 +68,7 @@ public class DerrickSettingsScreen extends Screen{
 		}, (button, matrix, mx, my) -> {
 			List<Component> list = new ArrayList<>();
 			list.add(new TextComponent("Return to Derrick"));
-			GuiUtils.drawHoveringText(matrix, list, mx, my, this.width, this.height, -1, this.font);
+			renderTooltip(matrix, list, Optional.empty(), mx, my);
 		}));
 	}
 	
@@ -74,19 +76,7 @@ public class DerrickSettingsScreen extends Screen{
 	public boolean isPauseScreen(){
 		return false;
 	}
-	
-	@Override
-	public void render(PoseStack matrix, int mx, int my, float partialTicks){
-		List<Component> tooltip = new ArrayList<>();
-		
-		background(matrix, mx, my, partialTicks);
-		super.render(matrix, mx, my, partialTicks);
-		
-		if(!tooltip.isEmpty()){
-			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);
-		}
-	}
-	
+
 	@Override
 	public void onClose(){
 		this.minecraft.setScreen(this.derrickScreen);
@@ -102,8 +92,7 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	private void background(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+		ClientUtils.bindTexture(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 }

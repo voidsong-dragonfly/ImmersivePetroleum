@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
+import blusunrize.immersiveengineering.client.ClientUtils;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import org.lwjgl.opengl.GL11;
@@ -198,8 +199,7 @@ public class ProjectorScreen extends Screen{
 				this.move += 1.5 * partialTicks;
 			}
 			
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
+			ClientUtils.bindTexture(GUI_TEXTURE);
 			blit(matrix, x, y, 0, 166, 200, 13);
 			
 			Component text;
@@ -301,7 +301,7 @@ public class ProjectorScreen extends Screen{
 	
 	private void background(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
+		ClientUtils.bindTexture(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 	
@@ -343,7 +343,7 @@ public class ProjectorScreen extends Screen{
 		
 		@Override
 		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
+			ClientUtils.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}
@@ -449,7 +449,7 @@ public class ProjectorScreen extends Screen{
 		
 		@Override
 		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-			Minecraft.getInstance().getTextureManager().bind(GUI_TEXTURE);
+			ClientUtils.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}

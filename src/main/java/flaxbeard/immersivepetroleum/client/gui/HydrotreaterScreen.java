@@ -3,6 +3,10 @@ package flaxbeard.immersivepetroleum.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.InfoArea;
+import net.minecraft.client.renderer.Rect2i;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,6 +22,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.client.gui.GuiUtils;
 
+import javax.annotation.Nonnull;
+
 public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/hydrotreater.png");
 	
@@ -29,43 +35,30 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 		this.imageWidth = 140;
 		this.imageHeight = 69;
 	}
-	
+
+	@Nonnull
 	@Override
-	public void render(PoseStack matrix, int mx, int my, float partialTicks){
-		this.renderBackground(matrix);
-		super.render(matrix, mx, my, partialTicks);
-//		this.renderHoveredTooltip(matrix, mx, my); // Not needed
-		
-		List<Component> tooltip = new ArrayList<>();
-		
-		// Tank displays
-		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_A], this.leftPos + 34, this.topPos + 11, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
-		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_B], this.leftPos + 11, this.topPos + 11, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
-		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_OUTPUT], this.leftPos + 92, this.topPos + 11, 16, 47, 0, 0, 0, 0, mx, my, GUI_TEXTURE, tooltip);
-		
-		// Power Stored
-		if(mx > this.leftPos + 121 && mx < this.leftPos + 129 && my > this.topPos + 11 && my < this.topPos + 58){
-			tooltip.add(new TextComponent(this.tile.energyStorage.getEnergyStored() + "/" + this.tile.energyStorage.getMaxEnergyStored() + " IF"));
-		}
-		
-		if(!tooltip.isEmpty()){
-			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, this.width, this.height, -1, this.font);
-		}
-	}
-	
-	@Override
-	protected void renderLabels(PoseStack matrixStack, int x, int y){
-		// Not needed
-		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-	}
-	
-	@Override
-	protected void renderBg(PoseStack matrix, float partialTicks, int mx, int my){
-		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_A], this.leftPos + 34, this.topPos + 11, 16, 47, 140, 0, 20, 51, mx, my, GUI_TEXTURE, null);
-		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_B], this.leftPos + 11, this.topPos + 11, 16, 47, 140, 0, 20, 51, mx, my, GUI_TEXTURE, null);
-		GuiHelper.handleGuiTank(matrix, this.tile.tanks[HydrotreaterTileEntity.TANK_OUTPUT], this.leftPos + 92, this.topPos + 11, 16, 47, 140, 0, 20, 51, mx, my, GUI_TEXTURE, null);
-		
-		int stored = (int) (46 * (tile.energyStorage.getEnergyStored() / (float) tile.energyStorage.getMaxEnergyStored()));
-		fillGradient(matrix, leftPos + 122, topPos + 12 + (46 - stored), leftPos + 129, topPos + 58, 0xffb51500, 0xff600b00);
+	protected List<InfoArea> makeInfoAreas(){
+		return List.of(
+				new FluidInfoArea(
+						this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_A],
+						new Rect2i(this.leftPos + 34, this.topPos + 11, 16, 47),
+						140, 0, 20, 51,
+						GUI_TEXTURE
+				),
+				new FluidInfoArea(
+						this.tile.tanks[HydrotreaterTileEntity.TANK_INPUT_B],
+						new Rect2i(this.leftPos + 11, this.topPos + 11, 16, 47),
+						140, 0, 20, 51,
+						GUI_TEXTURE
+				),
+				new FluidInfoArea(
+						this.tile.tanks[HydrotreaterTileEntity.TANK_OUTPUT],
+						new Rect2i(this.leftPos + 92, this.topPos + 11, 16, 47),
+						140, 0, 20, 51,
+						GUI_TEXTURE
+				),
+				new EnergyInfoArea(leftPos + 122, topPos + 12, tile.energyStorage)
+		);
 	}
 }

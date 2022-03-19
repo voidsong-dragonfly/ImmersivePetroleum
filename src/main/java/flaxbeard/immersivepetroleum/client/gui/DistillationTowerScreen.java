@@ -2,7 +2,13 @@ package flaxbeard.immersivepetroleum.client.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.InfoArea;
+import blusunrize.immersiveengineering.client.gui.info.MultitankArea;
+import net.minecraft.client.renderer.Rect2i;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,6 +27,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.fluids.FluidStack;
+import zsynthetic.FunctionIntTToBool;
+
+import javax.annotation.Nonnull;
 
 public class DistillationTowerScreen extends IEContainerScreen<DistillationTowerContainer>{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/distillation.png");
@@ -31,60 +40,14 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 		super(container, playerInventory, title, GUI_TEXTURE);
 		this.tile = container.tile;
 	}
-	
+
+	@Nonnull
 	@Override
-	public void render(PoseStack matrix, int mx, int my, float partialTicks){
-		this.renderBackground(matrix);
-		super.render(matrix, mx, my, partialTicks);
-		this.renderTooltip(matrix, mx, my);
-		
-		List<Component> tooltip = new ArrayList<>();
-		GuiHelper.handleGuiTank(matrix, tile.tanks[0], leftPos + 62, topPos + 21, 16, 47, 177, 31, 20, 51, mx, my, GUI_TEXTURE, tooltip);
-		
-		if(mx >= leftPos + 112 && mx <= leftPos + 112 + 16 && my >= topPos + 21 && my <= topPos + 21 + 47){
-			float capacity = tile.tanks[1].getCapacity();
-			int yy = topPos + 21 + 47;
-			if(tile.tanks[1].getFluidTypes() == 0){
-				tooltip.add(new TranslatableComponent("gui.immersiveengineering.empty"));
-			}else{
-				for(int i = tile.tanks[1].getFluidTypes() - 1;i >= 0;i--){
-					FluidStack fs = tile.tanks[1].fluids.get(i);
-					if(fs != null && fs.getFluid() != null){
-						int fluidHeight = (int) (47 * (fs.getAmount() / capacity));
-						yy -= fluidHeight;
-						if(my >= yy && my < yy + fluidHeight)
-							GuiHelper.addFluidTooltip(fs, tooltip, (int) capacity);
-					}
-				}
-			}
-		}
-		
-		if(mx > leftPos + 157 && mx < leftPos + 164 && my > topPos + 21 && my < topPos + 67)
-			tooltip.add(new TextComponent(tile.energyStorage.getEnergyStored() + "/" + tile.energyStorage.getMaxEnergyStored() + " IF"));
-		
-		if(!tooltip.isEmpty()){
-			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, font);
-		}
-	}
-	
-	@Override
-	protected void renderBg(PoseStack matrix, float f, int mx, int my){
-		int stored = (int) (46 * (tile.energyStorage.getEnergyStored() / (float) tile.energyStorage.getMaxEnergyStored()));
-		fillGradient(matrix, leftPos + 158, topPos + 22 + (46 - stored), leftPos + 165, topPos + 68, 0xffb51500, 0xff600b00);
-		
-		GuiHelper.handleGuiTank(matrix, tile.tanks[0], leftPos + 62, topPos + 21, 16, 47, 177, 31, 20, 51, mx, my, GUI_TEXTURE, null);
-		
-		MultiBufferSource.BufferSource buffers = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-		float capacity = tile.tanks[1].getCapacity();
-		int yy = topPos + 21 + 47;
-		for(int i = tile.tanks[1].getFluidTypes() - 1;i >= 0;i--){
-			FluidStack fs = tile.tanks[1].fluids.get(i);
-			if(fs != null && fs.getFluid() != null){
-				int fluidHeight = (int) (47 * (fs.getAmount() / capacity));
-				yy -= fluidHeight;
-				GuiHelper.drawRepeatedFluidSpriteGui(buffers, matrix, fs, leftPos + 112, yy, 16, fluidHeight);
-			}
-		}
-		buffers.endBatch();
+	protected List<InfoArea> makeInfoAreas(){
+		return List.of(
+				new FluidInfoArea(tile.tanks[0], new Rect2i(leftPos + 62, topPos + 21, 16, 47), 177, 31, 20, 51, GUI_TEXTURE),
+				new EnergyInfoArea(leftPos + 158, topPos + 22, tile.energyStorage),
+				new MultitankArea(new Rect2i(leftPos + 112, topPos + 21, 16, 47), tile.tanks[1])
+		);
 	}
 }
