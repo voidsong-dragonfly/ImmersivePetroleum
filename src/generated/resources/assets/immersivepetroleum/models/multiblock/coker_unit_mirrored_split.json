@@ -2,7 +2,7 @@
   "parent": "minecraft:block/block",
   "loader": "immersiveengineering:basic_split",
   "dynamic": false,
-  "base_model": "immersivepetroleum:multiblock/cokerunit_mirrored",
+  "base_model": "immersivepetroleum:multiblock/coker_unit_mirrored",
   "split_parts": [
     [
       4,

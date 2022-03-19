@@ -21,7 +21,9 @@
       "conditions": {
         "items": [
           {
-            "item": "immersiveengineering:light_engineering"
+            "items": [
+              "immersiveengineering:light_engineering"
+            ]
           }
         ]
       }

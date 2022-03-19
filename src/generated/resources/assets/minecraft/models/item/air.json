@@ -108,6 +108,8 @@
     }
   },
   "textures": {
+    "texture_base": "immersivepetroleum:multiblock/pumpjack_base",
+    "texture_armature": "immersivepetroleum:models/pumpjack_armature",
     "texture": "immersivepetroleum:multiblock/hydrotreater"
   },
   "loader": "forge:obj",
