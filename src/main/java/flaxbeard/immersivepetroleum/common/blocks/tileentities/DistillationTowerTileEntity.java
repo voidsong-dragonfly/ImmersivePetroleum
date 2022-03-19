@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
@@ -40,9 +41,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -50,6 +55,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe>
 		implements IPMenuProvider<DistillationTowerTileEntity>, IBlockBounds, TickableBE{
@@ -405,61 +411,32 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	public boolean shouldRenderAsActiveImpl(){
 		return this.cooldownTicks > 0 || super.shouldRenderAsActiveImpl();
 	}
-	
+
+	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
+			this, be -> be.outputHandler, DistillationTowerTileEntity::master,
+			registerFluidOutput(tanks[TANK_OUTPUT])
+	);
+	private final MultiblockCapability<IFluidHandler> inputHandler = MultiblockCapability.make(
+			this, be -> be.inputHandler, DistillationTowerTileEntity::master,
+			registerFluidInput(tanks[TANK_INPUT])
+	);
+
+	@Nonnull
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		DistillationTowerTileEntity master = master();
-		if(master != null){
-			// Fluid Input
+	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			if(this.posInMultiblock.equals(Fluid_IN)){
-				if(side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
-					return new IFluidTank[]{master.tanks[TANK_INPUT]};
+				if (side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
+					return inputHandler.getAndCast();
 				}
 			}
-			
-			// Fluid Output
 			if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == getFacing().getOpposite())){
-				return new IFluidTank[]{master.tanks[TANK_OUTPUT]};
+				return outputHandler.getAndCast();
 			}
 		}
-		return new FluidTank[0];
+		return super.getCapability(capability, side);
 	}
-	
-	@Override
-	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
-		if(this.posInMultiblock.equals(Fluid_IN)){
-			if(getIsMirrored() ? (side == null || side == getFacing().getCounterClockWise()) : (side == null || side == getFacing().getClockWise())){
-				DistillationTowerTileEntity master = master();
-				
-				if(master == null || master.tanks[TANK_INPUT].getFluidAmount() >= master.tanks[TANK_INPUT].getCapacity())
-					return false;
-				
-				FluidStack copy0 = Utils.copyFluidStackWithAmount(resource, 1000, false);
-				FluidStack copy1 = Utils.copyFluidStackWithAmount(master.tanks[TANK_INPUT].getFluid(), 1000, false);
-				
-				if(master.tanks[TANK_INPUT].getFluid() == FluidStack.EMPTY){
-					DistillationRecipe r = DistillationRecipe.findRecipe(copy0);
-					return r != null;
-				}else{
-					DistillationRecipe r0 = DistillationRecipe.findRecipe(copy0);
-					DistillationRecipe r1 = DistillationRecipe.findRecipe(copy1);
-					return r0 == r1;
-				}
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	protected boolean canDrainTankFrom(int iTank, Direction side){
-		if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == getFacing().getOpposite())){
-			DistillationTowerTileEntity master = master();
-			
-			return master != null && master.tanks[TANK_OUTPUT].getFluidAmount() > 0;
-		}
-		return false;
-	}
-	
+
 	public boolean isLadder(){
 		return this.posInMultiblock.getY() > 0 && (this.posInMultiblock.getX() == 2 && this.posInMultiblock.getZ() == 0);
 	}

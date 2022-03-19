@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
@@ -33,9 +34,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -43,6 +48,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe>
 		implements IPMenuProvider<HydrotreaterTileEntity>, IBlockBounds, TickableBE{
@@ -77,6 +83,8 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	public final FluidTank[] tanks = new FluidTank[]{new FluidTank(12000), new FluidTank(12000), new FluidTank(12000)};
 	public HydrotreaterTileEntity(BlockEntityType<HydrotreaterTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(HydroTreaterMultiblock.INSTANCE, 8000, true, type, pWorldPosition, pBlockState);
+		tanks[TANK_INPUT_A].setValidator(fs -> SulfurRecoveryRecipe.hasRecipeWithInput(fs, true));
+		tanks[TANK_INPUT_B].setValidator(fs -> SulfurRecoveryRecipe.hasRecipeWithSecondaryInput(fs, true));
 	}
 	
 	@Override
@@ -288,56 +296,32 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	public boolean isInWorldProcessingMachine(){
 		return false;
 	}
-	
+
+	private final MultiblockCapability<IFluidHandler> inputAHandler = MultiblockCapability.make(
+			this, be -> be.inputAHandler, HydrotreaterTileEntity::master, registerFluidInput(tanks[TANK_INPUT_A])
+	);
+	private final MultiblockCapability<IFluidHandler> inputBHandler = MultiblockCapability.make(
+			this, be -> be.inputBHandler, HydrotreaterTileEntity::master, registerFluidInput(tanks[TANK_INPUT_B])
+	);
+	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
+			this, be -> be.outputHandler, HydrotreaterTileEntity::master, registerFluidOutput(tanks[TANK_OUTPUT])
+	);
+
+	@Nonnull
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		HydrotreaterTileEntity master = master();
-		if(master != null){
-			if(this.posInMultiblock.equals(Fluid_IN_A) && (side == null || side == getFacing().getOpposite())){
-				return new IFluidTank[]{master.tanks[TANK_INPUT_A]};
-			}
-			if(this.posInMultiblock.equals(Fluid_IN_B) && (side == null || side == Direction.UP)){
-				return new IFluidTank[]{master.tanks[TANK_INPUT_B]};
-			}
-			if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == Direction.UP)){
-				return new IFluidTank[]{master.tanks[TANK_OUTPUT]};
+	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if (this.posInMultiblock.equals(Fluid_IN_A) && (side == null || side == getFacing().getOpposite())){
+				return inputAHandler.getAndCast();
+			} else if (this.posInMultiblock.equals(Fluid_IN_B) && (side == null || side == Direction.UP)){
+				return inputBHandler.getAndCast();
+			} else if (this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == Direction.UP)){
+				return outputHandler.getAndCast();
 			}
 		}
-		return new IFluidTank[0];
+		return super.getCapability(capability, side);
 	}
-	
-	@Override
-	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
-		if(this.posInMultiblock.equals(Fluid_IN_A) && (side == null || side == getFacing().getOpposite())){
-			HydrotreaterTileEntity master = master();
-			
-			if(master != null && master.tanks[TANK_INPUT_A].getFluidAmount() < master.tanks[TANK_INPUT_A].getCapacity()){
-				if(master.tanks[TANK_INPUT_A].isEmpty()){
-					return SulfurRecoveryRecipe.hasRecipeWithInput(resource, true);
-				}else{
-					return resource.isFluidEqual(master.tanks[TANK_INPUT_A].getFluid());
-				}
-			}
-		}
-		if(this.posInMultiblock.equals(Fluid_IN_B) && (side == null || side == Direction.UP)){
-			HydrotreaterTileEntity master = master();
-			
-			if(master != null && master.tanks[TANK_INPUT_B].getFluidAmount() < master.tanks[TANK_INPUT_B].getCapacity()){
-				if(master.tanks[TANK_INPUT_B].isEmpty()){
-					return SulfurRecoveryRecipe.hasRecipeWithSecondaryInput(resource, true);
-				}else{
-					return resource.isFluidEqual(master.tanks[TANK_INPUT_B].getFluid());
-				}
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	protected boolean canDrainTankFrom(int iTank, Direction side){
-		return false;
-	}
-	
+
 	@Override
 	public HydrotreaterTileEntity getGuiMaster(){
 		return master();

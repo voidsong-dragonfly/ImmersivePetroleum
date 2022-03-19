@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 
 import com.google.common.collect.ImmutableSet;
 
-import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
@@ -18,7 +18,6 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.process.Multibl
 import com.mojang.datafixers.util.Pair;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -35,12 +34,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds, TickableBE{
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
@@ -61,7 +66,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	 */
 	public static final BlockPos Down_Port = new BlockPos(1, 0, 0);
 	
-	public FluidTank fakeTank = new FluidTank(0);
+	public static final FluidTank FAKE_TANK = new FluidTank(0);
 	public boolean wasActive = false;
 	public float activeTicks = 0;
 	public PumpjackTileEntity(BlockEntityType<PumpjackTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
@@ -266,38 +271,29 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	public IFluidTank[] getInternalTanks(){
 		return null;
 	}
-	
+
+	private final ResettableCapability<IFluidHandler> fakeFluidHandler = registerFluidHandler(FAKE_TANK);
+
+	@Nonnull
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		PumpjackTileEntity master = master();
-		if(master != null){
+	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			// East Port
 			if(this.posInMultiblock.equals(East_Port)){
 				if(side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
-					return new FluidTank[]{master.fakeTank};
+					return fakeFluidHandler.cast();
 				}
 			}
-			
 			// West Port
 			if(this.posInMultiblock.equals(West_Port)){
 				if(side == null || (getIsMirrored() ? (side == getFacing().getClockWise()) : (side == getFacing().getCounterClockWise()))){
-					return new FluidTank[]{master.fakeTank};
+					return fakeFluidHandler.cast();
 				}
 			}
 		}
-		return new FluidTank[0];
+		return super.getCapability(capability, side);
 	}
-	
-	@Override
-	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
-		return false;
-	}
-	
-	@Override
-	protected boolean canDrainTankFrom(int iTank, Direction side){
-		return false;
-	}
-	
+
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(PumpjackTileEntity::getShape);
 	@Override
 	public VoxelShape getBlockBounds(CollisionContext ctx){

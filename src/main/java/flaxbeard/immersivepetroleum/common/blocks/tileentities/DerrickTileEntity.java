@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.common.util.MultiblockCapability;
+import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
@@ -54,9 +56,12 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -656,46 +661,27 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		return false;
 	}
 
+	private final MultiblockCapability<IFluidHandler> fluidInputHandler = MultiblockCapability.make(
+			this, be -> be.fluidInputHandler, DerrickTileEntity::master, registerFluidInput(tank)
+	);
+	private final ResettableCapability<IFluidHandler> dummyTank = registerFluidOutput(DUMMY_TANK);
+
+	@Nonnull
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		DerrickTileEntity master = master();
-		if(master != null){
-			if(this.posInMultiblock.equals(Fluid_IN)){
-				if(side == null || side == getFacing().getOpposite()){
-					return new IFluidTank[]{master.tank};
-				}
+	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if (posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
+				return fluidInputHandler.getAndCast();
 			}
-			
-			if(this.posInMultiblock.equals(Fluid_OUT)){
-				if(side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
-					return new IFluidTank[]{DUMMY_TANK};
+			if (this.posInMultiblock.equals(Fluid_OUT)){
+				if (side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
+					return dummyTank.cast();
 				}
 			}
 		}
-		return new IFluidTank[0];
+		return super.getCapability(capability, side);
 	}
-	
-	@Override
-	protected boolean canDrainTankFrom(int iTank, Direction side){
-		return false;
-	}
-	
-	@Override
-	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
-		if(this.posInMultiblock.equals(Fluid_IN)){
-			if(side == null || side == getFacing().getOpposite()){
-				DerrickTileEntity master = master();
-				
-				if(master == null || master.tank.getFluidAmount() >= master.tank.getCapacity()){
-					return false;
-				}
-				
-				return true;
-			}
-		}
-		return false;
-	}
-	
+
 	public boolean isLadder(){
 		int x = posInMultiblock.getX();
 		int y = posInMultiblock.getY();

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -39,12 +40,19 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction, TickableBE{
 	
@@ -281,39 +289,33 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		return Redstone_IN;
 	}
 	
+	private final MultiblockCapability<IFluidHandler> inputHandler = MultiblockCapability.make(
+			this, be -> be.inputHandler, OilTankTileEntity::master, registerFluidInput(tank)
+	);
+	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
+			this, be -> be.outputHandler, OilTankTileEntity::master, registerFluidOutput(tank)
+	);
+
+	@Nonnull
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		OilTankTileEntity master = master();
-		if(master != null && Port.ALL.contains(posInMultiblock)){
-			return new FluidTank[]{master.tank};
-		}
-		return new FluidTank[0];
-	}
-	
-	@Override
-	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
-		for(Port port:Port.values()){
-			if(port.matches(this.posInMultiblock)){
-				OilTankTileEntity master = isDummy() ? master() : this;
-				return master.getPortStateFor(port) == PortState.INPUT;
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side){
+		if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+			for(Port port:Port.values()){
+				if(port.matches(this.posInMultiblock)){
+					OilTankTileEntity master = isDummy() ? master() : this;
+					if (master == null) {
+						return LazyOptional.empty();
+					}
+					return switch (master.portConfig.get(port)){
+						case INPUT -> inputHandler.getAndCast();
+						case OUTPUT -> outputHandler.getAndCast();
+					};
+				}
 			}
 		}
-		
-		return false;
+		return super.getCapability(cap, side);
 	}
-	
-	@Override
-	protected boolean canDrainTankFrom(int iTank, Direction side){
-		for(Port port:Port.values()){
-			if(port.matches(this.posInMultiblock)){
-				OilTankTileEntity master = isDummy() ? master() : this;
-				return master.getPortStateFor(port) == PortState.OUTPUT;
-			}
-		}
-		
-		return false;
-	}
-	
+
 	public boolean isLadder(){
 		int x = posInMultiblock.getX();
 		int z = posInMultiblock.getZ();

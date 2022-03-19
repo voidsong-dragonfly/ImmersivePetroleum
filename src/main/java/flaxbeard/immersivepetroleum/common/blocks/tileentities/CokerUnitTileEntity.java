@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.common.util.MultiblockCapability;
+import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
@@ -53,6 +55,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -121,6 +125,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public final CokingChamber[] chambers = {new CokingChamber(64, 8000), new CokingChamber(64, 8000)};
 	public CokerUnitTileEntity(BlockEntityType<CokerUnitTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(CokerUnitMultiblock.INSTANCE, 24000, true, type, pWorldPosition, pBlockState);
+		bufferTanks[TANK_INPUT].setValidator(fs -> CokerUnitRecipe.hasRecipeWithInput(fs, true));
 	}
 	
 	@Override
@@ -172,34 +177,6 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	}
 	
 	@Override
-	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource){
-		if(this.posInMultiblock.equals(Fluid_IN)){
-			if(side == null || side == getFacing()){
-				CokerUnitTileEntity master = master();
-				
-				if(master != null && master.bufferTanks[TANK_INPUT].getFluidAmount() < master.bufferTanks[TANK_INPUT].getCapacity()){
-					if(master.bufferTanks[TANK_INPUT].isEmpty()){
-						return CokerUnitRecipe.hasRecipeWithInput(resource, true);
-					}else{
-						return resource.isFluidEqual(master.bufferTanks[TANK_INPUT].getFluid());
-					}
-				}
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	protected boolean canDrainTankFrom(int iTank, Direction side){
-		if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == getFacing())){
-			CokerUnitTileEntity master = master();
-			
-			return master != null && master.bufferTanks[TANK_OUTPUT].getFluidAmount() > 0;
-		}
-		return false;
-	}
-	
-	@Override
 	public void doGraphicalUpdates(){
 		updateMasterBlock(null, true);
 	}
@@ -217,17 +194,29 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	public void doProcessOutput(ItemStack output){
 	}
-	
-	private LazyOptional<IItemHandler> insertionHandler = LazyOptional.of(() -> {
-		return new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[8]);
-	});
+
+	private final MultiblockCapability<IItemHandler> insertionHandler = MultiblockCapability.make(
+			this, be -> be.insertionHandler, CokerUnitTileEntity::master,
+			new ResettableCapability<>(new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[8]))
+	);
+	private final MultiblockCapability<IFluidHandler> fluidOutHandler = MultiblockCapability.make(
+			this, be -> be.fluidOutHandler, CokerUnitTileEntity::master,
+			registerFluidOutput(bufferTanks[TANK_OUTPUT])
+	);
+	private final MultiblockCapability<IFluidHandler> fluidInHandler = MultiblockCapability.make(
+			this, be -> be.fluidInHandler, CokerUnitTileEntity::master,
+			registerFluidInput(bufferTanks[TANK_INPUT])
+	);
 	
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction facing){
-		if((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			CokerUnitTileEntity master = master();
-			if(master != null){
-				return master.insertionHandler.cast();
+		if ((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+			return insertionHandler.getAndCast();
+		} else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing == getFacing())){
+			if (this.posInMultiblock.equals(Fluid_OUT)){
+				return fluidOutHandler.getAndCast();
+			} else if (this.posInMultiblock.equals(Fluid_IN)) {
+				return fluidInHandler.getAndCast();
 			}
 		}
 		return super.getCapability(capability, facing);
@@ -483,25 +472,6 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	public float getMinProcessDistance(MultiblockProcess<CokerUnitRecipe> process){
 		return 1.0F;
-	}
-	
-	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(Direction side){
-		CokerUnitTileEntity master = master();
-		if(master != null){
-			if(this.posInMultiblock.equals(Fluid_IN)){
-				if(side == null || side == getFacing()){
-					return new IFluidTank[]{master.bufferTanks[TANK_INPUT]};
-				}
-			}
-			
-			if(this.posInMultiblock.equals(Fluid_OUT)){
-				if(side == null || side == getFacing().getOpposite()){
-					return new IFluidTank[]{master.bufferTanks[TANK_OUTPUT]};
-				}
-			}
-		}
-		return new IFluidTank[0];
 	}
 	
 	@Override
