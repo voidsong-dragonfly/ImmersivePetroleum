@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.client.model;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
@@ -14,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ModelMotorboat extends ListModel<MotorboatEntity>{
-	private final ImmutableList<ModelPart> list;
+	private final List<ModelPart> list = List.of();
 	
 	/**
 	 * Part of the model rendered to make it seem like there's no water in the
@@ -37,6 +38,7 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	public ModelPart[] paddles = new ModelPart[2];
 	
 	public ModelMotorboat(){
+		/*
 		this.boatSides[0] = (new ModelPart(this, 0, 0)).setTexSize(128, 64);
 		this.boatSides[1] = (new ModelPart(this, 0, 19)).setTexSize(128, 64);
 		this.boatSides[2] = (new ModelPart(this, 0, 27)).setTexSize(128, 64);
@@ -78,11 +80,11 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 				this.motor,
 				this.propellerAssembly));
 		
-		this.list = builder.build();
+		this.list = builder.build();*/
 	}
 	
 	public void refresh(){
-		motor = new ModelPart(this, 104, 0).setTexSize(128, 64);
+		/*motor = new ModelPart(this, 104, 0).setTexSize(128, 64);
 		motor.addBox(-19.0F, -8.0F, -3, 6, 5, 6, 0.0F);
 		
 		propellerAssembly = new ModelPart(this, 96, 0).setTexSize(128, 64);
@@ -196,15 +198,17 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 		iS2T.addBox(4, 0, 0F, 12, 5, 2, 0.0F);
 		iS2T.setPos(0F, -7F, 0F);
 		iS2T.xRot = (float) Math.toRadians(180 + 23);
-		iS2.addChild(iS2T);
+		iS2.addChild(iS2T);*/
 	}
-	
+
+	/*
 	ModelPart makePaddle(boolean left){
 		ModelPart model = (new ModelPart(this, 62, left ? 2 : 22)).setTexSize(128, 64);
 		model.addBox(-1.0F, 0.0F, -5.0F, 2, 2, 18);
 		model.addBox(left ? -1.001F : 0.001F, -3.0F, 8.0F, 1, 6, 7);
 		return model;
 	}
+	 */
 	
 	@Override
 	public void setupAnim(MotorboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){

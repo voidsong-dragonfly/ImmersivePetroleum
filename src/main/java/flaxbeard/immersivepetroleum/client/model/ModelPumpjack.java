@@ -24,13 +24,13 @@ public class ModelPumpjack extends IPModel{
 	public ModelPumpjack(){
 		super(IPRenderTypes::getEntitySolid);
 		
-		this.texWidth = 190;
-		this.texHeight = 58;
+		//this.texWidth = 190;
+		//this.texHeight = 58;
 	}
 	
 	@Override
 	public void init(){
-		this.origin = new ModelPart(this, 0, 0);
+		/*this.origin = new ModelPart(this, 0, 0);
 		
 		this.arm = new ModelPart(this, 0, 40);
 		this.arm.addBox(-24 - 16, 0, -4, 70, 10, 8);
@@ -77,11 +77,12 @@ public class ModelPumpjack extends IPModel{
 		this.wellConnector2.addBox(-1F, 0F, -1F, 2, 16, 2);
 		
 		this.origin.addChild(this.wellConnector);
-		this.origin.addChild(this.wellConnector2);
+		this.origin.addChild(this.wellConnector2);*/
 	}
 	
 	@Override
 	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
+		if (true) return;
 		arm.zRot = (float) Math.toRadians(15 * Math.sin(ticks / 25D));
 		swingy.zRot = (float) (2 * (Math.PI / 4) + (ticks / 25D));
 		

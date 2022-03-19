@@ -15,11 +15,12 @@ public class ModelLubricantPipes{
 		public Crusher(){
 			super(RenderType::entitySolid);
 			
-			this.texWidth = this.texHeight = 16;
+			//this.texWidth = this.texHeight = 16;
 		}
 		
 		@Override
 		public void init(){
+			/*
 			this.origin = new ModelPart(this, 0, 0);
 			this.origin.addBox(20, 8, 9, 12, 2, 2);
 			
@@ -64,6 +65,7 @@ public class ModelLubricantPipes{
 			p9.addBox(0, -1, -1, 14, 2, 2);
 			p9.zRot = (float) Math.toRadians(90);
 			this.origin.addChild(p9);
+			 */
 		}
 		
 		@Override
@@ -82,12 +84,12 @@ public class ModelLubricantPipes{
 			super(RenderType::entitySolid);
 			this.mirrored = mirror;
 			
-			this.texWidth = this.texHeight = 16;
+			//this.texWidth = this.texHeight = 16;
 		}
 		
 		@Override
 		public void init(){
-			if(this.mirrored){
+			/*if(this.mirrored){
 				this.origin = new ModelPart(this, 0, 0);
 				this.origin.addBox(51, 8, 6, 20, 2, 2);
 				
@@ -226,7 +228,7 @@ public class ModelLubricantPipes{
 				p12.addBox(-1, -1, 0, 4, 2, 2);
 				p12.yRot = (float) Math.toRadians(270);
 				this.origin.addChild(p12);
-			}
+			}*/
 		}
 		
 		@Override
@@ -245,12 +247,12 @@ public class ModelLubricantPipes{
 			super(RenderType::entitySolid);
 			this.mirrored = mirror;
 			
-			this.texWidth = this.texHeight = 16;
+			//this.texWidth = this.texHeight = 16;
 		}
 		
 		@Override
 		public void init(){
-			if(this.mirrored){
+			/*if(this.mirrored){
 				this.origin = new ModelPart(this, 0, 0);
 				this.origin.addBox(21, 8, 12, 15, 2, 2);
 				
@@ -380,7 +382,7 @@ public class ModelLubricantPipes{
 				p10.addBox(0, -2, 0, 6, 2, 2);
 				p10.zRot = (float) Math.toRadians(90);
 				this.origin.addChild(p10);
-			}
+			}*/
 		}
 		
 		@Override
