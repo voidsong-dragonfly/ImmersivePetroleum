@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.client.render;
 
 import java.util.OptionalDouble;
 
+import com.mojang.blaze3d.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,12 +12,11 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderStateShard.CullStateShard;
-import net.minecraft.client.renderer.RenderStateShard.LineStateShard;
 import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
-public class IPRenderTypes{
+public class IPRenderTypes extends RenderStateShard{
 	static final ResourceLocation activeTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/distillation_tower_active.png");
 	static final ResourceLocation oilTankTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/oiltank.png");
 	
@@ -31,7 +31,6 @@ public class IPRenderTypes{
 
 	static final RenderStateShard.TextureStateShard TEXTURE_ACTIVE_TOWER = new RenderStateShard.TextureStateShard(activeTexture, false, false);
 	static final RenderStateShard.TextureStateShard TEXTURE_OIL_TANK = new RenderStateShard.TextureStateShard(oilTankTexture, false, false);
-	static final RenderStateShard.ShadeModelStateShard SHADE_ENABLED = new RenderStateShard.ShadeModelStateShard(true);
 	static final RenderStateShard.LightmapStateShard LIGHTMAP_ENABLED = new RenderStateShard.LightmapStateShard(true);
 	static final RenderStateShard.OverlayStateShard OVERLAY_ENABLED = new RenderStateShard.OverlayStateShard(true);
 	static final RenderStateShard.OverlayStateShard OVERLAY_DISABLED = new RenderStateShard.OverlayStateShard(false);
@@ -44,17 +43,18 @@ public class IPRenderTypes{
 		RenderSystem.disableBlend();
 	}, () -> {
 	});
-	static final RenderStateShard.DiffuseLightingStateShard DIFFUSE_LIGHTING_ENABLED = new RenderStateShard.DiffuseLightingStateShard(true);
-	
+
 	static{
+		// TODO fix. Lines are weird in 1.17+
 		TRANSLUCENT_LINES = RenderType.create(
 				ImmersivePetroleum.MODID+":translucent_lines",
 				DefaultVertexFormat.POSITION_COLOR,
-				GL11.GL_LINES,
+				VertexFormat.Mode.LINES,
 				256,
+				false,
+				false,
 				RenderType.CompositeState.builder().setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setLineState(new LineStateShard(OptionalDouble.of(3.5)))
-					.setTextureState(new TextureStateShard())
 					.setDepthTestState(DEPTH_ALWAYS)
 					.createCompositeState(false)
 		);
@@ -62,13 +62,12 @@ public class IPRenderTypes{
 		DISTILLATION_TOWER_ACTIVE = RenderType.create(
 				ImmersivePetroleum.MODID+":distillation_tower_active",
 				DefaultVertexFormat.BLOCK,
-				GL11.GL_QUADS,
+				VertexFormat.Mode.QUADS,
 				256,
 				true,
 				false,
 				RenderType.CompositeState.builder()
 					.setTextureState(TEXTURE_ACTIVE_TOWER)
-					.setShadeModelState(SHADE_ENABLED)
 					.setLightmapState(LIGHTMAP_ENABLED)
 					.setOverlayState(OVERLAY_DISABLED)
 					.createCompositeState(false)
@@ -77,14 +76,13 @@ public class IPRenderTypes{
 		OIL_TANK = RenderType.create(
 				ImmersivePetroleum.MODID+":oil_tank",
 				DefaultVertexFormat.BLOCK,
-				GL11.GL_QUADS,
+				VertexFormat.Mode.QUADS,
 				256,
 				true,
 				false,
 				RenderType.CompositeState.builder()
 					.setTextureState(TEXTURE_OIL_TANK)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-					.setShadeModelState(SHADE_ENABLED)
 					.setLightmapState(LIGHTMAP_ENABLED)
 					.setOverlayState(OVERLAY_DISABLED)
 					.createCompositeState(false)
@@ -93,38 +91,45 @@ public class IPRenderTypes{
 		TRANSLUCENT_POSITION_COLOR = RenderType.create(
 				ImmersivePetroleum.MODID+":translucent_pos_color",
 				DefaultVertexFormat.POSITION_COLOR,
-				GL11.GL_QUADS,
+				VertexFormat.Mode.QUADS,
 				256,
+				false,
+				false,
 				RenderType.CompositeState.builder()
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-					.setTextureState(new TextureStateShard())
 					.createCompositeState(false)
 		);
 		
 		ISLAND_DEBUGGING_POSITION_COLOR = RenderType.create(
 				ImmersivePetroleum.MODID+":translucent_pos_color",
 				DefaultVertexFormat.POSITION_COLOR,
-				GL11.GL_QUADS,
+				VertexFormat.Mode.QUADS,
 				256,
+				false,
+				false,
 				RenderType.CompositeState.builder()
 					.setCullState(new CullStateShard(false))
-					.setTextureState(new TextureStateShard())
 					.createCompositeState(false)
 		);
 	}
-	
+
+	private IPRenderTypes(String pName, Runnable pSetupState, Runnable pClearState){
+		super(pName, pSetupState, pClearState);
+		throw new UnsupportedOperationException();
+	}
+
 	/** Same as vanilla, just without an overlay */
 	public static RenderType getEntitySolid(ResourceLocation locationIn){
 		RenderType.CompositeState renderState = RenderType.CompositeState.builder()
 				.setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false))
 				.setTransparencyState(NO_TRANSPARENCY)
-				.setDiffuseLightingState(DIFFUSE_LIGHTING_ENABLED)
 				.setLightmapState(LIGHTMAP_ENABLED)
 				.setOverlayState(OVERLAY_DISABLED)
 				.createCompositeState(true);
-		return RenderType.create("entity_solid", DefaultVertexFormat.NEW_ENTITY, 7, 256, true, false, renderState);
+		return RenderType.create("entity_solid", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, renderState);
 	}
-	
+
+	// TODO this is very very broken in 1.17+
 	public static MultiBufferSource disableLighting(MultiBufferSource in){
 		return type -> {
 			@SuppressWarnings("deprecation")
@@ -138,7 +143,7 @@ public class IPRenderTypes{
 					() -> {
 						type.setupRenderState();
 						
-						RenderSystem.disableLighting();
+						//RenderSystem.disableLighting();
 					}, () -> {
 						type.clearRenderState();
 					}){};
