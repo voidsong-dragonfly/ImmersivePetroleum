@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
+import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import com.google.common.collect.ImmutableSet;
@@ -57,7 +59,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
+public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements
+		IPMenuProvider<CokerUnitTileEntity>, IBlockBounds, TickableBE{
+
 	public static enum Inventory{
 		/** Inventory Item Input */
 		INPUT,
@@ -506,7 +510,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	}
 	
 	@Override
-	public BlockEntity getGuiMaster(){
+	public CokerUnitTileEntity getGuiMaster(){
 		return master();
 	}
 	
@@ -514,7 +518,13 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public boolean canUseGui(Player player){
 		return this.formed;
 	}
-	
+
+	@Nonnull
+	@Override
+	public BEContainerIP<? super CokerUnitTileEntity, ?> getContainerTypeIP(){
+		return IPMenuTypes.COKER;
+	}
+
 	@Override
 	public boolean isInWorldProcessingMachine(){
 		return false;
@@ -1380,11 +1390,5 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			
 			return false;
 		}
-	}
-
-	@Override
-	public BEContainer getContainerType(){
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

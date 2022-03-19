@@ -183,6 +183,7 @@ public class IPContent{
 		Items.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
 		Multiblock.forceClassLoad();
+		IPMenuTypes.forceClassLoad();
 	}
 
 	public static void preInit(){

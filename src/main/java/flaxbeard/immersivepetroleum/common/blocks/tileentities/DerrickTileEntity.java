@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
+import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -63,7 +65,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * @author TwistedGate
  */
-public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
+public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe>
+		implements IPMenuProvider<DerrickTileEntity>, IBlockBounds, TickableBE{
 	public enum Inventory{
 		/** Item Pipe Input */
 		INPUT;
@@ -546,10 +549,16 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	}
 	
 	@Override
-	public BlockEntity getGuiMaster(){
+	public DerrickTileEntity getGuiMaster(){
 		return master();
 	}
-	
+
+	@Nonnull
+	@Override
+	public BEContainerIP<? super DerrickTileEntity, ?> getContainerTypeIP(){
+		return IPMenuTypes.DERRICK;
+	}
+
 	@Override
 	public boolean canUseGui(Player player){
 		return this.formed;

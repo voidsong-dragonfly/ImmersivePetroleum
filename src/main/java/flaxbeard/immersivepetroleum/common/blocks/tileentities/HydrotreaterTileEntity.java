@@ -6,19 +6,18 @@ import java.util.Set;
 
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
+import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import com.google.common.collect.ImmutableSet;
 
-import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.core.BlockPos;
@@ -43,7 +42,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IInteractionObjectIE<HydrotreaterTileEntity>, IBlockBounds, TickableBE{
+import javax.annotation.Nonnull;
+
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe>
+		implements IPMenuProvider<HydrotreaterTileEntity>, IBlockBounds, TickableBE{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -340,7 +342,13 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	public HydrotreaterTileEntity getGuiMaster(){
 		return master();
 	}
-	
+
+	@Nonnull
+	@Override
+	public BEContainerIP<? super HydrotreaterTileEntity, ?> getContainerTypeIP(){
+		return IPMenuTypes.HYDROTREATER;
+	}
+
 	@Override
 	public boolean canUseGui(Player player){
 		return this.formed;

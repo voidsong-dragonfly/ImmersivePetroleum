@@ -11,16 +11,16 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTower
 import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 public class DistillationTowerContainer extends MultiblockAwareGuiContainer<DistillationTowerTileEntity>{
-	public DistillationTowerContainer(int id, Inventory playerInventory, final DistillationTowerTileEntity tile){
-		super(null, tile, id, DistillationTowerMultiblock.INSTANCE);
-		// TODO MenuType
-		
+	public DistillationTowerContainer(MenuType<?> type, int id, Inventory playerInventory, final DistillationTowerTileEntity tile){
+		super(type, tile, id, DistillationTowerMultiblock.INSTANCE);
+
 		addSlot(new IPSlot(this.inv, INV_0, 12, 17){
 			@Override
 			public boolean mayPlace(ItemStack stack){

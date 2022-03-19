@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -32,7 +33,7 @@ public class IPRegisters{
 	private static final DeferredRegister<Fluid> FLUID_REGISTER = DeferredRegister.create(ForgeRegistries.FLUIDS, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<BlockEntityType<?>> TE_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<EntityType<?>> ENTITY_REGISTER = DeferredRegister.create(ForgeRegistries.ENTITIES, ImmersivePetroleum.MODID);
-	private static final DeferredRegister<MenuType<?>> GUI_REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, ImmersivePetroleum.MODID);
+	private static final DeferredRegister<MenuType<?>> MENU_REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ImmersivePetroleum.MODID);
 	
 	public static final void addRegistersToEventBus(IEventBus eventBus){
@@ -41,7 +42,7 @@ public class IPRegisters{
 		FLUID_REGISTER.register(eventBus);
 		TE_REGISTER.register(eventBus);
 		ENTITY_REGISTER.register(eventBus);
-		GUI_REGISTER.register(eventBus);
+		MENU_REGISTER.register(eventBus);
 		RECIPE_SERIALIZERS.register(eventBus);
 	}
 
@@ -97,12 +98,9 @@ public class IPRegisters{
 		return RECIPE_SERIALIZERS.register(name, serializer);
 	}
 	
-	private static void registerGUI(String name){
-		// TODO GUI Register
-		GUI_REGISTER.register(name, () -> {
-			new MenuType(null);
-			return null;
-		});
+	public static <T extends AbstractContainerMenu>
+	RegistryObject<MenuType<T>> registerMenu(String name, Supplier<MenuType<T>> factory){
+		return MENU_REGISTER.register(name, factory);
 	}
 	
 	private IPRegisters(){

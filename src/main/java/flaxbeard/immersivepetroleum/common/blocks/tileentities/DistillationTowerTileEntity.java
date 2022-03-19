@@ -7,6 +7,8 @@ import java.util.Set;
 
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.mojang.datafixers.util.Pair;
+import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import com.google.common.collect.ImmutableSet;
@@ -47,7 +49,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe> implements IInteractionObjectIE, IBlockBounds, TickableBE{
+import javax.annotation.Nonnull;
+
+public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe>
+		implements IPMenuProvider<DistillationTowerTileEntity>, IBlockBounds, TickableBE{
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;
 	
@@ -276,10 +281,16 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	public BlockEntity getGuiMaster(){
+	public DistillationTowerTileEntity getGuiMaster(){
 		return master();
 	}
-	
+
+	@Nonnull
+	@Override
+	public BEContainerIP<? super DistillationTowerTileEntity, ?> getContainerTypeIP(){
+		return IPMenuTypes.DISTILLATION_TOWER;
+	}
+
 	@Override
 	public boolean canUseGui(Player player){
 		return this.formed;

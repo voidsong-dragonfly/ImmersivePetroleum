@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import blusunrize.immersiveengineering.common.gui.GuiHandler;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
@@ -37,13 +36,8 @@ public class CommonProxy{
 	public void setup(){
 	}
 	
-	public void registerContainersAndScreens(){
-		GuiHandler.register(DistillationTowerTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerContainer::new);
-		GuiHandler.register(CokerUnitTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "cokerunit"), CokerUnitContainer::new);
-		GuiHandler.register(DerrickTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "derrick"), DerrickContainer::new);
-		GuiHandler.register(HydrotreaterTileEntity.class, new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater"), HydrotreaterContainer::new);
-	}
-	
+	public void registerContainersAndScreens(){}
+
 	public void preInit(){
 	}
 	

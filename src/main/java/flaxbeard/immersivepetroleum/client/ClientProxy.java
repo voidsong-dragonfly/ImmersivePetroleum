@@ -31,6 +31,7 @@ import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
+import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
@@ -113,17 +114,11 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void registerContainersAndScreens(){
 		super.registerContainersAndScreens();
-		
-		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "distillationtower"), DistillationTowerScreen::new);
-		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "cokerunit"), CokerUnitScreen::new);
-		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "derrick"), DerrickScreen::new);
-		registerScreen(new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater"), HydrotreaterScreen::new);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <C extends AbstractContainerMenu, S extends Screen & MenuAccess<C>> void registerScreen(ResourceLocation name, ScreenConstructor<C, S> factory){
-		MenuType<C> type = (MenuType<C>) GuiHandler.getContainerType(name);
-		MenuScreens.register(type, factory);
+
+		MenuScreens.register(IPMenuTypes.DISTILLATION_TOWER.getType(), DistillationTowerScreen::new);
+		MenuScreens.register(IPMenuTypes.COKER.getType(), CokerUnitScreen::new);
+		MenuScreens.register(IPMenuTypes.DERRICK.getType(), DerrickScreen::new);
+		MenuScreens.register(IPMenuTypes.HYDROTREATER.getType(), HydrotreaterScreen::new);
 	}
 	
 	@SuppressWarnings("deprecation")
