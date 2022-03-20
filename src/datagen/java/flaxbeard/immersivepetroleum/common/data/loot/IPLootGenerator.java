@@ -1,8 +1,13 @@
 package flaxbeard.immersivepetroleum.common.data.loot;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import com.mojang.datafixers.util.Pair;
+
 import flaxbeard.immersivepetroleum.common.data.IPBlockLoot;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
@@ -12,13 +17,6 @@ import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class IPLootGenerator extends LootTableProvider{
 	public IPLootGenerator(DataGenerator pGenerator){

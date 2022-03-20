@@ -7,12 +7,12 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -49,12 +49,12 @@ public class PumpjackClientData extends IPClientMultiblockProperties{
 
 		if(this.list == null){
 			BlockState state = te.getBlockState();
-			BakedModel model = ClientUtils.mc().getBlockRenderer().getBlockModel(state);
+			BakedModel model = MCUtil.getBlockRenderer().getBlockModel(state);
 			this.list = model.getQuads(state, null, ApiUtils.RANDOM, EmptyModelData.INSTANCE);
 		}
 
 		if(this.list != null && this.list.size() > 0){
-			Level world = ClientUtils.mc().level;
+			Level world = MCUtil.getLevel();
 			if(world != null){
 				transform.pushPose();
 				transform.translate(1, 0, 0);

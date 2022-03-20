@@ -9,7 +9,6 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
@@ -29,6 +28,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.Port;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -211,7 +211,7 @@ public class DebugRenderHandler{
 			return;
 		}
 		
-		Player player = ClientUtils.mc().player;
+		Player player = MCUtil.getPlayer();
 		
 		ItemStack main = player.getItemInHand(InteractionHand.MAIN_HAND);
 		ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
@@ -233,7 +233,7 @@ public class DebugRenderHandler{
 				matrix.pushPose();
 				{
 					// Anti-Jiggle when moving
-					Vec3 renderView = ClientUtils.mc().gameRenderer.getMainCamera().getPosition();
+					Vec3 renderView = MCUtil.getGameRenderer().getMainCamera().getPosition();
 					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
 					matrix.pushPose();

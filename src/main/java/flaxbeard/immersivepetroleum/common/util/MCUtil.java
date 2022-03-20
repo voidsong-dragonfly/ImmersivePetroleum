@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.player.LocalPlayer;
@@ -25,6 +26,11 @@ import net.minecraft.world.phys.HitResult;
  * @author TwistedGate
  */
 public class MCUtil{
+	
+	public static Screen getScreen(){
+		Minecraft mc = Minecraft.getInstance();
+		return mc.screen;
+	}
 	
 	public static ParticleEngine getParticleEngine(){
 		Minecraft mc = Minecraft.getInstance();

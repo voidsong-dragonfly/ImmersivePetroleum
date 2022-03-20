@@ -33,6 +33,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -260,7 +261,8 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	
 	@Override
 	public boolean hammerUseSide(Direction side, Player player, InteractionHand hand, Vec3 hitVec){
-		if(!this.getLevelNonnull().isClientSide){
+		Level level = this.getLevelNonnull();
+		if(!level.isClientSide){
 			for(Port port:Port.DYNAMIC_PORTS){
 				if(port.posInMultiblock.equals(this.posInMultiblock)){
 					OilTankTileEntity master = master();

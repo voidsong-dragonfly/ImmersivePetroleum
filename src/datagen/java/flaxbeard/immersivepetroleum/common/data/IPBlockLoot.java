@@ -17,8 +17,6 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
-import static net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly;
-
 public class IPBlockLoot implements Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>{
 	private BiConsumer<ResourceLocation, LootTable.Builder> out;
 

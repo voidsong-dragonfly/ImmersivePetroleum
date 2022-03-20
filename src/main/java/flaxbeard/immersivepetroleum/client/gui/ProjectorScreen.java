@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Quaternion;
@@ -18,10 +16,9 @@ import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.UnionMultiblock;
 import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
-import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -36,7 +33,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
@@ -105,19 +101,19 @@ public class ProjectorScreen extends Screen{
 		this.searchField = addRenderableWidget(new SearchField(this.font, this.guiLeft + 25, this.guiTop + 13));
 		
 		addRenderableWidget(new ConfirmButton(this.guiLeft + 115, this.guiTop + 10, but -> {
-			LocalPlayer player = Minecraft.getInstance().player;
+			LocalPlayer player = MCUtil.getPlayer();
 			
 			this.settings.setMode(Settings.Mode.PROJECTION);
 			
 			ItemStack held = player.getItemInHand(this.hand);
 			this.settings.applyTo(held);
 			this.settings.sendPacketToServer(this.hand);
-			Minecraft.getInstance().screen.onClose();
+			MCUtil.getScreen().onClose();
 			
 			player.displayClientMessage(this.settings.getMode().getTranslated(), true);
 		}));
 		addRenderableWidget(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
-			Minecraft.getInstance().screen.onClose();
+			MCUtil.getScreen().onClose();
 		}));
 		addRenderableWidget(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> {
 			this.settings.flip();
@@ -146,7 +142,7 @@ public class ProjectorScreen extends Screen{
 		
 		List<String> list = new ArrayList<>();
 		for(int i = 0;i < this.multiblocks.get().size();i++){
-			String name = this.multiblocks.get().get(i).getUniqueName().toString();
+			String name = this.multiblocks.get().get(i).getDisplayName().getString();
 			if(!name.contains("feedthrough")){
 				list.add(Integer.toString(i));
 			}
@@ -154,15 +150,15 @@ public class ProjectorScreen extends Screen{
 		
 		// Sorting in alphabetical order
 		list.sort((a, b) ->{
-			String nameA = getMBName(Integer.valueOf(a));
-			String nameB = getMBName(Integer.valueOf(b));
+			String nameA = getMBName(a);
+			String nameB = getMBName(b);
 			
 			return nameA.compareToIgnoreCase(nameB);
 		});
 		
 		// Lazy search based on content
 		list.removeIf(str -> {
-			String name = getMBName(Integer.valueOf(str));
+			String name = getMBName(str);
 			return !name.toLowerCase().contains(this.searchField.getValue().toLowerCase());
 		});
 		
@@ -171,7 +167,7 @@ public class ProjectorScreen extends Screen{
 		guilist.setPadding(1, 1, 1, 1);
 		guilist.setTextColor(0);
 		guilist.setTextHoverColor(0x7F7FFF);
-		guilist.setTranslationFunc(str -> getMBName(Integer.valueOf(str)));
+		guilist.setTranslationFunc(this::getMBName);
 		
 		if(!exists){
 			this.list = addRenderableWidget(guilist);
@@ -183,12 +179,12 @@ public class ProjectorScreen extends Screen{
 		addRenderableWidget(this.list);
 	}
 	
+	private String getMBName(String str){
+		return getMBName(Integer.valueOf(str));
+	}
 	private String getMBName(int index){
 		IMultiblock mb = this.multiblocks.get().get(index);
-		if(mb instanceof UnionMultiblock && mb.getUniqueName().getPath().contains("excavator_demo")){
-			return I18n.get("desc.immersiveengineering.info.multiblock.IE:Excavator") + "2";
-		}
-		return I18n.get("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
+		return mb.getDisplayName().getString();
 	}
 	
 	@Override
@@ -206,15 +202,10 @@ public class ProjectorScreen extends Screen{
 			ClientUtils.bindTexture(GUI_TEXTURE);
 			blit(matrix, x, y, 0, 166, 200, 13);
 			
-			Component text;
-			if(mb instanceof UnionMultiblock && this.settings.getMultiblock().getUniqueName().getPath().contains("excavator_demo")){
-				text = new TranslatableComponent("desc.immersiveengineering.info.multiblock.IE:Excavator").append("2");
-			}else{
-				text = new TranslatableComponent("desc.immersiveengineering.info.multiblock.IE:" + ProjectorItem.getActualMBName(mb));
-			}
-			
 			x += 100;
 			y += 3;
+			
+			Component text = mb.getDisplayName();
 			FormattedCharSequence re = text.getVisualOrderText();
 			this.font.draw(matrix, re, (x - this.font.width(re) / 2), y, 0x3F3F3F);
 		}
@@ -275,7 +266,6 @@ public class ProjectorScreen extends Screen{
 						}
 						
 						final BlockRenderDispatcher blockRender = Minecraft.getInstance().getBlockRenderer();
-						int it = 0;
 						List<StructureTemplate.StructureBlockInfo> infos = mb.getStructure(null);
 						for(StructureTemplate.StructureBlockInfo info:infos){
 							if(info.state.getMaterial() != Material.AIR){
@@ -304,7 +294,6 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	private void background(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ClientUtils.bindTexture(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}

@@ -2,14 +2,14 @@ package flaxbeard.immersivepetroleum.common.data;
 
 import javax.annotation.Nullable;
 
+import com.mojang.math.Vector3f;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.common.register.IEFluids;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
@@ -20,8 +20,6 @@ import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
 import net.minecraftforge.client.model.generators.loaders.DynamicBucketModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
-import net.minecraftforge.client.model.generators.ModelBuilder.TransformsBuilder;
 
 public class IPItemModels extends ItemModelProvider{
 	public IPItemModels(DataGenerator gen, ExistingFileHelper exHelper){
