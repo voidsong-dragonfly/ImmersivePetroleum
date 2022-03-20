@@ -92,7 +92,7 @@ public class ProjectorItem extends IPItemBase{
 		if(stack.hasTag()){
 			Settings settings = getSettings(stack);
 			if(settings.getMultiblock() != null){
-				TranslatableComponent name = new TranslatableComponent("desc.immersiveengineering.info.multiblock.IE:" + getActualMBName(settings.getMultiblock()));
+				Component name = settings.getMultiblock().getDisplayName(); //new TranslatableComponent("desc.immersiveengineering.info.multiblock.IE:" + getActualMBName(settings.getMultiblock()));
 				
 				return new TranslatableComponent(selfKey + ".specific", name).withStyle(ChatFormatting.GOLD);
 			}
@@ -106,9 +106,8 @@ public class ProjectorItem extends IPItemBase{
 		if(settings.getMultiblock() != null){
 			Vec3i size = settings.getMultiblock().getSize(worldIn);
 			
-			String name = getActualMBName(settings.getMultiblock());
 			tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.projector.build0"));
-			tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.projector.build1", new TranslatableComponent("desc.immersiveengineering.info.multiblock.IE:" + name)));
+			tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.projector.build1", settings.getMultiblock().getDisplayName()));
 			
 			if(isPressing(GLFW.GLFW_KEY_LEFT_SHIFT) || isPressing(GLFW.GLFW_KEY_RIGHT_SHIFT)){
 				Component title = new TranslatableComponent("desc.immersivepetroleum.info.projector.holdshift.text").withStyle(ChatFormatting.DARK_AQUA);
