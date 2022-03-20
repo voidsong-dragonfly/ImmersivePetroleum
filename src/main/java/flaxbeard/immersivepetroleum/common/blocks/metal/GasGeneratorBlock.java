@@ -1,5 +1,8 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
@@ -31,9 +34,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	private static final Material material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);

@@ -1,8 +1,6 @@
 package flaxbeard.immersivepetroleum.common.world;
 
 import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
 
 import com.google.common.collect.HashMultimap;
 
@@ -13,7 +11,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.Feature;

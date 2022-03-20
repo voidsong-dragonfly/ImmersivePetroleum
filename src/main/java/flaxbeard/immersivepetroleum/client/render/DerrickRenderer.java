@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 
 public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{

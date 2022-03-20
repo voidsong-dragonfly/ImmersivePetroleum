@@ -1,5 +1,9 @@
 package flaxbeard.immersivepetroleum.common.world;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
@@ -16,10 +20,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class IPWorldGen{
 	public static Map<String, ConfiguredFeature<?, ?>> features = new HashMap<>();

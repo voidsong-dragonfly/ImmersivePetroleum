@@ -1,15 +1,16 @@
 package flaxbeard.immersivepetroleum.client.gui.elements;
 
+import java.util.List;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
-import com.mojang.blaze3d.vertex.PoseStack;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-
-import java.util.List;
 
 public class CokerChamberInfoArea extends InfoArea{
 	private final CokerUnitTileEntity.CokingChamber chamber;

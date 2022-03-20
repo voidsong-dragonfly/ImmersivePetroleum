@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.fluids;
 
 import java.util.ArrayList;
 
-import blusunrize.immersiveengineering.common.register.IEFluids;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

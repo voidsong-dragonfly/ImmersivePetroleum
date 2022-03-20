@@ -1,5 +1,13 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableList;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.TargetingInfo;
@@ -17,7 +25,6 @@ import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
-import com.google.common.collect.ImmutableList;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import net.minecraft.core.BlockPos;
@@ -52,11 +59,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IEBlockInterfaces.IDirectionalBE, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.ISoundBE, EnergyTransferHandler.EnergyConnector, TickableBE{
 	public static final int FLUX_CAPACITY = 8000;

@@ -1,32 +1,27 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
-import java.util.*;
-
-import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
-import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
-import blusunrize.immersiveengineering.client.gui.info.InfoArea;
-import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.util.FormattedCharSequence;
-import org.lwjgl.opengl.GL11;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.utils.GuiHelper;
+import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
+import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.gui.GuiUtils;
-
-import javax.annotation.Nullable;
 
 public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/derrick.png");

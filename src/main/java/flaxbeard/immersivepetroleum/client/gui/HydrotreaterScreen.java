@@ -1,28 +1,19 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
-import net.minecraft.client.renderer.Rect2i;
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
-import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.HydrotreaterContainer;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.gui.GuiUtils;
-
-import javax.annotation.Nonnull;
 
 public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/hydrotreater.png");

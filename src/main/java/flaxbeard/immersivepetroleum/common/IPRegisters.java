@@ -5,11 +5,11 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableSet;
+
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
-import com.google.common.collect.ImmutableSet;
-
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import net.minecraft.world.entity.EntityType;

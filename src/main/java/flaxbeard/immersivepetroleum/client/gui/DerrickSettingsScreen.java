@@ -6,11 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.network.MessageDerrick;
 import net.minecraft.client.Minecraft;
@@ -19,7 +17,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.GuiUtils;
 
 public class DerrickSettingsScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = new ResourceLocation(MODID, "textures/gui/derrick_settings.png");

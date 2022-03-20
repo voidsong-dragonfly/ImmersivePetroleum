@@ -1,17 +1,18 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
+import javax.annotation.Nonnull;
+
+import com.google.common.base.Preconditions;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.register.IEContainerTypes;
-import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.registries.RegistryObject;
-
-import javax.annotation.Nonnull;
 
 public interface IPMenuProvider<T extends BlockEntity & IPMenuProvider<T>> extends IEBlockInterfaces.IInteractionObjectIE<T>{
 	// This is a hack, and this whole interface should be replaced by something that does not depend on IE internals!

@@ -29,16 +29,19 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.recipes.*;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.tags.FluidTags;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -85,8 +88,7 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("reservoirs/oil"));
 		
 		ReservoirBuilder.builder("lava", Fluids.LAVA, 250.000, 1000.000, 0.0, 30)
-				// TODO should this be the nether?
-			.addDimensions(true, Level.NETHER.getRegistryName())
+			.addDimensions(true, Level.OVERWORLD.getRegistryName())
 			.build(this.out, rl("reservoirs/lava"));
 	}
 	

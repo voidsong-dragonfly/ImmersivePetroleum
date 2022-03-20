@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common.blocks;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.TickableBE;
 import net.minecraft.world.item.BlockItem;
@@ -10,8 +12,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-
-import javax.annotation.Nullable;
 
 public class IPBlockBase extends Block{
 	public IPBlockBase(Block.Properties props){

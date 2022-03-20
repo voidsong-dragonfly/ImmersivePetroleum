@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common;
 
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,14 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
-import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
-import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
-import flaxbeard.immersivepetroleum.common.gui.DistillationTowerContainer;
-import flaxbeard.immersivepetroleum.common.gui.HydrotreaterContainer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -27,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 
 public class CommonProxy{
 	@SuppressWarnings("unused")

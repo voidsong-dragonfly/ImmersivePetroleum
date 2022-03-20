@@ -2,6 +2,9 @@ package flaxbeard.immersivepetroleum.common.blocks.stone;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
@@ -15,9 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class WellBlock extends IPBlockBase implements EntityBlock{
 	public WellBlock(){

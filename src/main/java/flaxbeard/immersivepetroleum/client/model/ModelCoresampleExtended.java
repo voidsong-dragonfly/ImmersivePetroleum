@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.Nullable;
 
 import com.google.common.cache.Cache;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Vector3f;
 

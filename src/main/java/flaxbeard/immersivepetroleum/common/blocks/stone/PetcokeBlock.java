@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.stone;
 
+import java.util.function.Supplier;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
@@ -10,8 +12,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
-
-import java.util.function.Supplier;
 
 public class PetcokeBlock extends IPBlockBase{
 	public PetcokeBlock(){

@@ -5,32 +5,21 @@ import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitT
 import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.TANK_INPUT;
 import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.TANK_OUTPUT;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import flaxbeard.immersivepetroleum.client.gui.elements.CokerChamberInfoArea;
-import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.world.level.block.grower.OakTreeGrower;
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
-import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.gui.GuiUtils;
-
-import javax.annotation.Nonnull;
 
 public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	public static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/coker.png");

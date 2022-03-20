@@ -1,5 +1,9 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import static flaxbeard.immersivepetroleum.common.blocks.IPBlockBase.createTickerHelper;
+
+import javax.annotation.Nonnull;
+
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalMultiblockBlock;
@@ -12,10 +16,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-
-import javax.annotation.Nonnull;
-
-import static flaxbeard.immersivepetroleum.common.blocks.IPBlockBase.createTickerHelper;
 
 public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & TickableBE> extends MetalMultiblockBlock<T>{
 	private final MultiblockBEType<T> multiblockBEType;

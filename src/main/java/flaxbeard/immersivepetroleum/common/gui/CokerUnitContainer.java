@@ -16,7 +16,6 @@ import net.minecraftforge.fluids.FluidUtil;
 public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTileEntity>{
 	public CokerUnitContainer(MenuType<?> type, int id, Inventory playerInventory, final CokerUnitTileEntity tile){
 		super(type, tile, id, CokerUnitMultiblock.INSTANCE);
-		// TODO MenuType
 		
 		addSlot(new IPSlot.CokerInput(this, this.inv, CokerUnitTileEntity.Inventory.INPUT.id(), 20, 71));
 		addSlot(new IPSlot(this.inv, CokerUnitTileEntity.Inventory.INPUT_FILLED.id(), 9, 14){

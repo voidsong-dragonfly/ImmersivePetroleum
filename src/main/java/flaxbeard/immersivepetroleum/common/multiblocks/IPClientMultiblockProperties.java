@@ -1,9 +1,15 @@
 package flaxbeard.immersivepetroleum.common.multiblocks;
 
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -12,10 +18,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Objects;
 
 public class IPClientMultiblockProperties implements ClientMultiblocks.MultiblockManualData{
 	private final IPTemplateMultiblock multiblock;

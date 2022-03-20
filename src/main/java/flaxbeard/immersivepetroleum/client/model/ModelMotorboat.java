@@ -1,9 +1,6 @@
 package flaxbeard.immersivepetroleum.client.model;
 
-import java.util.Arrays;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.client.model.ListModel;

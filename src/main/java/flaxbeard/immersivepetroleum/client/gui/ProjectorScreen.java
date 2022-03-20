@@ -7,19 +7,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import net.minecraft.client.gui.components.*;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Quaternion;
 
+import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
+import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.UnionMultiblock;
 import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
@@ -27,6 +25,12 @@ import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;

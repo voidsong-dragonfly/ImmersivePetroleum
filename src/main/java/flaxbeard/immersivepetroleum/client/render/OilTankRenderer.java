@@ -12,7 +12,6 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.PortState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;

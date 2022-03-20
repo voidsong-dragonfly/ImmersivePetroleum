@@ -4,10 +4,10 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
