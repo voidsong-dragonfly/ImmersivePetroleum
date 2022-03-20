@@ -30,10 +30,9 @@ public class IPBlockBase extends Block{
 	}
 
 	// From vanilla
+	@SuppressWarnings("unchecked")
 	@Nullable
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> actual, BlockEntityType<E> expected, BlockEntityTicker<? super E> ticker
-	) {
-		return expected == actual ? (BlockEntityTicker<A>)ticker : null;
+	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected, BlockEntityTicker<? super E> ticker){
+		return expected == actual ? (BlockEntityTicker<A>) ticker : null;
 	}
 }

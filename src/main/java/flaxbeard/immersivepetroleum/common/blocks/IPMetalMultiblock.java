@@ -19,7 +19,7 @@ import net.minecraft.world.level.material.Material;
 
 public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & TickableBE> extends MetalMultiblockBlock<T>{
 	private final MultiblockBEType<T> multiblockBEType;
-
+	
 	public IPMetalMultiblock(MultiblockBEType<T> te){
 		super(te, Block.Properties.of(Material.METAL)
 				.sound(SoundType.METAL)
@@ -30,7 +30,7 @@ public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & Tickable
 		);
 		this.multiblockBEType = te;
 	}
-
+	
 	/*
 	public IPMetalMultiblock(String name, Supplier<BlockEntityType<T>> te){
 		super(name, te);
@@ -54,11 +54,9 @@ public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & Tickable
 		IPContent.registeredIPItems.add(bItem.setRegistryName(getRegistryName()));
 	}
 	*/
-
+	
 	@Override
-	public <T2 extends BlockEntity> BlockEntityTicker<T2> getTicker(
-			@Nonnull Level world, @Nonnull BlockState state, @Nonnull BlockEntityType<T2> type
-	){
+	public <T2 extends BlockEntity> BlockEntityTicker<T2> getTicker(@Nonnull Level world, @Nonnull BlockState state, @Nonnull BlockEntityType<T2> type){
 		return createTickerHelper(type, multiblockBEType.master(), TickableBE.makeTicker());
 	}
 }

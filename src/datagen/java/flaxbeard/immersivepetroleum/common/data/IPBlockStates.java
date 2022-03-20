@@ -250,7 +250,7 @@ public class IPBlockStates extends BlockStateProvider{
 			transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
 		}
 		final Vec3i offset = mb.getMasterFromOriginOffset();
-		@SuppressWarnings("deprecation")
+		
 		Stream<Vec3i> partsStream = mb.getStructure(null).stream()
 				.filter(info -> !info.state.isAir())
 				.map(info -> info.pos)

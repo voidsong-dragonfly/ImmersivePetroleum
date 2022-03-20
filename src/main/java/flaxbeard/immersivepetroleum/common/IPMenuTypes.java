@@ -34,22 +34,19 @@ public class IPMenuTypes{
 
 	public static void forceClassLoad(){}
 
-	public static <T extends BlockEntity, C extends IEBaseContainer<? super T>>
-	BEContainerIP<T, C> register(String name, IEContainerTypes.BEContainerConstructor<T, C> container)
-	{
-		RegistryObject<MenuType<C>> typeRef = IPRegisters.registerMenu(
-				name, () -> {
-					Mutable<MenuType<C>> typeBox = new MutableObject<>();
-					MenuType<C> type = new MenuType<>((IContainerFactory<C>)(windowId, inv, data) -> {
-						Level world = ImmersiveEngineering.proxy.getClientWorld();
-						BlockPos pos = data.readBlockPos();
-						BlockEntity te = world.getBlockEntity(pos);
-						return container.construct(typeBox.getValue(), windowId, inv, (T)te);
-					});
-					typeBox.setValue(type);
-					return type;
-				}
-		);
+	@SuppressWarnings("unchecked")
+	public static <T extends BlockEntity, C extends IEBaseContainer<? super T>> BEContainerIP<T, C> register(String name, IEContainerTypes.BEContainerConstructor<T, C> container){
+		RegistryObject<MenuType<C>> typeRef = IPRegisters.registerMenu(name, () -> {
+			Mutable<MenuType<C>> typeBox = new MutableObject<>();
+			MenuType<C> type = new MenuType<>((IContainerFactory<C>) (windowId, inv, data) -> {
+				Level world = ImmersiveEngineering.proxy.getClientWorld();
+				BlockPos pos = data.readBlockPos();
+				BlockEntity te = world.getBlockEntity(pos);
+				return container.construct(typeBox.getValue(), windowId, inv, (T) te);
+			});
+			typeBox.setValue(type);
+			return type;
+		});
 		return new BEContainerIP<>(typeRef, container);
 	}
 }

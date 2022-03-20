@@ -130,7 +130,6 @@ public class IPRenderTypes extends RenderStateShard{
 	// TODO this is very very broken in 1.17+
 	public static MultiBufferSource disableLighting(MultiBufferSource in){
 		return type -> {
-			@SuppressWarnings("deprecation")
 			RenderType rt = new RenderType(
 					ImmersivePetroleum.MODID + ":" + type + "_no_lighting",
 					type.format(),

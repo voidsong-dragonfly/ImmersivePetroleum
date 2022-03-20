@@ -16,7 +16,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 public interface IPMenuProvider<T extends BlockEntity & IPMenuProvider<T>> extends IEBlockInterfaces.IInteractionObjectIE<T>{
 	// This is a hack, and this whole interface should be replaced by something that does not depend on IE internals!
-	@SuppressWarnings("NullableProblems")
 	default IEContainerTypes.BEContainer<? super T, ?> getContainerType(){
 		return null;
 	}

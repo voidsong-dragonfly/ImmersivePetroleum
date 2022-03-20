@@ -126,7 +126,6 @@ public class ClientProxy extends CommonProxy{
 		MenuScreens.register(IPMenuTypes.HYDROTREATER.getType(), HydrotreaterScreen::new);
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void completed(ParallelDispatchEvent event){
 		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch (str){
