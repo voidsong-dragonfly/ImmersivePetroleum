@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -295,6 +296,34 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Override
 	public boolean canUseGui(Player player){
 		return this.formed;
+	}
+	
+	/** Locations that don't require sneaking to avoid the GUI */
+	public boolean skipGui(BlockHitResult hit){
+		Direction facing = getFacing();
+		
+		// Power input
+		if(DistillationTowerTileEntity.Energy_IN.stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == Direction.UP){
+			return true;
+		}
+		
+		// Redstone controller input
+		if(DistillationTowerTileEntity.Redstone_IN.contains(this.posInMultiblock) && (getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
+			return true;
+		}
+		
+		// Fluid I/O Ports
+		if((this.posInMultiblock.equals(DistillationTowerTileEntity.Fluid_IN) && (getIsMirrored() ? hit.getDirection() == facing.getCounterClockWise() : hit.getDirection() == facing.getClockWise()))
+		|| (this.posInMultiblock.equals(DistillationTowerTileEntity.Fluid_OUT) && hit.getDirection() == facing.getOpposite())){
+			return true;
+		}
+		
+		// Item output port
+		if(this.posInMultiblock.equals(DistillationTowerTileEntity.Item_OUT) && (getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
+			return true;
+		}
+		
+		return false;
 	}
 	
 	@Override

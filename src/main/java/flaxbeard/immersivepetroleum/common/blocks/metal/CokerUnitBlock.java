@@ -4,7 +4,6 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,36 +23,8 @@ public class CokerUnitBlock extends IPMetalMultiblock<CokerUnitTileEntity>{
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
 		if(!player.getItemInHand(hand).isEmpty()){
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof CokerUnitTileEntity){
-				BlockPos tPos = ((CokerUnitTileEntity)te).posInMultiblock;
-				Direction facing = ((CokerUnitTileEntity)te).getFacing();
-				
-				// Locations that don't require sneaking to avoid the GUI
-				
-				// Conveyor locations
-				if(tPos.getY() == 0 && tPos.getZ() == 2 && hit.getDirection() == Direction.UP){
-					return InteractionResult.FAIL;
-				}
-				
-				// All power input sockets
-				if(CokerUnitTileEntity.Energy_IN.contains(tPos) && hit.getDirection() == facing){
-					return InteractionResult.FAIL;
-				}
-				
-				// Redstone controller input
-				if(CokerUnitTileEntity.Redstone_IN.contains(tPos) && hit.getDirection() == facing.getOpposite()){
-					return InteractionResult.FAIL;
-				}
-				
-				// Fluid I/O Ports
-				if(tPos.equals(CokerUnitTileEntity.Fluid_IN) || tPos.equals(CokerUnitTileEntity.Fluid_OUT)){
-					return InteractionResult.FAIL;
-				}
-				
-				// Item input port
-				if(tPos.equals(CokerUnitTileEntity.Item_IN)){
-					return InteractionResult.FAIL;
-				}
+			if(te instanceof CokerUnitTileEntity coker && coker.skipGui(hit)){
+				return InteractionResult.FAIL;
 			}
 		}
 		return super.use(state, world, pos, player, hand, hit);

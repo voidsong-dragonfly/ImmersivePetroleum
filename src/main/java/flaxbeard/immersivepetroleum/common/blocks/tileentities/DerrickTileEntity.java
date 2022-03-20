@@ -49,6 +49,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
@@ -564,6 +565,23 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Override
 	public boolean canUseGui(Player player){
 		return this.formed;
+	}
+	
+	/** Locations that don't require sneaking to avoid the GUI */
+	public boolean skipGui(BlockHitResult hit){
+		Direction facing = getFacing();
+		
+		// Power input
+		if(DistillationTowerTileEntity.Energy_IN.stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == Direction.UP){
+			return true;
+		}
+		
+		// Redstone controller input
+		if(DerrickTileEntity.Redstone_IN.contains(posInMultiblock) && (getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
+			return true;
+		}
+		
+		return false;
 	}
 	
 	@Override

@@ -4,7 +4,6 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,21 +23,8 @@ public class DerrickBlock extends IPMetalMultiblock<DerrickTileEntity>{
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
 		if(!player.getItemInHand(hand).isEmpty()){
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof DerrickTileEntity){
-				DerrickTileEntity derrick = (DerrickTileEntity) te;
-				BlockPos tPos = derrick.posInMultiblock;
-				Direction facing = derrick.getFacing();
-				
-				// Locations that don't require sneaking to avoid the GUI
-				
-				// Power input
-				if(DerrickTileEntity.Energy_IN.contains(tPos) && hit.getDirection() == Direction.UP){
-					return InteractionResult.FAIL;
-				}
-				
-				if(DerrickTileEntity.Redstone_IN.contains(tPos) && (derrick.getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
-					return InteractionResult.FAIL;
-				}
+			if(te instanceof DerrickTileEntity derrick && derrick.skipGui(hit)){
+				return InteractionResult.FAIL;
 			}
 		}
 		

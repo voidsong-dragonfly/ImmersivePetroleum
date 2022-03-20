@@ -43,6 +43,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -483,6 +484,38 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	public boolean canUseGui(Player player){
 		return this.formed;
+	}
+	
+	/** Locations that don't require sneaking to avoid the GUI */
+	public boolean skipGui(BlockHitResult hit){
+		Direction facing = getFacing();
+		
+		// Conveyor locations
+		if(this.posInMultiblock.getY() == 0 && this.posInMultiblock.getZ() == 2 && hit.getDirection() == Direction.UP){
+			return true;
+		}
+		
+		// All power input sockets
+		if(CokerUnitTileEntity.Energy_IN.stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == facing){
+			return true;
+		}
+		
+		// Redstone controller input
+		if(CokerUnitTileEntity.Redstone_IN.contains(this.posInMultiblock) && hit.getDirection() == facing.getOpposite()){
+			return true;
+		}
+		
+		// Fluid I/O Ports
+		if(this.posInMultiblock.equals(CokerUnitTileEntity.Fluid_IN) || this.posInMultiblock.equals(CokerUnitTileEntity.Fluid_OUT)){
+			return true;
+		}
+		
+		// Item input port
+		if(this.posInMultiblock.equals(CokerUnitTileEntity.Item_IN)){
+			return true;
+		}
+		
+		return false;
 	}
 
 	@Nonnull

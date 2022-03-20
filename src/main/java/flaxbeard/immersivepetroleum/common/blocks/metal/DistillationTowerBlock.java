@@ -4,7 +4,6 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,33 +23,8 @@ public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerT
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
 		if(!player.getItemInHand(hand).isEmpty()){
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof DistillationTowerTileEntity){
-				DistillationTowerTileEntity tower = (DistillationTowerTileEntity) te;
-				BlockPos tPos = tower.posInMultiblock;
-				Direction facing = tower.getFacing();
-				
-				// Locations that don't require sneaking to avoid the GUI
-				
-				// Power input
-				if(DistillationTowerTileEntity.Energy_IN.contains(tPos) && hit.getDirection() == Direction.UP){
-					return InteractionResult.FAIL;
-				}
-				
-				// Redstone controller input
-				if(DistillationTowerTileEntity.Redstone_IN.contains(tPos) && (tower.getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
-					return InteractionResult.FAIL;
-				}
-				
-				// Fluid I/O Ports
-				if((tPos.equals(DistillationTowerTileEntity.Fluid_IN) && (tower.getIsMirrored() ? hit.getDirection() == facing.getCounterClockWise() : hit.getDirection() == facing.getClockWise()))
-				|| (tPos.equals(DistillationTowerTileEntity.Fluid_OUT) && hit.getDirection() == facing.getOpposite())){
-					return InteractionResult.FAIL;
-				}
-				
-				// Item output port
-				if(tPos.equals(DistillationTowerTileEntity.Item_OUT) && (tower.getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
-					return InteractionResult.FAIL;
-				}
+			if(te instanceof DistillationTowerTileEntity tower && tower.skipGui(hit)){
+				return InteractionResult.FAIL;
 			}
 		}
 		return super.use(state, world, pos, player, hand, hit);
