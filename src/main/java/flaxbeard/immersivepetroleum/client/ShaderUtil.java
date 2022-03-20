@@ -10,13 +10,19 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-// TODO update to use vanilla shaders
+// xTODO update to use vanilla shaders
+/*
+ * Yeah whatever i'll just remove/disable this
+ * fuck that, it goes waaay above my head and will power aint enough for this shader bullshit
+ * if it bothers you that much.. You do it, i'll happly merge it
+ */
 public class ShaderUtil{
 	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
 	
 	public static int alpha = -1;
 	
+	@Deprecated
 	public static void alpha_static(float av, float ticks){
 		if(alpha == -1){
 			alpha = createShader(null, "/assets/immersivepetroleum/shaders/alpha.frag");
@@ -31,6 +37,7 @@ public class ShaderUtil{
 		}
 	}
 	
+	@Deprecated
 	public static void releaseShader(){
 		if(alpha > 0){
 			ARBShaderObjects.glUseProgramObjectARB(0);

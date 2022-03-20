@@ -171,9 +171,9 @@ public class ClientEventHandler{
 												}
 												matrix.popPose();
 												
-												ShaderUtil.alpha_static(0.5f, mc.player.tickCount);
+												//IPShaders.alpha_static(0.5f, mc.player.tickCount);
 												buffer.endBatch();
-												ShaderUtil.releaseShader();
+												//IPShaders.releaseShader();
 											}
 										}
 									}

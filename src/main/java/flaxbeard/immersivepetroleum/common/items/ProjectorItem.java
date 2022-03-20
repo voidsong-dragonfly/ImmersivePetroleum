@@ -24,7 +24,6 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.ProjectorEvent;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
-import flaxbeard.immersivepetroleum.client.ShaderUtil;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
@@ -636,12 +635,17 @@ public class ProjectorItem extends IPItemBase{
 				}
 			}
 			
-			ShaderUtil.alpha_static(flicker * alpha, MCUtil.getPlayer().tickCount + partialTicks);
+			//IPShaders.alpha_static(flicker * alpha, MCUtil.getPlayer().tickCount + partialTicks);
 			buffer.endBatch();
-			ShaderUtil.releaseShader();
+			//IPShaders.releaseShader();
 		}
 		
 		private static void renderOutlineBox(PoseStack matrix, Vec3i min, Vec3i max, int rgb, float flicker){
+			// Why? See ShaderUtil
+			boolean disable = true;
+			if(disable)
+				return;
+			
 			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
 			
@@ -693,6 +697,11 @@ public class ProjectorItem extends IPItemBase{
 		}
 		
 		private static void renderCenteredOutlineBox(PoseStack matrix, int rgb, float flicker){
+			// Why? See ShaderUtil
+			boolean disable = true;
+			if(disable)
+				return;
+			
 			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
 			
