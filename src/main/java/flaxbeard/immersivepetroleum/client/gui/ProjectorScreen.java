@@ -142,8 +142,8 @@ public class ProjectorScreen extends Screen{
 		
 		List<String> list = new ArrayList<>();
 		for(int i = 0;i < this.multiblocks.get().size();i++){
-			String name = this.multiblocks.get().get(i).getDisplayName().getString();
-			if(!name.contains("feedthrough")){
+			IMultiblock mb = this.multiblocks.get().get(i);
+			if(!mb.getUniqueName().toString().equals("immersiveengineering:feedthrough")){
 				list.add(Integer.toString(i));
 			}
 		}
