@@ -118,11 +118,6 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public EntityType<?> getType(){
-		return TYPE;
-	}
-	
-	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
 		this.entityData.define(TANK_FLUID, "");
