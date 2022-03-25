@@ -112,7 +112,6 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void setup(){
-		// FIXME !"RenderingRegistry" does not exist anymore! (Again the fucking boat... jesus)
 //		RenderingRegistry.registerEntityRenderingHandler(MotorboatEntity.TYPE, MotorboatRenderer::new);
 	}
 	
@@ -184,17 +183,17 @@ public class ClientProxy extends CommonProxy{
 	}
 
 	@SubscribeEvent
-	public static void registerBERenders(RegisterRenderers ev){
+	public static void registerRenders(RegisterRenderers ev){
 		registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
 		registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
 		registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
 		registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
 		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
+		
+		//ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
 	}
-
-	private static <T extends BlockEntity> void registerBERender(
-			RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory
-	) {
+	
+	private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){
 		ev.registerBlockEntityRenderer(type, ctx -> factory.get());
 	}
 	
@@ -214,18 +213,21 @@ public class ClientProxy extends CommonProxy{
 	public void renderTile(BlockEntity te, VertexConsumer iVertexBuilder, PoseStack transform, MultiBufferSource buffer){
 		BlockEntityRenderer<BlockEntity> tesr = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(te);
 		
-		if(te instanceof PumpjackTileEntity){
+		// Crash prevention
+		if(tesr == null) return;
+		
+		if(te instanceof PumpjackTileEntity pumpjack){
 			transform.pushPose();
 			transform.mulPose(new Quaternion(0, -90, 0, true));
 			transform.translate(1, 1, -2);
 			
 			float pt = 0;
 			if(MCUtil.getPlayer() != null){
-				((PumpjackTileEntity) te).activeTicks = MCUtil.getPlayer().tickCount;
+				pumpjack.activeTicks = MCUtil.getPlayer().tickCount;
 				pt = Minecraft.getInstance().getFrameTime();
 			}
 			
-			tesr.render(te, pt, transform, buffer, 0xF000F0, 0);
+			tesr.render(pumpjack, pt, transform, buffer, 0xF000F0, 0);
 			transform.popPose();
 		}else{
 			transform.pushPose();
