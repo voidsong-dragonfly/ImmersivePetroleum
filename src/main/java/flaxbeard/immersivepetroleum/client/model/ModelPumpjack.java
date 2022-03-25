@@ -5,7 +5,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 public class ModelPumpjack extends IPModel{
@@ -30,59 +36,97 @@ public class ModelPumpjack extends IPModel{
 	
 	@Override
 	public void init(){
-		/*this.origin = new ModelPart(this, 0, 0);
+		MeshDefinition meshDefinition = new MeshDefinition();
+		PartDefinition rootDefinition = meshDefinition.getRoot();
 		
-		this.arm = new ModelPart(this, 0, 40);
-		this.arm.addBox(-24 - 16, 0, -4, 70, 10, 8);
-		this.arm.setPos(56, 48, 24);
-		this.origin.addChild(this.arm);
+		PartDefinition origin_Definition = rootDefinition.addOrReplaceChild("origin", CubeListBuilder.create().addBox(0, 0, 0, 1, 1, 1).texOffs(0, 0), PartPose.ZERO);
+		PartDefinition arm_Definition = origin_Definition.addOrReplaceChild("arm", CubeListBuilder.create().addBox(-24 - 16, 0, -4, 70, 10, 8).texOffs(0, 40), PartPose.offset(56, 48, 24));
+		arm_Definition.addOrReplaceChild("head", CubeListBuilder.create().addBox(30, -15, -5, 12, 30, 10).texOffs(0, 0), PartPose.ZERO);
+		arm_Definition.addOrReplaceChild("barBack", CubeListBuilder.create().addBox(-35F, 3F, -11F, 4, 4, 22).texOffs(138, 0), PartPose.ZERO);
+		PartDefinition swingy_Definition = origin_Definition.addOrReplaceChild("swingy", CubeListBuilder.create().addBox(-4F, -2F, -14F, 8, 10, 4).texOffs(44, 14), PartPose.offset(24, 30, 30));
+		swingy_Definition.addOrReplaceChild("swingy2", CubeListBuilder.create().addBox(-4F, -2F, -2F, 8, 10, 4).texOffs(44, 14), PartPose.ZERO);
+		swingy_Definition.addOrReplaceChild("counter", CubeListBuilder.create().addBox(-12F, 8F, -14F, 24, 10, 4).texOffs(44, 0), PartPose.ZERO);
+		swingy_Definition.addOrReplaceChild("counter2", CubeListBuilder.create().addBox(-12F, 8F, -2F, 24, 10, 4).texOffs(44, 0), PartPose.ZERO);
+		PartDefinition connector_Definition = origin_Definition.addOrReplaceChild("connector", CubeListBuilder.create().addBox(-1F, -1F, -12F, 2, 24, 2).texOffs(108, 0), PartPose.ZERO);
+		connector_Definition.addOrReplaceChild("connector2", CubeListBuilder.create().addBox(-1F, -1F, 6F, 2, 24, 2).texOffs(100, 0), PartPose.ZERO);
+		origin_Definition.addOrReplaceChild("wellConnector", CubeListBuilder.create().addBox(-1F, 0F, -1F, 2, 30, 2).texOffs(108, 0), PartPose.ZERO);
+		origin_Definition.addOrReplaceChild("wellConnector2", CubeListBuilder.create().addBox(-1F, 0F, -1F, 2, 16, 2).texOffs(108, 0), PartPose.ZERO);
 		
-		ModelPart head = new ModelPart(this, 0, 0);
+		LayerDefinition layerDefinition = LayerDefinition.create(meshDefinition, 190, 58);
+		ModelPart root = layerDefinition.bakeRoot();
+		
+		this.origin = root.getChild("origin");
+		this.arm = this.origin.getChild("arm");
+		this.swingy = this.origin.getChild("swingy");
+		this.connector = this.origin.getChild("connector");
+		this.wellConnector = this.origin.getChild("wellConnector");
+		this.wellConnector2 = this.origin.getChild("wellConnector2");
+		
+		ModelPartOLD origin = new ModelPartOLD(this, 0, 0);
+		
+		ModelPartOLD arm = new ModelPartOLD(this, 0, 40);
+		arm.addBox(-24 - 16, 0, -4, 70, 10, 8);
+		arm.setPos(56, 48, 24);
+		origin.addChild(arm);
+		
+		ModelPartOLD head = new ModelPartOLD(this, 0, 0);
 		head.addBox(30, -15, -5, 12, 30, 10);
-		this.arm.addChild(head);
+		arm.addChild(head);
 		
-		ModelPart barBack = new ModelPart(this, 138, 0);
+		ModelPartOLD barBack = new ModelPartOLD(this, 138, 0);
 		barBack.addBox(-35F, 3F, -11F, 4, 4, 22);
-		this.arm.addChild(barBack);
+		arm.addChild(barBack);
 		
-		this.swingy = new ModelPart(this, 44, 14);
-		this.swingy.addBox(-4F, -2F, -14F, 8, 10, 4);
-		this.swingy.setPos(24, 30, 30);
-		this.origin.addChild(this.swingy);
+		ModelPartOLD swingy = new ModelPartOLD(this, 44, 14);
+		swingy.addBox(-4F, -2F, -14F, 8, 10, 4);
+		swingy.setPos(24, 30, 30);
+		origin.addChild(swingy);
 		
-		ModelPart swingy2 = new ModelPart(this, 44, 14);
+		ModelPartOLD swingy2 = new ModelPartOLD(this, 44, 14);
 		swingy2.addBox(-4F, -2F, -2F, 8, 10, 4);
-		this.swingy.addChild(swingy2);
+		swingy.addChild(swingy2);
 		
-		ModelPart counter = new ModelPart(this, 44, 0);
+		ModelPartOLD counter = new ModelPartOLD(this, 44, 0);
 		counter.addBox(-12F, 8F, -14F, 24, 10, 4);
-		this.swingy.addChild(counter);
+		swingy.addChild(counter);
 		
-		ModelPart counter2 = new ModelPart(this, 44, 0);
+		ModelPartOLD counter2 = new ModelPartOLD(this, 44, 0);
 		counter2.addBox(-12F, 8F, -2F, 24, 10, 4);
-		this.swingy.addChild(counter2);
+		swingy.addChild(counter2);
 		
-		this.connector = new ModelPart(this, 108, 0);
-		this.connector.addBox(-1F, -1F, -12F, 2, 24, 2);
-		this.origin.addChild(this.connector);
+		ModelPartOLD connector = new ModelPartOLD(this, 108, 0);
+		connector.addBox(-1F, -1F, -12F, 2, 24, 2);
+		origin.addChild(connector);
 		
-		ModelPart connector2 = new ModelPart(this, 100, 0);
+		ModelPartOLD connector2 = new ModelPartOLD(this, 100, 0);
 		connector2.addBox(-1F, -1F, 6F, 2, 24, 2);
-		this.connector.addChild(connector2);
+		connector.addChild(connector2);
 		
-		this.wellConnector = new ModelPart(this, 108, 0);
-		this.wellConnector.addBox(-1F, 0F, -1F, 2, 30, 2);
+		ModelPartOLD wellConnector = new ModelPartOLD(this, 108, 0);
+		wellConnector.addBox(-1F, 0F, -1F, 2, 30, 2);
 		
-		this.wellConnector2 = new ModelPart(this, 108, 0);
-		this.wellConnector2.addBox(-1F, 0F, -1F, 2, 16, 2);
+		ModelPartOLD wellConnector2 = new ModelPartOLD(this, 108, 0);
+		wellConnector2.addBox(-1F, 0F, -1F, 2, 16, 2);
 		
-		this.origin.addChild(this.wellConnector);
-		this.origin.addChild(this.wellConnector2);*/
+		origin.addChild(wellConnector);
+		origin.addChild(wellConnector2);
+	}
+	
+	/** Dummy; To be deleted Soon™ */
+	public static final class ModelPartOLD{
+		public float xRot, yRot, zRot;
+		public boolean visible;
+		public ModelPartOLD(Model model, int tx, int ty){}
+		public void setPos(float x, float y, float z){}
+		public void addBox(float x, float y, float z, int width, int height, int depth){}
+		public void addChild(ModelPartOLD model){}
+		public void render(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){}
 	}
 	
 	@Override
 	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
-		if (true) return;
+//		if (true) return;
+		
 		arm.zRot = (float) Math.toRadians(15 * Math.sin(ticks / 25D));
 		swingy.zRot = (float) (2 * (Math.PI / 4) + (ticks / 25D));
 		
