@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -102,7 +104,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
 public class ClientProxy extends CommonProxy{
 	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/ClientProxy");
@@ -182,21 +184,6 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);
 	}
 
-	@SubscribeEvent
-	public static void registerRenders(RegisterRenderers ev){
-		registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
-		registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
-		registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
-		registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
-		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
-		
-		//ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
-	}
-	
-	private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){
-		ev.registerBlockEntityRenderer(type, ctx -> factory.get());
-	}
-	
 	/** ImmersivePetroleum's Manual Category */
 	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -529,5 +516,23 @@ public class ClientProxy extends CommonProxy{
 		String tanslatedSubtext = I18n.get("ie.manual.entry.reservoirs.subtitle");
 		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
 		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent, List.of());
+	}
+
+	@EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
+	public static class ModBusEventHandlers {
+		@SubscribeEvent
+		public static void registerRenders(RegisterRenderers ev){
+			registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
+			registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
+			registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
+			registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
+			registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
+
+			//ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
+		}
+
+		private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){
+			ev.registerBlockEntityRenderer(type, ctx -> factory.get());
+		}
 	}
 }

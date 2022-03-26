@@ -65,6 +65,7 @@ public class IPRenderTypes extends RenderStateShard{
 				true,
 				false,
 				RenderType.CompositeState.builder()
+					.setShaderState(ShaderStateShard.RENDERTYPE_SOLID_SHADER) // TODO may be wrong
 					.setTextureState(TEXTURE_ACTIVE_TOWER)
 					.setLightmapState(LIGHTMAP_ENABLED)
 					.setOverlayState(OVERLAY_DISABLED)
@@ -119,10 +120,11 @@ public class IPRenderTypes extends RenderStateShard{
 	/** Same as vanilla, just without an overlay */
 	public static RenderType getEntitySolid(ResourceLocation locationIn){
 		RenderType.CompositeState renderState = RenderType.CompositeState.builder()
+				.setShaderState(RENDERTYPE_ENTITY_SOLID_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false))
 				.setTransparencyState(NO_TRANSPARENCY)
-				.setLightmapState(LIGHTMAP_ENABLED)
-				.setOverlayState(OVERLAY_DISABLED)
+				.setLightmapState(LIGHTMAP)
+				.setOverlayState(NO_OVERLAY)
 				.createCompositeState(true);
 		return RenderType.create("entity_solid", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, renderState);
 	}
