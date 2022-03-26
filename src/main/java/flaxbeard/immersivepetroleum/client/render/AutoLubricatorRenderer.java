@@ -21,7 +21,7 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 	
 	@Override
 	public boolean shouldRenderOffScreen(AutoLubricatorTileEntity te){
-		return true;
+		return false;
 	}
 	
 	@OnlyIn(Dist.CLIENT)
@@ -45,7 +45,7 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 				transform.translate(0.25, 0.875, 0.25);
 				transform.scale(scale, scale, scale);
 				
-				VertexConsumer builder = bufferIn.getBuffer(RenderType.translucent());
+				VertexConsumer builder = bufferIn.getBuffer(RenderType.solid());
 				
 				float h = height * level;
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
@@ -81,50 +81,5 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 			}
 		}
 		transform.popPose();
-		
-		/*
-		GlStateManager.pushMatrix();
-		{
-			GlStateManager.disableAlphaTest();
-			GlStateManager.enableBlend();
-			GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			
-			GlStateManager.translated(x, y, z);
-			ClientUtils.bindTexture(lubeTexture);
-			base.renderTank(0.0625F);
-			
-			GlStateManager.disableBlend();
-			GlStateManager.enableAlphaTest();
-		}
-		GlStateManager.popMatrix();
-		
-		GlStateManager.pushMatrix();
-		{
-			int rotate;
-			switch(te.getFacing()){
-				case NORTH: rotate = 1; break;
-				case SOUTH: rotate = 3; break;
-				case WEST:  rotate = 2; break;
-				default:    rotate = 0; break;
-			}
-			
-			GlStateManager.enableTexture();
-			GlStateManager.enableBlend();
-			GlStateManager.blendFuncSeparate(770, 771, 1, 0);
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			
-			GlStateManager.translated(x + .5F, y + .5F, z + .5F);
-			GlStateManager.rotated(rotate * 90, 0, 1, 0);
-			GlStateManager.translated(-.5F, -.5F, -.5F);
-			
-			ClientUtils.bindTexture(lubeTexture);
-			base.render(0.0625F);
-			GlStateManager.translated(0, yOffset, 0);
-			// base.renderPlunger(0.0625F);
-			
-			GlStateManager.disableBlend();
-		}
-		GlStateManager.popMatrix();//*/
 	}
 }
