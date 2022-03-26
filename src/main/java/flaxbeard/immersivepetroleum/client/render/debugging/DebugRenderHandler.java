@@ -17,7 +17,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
-import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
@@ -32,6 +31,7 @@ import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -299,7 +299,8 @@ public class DebugRenderHandler{
 												
 												Matrix4f mat = matrix.last().pose();
 												
-												VertexConsumer builder = buffer.getBuffer(IPRenderTypes.ISLAND_DEBUGGING_POSITION_COLOR);
+												VertexConsumer builder = buffer.getBuffer(RenderType.lightning());
+//												VertexConsumer builder = buffer.getBuffer(IPRenderTypes.ISLAND_DEBUGGING_POSITION_COLOR);
 												builder.vertex(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
 												builder.vertex(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
 												builder.vertex(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
@@ -333,7 +334,8 @@ public class DebugRenderHandler{
 										List<ColumnPos> poly = island.getPolygon();
 										
 										if(poly != null && !poly.isEmpty()){
-											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
+											VertexConsumer builder = buffer.getBuffer(RenderType.lines());
+//											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
 											Matrix4f mat = matrix.last().pose();
 											
 											// Draw polygon as line
@@ -343,19 +345,19 @@ public class DebugRenderHandler{
 												ColumnPos b = poly.get(i);
 												float f = i / (float) poly.size();
 												
-												builder.vertex(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
-												builder.vertex(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).endVertex();
+												builder.vertex(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(0F, 1F, 0F).endVertex();
+												builder.vertex(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(0F, 1F, 0F).endVertex();
 												
 												j = i;
 											}
 											
 											// Center Marker
-											builder.vertex(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).endVertex();
-											builder.vertex(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).endVertex();
-											builder.vertex(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).endVertex();
-											builder.vertex(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).endVertex();
-											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).endVertex();
-											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
+											builder.vertex(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
+											builder.vertex(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
+											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
 											
 										}
 									}
