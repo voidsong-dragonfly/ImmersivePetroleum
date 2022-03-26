@@ -39,18 +39,18 @@ public class ModelPumpjack extends IPModel{
 		MeshDefinition meshDefinition = new MeshDefinition();
 		PartDefinition rootDefinition = meshDefinition.getRoot();
 		
-		PartDefinition origin_Definition = rootDefinition.addOrReplaceChild("origin", CubeListBuilder.create().addBox(0, 0, 0, 1, 1, 1).texOffs(0, 0), PartPose.ZERO);
-		PartDefinition arm_Definition = origin_Definition.addOrReplaceChild("arm", CubeListBuilder.create().addBox(-24 - 16, 0, -4, 70, 10, 8).texOffs(0, 40), PartPose.offset(56, 48, 24));
-		arm_Definition.addOrReplaceChild("head", CubeListBuilder.create().addBox(30, -15, -5, 12, 30, 10).texOffs(0, 0), PartPose.ZERO);
-		arm_Definition.addOrReplaceChild("barBack", CubeListBuilder.create().addBox(-35F, 3F, -11F, 4, 4, 22).texOffs(138, 0), PartPose.ZERO);
-		PartDefinition swingy_Definition = origin_Definition.addOrReplaceChild("swingy", CubeListBuilder.create().addBox(-4F, -2F, -14F, 8, 10, 4).texOffs(44, 14), PartPose.offset(24, 30, 30));
-		swingy_Definition.addOrReplaceChild("swingy2", CubeListBuilder.create().addBox(-4F, -2F, -2F, 8, 10, 4).texOffs(44, 14), PartPose.ZERO);
-		swingy_Definition.addOrReplaceChild("counter", CubeListBuilder.create().addBox(-12F, 8F, -14F, 24, 10, 4).texOffs(44, 0), PartPose.ZERO);
-		swingy_Definition.addOrReplaceChild("counter2", CubeListBuilder.create().addBox(-12F, 8F, -2F, 24, 10, 4).texOffs(44, 0), PartPose.ZERO);
-		PartDefinition connector_Definition = origin_Definition.addOrReplaceChild("connector", CubeListBuilder.create().addBox(-1F, -1F, -12F, 2, 24, 2).texOffs(108, 0), PartPose.ZERO);
-		connector_Definition.addOrReplaceChild("connector2", CubeListBuilder.create().addBox(-1F, -1F, 6F, 2, 24, 2).texOffs(100, 0), PartPose.ZERO);
-		origin_Definition.addOrReplaceChild("wellConnector", CubeListBuilder.create().addBox(-1F, 0F, -1F, 2, 30, 2).texOffs(108, 0), PartPose.ZERO);
-		origin_Definition.addOrReplaceChild("wellConnector2", CubeListBuilder.create().addBox(-1F, 0F, -1F, 2, 16, 2).texOffs(108, 0), PartPose.ZERO);
+		PartDefinition origin_Definition = rootDefinition.addOrReplaceChild("origin", CubeListBuilder.create().texOffs(0, 0).addBox(0, 0, 0, 1, 1, 1), PartPose.ZERO);
+		PartDefinition arm_Definition = origin_Definition.addOrReplaceChild("arm", CubeListBuilder.create().texOffs(0, 40).addBox(-24 - 16, 0, -4, 70, 10, 8), PartPose.offset(56, 48, 24));
+		arm_Definition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(30, -15, -5, 12, 30, 10), PartPose.ZERO);
+		arm_Definition.addOrReplaceChild("barBack", CubeListBuilder.create().texOffs(138, 0).addBox(-35F, 3F, -11F, 4, 4, 22), PartPose.ZERO);
+		PartDefinition swingy_Definition = origin_Definition.addOrReplaceChild("swingy", CubeListBuilder.create().texOffs(44, 14).addBox(-4F, -2F, -14F, 8, 10, 4), PartPose.offset(24, 30, 30));
+		swingy_Definition.addOrReplaceChild("swingy2", CubeListBuilder.create().texOffs(44, 14).addBox(-4F, -2F, -2F, 8, 10, 4), PartPose.ZERO);
+		swingy_Definition.addOrReplaceChild("counter", CubeListBuilder.create().texOffs(44, 0).addBox(-12F, 8F, -14F, 24, 10, 4), PartPose.ZERO);
+		swingy_Definition.addOrReplaceChild("counter2", CubeListBuilder.create().texOffs(44, 0).addBox(-12F, 8F, -2F, 24, 10, 4), PartPose.ZERO);
+		PartDefinition connector_Definition = origin_Definition.addOrReplaceChild("connector", CubeListBuilder.create().texOffs(108, 0).addBox(-1F, -1F, -12F, 2, 24, 2), PartPose.ZERO);
+		connector_Definition.addOrReplaceChild("connector2", CubeListBuilder.create().texOffs(100, 0).addBox(-1F, -1F, 6F, 2, 24, 2), PartPose.ZERO);
+		origin_Definition.addOrReplaceChild("wellConnector", CubeListBuilder.create().texOffs(108, 0).addBox(-1F, 0F, -1F, 2, 30, 2), PartPose.ZERO);
+		origin_Definition.addOrReplaceChild("wellConnector2", CubeListBuilder.create().texOffs(108, 0).addBox(-1F, 0F, -1F, 2, 16, 2), PartPose.ZERO);
 		
 		LayerDefinition layerDefinition = LayerDefinition.create(meshDefinition, 190, 58);
 		ModelPart root = layerDefinition.bakeRoot();
@@ -125,24 +125,22 @@ public class ModelPumpjack extends IPModel{
 	
 	@Override
 	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
-//		if (true) return;
-		
-		arm.zRot = (float) Math.toRadians(15 * Math.sin(ticks / 25D));
-		swingy.zRot = (float) (2 * (Math.PI / 4) + (ticks / 25D));
+		this.arm.zRot = (float) Math.toRadians(15 * Math.sin(this.ticks / 25F));
+		this.swingy.zRot = (float) (2 * (Math.PI / 4) + (this.ticks / 25F));
 		
 		float dist = 8.5F;
 		
-		float sin = (float) Math.sin(swingy.zRot);
-		float cos = (float) Math.cos(swingy.zRot);
-		connector.setPos(24 - dist * sin, 30 + dist * cos, 26);
+		float sin = (float) Math.sin(this.swingy.zRot);
+		float cos = (float) Math.cos(this.swingy.zRot);
+		this.connector.setPos(24 - dist * sin, 30 + dist * cos, 26);
 		if(sin < 0){
-			connector.zRot = (float) (1F * (Math.PI / 2) + Math.atan(25F / (dist * sin)));
+			this.connector.zRot = (float) (1F * (Math.PI / 2) + Math.atan(25F / (dist * sin)));
 		}else if(sin > 0){
-			connector.zRot = (float) (3F * (Math.PI / 2) + Math.atan(25F / (dist * sin)));
+			this.connector.zRot = (float) (3F * (Math.PI / 2) + Math.atan(25F / (dist * sin)));
 		}
 		
-		float sin2 = (float) Math.sin(arm.zRot);
-		float cos2 = (float) Math.cos(arm.zRot);
+		float sin2 = (float) Math.sin(this.arm.zRot);
+		float cos2 = (float) Math.cos(this.arm.zRot);
 		
 		float x = 24 - dist * sin;
 		float y = 30 + dist * cos;
@@ -153,11 +151,11 @@ public class ModelPumpjack extends IPModel{
 		float tx = 56 + w * -cos2 - h * sin2;
 		float ty = 48 + w * -sin2 + h * cos2;
 		
-		connector.setPos(x, y, 26);
-		connector.zRot = (float) (3F * (Math.PI / 2) + Math.atan2(ty - y, tx - x));
+		this.connector.setPos(x, y, 26);
+		this.connector.zRot = (float) (3F * (Math.PI / 2) + Math.atan2(ty - y, tx - x));
 		
-		wellConnector.setPos(88F, 16F, 24F);
-		wellConnector2.setPos(88F, 16F, 24F);
+		this.wellConnector.setPos(88F, 16F, 24F);
+		this.wellConnector2.setPos(88F, 16F, 24F);
 		
 		float w2 = -34F;
 		float h2 = -13F;
@@ -167,18 +165,21 @@ public class ModelPumpjack extends IPModel{
 		
 		float tx2 = 32F;
 		float ty2 = -32F;
-		wellConnector.setPos(56 + x2, 48 + y2, 24);
-		wellConnector.zRot = (float) (3F * (Math.PI / 2) + Math.atan2(ty2 - y2, tx2 - x2));
 		
-		wellConnector2.setPos(56 + x2, 48 + y2, 24);
-		wellConnector2.zRot = (float) (3F * (Math.PI / 2) + Math.atan2(ty2 - y2, tx2 - x2));
+		this.wellConnector.setPos(56 + x2, 48 + y2, 24);
+		this.wellConnector2.setPos(56 + x2, 48 + y2, 24);
 		
-		if(Math.sqrt((tx2 - x2) * (tx2 - x2) + (ty2 - y2) * (ty2 - y2)) <= 16){
-			wellConnector.visible = true;
-			wellConnector2.visible = false;
+		float zRot = (float) (3F * (Math.PI / 2) + Math.atan2(ty2 - y2, tx2 - x2));
+		this.wellConnector.zRot = zRot;
+		this.wellConnector2.zRot = zRot;
+		
+		double sqrt = Math.sqrt((tx2 - x2) * (tx2 - x2) + (ty2 - y2) * (ty2 - y2));
+		if(sqrt <= 16){
+			this.wellConnector.visible = true;
+			this.wellConnector2.visible = false;
 		}else{
-			wellConnector.visible = true;
-			wellConnector2.visible = true;
+			this.wellConnector.visible = true;
+			this.wellConnector2.visible = true;
 		}
 		
 		this.origin.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);

@@ -90,7 +90,6 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	
 	@Override
 	public void tick(){
-
 		if((this.level.isClientSide || isDummy()) && this.wasActive){
 			this.activeTicks++;
 			return;
