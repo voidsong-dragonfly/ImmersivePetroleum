@@ -5,10 +5,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
@@ -39,18 +37,18 @@ public class ModelPumpjack extends IPModel{
 		MeshDefinition meshDefinition = new MeshDefinition();
 		PartDefinition rootDefinition = meshDefinition.getRoot();
 		
-		PartDefinition origin_Definition = rootDefinition.addOrReplaceChild("origin", CubeListBuilder.create().texOffs(0, 0).addBox(0, 0, 0, 1, 1, 1), PartPose.ZERO);
-		PartDefinition arm_Definition = origin_Definition.addOrReplaceChild("arm", CubeListBuilder.create().texOffs(0, 40).addBox(-24 - 16, 0, -4, 70, 10, 8), PartPose.offset(56, 48, 24));
-		arm_Definition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(30, -15, -5, 12, 30, 10), PartPose.ZERO);
-		arm_Definition.addOrReplaceChild("barBack", CubeListBuilder.create().texOffs(138, 0).addBox(-35F, 3F, -11F, 4, 4, 22), PartPose.ZERO);
-		PartDefinition swingy_Definition = origin_Definition.addOrReplaceChild("swingy", CubeListBuilder.create().texOffs(44, 14).addBox(-4F, -2F, -14F, 8, 10, 4), PartPose.offset(24, 30, 30));
-		swingy_Definition.addOrReplaceChild("swingy2", CubeListBuilder.create().texOffs(44, 14).addBox(-4F, -2F, -2F, 8, 10, 4), PartPose.ZERO);
-		swingy_Definition.addOrReplaceChild("counter", CubeListBuilder.create().texOffs(44, 0).addBox(-12F, 8F, -14F, 24, 10, 4), PartPose.ZERO);
-		swingy_Definition.addOrReplaceChild("counter2", CubeListBuilder.create().texOffs(44, 0).addBox(-12F, 8F, -2F, 24, 10, 4), PartPose.ZERO);
-		PartDefinition connector_Definition = origin_Definition.addOrReplaceChild("connector", CubeListBuilder.create().texOffs(108, 0).addBox(-1F, -1F, -12F, 2, 24, 2), PartPose.ZERO);
-		connector_Definition.addOrReplaceChild("connector2", CubeListBuilder.create().texOffs(100, 0).addBox(-1F, -1F, 6F, 2, 24, 2), PartPose.ZERO);
-		origin_Definition.addOrReplaceChild("wellConnector", CubeListBuilder.create().texOffs(108, 0).addBox(-1F, 0F, -1F, 2, 30, 2), PartPose.ZERO);
-		origin_Definition.addOrReplaceChild("wellConnector2", CubeListBuilder.create().texOffs(108, 0).addBox(-1F, 0F, -1F, 2, 16, 2), PartPose.ZERO);
+		PartDefinition origin_Definition = rootDefinition.addOrReplaceChild("origin", singleCube(0, 0, 0, 1, 1, 1), PartPose.ZERO);
+		PartDefinition arm_Definition = origin_Definition.addOrReplaceChild("arm", singleCube(0, 40, -24 - 16, 0, -4, 70, 10, 8), PartPose.offset(56, 48, 24));
+		arm_Definition.addOrReplaceChild("head", singleCube(30, -15, -5, 12, 30, 10), PartPose.ZERO);
+		arm_Definition.addOrReplaceChild("barBack", singleCube(138, 0, -35F, 3F, -11F, 4, 4, 22), PartPose.ZERO);
+		PartDefinition swingy_Definition = origin_Definition.addOrReplaceChild("swingy", singleCube(44, 14, -4F, -2F, -14F, 8, 10, 4), PartPose.offset(24, 30, 30));
+		swingy_Definition.addOrReplaceChild("swingy2", singleCube(44, 14, -4F, -2F, -2F, 8, 10, 4), PartPose.ZERO);
+		swingy_Definition.addOrReplaceChild("counter", singleCube(44, 0, -12F, 8F, -14F, 24, 10, 4), PartPose.ZERO);
+		swingy_Definition.addOrReplaceChild("counter2", singleCube(44, 0, -12F, 8F, -2F, 24, 10, 4), PartPose.ZERO);
+		PartDefinition connector_Definition = origin_Definition.addOrReplaceChild("connector", singleCube(108, 0, -1F, -1F, -12F, 2, 24, 2), PartPose.ZERO);
+		connector_Definition.addOrReplaceChild("connector2", singleCube(100, 0, -1F, -1F, 6F, 2, 24, 2), PartPose.ZERO);
+		origin_Definition.addOrReplaceChild("wellConnector", singleCube(108, 0, -1F, 0F, -1F, 2, 30, 2), PartPose.ZERO);
+		origin_Definition.addOrReplaceChild("wellConnector2", singleCube(108, 0, -1F, 0F, -1F, 2, 16, 2), PartPose.ZERO);
 		
 		LayerDefinition layerDefinition = LayerDefinition.create(meshDefinition, 190, 58);
 		ModelPart root = layerDefinition.bakeRoot();
@@ -110,17 +108,6 @@ public class ModelPumpjack extends IPModel{
 		
 		origin.addChild(wellConnector);
 		origin.addChild(wellConnector2);
-	}
-	
-	/** Dummy; To be deleted Soon™ */
-	public static final class ModelPartOLD{
-		public float xRot, yRot, zRot;
-		public boolean visible;
-		public ModelPartOLD(Model model, int tx, int ty){}
-		public void setPos(float x, float y, float z){}
-		public void addBox(float x, float y, float z, int width, int height, int depth){}
-		public void addChild(ModelPartOLD model){}
-		public void render(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){}
 	}
 	
 	@Override
