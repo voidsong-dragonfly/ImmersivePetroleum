@@ -18,8 +18,6 @@ public class ModelLubricantPipes{
 		private ModelPart origin;
 		public Crusher(){
 			super(RenderType::entitySolid);
-			
-			//this.texWidth = this.texHeight = 16;
 		}
 		
 		@Override
@@ -28,8 +26,8 @@ public class ModelLubricantPipes{
 			
 			PartDefinition origin_Definition = meshDefinition.getRoot().addOrReplaceChild("origin", singleCube(20, 8, 9, 12, 2, 2), PartPose.ZERO);
 			
-			origin_Definition.addOrReplaceChild("p1", singleCube(-1, -1, 0, 12, 2, 2), PartPose.offsetAndRotation(20, 9, 10, 0, (float)Math.toRadians(270), 0));
-			origin_Definition.addOrReplaceChild("p2", singleCube(-1, -1, 0, 18, 2, 2), PartPose.offsetAndRotation(31, 9, -10, 0, (float)Math.toRadians(270), 0));
+			origin_Definition.addOrReplaceChild("p1", singleCube(-1, -1, 0, 12, 2, 2), PartPose.offsetAndRotation(20, 9, 10, 0, (float) Math.toRadians(270), 0));
+			origin_Definition.addOrReplaceChild("p2", singleCube(-1, -1, 0, 18, 2, 2), PartPose.offsetAndRotation(31, 9, -10, 0, (float) Math.toRadians(270), 0));
 			origin_Definition.addOrReplaceChild("p3", singleCube(0, -1, -1, 40, 2, 2), PartPose.offsetAndRotation(30, 10, -10, 0, 0, (float) Math.toRadians(90)));
 			origin_Definition.addOrReplaceChild("p5", singleCube(31, 8, 5, 1, 2, 2), PartPose.ZERO);
 			origin_Definition.addOrReplaceChild("p6", singleCube(23, 48, -11, 6, 2, 2), PartPose.ZERO);
@@ -100,13 +98,28 @@ public class ModelLubricantPipes{
 		public Excavator(boolean mirror){
 			super(RenderType::entitySolid);
 			this.mirrored = mirror;
-			
-			//this.texWidth = this.texHeight = 16;
 		}
 		
 		@Override
 		public void init(){
+			MeshDefinition meshDefinition = new MeshDefinition();
+			
 			if(this.mirrored){
+				PartDefinition origin_Definition = meshDefinition.getRoot().addOrReplaceChild("origin", singleCube(51, 8, 6, 20, 2, 2), PartPose.ZERO);
+				
+				origin_Definition.addOrReplaceChild("p1", singleCube(-1, -1, 0, 6, 2, 2), PartPose.offsetAndRotation(71, 9, 1, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p2", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(53, 9, 3, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p3", singleCube(0, -1, -1, 6, 2, 2), PartPose.offsetAndRotation(52, 10, 3, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p4", singleCube(0, -1, -1, 9, 2, 2), PartPose.offsetAndRotation(52, 32, 8, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p5", singleCube(48, 39, 7, 3, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p6", singleCube(0, -1, -1, 18, 2, 2), PartPose.offsetAndRotation(52, 16, -1, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p7", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(53, 15, -1, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p8", singleCube(-1, -1, 0, 7, 2, 2), PartPose.offsetAndRotation(53, 33, 1, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p9", singleCube(48, 39, 39, 3, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p10", singleCube(-1, -1, 0, 2, 2, 2), PartPose.offsetAndRotation(75, 9, 1, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p11", singleCube(73, 8, 2, 16, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p12", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(89, 9, 5, 0, (float) Math.toRadians(270), 0));
+				
 				ModelPartOLD origin = new ModelPartOLD(this, 0, 0);
 				origin.addBox(51, 8, 6, 20, 2, 2);
 				
@@ -177,6 +190,21 @@ public class ModelLubricantPipes{
 				origin.addChild(p12);
 				
 			}else{
+				PartDefinition origin_Definition = meshDefinition.getRoot().addOrReplaceChild("origin", singleCube(51, 8, 40, 20, 2, 2), PartPose.ZERO);
+				
+				origin_Definition.addOrReplaceChild("p1", singleCube(-1, -1, 0, 6, 2, 2), PartPose.offsetAndRotation(71, 9, 43, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p2", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(53, 9, 43, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p3", singleCube(0, -1, -1, 6, 2, 2), PartPose.offsetAndRotation(52, 10, 45, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p4", singleCube(0, -1, -1, 9, 2, 2), PartPose.offsetAndRotation(52, 32, 40, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p5", singleCube(48, 39, 39, 3, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p6", singleCube(0, -1, -1, 18, 2, 2), PartPose.offsetAndRotation(52, 16, 49, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p7", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(53, 15, 47, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p8", singleCube(-1, -1, 0, 7, 2, 2), PartPose.offsetAndRotation(53, 33, 42, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p9", singleCube(48, 39, 39, 3, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p10", singleCube(-1, -1, 0, 2, 2, 2), PartPose.offsetAndRotation(75, 9, 47, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p11", singleCube(73, 8, 44, 16, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p12", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(89, 9, 41, 0, (float) Math.toRadians(270), 0));
+				
 				ModelPartOLD origin = new ModelPartOLD(this, 0, 0);
 				origin.addBox(51, 8, 40, 20, 2, 2);
 				
@@ -246,6 +274,8 @@ public class ModelLubricantPipes{
 				p12.yRot = (float) Math.toRadians(270);
 				origin.addChild(p12);
 			}
+			
+			this.origin = LayerDefinition.create(meshDefinition, 16, 16).bakeRoot().getChild("origin");
 		}
 		
 		@Override
@@ -263,13 +293,29 @@ public class ModelLubricantPipes{
 		public Pumpjack(boolean mirror){
 			super(RenderType::entitySolid);
 			this.mirrored = mirror;
-			
-			//this.texWidth = this.texHeight = 16;
 		}
 		
 		@Override
 		public void init(){
+			MeshDefinition meshDefinition = new MeshDefinition();
+			
 			if(this.mirrored){
+				PartDefinition origin_Definition = meshDefinition.getRoot().addOrReplaceChild("origin", singleCube(21, 8, 12, 15, 2, 2), PartPose.ZERO);
+				
+				origin_Definition.addOrReplaceChild("p1", singleCube(-1, -1, 0, 12, 2, 2), PartPose.offsetAndRotation(23, 9, 1, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p2", singleCube(-1, -1, 0, 13, 2, 2), PartPose.offsetAndRotation(38, 9, 13, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p3", singleCube(34, 8, 23, 2, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p4", singleCube(0, -1, -1, 30, 2, 2), PartPose.offsetAndRotation(33, 8, 24, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p5", singleCube(24, 36, 23, 8, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p6", singleCube(0, -1F, -1, 9, 2, 2), PartPose.offsetAndRotation(26, 9.01F, 0, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p7", singleCube(25, 8, 8.5F, 18, 2, 2), PartPose.ZERO);
+				
+				PartDefinition leg1_Definition = origin_Definition.addOrReplaceChild("leg1", empty(), PartPose.offsetAndRotation(56 - 13.6F, 8F, 12F, (float) Math.toRadians(9), (float) Math.toRadians(20), (float) Math.toRadians(-14)));
+				leg1_Definition.addOrReplaceChild("leg2", singleCube(1F, -1F, -4F, 38, 2, 2), PartPose.rotation(0, 0, (float) Math.toRadians(90)));
+				
+				origin_Definition.addOrReplaceChild("p8", singleCube(0, 0, 0, 4, 2, 2), PartPose.offsetAndRotation(52.5F, 43.3F, 14.7F, 0, (float) Math.toRadians(30), 0));
+				origin_Definition.addOrReplaceChild("p9", singleCube(0, -2, 0, 6, 2, 2), PartPose.offsetAndRotation(55f, 43.3f, 13f, 0, 0, (float) Math.toRadians(90)));
+				
 				ModelPartOLD origin = new ModelPartOLD(this, 0, 0);
 				origin.addBox(21, 8, 12, 15, 2, 2);
 				
@@ -335,6 +381,21 @@ public class ModelLubricantPipes{
 				origin.addChild(p10);
 				
 			}else{
+				PartDefinition origin_Definition = meshDefinition.getRoot().addOrReplaceChild("origin", singleCube(21, 8, 48 - 12 - 2, 15, 2, 2), PartPose.ZERO);
+				
+				origin_Definition.addOrReplaceChild("p1", singleCube(-1, -1, 0, 12, 2, 2), PartPose.offsetAndRotation(23, 9, 37, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p2", singleCube(-1, -1, 0, 13, 2, 2), PartPose.offsetAndRotation(38, 9, 24, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p3", singleCube(34, 8, 23, 2, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p4", singleCube(0, -1, -1, 30, 2, 2), PartPose.offsetAndRotation(33, 8, 24, 0, 0, (float) Math.toRadians(90)));
+				origin_Definition.addOrReplaceChild("p5", singleCube(24, 36, 23, 8, 2, 2), PartPose.ZERO);
+				origin_Definition.addOrReplaceChild("p6", singleCube(39, -1F, -1, 9, 2, 2), PartPose.offsetAndRotation(26, 9.01F, 0, 0, (float) Math.toRadians(270), 0));
+				origin_Definition.addOrReplaceChild("p7", singleCube(25, 8, 38.5F, 18, 2, 2), PartPose.ZERO);
+				
+				PartDefinition leg1_Definition = origin_Definition.addOrReplaceChild("leg1", empty(), PartPose.offsetAndRotation(56 - 13.6F, 8F, 36F, (float) Math.toRadians(-10), (float) Math.toRadians(-20), (float) Math.toRadians(-15)));
+				leg1_Definition.addOrReplaceChild("leg2", singleCube(1F, -1F, 3F, 38, 2, 2), PartPose.rotation(0, 0, (float) Math.toRadians(90)));
+				
+				origin_Definition.addOrReplaceChild("p8", singleCube(0, 0, 0, 4, 2, 2), PartPose.offsetAndRotation(53F, 43.3F, 46 - 14.3F, 0, (float) Math.toRadians(-30), 0));
+				origin_Definition.addOrReplaceChild("p9", singleCube(0, -2, 0, 6, 2, 2), PartPose.offsetAndRotation(55f, 43.3f, 33f, 0, 0, (float) Math.toRadians(90)));
 				
 				ModelPartOLD origin = new ModelPartOLD(this, 0, 0);
 				origin.addBox(21, 8, 48 - 12 - 2, 15, 2, 2);
@@ -400,6 +461,8 @@ public class ModelLubricantPipes{
 				p10.zRot = (float) Math.toRadians(90);
 				origin.addChild(p10);
 			}
+			
+			this.origin = LayerDefinition.create(meshDefinition, 16, 16).bakeRoot().getChild("origin");
 		}
 		
 		@Override

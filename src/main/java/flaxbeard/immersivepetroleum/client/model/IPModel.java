@@ -27,4 +27,9 @@ public abstract class IPModel extends Model{
 	protected final CubeListBuilder singleCube(int pXTexOffs, int pYTexOffs, float pOriginX, float pOriginY, float pOriginZ, float pDimensionX, float pDimensionY, float pDimensionZ){
 		return CubeListBuilder.create().texOffs(pXTexOffs, pYTexOffs).addBox(pOriginX, pOriginY, pOriginZ, pDimensionX, pDimensionY, pDimensionZ);
 	}
+	
+	/** Creates an empty CubeListBuilder. Same as doing <code>CubeListBuilder.create();</code>*/
+	protected final CubeListBuilder empty(){
+		return CubeListBuilder.create();
+	}
 }

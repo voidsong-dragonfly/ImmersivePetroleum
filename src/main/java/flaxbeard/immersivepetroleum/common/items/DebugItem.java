@@ -103,9 +103,14 @@ public class DebugItem extends IPItemBase{
 					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				case REFRESH_ALL_IPMODELS:{
-					IPModels.getModels().forEach(m -> m.init());
+					try{
+						IPModels.getModels().forEach(m -> m.init());
+						
+						playerIn.displayClientMessage(new TextComponent("Models refreshed."), true);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 					
-					playerIn.displayClientMessage(new TextComponent("Models refreshed."), true);
 					
 					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
