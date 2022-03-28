@@ -284,7 +284,7 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.AUTO_LUBRICATOR.get());
 		for(Direction dir:AutoLubricatorBlock.FACING.getPossibleValues()){
-			int rot = (int) ((90 * dir.toYRot()) + 90 % 360);
+			int rot = (int) ((dir.toYRot()) + 90 % 360);
 			
 			lubeBuilder.partialState()
 				.with(AutoLubricatorBlock.SLAVE, false)

@@ -64,7 +64,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(FACING, SLAVE);
 	}
-
+	
 	@Override
 	public Supplier<BlockItem> blockItemSupplier(){
 		return () -> new AutoLubricatorBlockItem(this);
@@ -82,15 +82,13 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		te.facing = pState.getValue(FACING);
 		return te;
 	}
-
+	
 	@Nullable
 	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-			@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type
-	){
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
 		return createTickerHelper(type, IPTileTypes.AUTOLUBE);
 	}
-
+	
 	@Override
 	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player){
 		if(state.getValue(SLAVE)){
@@ -139,10 +137,11 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		
 		@Override
 		protected boolean canPlace(BlockPlaceContext con, BlockState state){
-			// No point in checking if the second block above is empty if it can't even place on the first one
+			// No point in checking if the second block above is empty if it
+			// can't even place on the first one
 			if(super.canPlace(con, state)){
-				BlockPos pos=con.getClickedPos().offset(0, 1, 0);
-				BlockState otherState=con.getLevel().getBlockState(pos);
+				BlockPos pos = con.getClickedPos().offset(0, 1, 0);
+				BlockState otherState = con.getLevel().getBlockState(pos);
 				otherState.isAir();
 				return otherState.isAir();
 			}

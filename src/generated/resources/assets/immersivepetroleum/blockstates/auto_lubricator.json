@@ -2,7 +2,7 @@
   "variants": {
     "facing=north,slave=false": {
       "model": "immersivepetroleum:block/auto_lubricator",
-      "y": 16290
+      "y": 270
     },
     "facing=south,slave=false": {
       "model": "immersivepetroleum:block/auto_lubricator",
@@ -10,11 +10,11 @@
     },
     "facing=west,slave=false": {
       "model": "immersivepetroleum:block/auto_lubricator",
-      "y": 8190
+      "y": 180
     },
     "facing=east,slave=false": {
       "model": "immersivepetroleum:block/auto_lubricator",
-      "y": 24390
+      "y": 360
     },
     "facing=north,slave=true": {
       "model": "immersivepetroleum:block/lube_empty"
