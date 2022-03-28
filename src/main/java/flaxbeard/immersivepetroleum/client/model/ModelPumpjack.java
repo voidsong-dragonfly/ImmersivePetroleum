@@ -59,55 +59,6 @@ public class ModelPumpjack extends IPModel{
 		this.connector = this.origin.getChild("connector");
 		this.wellConnector = this.origin.getChild("wellConnector");
 		this.wellConnector2 = this.origin.getChild("wellConnector2");
-		
-		ModelPartOLD origin = new ModelPartOLD(this, 0, 0);
-		
-		ModelPartOLD arm = new ModelPartOLD(this, 0, 40);
-		arm.addBox(-24 - 16, 0, -4, 70, 10, 8);
-		arm.setPos(56, 48, 24);
-		origin.addChild(arm);
-		
-		ModelPartOLD head = new ModelPartOLD(this, 0, 0);
-		head.addBox(30, -15, -5, 12, 30, 10);
-		arm.addChild(head);
-		
-		ModelPartOLD barBack = new ModelPartOLD(this, 138, 0);
-		barBack.addBox(-35F, 3F, -11F, 4, 4, 22);
-		arm.addChild(barBack);
-		
-		ModelPartOLD swingy = new ModelPartOLD(this, 44, 14);
-		swingy.addBox(-4F, -2F, -14F, 8, 10, 4);
-		swingy.setPos(24, 30, 30);
-		origin.addChild(swingy);
-		
-		ModelPartOLD swingy2 = new ModelPartOLD(this, 44, 14);
-		swingy2.addBox(-4F, -2F, -2F, 8, 10, 4);
-		swingy.addChild(swingy2);
-		
-		ModelPartOLD counter = new ModelPartOLD(this, 44, 0);
-		counter.addBox(-12F, 8F, -14F, 24, 10, 4);
-		swingy.addChild(counter);
-		
-		ModelPartOLD counter2 = new ModelPartOLD(this, 44, 0);
-		counter2.addBox(-12F, 8F, -2F, 24, 10, 4);
-		swingy.addChild(counter2);
-		
-		ModelPartOLD connector = new ModelPartOLD(this, 108, 0);
-		connector.addBox(-1F, -1F, -12F, 2, 24, 2);
-		origin.addChild(connector);
-		
-		ModelPartOLD connector2 = new ModelPartOLD(this, 100, 0);
-		connector2.addBox(-1F, -1F, 6F, 2, 24, 2);
-		connector.addChild(connector2);
-		
-		ModelPartOLD wellConnector = new ModelPartOLD(this, 108, 0);
-		wellConnector.addBox(-1F, 0F, -1F, 2, 30, 2);
-		
-		ModelPartOLD wellConnector2 = new ModelPartOLD(this, 108, 0);
-		wellConnector2.addBox(-1F, 0F, -1F, 2, 16, 2);
-		
-		origin.addChild(wellConnector);
-		origin.addChild(wellConnector2);
 	}
 	
 	@Override
