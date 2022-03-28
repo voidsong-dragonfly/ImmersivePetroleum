@@ -51,7 +51,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 	}
 	
 	@Override
-	protected void readCustom(BlockState state, CompoundTag compound){
+	protected void readCustom(CompoundTag compound){
 		this.isSlave = compound.getBoolean("slave");
 		this.isActive = compound.getBoolean("active");
 		this.predictablyDraining = compound.getBoolean("predictablyDraining");

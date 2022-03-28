@@ -55,7 +55,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE, 
 	}
 	
 	@Override
-	public void readCustom(BlockState state, CompoundTag nbt){
+	public void readCustom(CompoundTag nbt){
 		this.isRedstoneInverted = nbt.getBoolean("inverted");
 		this.isActive = nbt.getBoolean("active");
 		this.drained = nbt.getShort("drained");

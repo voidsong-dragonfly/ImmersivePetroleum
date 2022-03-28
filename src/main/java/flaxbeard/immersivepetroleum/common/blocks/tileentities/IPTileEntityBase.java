@@ -55,10 +55,10 @@ public abstract class IPTileEntityBase extends BlockEntity{
 	@Override
 	public void load(CompoundTag compound){
 		super.load(compound);
-		readCustom(null, compound);
+		readCustom(compound);
 	}
 	
 	protected abstract void writeCustom(CompoundTag compound);
 	
-	protected abstract void readCustom(BlockState state, CompoundTag compound);
+	protected abstract void readCustom(CompoundTag compound);
 }

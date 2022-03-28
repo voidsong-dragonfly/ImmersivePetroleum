@@ -98,7 +98,7 @@ public class WellTileEntity extends IPTileEntityBase implements TickableBE{
 	}
 	
 	@Override
-	protected void readCustom(BlockState state, CompoundTag nbt){
+	protected void readCustom(CompoundTag nbt){
 		this.spill = nbt.getBoolean("spill");
 		this.drillingCompleted = nbt.getBoolean("drillingcompleted");
 		this.pastPhyiscalPart = nbt.getBoolean("pastphyiscalpart");

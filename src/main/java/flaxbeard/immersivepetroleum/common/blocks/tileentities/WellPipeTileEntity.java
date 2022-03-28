@@ -18,7 +18,7 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 	}
 	
 	@Override
-	protected void readCustom(BlockState state, CompoundTag nbt){
+	protected void readCustom(CompoundTag nbt){
 	}
 	
 	/** Returns null if there is no connection to the Well. Used by Pumpjack. */
