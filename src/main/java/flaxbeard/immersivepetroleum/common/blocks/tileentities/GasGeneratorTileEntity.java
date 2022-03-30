@@ -305,9 +305,14 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			if(!this.level.hasNeighborSignal(this.worldPosition) && this.tank.getFluid() != null){
 				Fluid fluid = this.tank.getFluid().getFluid();
 				int amount = FuelHandler.getFuelUsedPerTick(fluid);
-				if(amount > 0 && this.tank.getFluidAmount() >= amount && this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fluid), false) > 0){
-					this.tank.drain(new FluidStack(fluid, amount), FluidAction.EXECUTE);
-					this.isActive = true;
+				if(amount > 0 && this.tank.getFluidAmount() >= amount){
+					int generated = FuelHandler.getFluxGeneratedPerTick(fluid);
+					
+					if(this.energyStorage.receiveEnergy(generated, true) >= generated){
+						this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fluid), false);
+						this.tank.drain(new FluidStack(fluid, amount), FluidAction.EXECUTE);
+						this.isActive = true;
+					}
 				}
 			}
 			
