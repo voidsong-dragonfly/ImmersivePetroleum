@@ -25,7 +25,7 @@ public abstract class IPTileEntityBase extends BlockEntity{
 	
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket(){
-		return ClientboundBlockEntityDataPacket.create(this, b -> b.getUpdateTag());
+		return ClientboundBlockEntityDataPacket.create(this, b -> getUpdateTag());
 	}
 	
 	@Override
@@ -36,7 +36,7 @@ public abstract class IPTileEntityBase extends BlockEntity{
 	@Override
 	public CompoundTag getUpdateTag(){
 		CompoundTag nbt = new CompoundTag();
-		save(nbt);
+		saveAdditional(nbt);
 		return nbt;
 	}
 	

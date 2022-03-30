@@ -107,7 +107,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket(){
-		return ClientboundBlockEntityDataPacket.create(this, b -> b.getUpdateTag());
+		return ClientboundBlockEntityDataPacket.create(this, b -> getUpdateTag());
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	@Override
 	public CompoundTag getUpdateTag(){
 		CompoundTag nbt = new CompoundTag();
-		save(nbt);
+		saveAdditional(nbt);
 		return nbt;
 	}
 
