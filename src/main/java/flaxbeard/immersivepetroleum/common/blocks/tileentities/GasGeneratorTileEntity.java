@@ -87,8 +87,10 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		
 		this.isActive = nbt.getBoolean("isActive");
 		this.tank.readFromNBT(nbt.getCompound("tank"));
-		this.energyStorage.deserializeNBT(nbt.get("buffer"));
 		this.wireType = nbt.contains("wiretype") ? WireUtils.getWireTypeFromNBT(nbt, "wiretype") : null;
+		
+		if(nbt.contains("buffer"))
+			this.energyStorage.deserializeNBT(nbt.get("buffer"));
 	}
 	
 	@Override
