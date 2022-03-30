@@ -163,7 +163,7 @@ public class IPFluid extends FlowingFluid{
 	
 	@Override
 	public boolean isSame(Fluid fluidIn){
-		return fluidIn.isSame(this.getSource()) || fluidIn.isSame(this.getFlowing());
+		return fluidIn.equals(this.getSource()) || fluidIn.equals(this.getFlowing());
 	}
 	
 	public static Consumer<FluidAttributes.Builder> createBuilder(int density, int viscosity){
