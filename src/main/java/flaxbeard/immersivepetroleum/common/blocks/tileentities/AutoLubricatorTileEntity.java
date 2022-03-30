@@ -43,7 +43,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 	public boolean isSlave;
 	public boolean isActive;
 	public boolean predictablyDraining = false;
-	public Direction facing;
+	public Direction facing = Direction.NORTH;
 	public FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
 	
 	public AutoLubricatorTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
@@ -58,7 +58,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 		
 		Direction facing = Direction.byName(compound.getString("facing"));
 		if(facing.get2DDataValue() == -1)
-			facing = Direction.NORTH;
+			this.facing = Direction.NORTH;
 		this.facing = facing;
 		
 		this.tank.readFromNBT(compound.getCompound("tank"));
@@ -102,11 +102,9 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 		ItemStack stack = new ItemStack(state.getBlock());
 		
 		BlockEntity te = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
-		if(te instanceof AutoLubricatorTileEntity){
-			AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) te;
-			
+		if(te instanceof AutoLubricatorTileEntity autolube){
 			CompoundTag tag = new CompoundTag();
-			lube.writeTank(tag, true);
+			autolube.writeTank(tag, true);
 			if(!tag.isEmpty()){
 				stack.setTag(tag);
 			}
@@ -123,8 +121,8 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 			if(this.outputHandler == null){
 				this.outputHandler = LazyOptional.of(() -> {
 					BlockEntity te = this.level.getBlockEntity(getBlockPos().relative(Direction.DOWN));
-					if(te != null && te instanceof AutoLubricatorTileEntity){
-						return ((AutoLubricatorTileEntity) te).tank;
+					if(te != null && te instanceof AutoLubricatorTileEntity autolube){
+						return autolube.tank;
 					}
 					return null;
 				});
@@ -178,11 +176,10 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 	public Component[] getOverlayText(Player player, HitResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
 			BlockEntity master = this.level.getBlockEntity(getBlockPos().offset(0, this.isSlave ? -1 : 0, 0));
-			if(master != null && master instanceof AutoLubricatorTileEntity){
-				AutoLubricatorTileEntity lube = (AutoLubricatorTileEntity) master;
+			if(master != null && master instanceof AutoLubricatorTileEntity autolube){
 				Component s = null;
-				if(!lube.tank.isEmpty()){
-					s = ((MutableComponent) lube.tank.getFluid().getDisplayName()).append(": " + lube.tank.getFluidAmount() + "mB");
+				if(!autolube.tank.isEmpty()){
+					s = ((MutableComponent) autolube.tank.getFluid().getDisplayName()).append(": " + autolube.tank.getFluidAmount() + "mB");
 				}else{
 					s = new TranslatableComponent(Lib.GUI + "empty");
 				}
@@ -200,8 +197,8 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 	@Override
 	public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
 		BlockEntity master = this.isSlave ? this.level.getBlockEntity(getBlockPos().offset(0, -1, 0)) : this;
-		if(master != null && master instanceof AutoLubricatorTileEntity){
-			if(!this.level.isClientSide && FluidUtil.interactWithFluidHandler(player, hand, ((AutoLubricatorTileEntity) master).tank)){
+		if(master != null && master instanceof AutoLubricatorTileEntity autolube){
+			if(!this.level.isClientSide && FluidUtil.interactWithFluidHandler(player, hand, autolube.tank)){
 				setChanged();
 			}
 			return true;
