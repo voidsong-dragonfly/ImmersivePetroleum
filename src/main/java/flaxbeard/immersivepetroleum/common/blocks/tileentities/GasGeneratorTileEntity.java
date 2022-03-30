@@ -92,7 +92,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
-	public CompoundTag save(CompoundTag compound){
+	public void saveAdditional(CompoundTag compound){
 		CompoundTag nbt = super.save(compound);
 		
 		nbt.putBoolean("isActive", this.isActive);
@@ -102,8 +102,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		if(this.wireType != null){
 			nbt.putString("wiretype", this.wireType.getUniqueName());
 		}
-		
-		return nbt;
 	}
 	
 	@Override
