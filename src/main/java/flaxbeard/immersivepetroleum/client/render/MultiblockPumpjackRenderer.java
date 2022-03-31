@@ -20,6 +20,11 @@ public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackT
 	private static Supplier<IPModel> pumpjackarm = IPModels.getSupplier(ModelPumpjack.ID);
 	
 	@Override
+	public int getViewDistance(){
+		return 100;
+	}
+	
+	@Override
 	public void render(PumpjackTileEntity te, float partialTicks, PoseStack transform, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn){
 		if(te != null && !te.isDummy()){
 			transform.pushPose();
