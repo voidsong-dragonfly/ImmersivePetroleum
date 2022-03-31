@@ -70,6 +70,12 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
+	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
+		background(pPoseStack, pMouseX, pMouseY, pPartialTick);
+		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
+	}
+	
+	@Override
 	public boolean isPauseScreen(){
 		return false;
 	}
