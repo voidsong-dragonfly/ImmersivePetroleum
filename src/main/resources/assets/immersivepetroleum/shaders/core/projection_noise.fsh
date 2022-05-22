@@ -9,8 +9,8 @@ uniform vec4 FogColor;
 uniform float FogStart;
 uniform float FogEnd;
 
-uniform float alpha; // Passed in by callback
-uniform float time;
+uniform float Alpha; // Passed in by callback
+uniform float Time;
 
 in float vertexDistance;
 in vec4 vertexColor;
@@ -21,10 +21,13 @@ out vec4 fragColor;
 
 float noise(in vec2 coordinate, in float seed){
 	vec2 coordActual = floor(textureSize(Sampler0, 0) * coordinate);
-	return fract(sin(dot(coordActual * seed, vec2(12.9898, 78.233))) * 43758.5453);
+	float frac = fract(sin(dot(coordActual * seed, vec2(12.9898, 78.233))) * 43758.5453);
+	return max(0, min(1, frac));
 }
 
 void main(){
-	float n = (noise(texCoord0, time) - 0.5) * 0.25;
-	fragColor = texture(Sampler0, texCoord0) * Color * vec4(1.0 + n, 1.0 + n, 1.0 + n, alpha);
+	float n = (noise(texCoord0, Time) - 0.5) * 0.25;
+	vec4 v = vec4(1.0 + n, 1.0 + n, 1.0 + n, Alpha);
+	vec4 color = texture(Sampler0, texCoord0) * vertexColor * v * ColorModulator;
+    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 }

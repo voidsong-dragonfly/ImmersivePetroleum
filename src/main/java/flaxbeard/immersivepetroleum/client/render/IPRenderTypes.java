@@ -54,10 +54,11 @@ public class IPRenderTypes extends RenderStateShard{
 				DefaultVertexFormat.BLOCK,
 				VertexFormat.Mode.QUADS,
 				2097152,
-				false,
-				false,
+				true,
+				true,
 				RenderType.CompositeState.builder()
 					.setShaderState(PROJECTION_NOISE)
+					.setTextureState(BLOCK_SHEET_MIPPED)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setDepthTestState(DEPTH_ALWAYS)
 					.setCullState(CULL)

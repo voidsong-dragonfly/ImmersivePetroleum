@@ -623,8 +623,7 @@ public class ProjectorItem extends IPItemBase{
 						
 						modelData = ibakedmodel.getModelData(rInfo.templateWorld, rInfo.tBlockInfo.pos, state, modelData);
 						
-						IPShaders.projection_alpha.set(flicker * alpha);
-						IPShaders.projection_time.set(MCUtil.getPlayer().tickCount + partialTicks);
+						IPShaders.projNoise(flicker * alpha, MCUtil.getPlayer().tickCount + partialTicks);
 						
 						VertexConsumer vc = buffer.getBuffer(IPRenderTypes.EXPERIMENTAL_RENDER_TYPE);
 						//vc = buffer.getBuffer(RenderType.translucent());

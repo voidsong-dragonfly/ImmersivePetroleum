@@ -4,8 +4,8 @@
         "srcrgb": "srcalpha",
         "dstrgb": "1-srcalpha"
     },
-    "vertex": "rendertype_translucent",
-    "fragment": "rendertype_translucent",
+    "vertex": "immersivepetroleum:projection_noise",
+    "fragment": "immersivepetroleum:projection_noise",
     "attributes": [
         "Position",
         "Color",
@@ -24,7 +24,8 @@
         { "name": "FogStart", "type": "float", "count": 1, "values": [ 0.0 ] },
         { "name": "FogEnd", "type": "float", "count": 1, "values": [ 1.0 ] },
         { "name": "FogColor", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
-        { "name": "alpha", "type": "float", "count": 1, "values": [ 0.0 ] },
-        { "name": "time", "type": "float", "count": 1, "values": [ 0.0 ] }
+        
+        { "name": "Alpha", "type": "float", "count": 1, "values": [ 0.0 ] },
+        { "name": "Time", "type": "float", "count": 1, "values": [ 0.0 ] }
     ]
 }

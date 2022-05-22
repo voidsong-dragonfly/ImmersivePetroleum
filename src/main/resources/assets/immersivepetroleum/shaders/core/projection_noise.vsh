@@ -12,10 +12,6 @@ uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform vec3 ChunkOffset;
 
-// Testing if it needs to be here instead
-uniform float alpha; // Passed in by callback
-uniform float time;
-
 out float vertexDistance;
 out vec4 vertexColor;
 out vec2 texCoord0;
