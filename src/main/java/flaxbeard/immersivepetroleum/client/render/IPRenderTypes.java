@@ -60,7 +60,7 @@ public class IPRenderTypes extends RenderStateShard{
 					.setShaderState(PROJECTION_NOISE)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setDepthTestState(DEPTH_ALWAYS)
-					.setCullState(NO_CULL)
+					.setCullState(CULL)
 					.createCompositeState(false)
 		);
 		
