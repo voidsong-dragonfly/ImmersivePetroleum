@@ -38,8 +38,8 @@ public class IPShaders{
 			ImmersivePetroleum.log.info("projection_noise shader loaded.");
 			projection_noise = s;
 			
-			projection_alpha = projection_noise.getUniform("Alpha");
-			projection_time = projection_noise.getUniform("Time");
+			projection_alpha = projection_noise.getUniform("alpha");
+			projection_time = projection_noise.getUniform("time");
 			
 			ImmersivePetroleum.log.info("projection_alpha = " + projection_alpha);
 			ImmersivePetroleum.log.info("projection_time = " + projection_time);
