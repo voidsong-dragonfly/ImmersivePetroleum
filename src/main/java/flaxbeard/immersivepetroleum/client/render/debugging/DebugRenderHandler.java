@@ -7,6 +7,7 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
@@ -17,6 +18,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
@@ -90,34 +92,20 @@ public class DebugRenderHandler{
 							BlockEntity te = world.getBlockEntity(result.getBlockPos());
 							boolean isMBPart = te instanceof MultiblockPartBlockEntity<?>;
 							if(isMBPart){
-								MultiblockPartBlockEntity<?> multiblock = (MultiblockPartBlockEntity<?>) te;
-
-								if(!multiblock.offsetToMaster.equals(BlockPos.ZERO)){
-									multiblock = multiblock.master();
-								}
-								
-								if(te instanceof DistillationTowerTileEntity){
-									distillationtower(debugOut, (DistillationTowerTileEntity) multiblock);
+								if(te instanceof DistillationTowerTileEntity tower){
+									distillationtower(debugOut, tower);
 									
-								}else if(te instanceof CokerUnitTileEntity){
-									cokerunit(debugOut, (CokerUnitTileEntity) multiblock);
+								}else if(te instanceof CokerUnitTileEntity coker){
+									cokerunit(debugOut, coker);
 									
-								}else if(te instanceof HydrotreaterTileEntity){
-									hydrotreater(debugOut, (HydrotreaterTileEntity) multiblock);
+								}else if(te instanceof HydrotreaterTileEntity treater){
+									hydrotreater(debugOut, treater);
 									
-								}else if(te instanceof OilTankTileEntity){
-									oiltank(debugOut, (OilTankTileEntity) multiblock);
+								}else if(te instanceof OilTankTileEntity oiltank){
+									oiltank(debugOut, oiltank);
 									
-								}else if(te instanceof DerrickTileEntity){
-									DerrickTileEntity derrick = (DerrickTileEntity) multiblock;
-									
-									IFluidTank[] tanks = derrick.getInternalTanks();
-									if(tanks != null && tanks.length > 0){
-										for(int i = 0;i < tanks.length;i++){
-											FluidStack fs = tanks[i].getFluid();
-											debugOut.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-										}
-									}
+								}else if(te instanceof DerrickTileEntity derrick){
+									derrick(debugOut, derrick);
 								}
 							}
 							
@@ -334,9 +322,10 @@ public class DebugRenderHandler{
 										List<ColumnPos> poly = island.getPolygon();
 										
 										if(poly != null && !poly.isEmpty()){
-											VertexConsumer builder = buffer.getBuffer(RenderType.lines());
-//											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
+//											VertexConsumer builder = buffer.getBuffer(RenderType.lines());
+											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
 											Matrix4f mat = matrix.last().pose();
+											Matrix3f nor = matrix.last().normal();
 											
 											// Draw polygon as line
 											int j = poly.size() - 1;
@@ -345,19 +334,26 @@ public class DebugRenderHandler{
 												ColumnPos b = poly.get(i);
 												float f = i / (float) poly.size();
 												
-												builder.vertex(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(0F, 1F, 0F).endVertex();
-												builder.vertex(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(0F, 1F, 0F).endVertex();
+												builder.vertex(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												builder.vertex(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
 												
 												j = i;
 											}
 											
 											// Center Marker
-											builder.vertex(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
-											builder.vertex(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
-											builder.vertex(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
-											builder.vertex(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
-											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
-											builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).normal(0F, 1F, 0F).endVertex();
+											{
+												// Y
+												builder.vertex(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												builder.vertex(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												
+												// X
+												builder.vertex(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												builder.vertex(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												
+												// Z
+												builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+											}
 											
 										}
 									}
@@ -400,6 +396,10 @@ public class DebugRenderHandler{
 	}
 	
 	private static void distillationtower(List<Component> text, DistillationTowerTileEntity tower){
+		if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
+			tower = tower.master();
+		}
+		
 		for(int i = 0;i < tower.tanks.length;i++){
 			text.add(toText("Tank " + (i + 1)).withStyle(ChatFormatting.UNDERLINE));
 			
@@ -416,6 +416,10 @@ public class DebugRenderHandler{
 	}
 	
 	private static void cokerunit(List<Component> text, CokerUnitTileEntity coker){
+		if(!coker.offsetToMaster.equals(BlockPos.ZERO)){
+			coker = coker.master();
+		}
+		
 		{
 			FluidTank tank = coker.bufferTanks[CokerUnitTileEntity.TANK_INPUT];
 			FluidStack fs = tank.getFluid();
@@ -445,6 +449,10 @@ public class DebugRenderHandler{
 	}
 	
 	private static void hydrotreater(List<Component> text, HydrotreaterTileEntity treater){
+		if(!treater.offsetToMaster.equals(BlockPos.ZERO)){
+			treater = treater.master();
+		}
+		
 		IFluidTank[] tanks = treater.getInternalTanks();
 		if(tanks != null && tanks.length > 0){
 			for(int i = 0;i < tanks.length;i++){
@@ -475,8 +483,26 @@ public class DebugRenderHandler{
 			}
 		}
 		
+		if(!tank.offsetToMaster.equals(BlockPos.ZERO)){
+			tank = tank.master();
+		}
+		
 		FluidStack fs = tank.tank.getFluid();
 		text.add(toText("Fluid: " + (fs.getAmount() + "/" + tank.tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+	}
+	
+	private static void derrick(List<Component> text, DerrickTileEntity derrick){
+		if(!derrick.offsetToMaster.equals(BlockPos.ZERO)){
+			derrick = derrick.master();
+		}
+		
+		IFluidTank[] tanks = derrick.getInternalTanks();
+		if(tanks != null && tanks.length > 0){
+			for(int i = 0;i < tanks.length;i++){
+				FluidStack fs = tanks[i].getFluid();
+				text.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+			}
+		}
 	}
 	
 	static MutableComponent toText(String string){
