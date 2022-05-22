@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.client.IPShaders;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
@@ -26,7 +27,10 @@ public class IPRenderTypes extends RenderStateShard{
 	public static final RenderType TRANSLUCENT_LINES;
 	public static final RenderType TRANSLUCENT_POSITION_COLOR;
 	public static final RenderType ISLAND_DEBUGGING_POSITION_COLOR;
-
+	
+	/** There is no right or wrong here! Just, play around.. NO PRESSURE!!!! You have aaaaall the time in the world! */
+	public static final RenderType EXPERIMENTAL_RENDER_TYPE;
+	
 	static final RenderStateShard.TextureStateShard TEXTURE_ACTIVE_TOWER = new RenderStateShard.TextureStateShard(activeTexture, false, false);
 	static final RenderStateShard.TextureStateShard TEXTURE_OIL_TANK = new RenderStateShard.TextureStateShard(oilTankTexture, false, false);
 	static final RenderStateShard.LightmapStateShard LIGHTMAP_ENABLED = new RenderStateShard.LightmapStateShard(true);
@@ -41,24 +45,54 @@ public class IPRenderTypes extends RenderStateShard{
 		RenderSystem.disableBlend();
 	}, () -> {
 	});
-
+	static final RenderStateShard.ShaderStateShard PROJECTION_NOISE = new RenderStateShard.ShaderStateShard(IPShaders::getProjectionStaticShader);
+	
 	static{
+		
+		EXPERIMENTAL_RENDER_TYPE = RenderType.create(
+				typeName("experimental"),
+				DefaultVertexFormat.BLOCK,
+				VertexFormat.Mode.QUADS,
+				2097152,
+				false,
+				false,
+				RenderType.CompositeState.builder()
+					.setShaderState(PROJECTION_NOISE)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(DEPTH_ALWAYS)
+					.setCullState(NO_CULL)
+					.createCompositeState(false)
+		);
+		
 		// TODO fix. Lines are weird in 1.17+
 		TRANSLUCENT_LINES = RenderType.create(
-				ImmersivePetroleum.MODID+":translucent_lines",
-				DefaultVertexFormat.POSITION_COLOR,
-				VertexFormat.Mode.LINES,
+				typeName("translucent_lines"),
+				DefaultVertexFormat.POSITION_COLOR_NORMAL,
+				VertexFormat.Mode.DEBUG_LINES,
 				256,
 				false,
 				false,
-				RenderType.CompositeState.builder().setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+				RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LINES_SHADER)
 					.setLineState(new LineStateShard(OptionalDouble.of(3.5)))
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setDepthTestState(DEPTH_ALWAYS)
+					.setCullState(NO_CULL)
 					.createCompositeState(false)
 		);
-
+		
+		RenderType.CompositeState.builder()
+			.setShaderState(RENDERTYPE_LINES_SHADER)
+			.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(3.5)))
+			.setLayeringState(VIEW_OFFSET_Z_LAYERING)
+			.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+			.setOutputState(ITEM_ENTITY_TARGET)
+			.setWriteMaskState(COLOR_DEPTH_WRITE)
+			.setCullState(NO_CULL)
+			.createCompositeState(false);
+		
 		DISTILLATION_TOWER_ACTIVE = RenderType.create(
-				ImmersivePetroleum.MODID+":distillation_tower_active",
+				typeName("distillation_tower_active"),
 				DefaultVertexFormat.BLOCK,
 				VertexFormat.Mode.QUADS,
 				256,
@@ -73,7 +107,7 @@ public class IPRenderTypes extends RenderStateShard{
 		);
 		
 		OIL_TANK = RenderType.create(
-				ImmersivePetroleum.MODID+":oil_tank",
+				typeName("oil_tank"),
 				DefaultVertexFormat.BLOCK,
 				VertexFormat.Mode.QUADS,
 				256,
@@ -88,7 +122,7 @@ public class IPRenderTypes extends RenderStateShard{
 		);
 		
 		TRANSLUCENT_POSITION_COLOR = RenderType.create(
-				ImmersivePetroleum.MODID+":translucent_pos_color",
+				typeName("translucent_pos_color1"),
 				DefaultVertexFormat.POSITION_COLOR,
 				VertexFormat.Mode.QUADS,
 				256,
@@ -100,7 +134,7 @@ public class IPRenderTypes extends RenderStateShard{
 		);
 		
 		ISLAND_DEBUGGING_POSITION_COLOR = RenderType.create(
-				ImmersivePetroleum.MODID+":translucent_pos_color",
+				typeName("translucent_pos_color2"),
 				DefaultVertexFormat.POSITION_COLOR,
 				VertexFormat.Mode.QUADS,
 				256,
@@ -110,6 +144,10 @@ public class IPRenderTypes extends RenderStateShard{
 					.setCullState(new CullStateShard(false))
 					.createCompositeState(false)
 		);
+	}
+	
+	private static String typeName(String str){
+		return ImmersivePetroleum.MODID + ":" + str;
 	}
 
 	private IPRenderTypes(String pName, Runnable pSetupState, Runnable pClearState){

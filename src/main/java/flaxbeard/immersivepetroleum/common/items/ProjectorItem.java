@@ -24,6 +24,7 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.ProjectorEvent;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
+import flaxbeard.immersivepetroleum.client.IPShaders;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
@@ -612,8 +613,8 @@ public class ProjectorItem extends IPItemBase{
 				}
 				
 				RenderShape blockrendertype = state.getRenderShape();
-				if(blockrendertype != RenderShape.INVISIBLE){
-					if(blockrendertype == RenderShape.MODEL){
+				switch(blockrendertype){
+					case MODEL -> {
 						BakedModel ibakedmodel = dispatcher.getBlockModel(state);
 						int i = blockColors.getColor(state, null, null, 0);
 						float red = (i >> 16 & 0xFF) / 255F;
@@ -622,15 +623,23 @@ public class ProjectorItem extends IPItemBase{
 						
 						modelData = ibakedmodel.getModelData(rInfo.templateWorld, rInfo.tBlockInfo.pos, state, modelData);
 						
-						blockRenderer.renderModel(matrix.last(), buffer.getBuffer(RenderType.translucent()), state, ibakedmodel, red, green, blue, 0xF000F0, OverlayTexture.NO_OVERLAY, modelData);
+						IPShaders.projection_alpha.set(flicker * alpha);
+						IPShaders.projection_time.set(MCUtil.getPlayer().tickCount + partialTicks);
 						
-					}else if(blockrendertype == RenderShape.ENTITYBLOCK_ANIMATED){
+						VertexConsumer vc = buffer.getBuffer(IPRenderTypes.EXPERIMENTAL_RENDER_TYPE);
+						//vc = buffer.getBuffer(RenderType.translucent());
+						blockRenderer.renderModel(matrix.last(), vc, state, ibakedmodel, red, green, blue, 0xF000F0, OverlayTexture.NO_OVERLAY, modelData);
+						break;
+					}
+					case ENTITYBLOCK_ANIMATED -> {
 						ItemStack stack = new ItemStack(state.getBlock());
 						
 						// TODO Not sure this is the right thing? Left the original below.
 						MCUtil.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.NONE, 0xF000F0, OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
 						//stack.getItem().getItemStackBlockEntityRenderer().renderByItem(stack, ItemTransforms.TransformType.NONE, matrix, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY);
+						break;
 					}
+					default -> {}
 				}
 			}
 			
