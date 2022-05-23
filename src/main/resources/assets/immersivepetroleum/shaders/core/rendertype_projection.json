@@ -4,8 +4,8 @@
         "srcrgb": "srcalpha",
         "dstrgb": "1-srcalpha"
     },
-    "vertex": "immersivepetroleum:projection_noise",
-    "fragment": "immersivepetroleum:projection_noise",
+    "vertex": "immersivepetroleum:rendertype_projection",
+    "fragment": "immersivepetroleum:rendertype_projection",
     "attributes": [
         "Position",
         "Color",

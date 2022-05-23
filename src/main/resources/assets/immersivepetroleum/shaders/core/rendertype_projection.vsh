@@ -5,7 +5,7 @@
 in vec3 Position;
 in vec4 Color;
 in vec2 UV0;
-in ivec2 UV2; // Completely ignoring this but leaving it here so Minecraft is happy, it's lighting stuff and not needed!
+in ivec2 UV2;
 in vec3 Normal;
 
 uniform mat4 ModelViewMat;

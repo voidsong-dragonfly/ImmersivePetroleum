@@ -2,7 +2,7 @@ package flaxbeard.immersivepetroleum.client;
 
 import java.io.IOException;
 
-import com.mojang.blaze3d.shaders.Uniform;
+import com.mojang.blaze3d.shaders.AbstractUniform;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -21,11 +21,11 @@ public class IPShaders{
 	private static ShaderInstance lineShader;
 	private static ShaderInstance projection_noise;
 
-	public static Uniform projection_alpha;
-	public static Uniform projection_time;
+	private static AbstractUniform projection_alpha;
+	private static AbstractUniform projection_time;
 	public static void projNoise(float alpha, float time){
-		if(IPShaders.projection_alpha != null) IPShaders.projection_alpha.set(alpha);
-		if(IPShaders.projection_time != null)  IPShaders.projection_time.set(time);
+		IPShaders.projection_alpha.set(alpha);
+		IPShaders.projection_time.set(time);
 	}
 	
 	@SubscribeEvent
@@ -34,15 +34,12 @@ public class IPShaders{
 //			lineShader = s;
 //		});
 		
-		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("projection_noise"), DefaultVertexFormat.POSITION_COLOR_TEX), s -> {
+		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_projection"), DefaultVertexFormat.POSITION_COLOR_TEX), s -> {
 			ImmersivePetroleum.log.info("projection_noise shader loaded.");
 			projection_noise = s;
 			
-			projection_alpha = projection_noise.getUniform("alpha");
-			projection_time = projection_noise.getUniform("time");
-			
-			ImmersivePetroleum.log.info("projection_alpha = " + projection_alpha);
-			ImmersivePetroleum.log.info("projection_time = " + projection_time);
+			projection_alpha = projection_noise.safeGetUniform("Alpha");
+			projection_time = projection_noise.safeGetUniform("Time");
 		});
 	}
 	

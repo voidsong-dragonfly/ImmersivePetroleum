@@ -10,12 +10,7 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-// xTODO update to use vanilla shaders
-/*
- * Yeah whatever i'll just remove/disable this
- * fuck that, it goes waaay above my head and will power aint enough for this shader bullshit
- * if it bothers you that much.. You do it, i'll happly merge it
- */
+// TODO update to use vanilla shaders
 public class ShaderUtil{
 	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;

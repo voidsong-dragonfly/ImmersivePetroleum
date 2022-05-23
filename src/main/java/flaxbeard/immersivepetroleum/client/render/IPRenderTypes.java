@@ -27,9 +27,13 @@ public class IPRenderTypes extends RenderStateShard{
 	public static final RenderType TRANSLUCENT_LINES;
 	public static final RenderType TRANSLUCENT_POSITION_COLOR;
 	public static final RenderType ISLAND_DEBUGGING_POSITION_COLOR;
+	/**
+	 * Used by the Projector
+	 */
+	public static final RenderType PROJECTION;
 	
-	/** There is no right or wrong here! Just, play around.. NO PRESSURE!!!! You have aaaaall the time in the world! */
-	public static final RenderType EXPERIMENTAL_RENDER_TYPE;
+	///** There is no right or wrong here! Just, play around.. NO PRESSURE!!!! You have aaaaall the time in the world! */
+	//public static final RenderType EXPERIMENTAL_RENDER_TYPE;
 	
 	static final RenderStateShard.TextureStateShard TEXTURE_ACTIVE_TOWER = new RenderStateShard.TextureStateShard(activeTexture, false, false);
 	static final RenderStateShard.TextureStateShard TEXTURE_OIL_TANK = new RenderStateShard.TextureStateShard(oilTankTexture, false, false);
@@ -45,21 +49,39 @@ public class IPRenderTypes extends RenderStateShard{
 		RenderSystem.disableBlend();
 	}, () -> {
 	});
-	static final RenderStateShard.ShaderStateShard PROJECTION_NOISE = new RenderStateShard.ShaderStateShard(IPShaders::getProjectionStaticShader);
+	static final RenderStateShard.ShaderStateShard PROJECTION_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getProjectionStaticShader);
 	
 	static{
-		
+		/*
 		EXPERIMENTAL_RENDER_TYPE = RenderType.create(
 				typeName("experimental"),
 				DefaultVertexFormat.BLOCK,
 				VertexFormat.Mode.QUADS,
-				2097152,
+				RenderType.BIG_BUFFER_SIZE,
 				true,
 				true,
 				RenderType.CompositeState.builder()
-					.setShaderState(PROJECTION_NOISE)
+					.setShaderState(PROJECTION_SHADER)
 					.setTextureState(BLOCK_SHEET_MIPPED)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setOutputState(TRANSLUCENT_TARGET)
+					.setDepthTestState(DEPTH_ALWAYS)
+					.setCullState(CULL)
+					.createCompositeState(false)
+		);
+		*/
+		PROJECTION = RenderType.create(
+				typeName("rendertype_projection"),
+				DefaultVertexFormat.BLOCK,
+				VertexFormat.Mode.QUADS,
+				RenderType.BIG_BUFFER_SIZE,
+				true,
+				true,
+				RenderType.CompositeState.builder()
+					.setShaderState(PROJECTION_SHADER)
+					.setTextureState(BLOCK_SHEET_MIPPED)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setOutputState(TRANSLUCENT_TARGET)
 					.setDepthTestState(DEPTH_ALWAYS)
 					.setCullState(CULL)
 					.createCompositeState(false)
@@ -70,7 +92,7 @@ public class IPRenderTypes extends RenderStateShard{
 				typeName("translucent_lines"),
 				DefaultVertexFormat.POSITION_COLOR_NORMAL,
 				VertexFormat.Mode.DEBUG_LINES,
-				256,
+				RenderType.TRANSIENT_BUFFER_SIZE,
 				false,
 				false,
 				RenderType.CompositeState.builder()
@@ -96,7 +118,7 @@ public class IPRenderTypes extends RenderStateShard{
 				typeName("distillation_tower_active"),
 				DefaultVertexFormat.BLOCK,
 				VertexFormat.Mode.QUADS,
-				256,
+				RenderType.TRANSIENT_BUFFER_SIZE,
 				true,
 				false,
 				RenderType.CompositeState.builder()
@@ -111,7 +133,7 @@ public class IPRenderTypes extends RenderStateShard{
 				typeName("oil_tank"),
 				DefaultVertexFormat.BLOCK,
 				VertexFormat.Mode.QUADS,
-				256,
+				RenderType.TRANSIENT_BUFFER_SIZE,
 				true,
 				false,
 				RenderType.CompositeState.builder()
@@ -126,7 +148,7 @@ public class IPRenderTypes extends RenderStateShard{
 				typeName("translucent_pos_color1"),
 				DefaultVertexFormat.POSITION_COLOR,
 				VertexFormat.Mode.QUADS,
-				256,
+				RenderType.TRANSIENT_BUFFER_SIZE,
 				false,
 				false,
 				RenderType.CompositeState.builder()
@@ -138,7 +160,7 @@ public class IPRenderTypes extends RenderStateShard{
 				typeName("translucent_pos_color2"),
 				DefaultVertexFormat.POSITION_COLOR,
 				VertexFormat.Mode.QUADS,
-				256,
+				RenderType.TRANSIENT_BUFFER_SIZE,
 				false,
 				false,
 				RenderType.CompositeState.builder()

@@ -16,6 +16,7 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
@@ -36,7 +37,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -487,17 +487,22 @@ public class ProjectorItem extends IPItemBase{
 				
 				MutableBlockPos min = new MutableBlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 				MutableBlockPos max = new MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
-				float flicker = (world.random.nextInt(10) == 0) ? 0.75F : (world.random.nextInt(20) == 0 ? 0.5F : 1F);
+				float flicker = world.random.nextFloat() / 2F + 0.5F;
+//				float flicker = (world.random.nextInt(10) == 0) ? 0.75F : (world.random.nextInt(20) == 0 ? 0.5F : 1F);
 				matrix.translate(hit.getX(), hit.getY(), hit.getZ());
 				
 				toRender.sort((a, b) -> {
-					if(a.getLeft().ordinal() > b.getLeft().ordinal()){
+					int ao = a.getLeft().ordinal();
+					int bo = b.getLeft().ordinal();
+					if(ao > bo){
 						return 1;
-					}else if(a.getLeft().ordinal() < b.getLeft().ordinal()){
+					}else if(ao < bo){
 						return -1;
 					}
 					return 0;
 				});
+				
+				MultiBufferSource.BufferSource mainBuffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 				
 				ItemStack heldStack = player.getMainHandItem();
 				for(Pair<RenderLayer, MultiblockProjection.Info> pair:toRender){
@@ -510,10 +515,12 @@ public class ProjectorItem extends IPItemBase{
 							
 							matrix.pushPose();
 							{
+								// This can NOT use mainBuffer, otherwise highlighting held blocks does not work at all.
+								// While this may not be the most efficient thing to do, it's the one thing i have yet to find an alternative to
 								renderPhantom(matrix, world, rInfo, settings.isMirrored(), flicker, alpha, partialTicks);
 								
 								if(held){
-									renderCenteredOutlineBox(matrix, 0xAFAFAF, flicker);
+									renderCenteredOutlineBox(mainBuffer, matrix, 0xAFAFAF, flicker);
 								}
 							}
 							matrix.popPose();
@@ -524,7 +531,7 @@ public class ProjectorItem extends IPItemBase{
 							{
 								matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
 								
-								renderCenteredOutlineBox(matrix, 0xFF0000, flicker);
+								renderCenteredOutlineBox(mainBuffer, matrix, 0xFF0000, flicker);
 							}
 							matrix.popPose();
 							break;
@@ -535,14 +542,15 @@ public class ProjectorItem extends IPItemBase{
 							int z = rInfo.tPos.getZ();
 							
 							min.set(
-									(x < min.getX() ? x : min.getX()),
-									(y < min.getY() ? y : min.getY()),
-									(z < min.getZ() ? z : min.getZ()));
-							
+								(x < min.getX() ? x : min.getX()),
+								(y < min.getY() ? y : min.getY()),
+								(z < min.getZ() ? z : min.getZ())
+							);
 							max.set(
-									(x > max.getX() ? x : max.getX()),
-									(y > max.getY() ? y : max.getY()),
-									(z > max.getZ() ? z : max.getZ()));
+								(x > max.getX() ? x : max.getX()),
+								(y > max.getY() ? y : max.getY()),
+								(z > max.getZ() ? z : max.getZ())
+							);
 							break;
 						}
 					}
@@ -552,7 +560,7 @@ public class ProjectorItem extends IPItemBase{
 					// Multiblock Correctly Built
 					matrix.pushPose();
 					{
-						renderOutlineBox(matrix, min, max, 0x00BF00, flicker);
+						renderOutlineBox(mainBuffer, matrix, min, max, 0x00BF00, flicker);
 					}
 					matrix.popPose();
 					
@@ -562,7 +570,7 @@ public class ProjectorItem extends IPItemBase{
 						{
 							// Min (Red)
 							matrix.translate(min.getX(), min.getY(), min.getZ());
-							renderCenteredOutlineBox(matrix, 0xFF0000, flicker);
+							renderCenteredOutlineBox(mainBuffer, matrix, 0xFF0000, flicker);
 						}
 						matrix.popPose();
 						
@@ -570,7 +578,7 @@ public class ProjectorItem extends IPItemBase{
 						{
 							// Max (Greem)
 							matrix.translate(max.getX(), max.getY(), max.getZ());
-							renderCenteredOutlineBox(matrix, 0x00FF00, flicker);
+							renderCenteredOutlineBox(mainBuffer, matrix, 0x00FF00, flicker);
 						}
 						matrix.popPose();
 						
@@ -580,14 +588,17 @@ public class ProjectorItem extends IPItemBase{
 							BlockPos center = min.immutable().offset(max);
 							matrix.translate(center.getX() / 2, center.getY() / 2, center.getZ() / 2);
 							
-							renderCenteredOutlineBox(matrix, 0x0000FF, flicker);
+							renderCenteredOutlineBox(mainBuffer, matrix, 0x0000FF, flicker);
 						}
 						matrix.popPose();
 					}
 				}
+				
+				mainBuffer.endBatch();
 			}
 		}
 		
+		private static final Tesselator phantomTes = new Tesselator();
 		private static void renderPhantom(PoseStack matrix, Level realWorld, MultiblockProjection.Info rInfo, boolean mirror, float flicker, float alpha, float partialTicks){
 			BlockRenderDispatcher dispatcher = ClientUtils.mc().getBlockRenderer();
 			ModelBlockRenderer blockRenderer = dispatcher.getModelRenderer();
@@ -596,7 +607,7 @@ public class ProjectorItem extends IPItemBase{
 			// Centers the preview block
 			matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
 			
-			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(phantomTes.getBuilder());
 			
 			BlockState state = rInfo.getModifiedState(realWorld, rInfo.tPos);
 			
@@ -625,7 +636,7 @@ public class ProjectorItem extends IPItemBase{
 						
 						IPShaders.projNoise(flicker * alpha, MCUtil.getPlayer().tickCount + partialTicks);
 						
-						VertexConsumer vc = buffer.getBuffer(IPRenderTypes.EXPERIMENTAL_RENDER_TYPE);
+						VertexConsumer vc = buffer.getBuffer(IPRenderTypes.PROJECTION);
 						//vc = buffer.getBuffer(RenderType.translucent());
 						blockRenderer.renderModel(matrix.last(), vc, state, ibakedmodel, red, green, blue, 0xF000F0, OverlayTexture.NO_OVERLAY, modelData);
 						break;
@@ -647,13 +658,13 @@ public class ProjectorItem extends IPItemBase{
 			//IPShaders.releaseShader();
 		}
 		
-		private static void renderOutlineBox(PoseStack matrix, Vec3i min, Vec3i max, int rgb, float flicker){
+		private static void renderOutlineBox(MultiBufferSource buffer, PoseStack matrix, Vec3i min, Vec3i max, int rgb, float flicker){
 			// Why? See ShaderUtil
-			boolean disable = true;
+			boolean disable = false;
 			if(disable)
 				return;
 			
-			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+			//MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
 			
 			float alpha = 0.25F + (0.5F * flicker);
@@ -672,49 +683,51 @@ public class ProjectorItem extends IPItemBase{
 			
 			// matrix.scale(xScale, yScale, zScale);
 			Matrix4f mat = matrix.last().pose();
+			Matrix3f nor = matrix.last().normal();
 			
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
+			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
 			
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
+			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
 			
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
+			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
 			
-			buffer.endBatch();
+			//buffer.endBatch();
 		}
 		
-		private static void renderCenteredOutlineBox(PoseStack matrix, int rgb, float flicker){
+		private static void renderCenteredOutlineBox(MultiBufferSource buffer, PoseStack matrix, int rgb, float flicker){
 			// Why? See ShaderUtil
-			boolean disable = true;
+			boolean disable = false;
 			if(disable)
 				return;
 			
-			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+			//MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
 			
 			matrix.translate(0.5, 0.5, 0.5);
 			matrix.scale(1.01F, 1.01F, 1.01F);
 			Matrix4f mat = matrix.last().pose();
+			Matrix3f nor = matrix.last().normal();
 			
 			float r = ((rgb >> 16) & 0xFF) / 255.0F;
 			float g = ((rgb >> 8) & 0xFF) / 255.0F;
@@ -722,34 +735,34 @@ public class ProjectorItem extends IPItemBase{
 			float alpha = .375F * flicker;
 			float s = 0.5F;
 			
-			builder.vertex(mat, -s, s, -s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s, -s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s, -s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, s, -s)	.color(r, g, b, alpha).endVertex();
+			builder.vertex(mat, -s, s, -s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, s, -s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, s, -s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, s,  s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, s,  s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, s,  s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, s,  s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, s, -s)	.color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
 			
-			builder.vertex(mat, -s,  s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s,  s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s,  s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s,  s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).endVertex();
+			builder.vertex(mat, -s,  s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s,  s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s,  s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s,  s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
 			
-			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).endVertex();
+			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
+			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).normal(nor, 0F, 1F, 0F).endVertex();
 			
-			buffer.endBatch();
+			//buffer.endBatch();
 		}
 	}
 	
