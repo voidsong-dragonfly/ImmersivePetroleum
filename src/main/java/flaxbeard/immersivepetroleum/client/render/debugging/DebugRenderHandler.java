@@ -463,28 +463,26 @@ public class DebugRenderHandler{
 	}
 	
 	private static void oiltank(List<Component> text, OilTankTileEntity tank){
-		{
-			BlockPos mbpos = tank.posInMultiblock;
-			Port port = null;
-			for(Port p:Port.values()){
-				if(p.matches(mbpos)){
-					port = p;
-					break;
-				}
-			}
-			
-			if(port != null){
-				OilTankTileEntity.PortState portState = tank.portConfig.get(port);
-				boolean isInput = portState == OilTankTileEntity.PortState.INPUT;
-				text.add(toText("Port: ")
-						.append(toText(port != null ? port.getSerializedName() : "None"))
-						.append(toText(" " + portState.getSerializedName())
-								.withStyle(isInput ? ChatFormatting.AQUA : ChatFormatting.GOLD)));
+		BlockPos mbpos = tank.posInMultiblock;
+		Port port = null;
+		for(Port p:Port.values()){
+			if(p.matches(mbpos)){
+				port = p;
+				break;
 			}
 		}
 		
 		if(!tank.offsetToMaster.equals(BlockPos.ZERO)){
 			tank = tank.master();
+		}
+		
+		if(port != null){
+			OilTankTileEntity.PortState portState = tank.portConfig.get(port);
+			boolean isInput = portState == OilTankTileEntity.PortState.INPUT;
+			text.add(toText("Port: ")
+					.append(toText(port != null ? port.getSerializedName() : "None"))
+					.append(toText(" " + portState.getSerializedName())
+							.withStyle(isInput ? ChatFormatting.AQUA : ChatFormatting.GOLD)));
 		}
 		
 		FluidStack fs = tank.tank.getFluid();
