@@ -635,8 +635,7 @@ public class ProjectorItem extends IPItemBase{
 
 		private static void renderBox(MultiBufferSource buffer, PoseStack matrix, Vec3 min, Vec3 max, int rgb, float flicker){
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINE);
-
-			// TODO match with other box method, the formula for alpha was not the same for both!
+			
 			float alpha = 0.25F + (0.5F * flicker);
 			
 			int rgba = rgb | (((int)(alpha * 255)) << 24);
@@ -683,113 +682,6 @@ public class ProjectorItem extends IPItemBase{
 					.color(rgba)
 					.normal(mat.last().normal(), delta.x(), delta.y(), delta.z())
 					.endVertex();
-		}
-		
-		/* Possible alternatives to Lines, since they're all annoying now */
-		
-		private static void renderInvertedCube(MultiBufferSource buffer, PoseStack matrix, Vec3i min, Vec3i max, int rgb, float flicker){
-			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_POSITION_COLOR);
-			
-			float alpha = 0.25F + (0.5F * flicker);
-			
-			float xMin = min.getX() + 0.0625F;
-			float yMin = min.getY() + 0.0625F;
-			float zMin = min.getZ() + 0.0625F;
-			
-			float xMax = max.getX() + 0.9375F;
-			float yMax = max.getY() + 0.9375F;
-			float zMax = max.getZ() + 0.9375F;
-			
-			float r = ((rgb >> 16) & 0xFF) / 255F;
-			float g = ((rgb >> 8) & 0xFF) / 255F;
-			float b = ((rgb >> 0) & 0xFF) / 255F;
-			
-			Matrix4f mat = matrix.last().pose();
-			
-			// Up face
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			
-			// Down face
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			
-			// North face
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			
-			// South face
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			
-			// East face
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			
-			// West face
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-		}
-		
-		private static void renderCube(MultiBufferSource buffer, PoseStack matrix, int rgb, float flicker){
-			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_POSITION_COLOR);
-			
-			matrix.translate(0.5, 0.5, 0.5);
-			Matrix4f mat = matrix.last().pose();
-			
-			float r = ((rgb >> 16) & 0xFF) / 255.0F;
-			float g = ((rgb >> 8) & 0xFF) / 255.0F;
-			float b = ((rgb >> 0) & 0xFF) / 255.0F;
-			float alpha = .375F * flicker;
-			float s = 0.5625F;
-			
-			// Up face
-			builder.vertex(mat, s, s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, s, s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s, s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s, s, s).color(r, g, b, alpha).endVertex();
-			
-			// Down face
-			builder.vertex(mat, s,-s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s,-s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s,-s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, s,-s,-s).color(r, g, b, alpha).endVertex();
-			
-			// North face
-			builder.vertex(mat, s, s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, s,-s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s,-s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s, s,-s).color(r, g, b, alpha).endVertex();
-			
-			// South face
-			builder.vertex(mat, s, s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s, s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s,-s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, s,-s, s).color(r, g, b, alpha).endVertex();
-			
-			// East face
-			builder.vertex(mat, s, s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, s,-s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, s,-s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, s, s,-s).color(r, g, b, alpha).endVertex();
-			
-			// West face
-			builder.vertex(mat,-s, s, s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s, s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s,-s,-s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,-s,-s, s).color(r, g, b, alpha).endVertex();
 		}
 	}
 
