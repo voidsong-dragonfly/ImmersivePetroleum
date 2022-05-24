@@ -20,7 +20,6 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.ProjectorEvent;
@@ -355,7 +354,7 @@ public class ProjectorItem extends IPItemBase{
 	public static class ClientRenderHandler{
 		@SubscribeEvent
 		public static void renderLast(RenderLevelLastEvent event){
-			Minecraft mc = ClientUtils.mc();
+			Minecraft mc = Minecraft.getInstance();
 			
 			if(mc.player != null){
 				PoseStack matrix = event.getPoseStack();
@@ -564,7 +563,7 @@ public class ProjectorItem extends IPItemBase{
 						
 						matrix.pushPose();
 						{
-							// Max (Greem)
+							// Max (Green)
 							matrix.translate(max.getX(), max.getY(), max.getZ());
 							renderCube(mainBuffer, matrix, 0x00FF00, 1.0F);
 						}
@@ -575,7 +574,6 @@ public class ProjectorItem extends IPItemBase{
 							// Center (Blue)
 							BlockPos center = min.immutable().offset(max);
 							matrix.translate(center.getX() / 2, center.getY() / 2, center.getZ() / 2);
-							
 							renderCube(mainBuffer, matrix, 0x0000FF, 1.0F);
 						}
 						matrix.popPose();
@@ -588,9 +586,9 @@ public class ProjectorItem extends IPItemBase{
 		
 		private static final Tesselator PHANTOM_TESSELATOR = new Tesselator();
 		private static void renderPhantom(PoseStack matrix, Level realWorld, MultiblockProjection.Info rInfo, boolean mirror, float flicker, float alpha, float partialTicks){
-			BlockRenderDispatcher dispatcher = ClientUtils.mc().getBlockRenderer();
+			BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 			ModelBlockRenderer blockRenderer = dispatcher.getModelRenderer();
-			BlockColors blockColors = ClientUtils.mc().getBlockColors();
+			BlockColors blockColors = Minecraft.getInstance().getBlockColors();
 			
 			// Centers the preview block
 			matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
@@ -632,18 +630,14 @@ public class ProjectorItem extends IPItemBase{
 					case ENTITYBLOCK_ANIMATED -> {
 						ItemStack stack = new ItemStack(state.getBlock());
 						
-						// TODO Not sure this is the right thing? Left the original below.
 						MCUtil.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.NONE, 0xF000F0, OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
-						//stack.getItem().getItemStackBlockEntityRenderer().renderByItem(stack, ItemTransforms.TransformType.NONE, matrix, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY);
 						break;
 					}
 					default -> {}
 				}
 			}
 			
-			//IPShaders.alpha_static(flicker * alpha, MCUtil.getPlayer().tickCount + partialTicks);
 			buffer.endBatch();
-			//IPShaders.releaseShader();
 		}
 		
 		private static void renderOutlineBox(MultiBufferSource buffer, PoseStack matrix, Vec3i min, Vec3i max, int rgb, float flicker){
@@ -706,7 +700,7 @@ public class ProjectorItem extends IPItemBase{
 			float r = ((rgb >> 16) & 0xFF) / 255.0F;
 			float g = ((rgb >> 8) & 0xFF) / 255.0F;
 			float b = ((rgb >> 0) & 0xFF) / 255.0F;
-			float alpha = .375F * flicker;
+			float alpha = 0.25F + (0.5F * flicker);
 			float s = 0.5F;
 			
 			builder.vertex(mat, -s, s, -s).color(r, g, b, alpha).normal(nor, 0.0F, 0.0F, 0.0F).endVertex();
@@ -853,7 +847,7 @@ public class ProjectorItem extends IPItemBase{
 		
 		@SubscribeEvent
 		public static void onPlayerTick(TickEvent.PlayerTickEvent event){
-			if(event.side == LogicalSide.CLIENT && event.player != null && event.player == ClientUtils.mc().getCameraEntity()){
+			if(event.side == LogicalSide.CLIENT && event.player != null && event.player == Minecraft.getInstance().getCameraEntity()){
 				if(event.phase == Phase.END){
 					if(!ClientProxy.keybind_preview_flip.isUnbound() && ClientProxy.keybind_preview_flip.consumeClick()){
 						doAFlip();
