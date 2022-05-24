@@ -18,9 +18,10 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPShaders{
 
-	private static ShaderInstance lineShader;
-	private static ShaderInstance projection_noise;
-	private static ShaderInstance translucent_postion_color;
+	private static ShaderInstance shader_line;
+	private static ShaderInstance shader_projection;
+	private static ShaderInstance shader_translucent_full;
+	private static ShaderInstance shader_translucent_postion_color;
 
 	private static AbstractUniform projection_alpha;
 	private static AbstractUniform projection_time;
@@ -33,33 +34,42 @@ public class IPShaders{
 	public static void registerShaders(RegisterShadersEvent event) throws IOException{
 		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_line"), DefaultVertexFormat.POSITION_COLOR), s -> {
 			ImmersivePetroleum.log.info("rendertype_line shader loaded.");
-			lineShader = s;
+			shader_line = s;
 		});
 		
 		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_projection"), DefaultVertexFormat.POSITION_COLOR_TEX), s -> {
 			ImmersivePetroleum.log.info("rendertype_projection shader loaded.");
-			projection_noise = s;
+			shader_projection = s;
 			
-			projection_alpha = projection_noise.safeGetUniform("Alpha");
-			projection_time = projection_noise.safeGetUniform("Time");
+			projection_alpha = shader_projection.safeGetUniform("Alpha");
+			projection_time = shader_projection.safeGetUniform("Time");
 		});
 		
 		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_translucent_postion_color"), DefaultVertexFormat.POSITION_COLOR), s -> {
 			ImmersivePetroleum.log.info("rendertype_translucent_postion_color shader loaded.");
-			translucent_postion_color = s;
+			shader_translucent_postion_color = s;
+		});
+		
+		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_translucent"), DefaultVertexFormat.BLOCK), s -> {
+			ImmersivePetroleum.log.info("rendertype_translucent shader loaded.");
+			shader_translucent_full = s;
 		});
 	}
 	
 	public static ShaderInstance getTranslucentLineShader(){
-		return lineShader;
+		return shader_line;
 	}
 	
 	public static ShaderInstance getProjectionStaticShader(){
-		return projection_noise;
+		return shader_projection;
+	}
+	
+	public static ShaderInstance getTranslucentShader(){
+		return shader_translucent_full;
 	}
 	
 	public static ShaderInstance getTranslucentPostionColorShader(){
-		return translucent_postion_color;
+		return shader_translucent_postion_color;
 	}
 	
 	private static ResourceLocation rl(String path){

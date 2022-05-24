@@ -81,6 +81,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		
 		public static final Port[] DYNAMIC_PORTS = {DYNAMIC_A, DYNAMIC_B, DYNAMIC_C, DYNAMIC_D};
 		
+		// TODO Delete these.
 		public static final Set<BlockPos> ALL = toSet(values());
 		public static final Set<BlockPos> DYNAMIC_PORTS_SET = toSet(DYNAMIC_PORTS);
 		
@@ -154,7 +155,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		if(isDummy() || level.isClientSide){
 			return;
 		}
-		int threshold = 5;
+		int threshold = 1;
 		int maxTransfer = FluidAttributes.BUCKET_VOLUME;
 		
 		PortState portStateA = getPortStateFor(Port.DYNAMIC_A),

@@ -52,6 +52,7 @@ public class IPRenderTypes extends RenderStateShard{
 	
 	static final RenderStateShard.ShaderStateShard PROJECTION_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getProjectionStaticShader);
 	static final RenderStateShard.ShaderStateShard LINE_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getTranslucentLineShader);
+	static final RenderStateShard.ShaderStateShard TRANSLUCENT_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getTranslucentShader);
 	static final RenderStateShard.ShaderStateShard TRANSLUCENT_POSTION_COLOR_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getTranslucentPostionColorShader);
 	
 	static{
@@ -86,7 +87,6 @@ public class IPRenderTypes extends RenderStateShard{
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setOutputState(TRANSLUCENT_TARGET)
 					.setDepthTestState(DEPTH_ALWAYS)
-					.setCullState(CULL)
 					.createCompositeState(false)
 		);
 		
@@ -140,6 +140,7 @@ public class IPRenderTypes extends RenderStateShard{
 				true,
 				false,
 				RenderType.CompositeState.builder()
+					.setShaderState(TRANSLUCENT_SHADER)
 					.setTextureState(TEXTURE_OIL_TANK)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setLightmapState(LIGHTMAP_ENABLED)
@@ -157,8 +158,6 @@ public class IPRenderTypes extends RenderStateShard{
 				RenderType.CompositeState.builder()
 					.setShaderState(TRANSLUCENT_POSTION_COLOR_SHADER)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-					.setDepthTestState(DEPTH_ALWAYS)
-					.setCullState(CULL)
 					.createCompositeState(false)
 		);
 		
