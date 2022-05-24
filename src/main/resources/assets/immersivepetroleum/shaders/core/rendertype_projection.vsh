@@ -18,11 +18,11 @@ out vec2 texCoord0;
 out vec4 normal;
 
 void main() {
-    vec3 pos = Position + ChunkOffset;
-    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+	vec3 pos = Position + ChunkOffset;
+	gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 
-    vertexDistance = cylindrical_distance(ModelViewMat, pos);
-    vertexColor = Color;
-    texCoord0 = UV0;
-    normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+	vertexDistance = cylindrical_distance(ModelViewMat, pos);
+	vertexColor = Color;
+	texCoord0 = UV0;
+	normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
 }

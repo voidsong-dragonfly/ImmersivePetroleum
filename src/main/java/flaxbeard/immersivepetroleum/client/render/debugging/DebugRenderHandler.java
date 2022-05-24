@@ -323,7 +323,7 @@ public class DebugRenderHandler{
 										
 										if(poly != null && !poly.isEmpty()){
 //											VertexConsumer builder = buffer.getBuffer(RenderType.lines());
-											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
+											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINE);
 											Matrix4f mat = matrix.last().pose();
 											Matrix3f nor = matrix.last().normal();
 											

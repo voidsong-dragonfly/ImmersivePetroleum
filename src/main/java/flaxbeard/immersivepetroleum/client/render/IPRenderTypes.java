@@ -24,7 +24,7 @@ public class IPRenderTypes extends RenderStateShard{
 	 */
 	public static final RenderType DISTILLATION_TOWER_ACTIVE;
 	public static final RenderType OIL_TANK;
-	public static final RenderType TRANSLUCENT_LINES;
+	public static final RenderType TRANSLUCENT_LINE;
 	public static final RenderType TRANSLUCENT_POSITION_COLOR;
 	public static final RenderType ISLAND_DEBUGGING_POSITION_COLOR;
 	/**
@@ -49,7 +49,10 @@ public class IPRenderTypes extends RenderStateShard{
 		RenderSystem.disableBlend();
 	}, () -> {
 	});
+	
 	static final RenderStateShard.ShaderStateShard PROJECTION_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getProjectionStaticShader);
+	static final RenderStateShard.ShaderStateShard LINE_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getTranslucentLineShader);
+	static final RenderStateShard.ShaderStateShard TRANSLUCENT_POSTION_COLOR_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getTranslucentPostionColorShader);
 	
 	static{
 		/*
@@ -88,15 +91,15 @@ public class IPRenderTypes extends RenderStateShard{
 		);
 		
 		// TODO fix. Lines are weird in 1.17+
-		TRANSLUCENT_LINES = RenderType.create(
-				typeName("translucent_lines"),
-				DefaultVertexFormat.POSITION_COLOR_NORMAL,
-				VertexFormat.Mode.DEBUG_LINES,
+		TRANSLUCENT_LINE = RenderType.create(
+				typeName("rendertype_line"),
+				DefaultVertexFormat.POSITION_COLOR,
+				VertexFormat.Mode.LINES,
 				RenderType.TRANSIENT_BUFFER_SIZE,
 				false,
 				false,
 				RenderType.CompositeState.builder()
-					.setShaderState(RENDERTYPE_LINES_SHADER)
+					.setShaderState(LINE_SHADER)
 					.setLineState(new LineStateShard(OptionalDouble.of(3.5)))
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setDepthTestState(DEPTH_ALWAYS)
@@ -145,14 +148,17 @@ public class IPRenderTypes extends RenderStateShard{
 		);
 		
 		TRANSLUCENT_POSITION_COLOR = RenderType.create(
-				typeName("translucent_pos_color1"),
+				typeName("rendertype_translucent"),
 				DefaultVertexFormat.POSITION_COLOR,
 				VertexFormat.Mode.QUADS,
-				RenderType.TRANSIENT_BUFFER_SIZE,
+				RenderType.SMALL_BUFFER_SIZE,
 				false,
 				false,
 				RenderType.CompositeState.builder()
+					.setShaderState(TRANSLUCENT_POSTION_COLOR_SHADER)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(DEPTH_ALWAYS)
+					.setCullState(CULL)
 					.createCompositeState(false)
 		);
 		
@@ -164,7 +170,7 @@ public class IPRenderTypes extends RenderStateShard{
 				false,
 				false,
 				RenderType.CompositeState.builder()
-					.setCullState(new CullStateShard(false))
+					.setCullState(NO_CULL)
 					.createCompositeState(false)
 		);
 	}
