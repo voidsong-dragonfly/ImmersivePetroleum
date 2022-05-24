@@ -8,6 +8,7 @@ import java.util.function.BiPredicate;
 
 import javax.annotation.Nullable;
 
+import com.mojang.math.Vector3f;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,7 +17,6 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -534,15 +534,8 @@ public class ProjectorItem extends IPItemBase{
 							int y = rInfo.tPos.getY();
 							int z = rInfo.tPos.getZ();
 							
-							min.set(
-									(x < min.getX() ? x : min.getX()),
-									(y < min.getY() ? y : min.getY()),
-									(z < min.getZ() ? z : min.getZ()));
-							
-							max.set(
-									(x > max.getX() ? x : max.getX()),
-									(y > max.getY() ? y : max.getY()),
-									(z > max.getZ() ? z : max.getZ()));
+							min.set(Math.min(x, min.getX()), Math.min(y, min.getY()), Math.min(z, min.getZ()));
+							max.set(Math.max(x, max.getX()), Math.max(y, max.getY()), Math.max(z, max.getZ()));
 							break;
 						}
 					}
@@ -647,113 +640,67 @@ public class ProjectorItem extends IPItemBase{
 			buffer.endBatch();
 			//IPShaders.releaseShader();
 		}
-		
+
 		private static void renderOutlineBox(PoseStack matrix, Vec3i min, Vec3i max, int rgb, float flicker){
-			// Why? See ShaderUtil
-			boolean disable = true;
-			if(disable)
-				return;
-			
+			renderBox(matrix, Vec3.atLowerCornerOf(min), Vec3.atLowerCornerOf(max).add(1, 1, 1), rgb, flicker);
+		}
+
+		private static void renderBox(PoseStack matrix, Vec3 min, Vec3 max, int rgb, float flicker){
 			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
-			
+
+			// TODO match with other box method, the formula for alpha was not the same for both!
 			float alpha = 0.25F + (0.5F * flicker);
 			
-			float xMin = min.getX();
-			float yMin = min.getY();
-			float zMin = min.getZ();
-			
-			float xMax = max.getX() + 1F;
-			float yMax = max.getY() + 1F;
-			float zMax = max.getZ() + 1F;
-			
-			float r = ((rgb >> 16) & 0xFF) / 255F;
-			float g = ((rgb >> 8) & 0xFF) / 255F;
-			float b = ((rgb >> 0) & 0xFF) / 255F;
-			
-			// matrix.scale(xScale, yScale, zScale);
-			Matrix4f mat = matrix.last().pose();
-			
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			
-			builder.vertex(mat, xMin, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMax, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMin).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMax, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMax).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, xMin, yMin, zMin).color(r, g, b, alpha).endVertex();
-			
+			int rgba = rgb | (((int)(alpha * 255)) << 24);
+
+			line(builder, matrix, min, max, 0b010, 0b110, rgba);
+			line(builder, matrix, min, max, 0b110, 0b111, rgba);
+			line(builder, matrix, min, max, 0b111, 0b011, rgba);
+			line(builder, matrix, min, max, 0b011, 0b010, rgba);
+
+			line(builder, matrix, min, max, 0b010, 0b000, rgba);
+			line(builder, matrix, min, max, 0b110, 0b100, rgba);
+			line(builder, matrix, min, max, 0b011, 0b001, rgba);
+			line(builder, matrix, min, max, 0b111, 0b101, rgba);
+
+			line(builder, matrix, min, max, 0b000, 0b100, rgba);
+			line(builder, matrix, min, max, 0b100, 0b101, rgba);
+			line(builder, matrix, min, max, 0b101, 0b001, rgba);
+			line(builder, matrix, min, max, 0b001, 0b000, rgba);
+
 			buffer.endBatch();
 		}
 		
 		private static void renderCenteredOutlineBox(PoseStack matrix, int rgb, float flicker){
-			// Why? See ShaderUtil
-			boolean disable = true;
-			if(disable)
-				return;
-			
-			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINES);
-			
-			matrix.translate(0.5, 0.5, 0.5);
-			matrix.scale(1.01F, 1.01F, 1.01F);
-			Matrix4f mat = matrix.last().pose();
-			
-			float r = ((rgb >> 16) & 0xFF) / 255.0F;
-			float g = ((rgb >> 8) & 0xFF) / 255.0F;
-			float b = ((rgb >> 0) & 0xFF) / 255.0F;
-			float alpha = .375F * flicker;
-			float s = 0.5F;
-			
-			builder.vertex(mat, -s, s, -s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s, -s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s, -s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, s,  s)	.color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, s, -s)	.color(r, g, b, alpha).endVertex();
-			
-			builder.vertex(mat, -s,  s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s,  s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s,  s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s,  s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).endVertex();
-			
-			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s, -s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat,  s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s,  s).color(r, g, b, alpha).endVertex();
-			builder.vertex(mat, -s, -s, -s).color(r, g, b, alpha).endVertex();
-			
-			buffer.endBatch();
+			renderBox(matrix, Vec3.ZERO, new Vec3(1, 1, 1), rgb, flicker);
+		}
+
+		private static Vector3f combine(Vec3 start, Vec3 end, int mixBits) {
+			final float eps = 0.01f;
+			return new Vector3f(
+					(float) ((mixBits & 4) != 0 ? end.x + eps : start.x - eps),
+					(float) ((mixBits & 2) != 0 ? end.y + eps : start.y - eps),
+					(float) ((mixBits & 1) != 0 ? end.z + eps : start.z - eps)
+			);
+		}
+
+		private static void line(VertexConsumer out, PoseStack mat, Vec3 min, Vec3 max, int startBits, int endBits, int rgba) {
+			Vector3f start = combine(min, max, startBits);
+			Vector3f end = combine(min, max, endBits);
+			Vector3f delta = end.copy();
+			delta.sub(start);
+			out.vertex(mat.last().pose(), start.x(), start.y(), start.z())
+					.color(rgba)
+					.normal(mat.last().normal(), delta.x(), delta.y(), delta.z())
+					.endVertex();
+			out.vertex(mat.last().pose(), end.x(), end.y(), end.z())
+					.color(rgba)
+					.normal(mat.last().normal(), delta.x(), delta.y(), delta.z())
+					.endVertex();
 		}
 	}
-	
+
 	/** Client Input Stuff */
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
