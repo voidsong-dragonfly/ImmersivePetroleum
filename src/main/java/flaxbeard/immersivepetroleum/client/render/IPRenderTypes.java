@@ -125,7 +125,7 @@ public class IPRenderTypes extends RenderStateShard{
 				true,
 				false,
 				RenderType.CompositeState.builder()
-					.setShaderState(ShaderStateShard.RENDERTYPE_SOLID_SHADER) // TODO may be wrong
+					.setShaderState(TRANSLUCENT_SHADER)
 					.setTextureState(TEXTURE_ACTIVE_TOWER)
 					.setLightmapState(LIGHTMAP_ENABLED)
 					.setOverlayState(OVERLAY_DISABLED)
