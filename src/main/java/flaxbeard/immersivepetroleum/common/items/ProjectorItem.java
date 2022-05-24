@@ -793,14 +793,13 @@ public class ProjectorItem extends IPItemBase{
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_POSITION_COLOR);
 			
 			matrix.translate(0.5, 0.5, 0.5);
-			matrix.scale(1.01F, 1.01F, 1.01F);
 			Matrix4f mat = matrix.last().pose();
 			
 			float r = ((rgb >> 16) & 0xFF) / 255.0F;
 			float g = ((rgb >> 8) & 0xFF) / 255.0F;
 			float b = ((rgb >> 0) & 0xFF) / 255.0F;
 			float alpha = .375F * flicker;
-			float s = 0.5F;
+			float s = 0.5625F;
 			
 			// Up face
 			builder.vertex(mat, s, s, s).color(r, g, b, alpha).endVertex();
