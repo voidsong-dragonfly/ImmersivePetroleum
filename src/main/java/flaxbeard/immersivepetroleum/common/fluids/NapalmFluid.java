@@ -36,7 +36,7 @@ public class NapalmFluid extends IPFluid{
 			@Override
 			public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 				if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
-					ResourceLocation d = worldIn.dimension().getRegistryName();
+					ResourceLocation d = worldIn.dimension().location();
 					if(!CommonEventHandler.napalmPositions.containsKey(d) || !CommonEventHandler.napalmPositions.get(d).contains(fromPos)){
 						processFire(e, worldIn, pos);
 					}
@@ -53,7 +53,7 @@ public class NapalmFluid extends IPFluid{
 	}
 	
 	public static void processFire(IPFluidEntry entry, Level world, BlockPos pos){
-		ResourceLocation d = world.dimension().getRegistryName();
+		ResourceLocation d = world.dimension().location();
 		if(!CommonEventHandler.napalmPositions.containsKey(d)){
 			CommonEventHandler.napalmPositions.put(d, new ArrayList<>());
 		}

@@ -158,7 +158,7 @@ public class Reservoir extends IESerializableRecipe{
 		if(world == null)
 			return false;
 		
-		return isValidDimension(world.dimension().getRegistryName());
+		return isValidDimension(world.dimension().location());
 	}
 	
 	public boolean isValidDimension(@Nonnull ResourceLocation rl){

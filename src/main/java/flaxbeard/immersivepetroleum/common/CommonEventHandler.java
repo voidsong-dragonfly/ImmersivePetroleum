@@ -270,7 +270,7 @@ public class CommonEventHandler{
 	
 	@SubscribeEvent
 	public void handleNapalm(WorldTickEvent event){
-		ResourceLocation d = event.world.dimension().getRegistryName();
+		ResourceLocation d = event.world.dimension().location();
 		
 		if(event.phase == Phase.START){
 			toRemove.put(d, new ArrayList<>());
