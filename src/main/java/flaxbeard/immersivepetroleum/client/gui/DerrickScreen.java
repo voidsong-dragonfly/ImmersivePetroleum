@@ -55,7 +55,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		addRenderableWidget(this.cfgButton);
 		this.areas = List.of(
 				new FluidInfoArea(tile.tank, new Rect2i(leftPos + 11, topPos + 16, 16, 47), 200, 0, 20, 51, GUI_TEXTURE),
-				new EnergyInfoArea(leftPos + 185, topPos + 44, tile.energyStorage)
+				new EnergyInfoArea(leftPos + 185, topPos + 19, tile.energyStorage)
 		);
 	}
 
