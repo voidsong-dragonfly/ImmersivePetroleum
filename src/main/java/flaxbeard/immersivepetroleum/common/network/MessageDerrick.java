@@ -38,6 +38,7 @@ public class MessageDerrick implements INetMessage{
 		buf.writeBlockPos(this.derrickPos);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void process(Supplier<NetworkEvent.Context> context){
 		context.get().enqueueWork(() -> {

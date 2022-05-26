@@ -202,6 +202,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
 	static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(){
 		if(isDummy()){

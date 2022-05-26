@@ -33,7 +33,6 @@ import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -271,10 +270,6 @@ public class DebugRenderHandler{
 												int r = (color.getTextColor() & 0xFF0000) >> 16;
 												int g = (color.getTextColor() & 0x00FF00) >> 8;
 												int b = (color.getTextColor() & 0x0000FF);
-
-												r/=1.5F;
-												g/=1.5F;
-												b/=1.5F;
 												
 												int height = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(x, 0, z)).getY();
 												for(;height > 0;height--){
@@ -287,12 +282,11 @@ public class DebugRenderHandler{
 												
 												Matrix4f mat = matrix.last().pose();
 												
-												VertexConsumer builder = buffer.getBuffer(RenderType.lightning());
-//												VertexConsumer builder = buffer.getBuffer(IPRenderTypes.ISLAND_DEBUGGING_POSITION_COLOR);
-												builder.vertex(mat, 0, 0, 0).color(r, g, b, 255).endVertex();
-												builder.vertex(mat, 0, 0, 1).color(r, g, b, 255).endVertex();
-												builder.vertex(mat, 1, 0, 1).color(r, g, b, 255).endVertex();
-												builder.vertex(mat, 1, 0, 0).color(r, g, b, 255).endVertex();
+												VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_POSITION_COLOR);
+												builder.vertex(mat, 0, 0, 0).color(r, g, b, 127).endVertex();
+												builder.vertex(mat, 0, 0, 1).color(r, g, b, 127).endVertex();
+												builder.vertex(mat, 1, 0, 1).color(r, g, b, 127).endVertex();
+												builder.vertex(mat, 1, 0, 0).color(r, g, b, 127).endVertex();
 											}
 										}
 										matrix.popPose();
@@ -322,7 +316,6 @@ public class DebugRenderHandler{
 										List<ColumnPos> poly = island.getPolygon();
 										
 										if(poly != null && !poly.isEmpty()){
-//											VertexConsumer builder = buffer.getBuffer(RenderType.lines());
 											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINE);
 											Matrix4f mat = matrix.last().pose();
 											Matrix3f nor = matrix.last().normal();

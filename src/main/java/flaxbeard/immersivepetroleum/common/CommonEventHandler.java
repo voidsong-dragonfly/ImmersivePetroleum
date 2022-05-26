@@ -177,7 +177,7 @@ public class CommonEventHandler{
 	}
 	
 	static final Random random = new Random();
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({"rawtypes", "unchecked", "deprecation"})
 	public static void handleLubricatingMachines(Level world){
 		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
