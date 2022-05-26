@@ -425,8 +425,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			Level world = this.getLevelNonnull();
 			WellTileEntity well = null;
 			
-			// TODO !Replace "y >= 0" in 1.18 with something that can go negative
-			for(int y = getBlockPos().getY() - 1;y >= 0;y--){
+			for(int y = getBlockPos().getY() - 1;y >= world.getMinBuildHeight();y--){
 				BlockPos current = new BlockPos(this.getBlockPos().getX(), y, this.getBlockPos().getZ());
 				BlockState state = world.getBlockState(current);
 				
@@ -520,8 +519,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			
 			Level world = master.getLevelNonnull();
 			BlockPos dPos = master.getBlockPos();
-			// TODO !Replace "y >= 0" in 1.18 with something that can go negative
-			for(int y = getBlockPos().getY() - 1;y >= 0;y--){
+			for(int y = getBlockPos().getY() - 1;y >= world.getMinBuildHeight();y--){
 				BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
 				BlockEntity teLow = world.getBlockEntity(current);
 				

@@ -23,8 +23,7 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 	
 	/** Returns null if there is no connection to the Well. Used by Pumpjack. */
 	public WellTileEntity getWell(){
-		// TODO !Replace "y >= 0" in 1.18 with something that can go negative
-		for(int y = this.worldPosition.getY() - 1;y >= 0;y--){
+		for(int y = this.worldPosition.getY() - 1;y >= this.level.getMinBuildHeight();y--){
 			BlockEntity teLow = this.level.getBlockEntity(new BlockPos(this.worldPosition.getX(), y, this.worldPosition.getZ()));
 			
 			if(teLow instanceof WellTileEntity){
