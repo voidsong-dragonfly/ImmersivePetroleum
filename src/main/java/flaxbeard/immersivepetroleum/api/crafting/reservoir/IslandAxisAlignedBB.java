@@ -21,6 +21,22 @@ public class IslandAxisAlignedBB{
 		this.center = new BlockPos((this.minX + this.maxX) / 2, 0, (this.minZ + this.maxZ) / 2);
 	}
 	
+	public int minX(){
+		return this.minX;
+	}
+	
+	public int maxX(){
+		return this.maxX;
+	}
+	
+	public int minZ(){
+		return this.minZ;
+	}
+	
+	public int maxZ(){
+		return this.maxZ;
+	}
+	
 	// May end up never using it, but its here already just incase i do
 	public BlockPos getCenter(){
 		return this.center;

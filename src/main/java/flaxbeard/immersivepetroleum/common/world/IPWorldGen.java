@@ -33,7 +33,6 @@ public class IPWorldGen{
 	}
 	
 	public static void registerReservoirGen(){
-		// TODO test that this isn't broken
 		ConfiguredFeature<?, ?> reservoirFeature = register(new ResourceLocation(ImmersivePetroleum.MODID, "reservoir"),
 				RESERVOIR_FEATURE.get()
 					.configured(new NoneFeatureConfiguration())
