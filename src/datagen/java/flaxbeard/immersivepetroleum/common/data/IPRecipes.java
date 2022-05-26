@@ -80,15 +80,15 @@ public class IPRecipes extends RecipeProvider{
 	
 	private void reservoirs(){
 		ReservoirBuilder.builder("aquifer", Fluids.WATER, 5000.000, 10000.000, 0.006, 30)
-			.addDimensions(false, Level.OVERWORLD.getRegistryName())
+			.addDimensions(false, Level.OVERWORLD.location())
 			.build(this.out, rl("reservoirs/aquifer"));
 		
 		ReservoirBuilder.builder("oil", IPContent.Fluids.CRUDEOIL.still().get(), 2500.000, 15000.000, 0.006, 40)
-			.addDimensions(true, Level.END.getRegistryName())
+			.addDimensions(true, Level.END.location())
 			.build(this.out, rl("reservoirs/oil"));
 		
 		ReservoirBuilder.builder("lava", Fluids.LAVA, 250.000, 1000.000, 0.0, 30)
-			.addDimensions(true, Level.OVERWORLD.getRegistryName())
+			.addDimensions(true, Level.OVERWORLD.location())
 			.build(this.out, rl("reservoirs/lava"));
 	}
 	

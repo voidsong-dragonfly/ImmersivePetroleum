@@ -8,7 +8,7 @@
   "dimension": {
     "whitelist": [],
     "blacklist": [
-      "minecraft:dimension"
+      "minecraft:overworld"
     ]
   },
   "biome": {

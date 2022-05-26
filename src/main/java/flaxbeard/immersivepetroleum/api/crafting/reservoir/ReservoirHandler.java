@@ -50,7 +50,7 @@ public class ReservoirHandler{
 		int chunkZ = chunkPos.getMinBlockZ();
 		
 		ResourceKey<Level> dimensionKey = world.dimension();
-		ResourceLocation dimensionRL = dimensionKey.getRegistryName();
+		ResourceLocation dimensionRL = dimensionKey.location();
 		
 		for(int j = 0;j < 16;j++){
 			for(int i = 0;i < 16;i++){
