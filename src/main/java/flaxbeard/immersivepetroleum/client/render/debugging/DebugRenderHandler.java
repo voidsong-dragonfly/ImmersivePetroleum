@@ -16,6 +16,7 @@ import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBl
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
@@ -306,6 +307,7 @@ public class DebugRenderHandler{
 							Collection<ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList().get(player.getCommandSenderWorld().dimension());
 							
 							if(islands != null && !islands.isEmpty()){
+								float y = 128.0625F;
 								int radius = 128;
 								radius = radius * radius + radius * radius;
 								for(ReservoirIsland island:islands){
@@ -313,41 +315,68 @@ public class DebugRenderHandler{
 									BlockPos center = island.getBoundingBox().getCenter();
 									
 									if(center.distSqr(p) <= radius){
-										List<ColumnPos> poly = island.getPolygon();
-										
-										if(poly != null && !poly.isEmpty()){
+										IslandAxisAlignedBB bounds = island.getBoundingBox();
+										matrix.pushPose();
+										{
+											float minX = bounds.minX() + 0.5F;
+											float minZ = bounds.minZ() + 0.5F;
+											float maxX = bounds.maxX() + 0.5F;
+											float maxZ = bounds.maxZ() + 0.5F;
+											
 											VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINE);
+											
 											Matrix4f mat = matrix.last().pose();
 											Matrix3f nor = matrix.last().normal();
 											
-											// Draw polygon as line
-											int j = poly.size() - 1;
-											for(int i = 0;i < poly.size();i++){
-												ColumnPos a = poly.get(j);
-												ColumnPos b = poly.get(i);
-												float f = i / (float) poly.size();
-												
-												builder.vertex(mat, a.x + .5F, 128.5F, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
-												builder.vertex(mat, b.x + .5F, 128.5F, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
-												
-												j = i;
-											}
+											builder.vertex(mat, minX, y, minZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+											builder.vertex(mat, maxX, y, minZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+											builder.vertex(mat, minX, y, maxZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+											builder.vertex(mat, maxX, y, maxZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+											builder.vertex(mat, minX, y, minZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+											builder.vertex(mat, minX, y, maxZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+											builder.vertex(mat, maxX, y, minZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+											builder.vertex(mat, maxX, y, maxZ).color(255, 0, 255, 127).normal(nor, 0, 1, 0).endVertex();
+										}
+										matrix.popPose();
+										
+										if(island.getPolygon() != null && !island.getPolygon().isEmpty()){
+											List<ColumnPos> poly = island.getPolygon();
 											
-											// Center Marker
+											matrix.pushPose();
 											{
-												// Y
-												builder.vertex(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
-												builder.vertex(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINE);
+												Matrix4f mat = matrix.last().pose();
+												Matrix3f nor = matrix.last().normal();
 												
-												// X
-												builder.vertex(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
-												builder.vertex(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												// Draw polygon as line
+												int j = poly.size() - 1;
+												for(int i = 0;i < poly.size();i++){
+													ColumnPos a = poly.get(j);
+													ColumnPos b = poly.get(i);
+													float f = i / (float) poly.size();
+													
+													builder.vertex(mat, a.x + .5F, y, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													builder.vertex(mat, b.x + .5F, y, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													
+													j = i;
+												}
 												
-												// Z
-												builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
-												builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												// Center Marker
+												{
+													// Y
+													builder.vertex(mat, center.getX() + .5F, 128F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													builder.vertex(mat, center.getX() + .5F, 129F, center.getZ() + .5F).color(0.0F, 1.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													
+													// X
+													builder.vertex(mat, center.getX(), 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													builder.vertex(mat, center.getX() + 1, 128.5F, center.getZ() + .5F).color(1.0F, 0.0F, 0.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													
+													// Z
+													builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ()).color(0.0F, 0.0F, 1.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													builder.vertex(mat, center.getX() + .5F, 128.5F, center.getZ() + 1).color(0.0F, 0.0F, 1.0F, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+												}
 											}
-											
+											matrix.popPose();
 										}
 									}
 								}
