@@ -9,11 +9,11 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang3.tuple.Pair;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 
 public class LubricantHandler{
-	static final Set<Pair<Tag<Fluid>, Integer>> lubricants = new HashSet<>();
+	static final Set<Pair<TagKey<Fluid>, Integer>> lubricants = new HashSet<>();
 	
 	/**
 	 * Registers a lubricant to be used in the Lubricant Can and Automatic
@@ -34,7 +34,7 @@ public class LubricantHandler{
 	 * @param fluid The fluid to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
-	public static void register(@Nonnull Tag<Fluid> fluid, int amount){
+	public static void register(@Nonnull TagKey<Fluid> fluid, int amount){
 		if(fluid != null && !lubricants.stream().anyMatch(pair -> pair.getLeft() == fluid)){
 			lubricants.add(Pair.of(fluid, amount));
 		}
@@ -48,10 +48,11 @@ public class LubricantHandler{
 	 * @param toCheck Fluid to check
 	 * @return mB of this Fluid used to lubricate
 	 */
+	@SuppressWarnings("deprecation")
 	public static int getLubeAmount(@Nonnull Fluid toCheck){
 		if(toCheck != null){
-			for(Map.Entry<Tag<Fluid>, Integer> entry:lubricants){
-				if(entry.getKey().contains(toCheck)){
+			for(Map.Entry<TagKey<Fluid>, Integer> entry:lubricants){
+				if(toCheck.is(entry.getKey())){
 					return entry.getValue();
 				}
 			}
@@ -66,7 +67,8 @@ public class LubricantHandler{
 	 * @param toCheck Fluid to check
 	 * @return Whether or not the Fluid is a lubricant
 	 */
+	@SuppressWarnings("deprecation")
 	public static boolean isValidLube(@Nonnull Fluid toCheck){
-		return toCheck != null && lubricants.stream().anyMatch(pair -> pair.getKey().contains(toCheck));
+		return toCheck != null && lubricants.stream().anyMatch(pair -> toCheck.is(pair.getKey()));
 	}
 }

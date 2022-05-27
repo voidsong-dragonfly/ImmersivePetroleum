@@ -12,7 +12,7 @@ public abstract class IPMultiblockRecipe extends MultiblockRecipe{
 	Lazy<Integer> totalProcessTime;
 	Lazy<Integer> totalProcessEnergy;
 	protected IPMultiblockRecipe(ItemStack outputDummy, RecipeType<?> type, ResourceLocation id){
-		super(outputDummy, type, id);
+		super(Lazy.of(() -> outputDummy), type, id);
 	}
 	
 	protected void timeAndEnergy(int time, int energy){

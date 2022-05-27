@@ -11,6 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.util.Lazy;
 
 public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecipe>{
 	
@@ -19,7 +20,7 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 		FluidTagInput outputFluid = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "resultfluid"));
 		FluidTagInput inputFluid = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "inputfluid"));
 		
-		ItemStack outputItem = readOutput(json.get("result"));
+		Lazy<ItemStack> outputItem = readOutput(json.get("result"));
 		IngredientWithSize inputItem = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"));
 		
 		int energy = GsonHelper.getAsInt(json, "energy");
@@ -39,13 +40,13 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 		int energy = buffer.readInt();
 		int time = buffer.readInt();
 		
-		return new CokerUnitRecipe(recipeId, outputItem, outputFluid, inputItem, inputFluid, energy, time);
+		return new CokerUnitRecipe(recipeId, Lazy.of(() -> outputItem), outputFluid, inputItem, inputFluid, energy, time);
 	}
 	
 	@Override
 	public void toNetwork(FriendlyByteBuf buffer, CokerUnitRecipe recipe){
 		recipe.inputItem.write(buffer);
-		buffer.writeItem(recipe.outputItem);
+		buffer.writeItem(recipe.outputItem.get());
 		
 		recipe.inputFluid.write(buffer);
 		recipe.outputFluid.write(buffer);

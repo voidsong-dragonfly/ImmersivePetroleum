@@ -1,14 +1,11 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
-import java.util.Iterator;
 import java.util.function.Supplier;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 
-import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.common.blocks.metal.CrusherBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
@@ -63,6 +60,8 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 	
 	@Override
 	public void lubricate(Level world, int ticks, CrusherBlockEntity mbte){
+		// FIXME !This is completely fucked now..
+		/*
 		if(!world.isClientSide){
 			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
 			MultiblockProcess<CrusherRecipe> process = processIterator.next();
@@ -72,13 +71,13 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 				if(consume >= process.energyPerTick){
 					mbte.energyStorage.extractEnergy(process.energyPerTick, false);
 					
-					if(process.processTick < process.maxTicks)
+					if(process.processTick < process.getMaxTicks(world))
 						process.processTick++;
 					
-					if(process.processTick >= process.maxTicks && mbte.processQueue.size() > 1){
+					if(process.processTick >= process.getMaxTicks(world) && mbte.processQueue.size() > 1){
 						process = processIterator.next();
 						
-						if(process.processTick < process.maxTicks)
+						if(process.processTick < process.getMaxTicks(world))
 							process.processTick++;
 					}
 				}
@@ -87,6 +86,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 			mbte.animation_barrelRotation += 18f / 4f;
 			mbte.animation_barrelRotation %= 360f;
 		}
+		*/
 	}
 	
 	@Override

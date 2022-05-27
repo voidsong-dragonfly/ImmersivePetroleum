@@ -604,7 +604,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	}
 	
 	@Override
-	protected MultiblockRecipe getRecipeForId(ResourceLocation id){
+	protected MultiblockRecipe getRecipeForId(Level level, ResourceLocation id){
 		return null;
 	}
 	

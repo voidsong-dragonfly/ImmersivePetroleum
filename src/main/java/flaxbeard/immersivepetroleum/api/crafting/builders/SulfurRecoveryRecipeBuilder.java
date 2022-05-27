@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -34,7 +34,7 @@ public class SulfurRecoveryRecipeBuilder extends IEFinishedRecipe<SulfurRecovery
 		return addFluidTag("input", fluid);
 	}
 	
-	public SulfurRecoveryRecipeBuilder addInputFluid(Tag.Named<Fluid> fluid, int amount){
+	public SulfurRecoveryRecipeBuilder addInputFluid(TagKey<Fluid> fluid, int amount){
 		return addFluidTag("input", fluid, amount);
 	}
 	
@@ -49,7 +49,7 @@ public class SulfurRecoveryRecipeBuilder extends IEFinishedRecipe<SulfurRecovery
 	}
 	
 	/** Optionaly add a second fluid to be pumped in */
-	public SulfurRecoveryRecipeBuilder addSecondaryInputFluid(Tag.Named<Fluid> fluid, int amount){
+	public SulfurRecoveryRecipeBuilder addSecondaryInputFluid(TagKey<Fluid> fluid, int amount){
 		return addFluidTag("secondary_input", fluid, amount);
 	}
 	

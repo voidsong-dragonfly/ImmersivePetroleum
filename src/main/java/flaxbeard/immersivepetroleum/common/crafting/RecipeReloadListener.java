@@ -11,7 +11,7 @@ import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.ServerResources;
+import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.crafting.Recipe;
@@ -22,8 +22,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class RecipeReloadListener implements ResourceManagerReloadListener{
-	private final ServerResources dataPackRegistries;
-	public RecipeReloadListener(ServerResources dataPackRegistries){
+	private final ReloadableServerResources dataPackRegistries;
+	public RecipeReloadListener(ReloadableServerResources dataPackRegistries){
 		this.dataPackRegistries = dataPackRegistries;
 	}
 	

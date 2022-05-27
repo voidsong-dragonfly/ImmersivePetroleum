@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipe extends IPMultiblockRecipe{
@@ -54,7 +55,7 @@ public class DistillationRecipe extends IPMultiblockRecipe{
 		this.input = input;
 		this.fluidInputList = Collections.singletonList(input);
 		this.fluidOutputList = Arrays.asList(this.fluidOutput);
-		this.outputList = NonNullList.of(ItemStack.EMPTY, itemOutput);
+		this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, itemOutput));
 		
 		timeAndEnergy(time, energy);
 		modifyTimeAndEnergy(IPServerConfig.REFINING.distillationTower_timeModifier::get, IPServerConfig.REFINING.distillationTower_energyModifier::get);

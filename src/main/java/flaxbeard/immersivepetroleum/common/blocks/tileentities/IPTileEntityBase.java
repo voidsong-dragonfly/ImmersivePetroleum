@@ -47,7 +47,6 @@ public abstract class IPTileEntityBase extends BlockEntity{
 	
 	@Override
 	public void saveAdditional(CompoundTag compound){
-		super.save(compound);
 		writeCustom(compound);
 	}
 	

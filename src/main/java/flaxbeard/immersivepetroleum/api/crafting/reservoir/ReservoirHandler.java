@@ -59,7 +59,7 @@ public class ReservoirHandler{
 				
 				if(ReservoirHandler.noiseFor(world, x, z) > -1){
 					// Getting the biome now to prevent lockups
-					ResourceLocation biome = world.getBiome(new BlockPos(x, 64, z)).getRegistryName();
+					ResourceLocation biome = world.getBiome(new BlockPos(x, 64, z)).value().getRegistryName();
 					
 					synchronized(RESERVOIR_ISLAND_LIST){
 						final ColumnPos current = new ColumnPos(x, z);

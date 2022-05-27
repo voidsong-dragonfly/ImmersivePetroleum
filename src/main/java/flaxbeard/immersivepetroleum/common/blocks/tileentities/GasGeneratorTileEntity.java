@@ -93,9 +93,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
-	public void saveAdditional(CompoundTag compound){
-		CompoundTag nbt = super.save(compound);
-		
+	public void saveAdditional(CompoundTag nbt){
 		nbt.putBoolean("isActive", this.isActive);
 		nbt.put("tank", this.tank.writeToNBT(new CompoundTag()));
 		nbt.put("buffer", this.energyStorage.serializeNBT());
@@ -341,7 +339,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	@Override
 	public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vec3i offset){
-		if(level.getBlockState(target.getPosition()).getBlock() != level.getBlockState(getBlockPos()).getBlock()){
+		if(level.getBlockState(target.position()).getBlock() != level.getBlockState(getBlockPos()).getBlock()){
 			return false;
 		}
 		

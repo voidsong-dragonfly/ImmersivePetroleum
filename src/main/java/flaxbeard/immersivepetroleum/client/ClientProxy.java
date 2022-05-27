@@ -32,6 +32,7 @@ import blusunrize.lib.manual.ManualEntry.EntryData;
 import blusunrize.lib.manual.ManualEntry.SpecialElementData;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
+import blusunrize.lib.manual.utils.ManualRecipeRef;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
@@ -50,7 +51,6 @@ import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
 import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
@@ -75,8 +75,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.Tag.Named;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -266,6 +265,10 @@ public class ClientProxy extends CommonProxy{
 		// TODO Sound: Perhaps give some MBs some audio
 	}
 	
+	private static ManualRecipeRef[][] singleRecipeRef(ItemStack stack){
+		return new ManualRecipeRef[][]{{new ManualRecipeRef(stack)}};
+	}
+	
 	public void setupManualPages(){
 		ManualInstance man = ManualHelper.getManual();
 		
@@ -292,21 +295,16 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("flarestack0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.FLARESTACK.get()))));
+		builder.addSpecialElement(new SpecialElementData("flarestack0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.FLARESTACK.get())))));
 		builder.addSpecialElement(new SpecialElementData("flarestack1", 0, () -> {
-			Set<Tag<Fluid>> fluids = FlarestackHandler.getSet();
+			Set<TagKey<Fluid>> fluids = FlarestackHandler.getSet();
 			List<Component[]> list = new ArrayList<Component[]>();
-			for(Tag<Fluid> tag:fluids){
-				if(tag instanceof Named){
-					List<Fluid> fl = ((Named<Fluid>) tag).getValues();
-					for(Fluid f:fl){
-						Component[] entry = new Component[]{
-								TextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()
-						};
-						
-						list.add(entry);
-					}
-				}
+			for(TagKey<Fluid> tag:fluids){
+				ResourceLocation rl = tag.registry().location();
+				Fluid f = ForgeRegistries.FLUIDS.getValue(rl);
+				Component[] entry = new Component[]{TextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()};
+				
+				list.add(entry);
 			}
 			
 			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
@@ -319,7 +317,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("automaticlubricator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.AUTO_LUBRICATOR.get()))));
+		builder.addSpecialElement(new SpecialElementData("automaticlubricator0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.AUTO_LUBRICATOR.get())))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -328,7 +326,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("portablegenerator0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Blocks.GAS_GENERATOR.get()))));
+		builder.addSpecialElement(new SpecialElementData("portablegenerator0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.GAS_GENERATOR.get())))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -337,12 +335,12 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("speedboat0", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.SPEEDBOAT.get()))));
-		builder.addSpecialElement(new SpecialElementData("speedboat1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.TANK.get()))));
-		builder.addSpecialElement(new SpecialElementData("speedboat2", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.RUDDERS.get()))));
-		builder.addSpecialElement(new SpecialElementData("speedboat3", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.ICE_BREAKER.get()))));
-		builder.addSpecialElement(new SpecialElementData("speedboat4", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.REINFORCED_HULL.get()))));
-		builder.addSpecialElement(new SpecialElementData("speedboat5", 0, new ManualElementCrafting(man, new ItemStack(IPContent.BoatUpgrades.PADDLES.get()))));
+		builder.addSpecialElement(new SpecialElementData("speedboat0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Items.SPEEDBOAT.get())))));
+		builder.addSpecialElement(new SpecialElementData("speedboat1", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.TANK.get())))));
+		builder.addSpecialElement(new SpecialElementData("speedboat2", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.RUDDERS.get())))));
+		builder.addSpecialElement(new SpecialElementData("speedboat3", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.ICE_BREAKER.get())))));
+		builder.addSpecialElement(new SpecialElementData("speedboat4", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.REINFORCED_HULL.get())))));
+		builder.addSpecialElement(new SpecialElementData("speedboat5", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.PADDLES.get())))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -351,7 +349,7 @@ public class ClientProxy extends CommonProxy{
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("lubricant1", 0, new ManualElementCrafting(man, new ItemStack(IPContent.Items.OIL_CAN.get()))));
+		builder.addSpecialElement(new SpecialElementData("lubricant1", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Items.OIL_CAN.get())))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
@@ -415,12 +413,12 @@ public class ClientProxy extends CommonProxy{
 	protected static void projector(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
-		ItemStack projectorWithNBT = new ItemStack(Items.PROJECTOR.get());
+		ItemStack projectorWithNBT = new ItemStack(IPContent.Items.PROJECTOR.get());
 		ItemNBTHelper.putString(projectorWithNBT, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("projector0", 0, new ManualElementCrafting(man, new ItemStack(Items.PROJECTOR.get()))));
-		builder.addSpecialElement(new SpecialElementData("projector1", 0, new ManualElementCrafting(man, projectorWithNBT)));
+		builder.addSpecialElement(new SpecialElementData("projector0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Items.PROJECTOR.get())))));
+		builder.addSpecialElement(new SpecialElementData("projector1", 0, new ManualElementCrafting(man, singleRecipeRef(projectorWithNBT))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}

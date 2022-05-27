@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,8 +50,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe>
-		implements IPMenuProvider<HydrotreaterTileEntity>, IBlockBounds, TickableBE{
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IPMenuProvider<HydrotreaterTileEntity>, IBlockBounds, TickableBE{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -105,7 +105,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	protected SulfurRecoveryRecipe getRecipeForId(ResourceLocation id){
+	protected SulfurRecoveryRecipe getRecipeForId(Level level, ResourceLocation id){
 		return SulfurRecoveryRecipe.recipes.get(id);
 	}
 	
@@ -163,7 +163,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	@Override
 	public boolean additionalCanProcessCheck(MultiblockProcess<SulfurRecoveryRecipe> process){
 		int outputAmount = 0;
-		for(FluidStack outputFluid:process.recipe.getFluidOutputs()){
+		for(FluidStack outputFluid:process.getRecipe(this.level).getFluidOutputs()){
 			outputAmount += outputFluid.getAmount();
 		}
 		
@@ -234,7 +234,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 							inputAmounts = new int[]{recipe.getInputFluid().getAmount()};
 						}
 						
-						MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<SulfurRecoveryRecipe>(recipe)
+						MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<SulfurRecoveryRecipe>(recipe, this::getRecipeForId)
 								.setInputTanks(inputs)
 								.setInputAmounts(inputAmounts);
 						if(addProcessToQueue(process, true)){

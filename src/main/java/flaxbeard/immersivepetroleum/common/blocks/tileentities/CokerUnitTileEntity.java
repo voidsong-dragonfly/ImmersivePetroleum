@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -427,7 +428,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	}
 	
 	@Override
-	protected CokerUnitRecipe getRecipeForId(ResourceLocation id){
+	protected CokerUnitRecipe getRecipeForId(Level level, ResourceLocation id){
 		return CokerUnitRecipe.recipes.get(id);
 	}
 	
@@ -1094,10 +1095,19 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	// STATIC CLASSES
 	
+	// FIXME !This may need to be redone completely
 	public class CokingProcess extends MultiblockProcessInMachine<CokerUnitRecipe>{
-		public CokingProcess(CokerUnitRecipe recipe){
-			super(recipe, Inventory.INPUT.id());
-			setInputTanks(TANK_INPUT);
+//		public CokingProcess(CokerUnitRecipe recipe){
+//			super(recipe, Inventory.INPUT.id());
+//			setInputTanks(TANK_INPUT);
+//		}
+		
+		public CokingProcess(ResourceLocation id, BiFunction<Level, ResourceLocation, CokerUnitRecipe> get){
+			super(id, get, Inventory.INPUT.id());
+		}
+		
+		public CokingProcess(CokerUnitRecipe recipe, BiFunction<Level, ResourceLocation, CokerUnitRecipe> get){
+			super(recipe, get, Inventory.INPUT.id());
 		}
 		
 		@Override
@@ -1262,7 +1272,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				return ItemStack.EMPTY;
 			}
 			
-			return this.recipe.outputItem;
+			return this.recipe.outputItem.get();
 		}
 		
 		public FluidTank getTank(){
@@ -1351,7 +1361,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 						if(this.outputAmount > 0){
 							Level world = cokerunit.getLevelNonnull();
 							int amount = Math.min(this.outputAmount, 1);
-							ItemStack copy = this.recipe.outputItem.copy();
+							ItemStack copy = this.recipe.outputItem.get().copy();
 							copy.setCount(amount);
 							
 							// Drop item(s) at the designated chamber output location

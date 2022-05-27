@@ -11,7 +11,7 @@ import com.google.gson.JsonObject;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -77,7 +77,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 		return setTime(time).setEnergy(energy);
 	}
 	
-	public DistillationRecipeBuilder addInput(Tag.Named<Fluid> fluidTag, int amount){
+	public DistillationRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount){
 		return addFluidTag("input", fluidTag, amount);
 	}
 	

@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 
 public class CokerUnitRecipe extends IPMultiblockRecipe{
@@ -84,18 +85,18 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	// Coke Output   -> Item Out
 	// Diesel Output -> Fluid Out
 	
-	public final ItemStack outputItem;
+	public final Lazy<ItemStack> outputItem;
 	public final FluidTagInput outputFluid;
 	
 	public final IngredientWithSize inputItem;
 	public final FluidTagInput inputFluid;
 	
-	public CokerUnitRecipe(ResourceLocation id, ItemStack outputItem, FluidTagInput outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
+	public CokerUnitRecipe(ResourceLocation id, Lazy<ItemStack> outputItem2, FluidTagInput outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
 		super(ItemStack.EMPTY, TYPE, id);
 		this.inputFluid = inputFluid;
 		this.inputItem = inputItem;
 		this.outputFluid = outputFluid;
-		this.outputItem = outputItem;
+		this.outputItem = outputItem2;
 		
 		timeAndEnergy(time, energy);
 		modifyTimeAndEnergy(IPServerConfig.REFINING.cokerUnit_timeModifier::get, IPServerConfig.REFINING.cokerUnit_energyModifier::get);
@@ -109,7 +110,7 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(BlockEntity tile){
 		NonNullList<ItemStack> list = NonNullList.create();
-		list.add(this.outputItem);
+		list.add(this.outputItem.get());
 		return list;
 	}
 	

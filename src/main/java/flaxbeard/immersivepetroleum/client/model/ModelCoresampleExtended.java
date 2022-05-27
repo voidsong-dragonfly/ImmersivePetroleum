@@ -77,7 +77,7 @@ public class ModelCoresampleExtended extends ModelCoresample{
 				resName = "resAmount";
 			}
 			
-			MineralMix[] minerals = CoresampleItem.getMineralMixes(stack);
+			MineralMix[] minerals = CoresampleItem.getMineralMixes(worldIn, stack);
 			if(minerals.length > 0){
 				try{
 					String cacheKey = "";

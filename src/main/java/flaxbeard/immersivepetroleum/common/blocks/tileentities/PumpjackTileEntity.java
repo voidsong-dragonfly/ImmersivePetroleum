@@ -30,6 +30,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -256,7 +257,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	}
 	
 	@Override
-	protected MultiblockRecipe getRecipeForId(ResourceLocation id){
+	protected MultiblockRecipe getRecipeForId(Level level, ResourceLocation id){
 		return null;
 	}
 	

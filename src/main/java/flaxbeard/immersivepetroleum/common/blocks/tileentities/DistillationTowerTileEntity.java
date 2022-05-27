@@ -34,6 +34,7 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -157,7 +158,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 				if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
 					DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
 					if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
-						MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe).setInputTanks(TANK_INPUT);
+						MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe, this::getRecipeForId).setInputTanks(TANK_INPUT);
 						if(addProcessToQueue(process, true)){
 							addProcessToQueue(process, false);
 							update = true;
@@ -327,7 +328,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	protected DistillationRecipe getRecipeForId(ResourceLocation id){
+	protected DistillationRecipe getRecipeForId(Level level, ResourceLocation id){
 		return DistillationRecipe.recipes.get(id);
 	}
 	
@@ -364,7 +365,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Override
 	public boolean additionalCanProcessCheck(MultiblockProcess<DistillationRecipe> process){
 		int outputAmount = 0;
-		for (FluidStack outputFluid : process.recipe.getFluidOutputs()){
+		for (FluidStack outputFluid : process.getRecipe(this.level).getFluidOutputs()){
 			outputAmount += outputFluid.getAmount();
 		}
 

@@ -138,7 +138,7 @@ public class ImmersivePetroleum{
 	}
 	
 	public void addReloadListeners(AddReloadListenerEvent event){
-		event.addListener(new RecipeReloadListener(event.getDataPackRegistries()));
+		event.addListener(new RecipeReloadListener(event.getServerResources()));
 	}
 	
 	public void serverStarted(ServerStartedEvent event){

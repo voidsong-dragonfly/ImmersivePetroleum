@@ -22,9 +22,12 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class Reservoir extends IESerializableRecipe{
+	static final Lazy<ItemStack> EMPTY_LAZY = Lazy.of(() -> ItemStack.EMPTY);
+	
 	public static final RecipeType<Reservoir> TYPE = RecipeType.register(ImmersivePetroleum.MODID + ":reservoir");
 	
 	public static Map<ResourceLocation, Reservoir> map = new HashMap<>();
@@ -74,7 +77,7 @@ public class Reservoir extends IESerializableRecipe{
 	 * @param weight The weight for this reservoir
 	 */
 	public Reservoir(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int weight){
-		super(ItemStack.EMPTY, TYPE, id);
+		super(EMPTY_LAZY, TYPE, id);
 		this.name = name;
 		this.fluidLocation = fluid.getRegistryName();
 		this.fluid = fluid;
@@ -85,7 +88,7 @@ public class Reservoir extends IESerializableRecipe{
 	}
 	
 	public Reservoir(CompoundTag nbt){
-		super(ItemStack.EMPTY, TYPE, new ResourceLocation(nbt.getString("id")));
+		super(EMPTY_LAZY, TYPE, new ResourceLocation(nbt.getString("id")));
 		
 		this.name = nbt.getString("name");
 		
