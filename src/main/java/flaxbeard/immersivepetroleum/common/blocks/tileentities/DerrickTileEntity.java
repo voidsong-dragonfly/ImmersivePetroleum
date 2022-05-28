@@ -439,18 +439,16 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				}
 			}
 			
-			if(well != null){
-				if(popList && well.tappedIslands.isEmpty()){
-					if(this.gridStorage != null){
-						transferGridDataToWell(well);
-					}else{
-						well.tappedIslands.add(new ColumnPos(this.worldPosition.getX(), this.worldPosition.getZ()));
-						well.setChanged();
-					}
-				}
-			}
-			
 			this.wellCache = well;
+		}
+		
+		if(popList && this.wellCache != null && this.wellCache.tappedIslands.isEmpty()){
+			if(this.gridStorage != null){
+				transferGridDataToWell(this.wellCache);
+			}else{
+				this.wellCache.tappedIslands.add(new ColumnPos(this.worldPosition.getX(), this.worldPosition.getZ()));
+				this.wellCache.setChanged();
+			}
 		}
 		
 		this.wellCache.abortSelfDestructSequence();
