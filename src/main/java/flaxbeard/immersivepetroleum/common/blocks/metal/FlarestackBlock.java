@@ -175,16 +175,16 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		if(!pState.getValue(SLAVE)) return null;
+		if(pState.getValue(SLAVE)) return null;
 		
 		return IPTileTypes.FLARE.get().create(pPos, pState);
 	}
-
+	
 	@Nullable
 	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-			@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type
-	){
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
+		if(state.getValue(SLAVE)) return null;
+		
 		return createTickerHelper(type, IPTileTypes.FLARE);
 	}
 

@@ -34,9 +34,14 @@ public class FlarestackHandler{
 	 * @param fluid to test
 	 * @return true if the given fluid is infact burnable, false otherwise
 	 */
-	@SuppressWarnings("deprecation")
 	public static boolean isBurnable(@Nonnull Fluid fluid){
-		return fluid != null && burnables.stream().anyMatch(tag -> fluid.is(tag));
+		boolean bool = fluid != null && burnables.stream().anyMatch(tag -> FlarestackHandler.match(tag, fluid));
+		return bool;
+	}
+	
+	@SuppressWarnings("deprecation")
+	private static boolean match(TagKey<Fluid> tag, Fluid fluid){
+		return fluid.is(tag);
 	}
 	
 	/**
