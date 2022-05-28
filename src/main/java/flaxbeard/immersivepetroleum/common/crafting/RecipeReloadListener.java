@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import net.minecraft.client.Minecraft;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.RegistryObject;
 
 public class RecipeReloadListener implements ResourceManagerReloadListener{
 	private final ReloadableServerResources dataPackRegistries;
@@ -48,21 +50,23 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		}
 		
 		ImmersivePetroleum.log.info("Loading Distillation Recipes.");
-		DistillationRecipe.recipes = filterRecipes(recipes, DistillationRecipe.class, DistillationRecipe.TYPE);
+		DistillationRecipe.recipes = filterRecipes(recipes, DistillationRecipe.class, IPRecipeTypes.DISTILLATION);
 		
 		ImmersivePetroleum.log.info("Loading Reservoirs.");
-		Reservoir.map = filterRecipes(recipes, Reservoir.class, Reservoir.TYPE);
-		
+		Reservoir.map = filterRecipes(recipes, Reservoir.class, IPRecipeTypes.RESERVOIR);
+
 		ImmersivePetroleum.log.info("Loading Coker-Unit Recipes.");
-		CokerUnitRecipe.recipes = filterRecipes(recipes, CokerUnitRecipe.class, CokerUnitRecipe.TYPE);
+		CokerUnitRecipe.recipes = filterRecipes(recipes, CokerUnitRecipe.class, IPRecipeTypes.COKER);
 		
 		ImmersivePetroleum.log.info("Loading Sulfur Recovery Recipes.");
-		SulfurRecoveryRecipe.recipes = filterRecipes(recipes, SulfurRecoveryRecipe.class, SulfurRecoveryRecipe.TYPE);
+		SulfurRecoveryRecipe.recipes = filterRecipes(recipes, SulfurRecoveryRecipe.class, IPRecipeTypes.SULFUR_RECOVERY);
 	}
 	
-	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<Recipe<?>> recipes, Class<R> recipeClass, RecipeType<R> recipeType){
+	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(
+			Collection<Recipe<?>> recipes, Class<R> recipeClass, RegistryObject<RecipeType<R>> recipeType
+	){
 		return recipes.stream()
-				.filter(iRecipe -> iRecipe.getType() == recipeType)
+				.filter(iRecipe -> iRecipe.getType() == recipeType.get())
 				.map(recipeClass::cast)
 				.collect(Collectors.toMap(recipe -> recipe.getId(), recipe -> recipe));
 	}

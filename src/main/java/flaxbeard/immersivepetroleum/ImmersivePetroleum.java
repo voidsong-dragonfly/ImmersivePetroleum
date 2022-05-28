@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum;
 
+import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -80,6 +81,7 @@ public class ImmersivePetroleum{
 		
 		IPContent.populate();
 		IPLootFunctions.modConstruction();
+		IPRecipeTypes.modConstruction();
 		
 		//IPTileTypes.REGISTER.register(eBus);
 		

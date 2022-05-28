@@ -21,8 +21,6 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 
 public class CokerUnitRecipe extends IPMultiblockRecipe{
-	public static final RecipeType<CokerUnitRecipe> TYPE = RecipeType.register(ImmersivePetroleum.MODID + ":cokerunit");
-	
 	public static Map<ResourceLocation, CokerUnitRecipe> recipes = new HashMap<>();
 	
 	public static CokerUnitRecipe findRecipe(ItemStack stack, FluidStack fluid){
@@ -92,7 +90,7 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	public final FluidTagInput inputFluid;
 	
 	public CokerUnitRecipe(ResourceLocation id, Lazy<ItemStack> outputItem2, FluidTagInput outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
-		super(ItemStack.EMPTY, TYPE, id);
+		super(ItemStack.EMPTY, IPRecipeTypes.COKER, id);
 		this.inputFluid = inputFluid;
 		this.inputItem = inputItem;
 		this.outputFluid = outputFluid;

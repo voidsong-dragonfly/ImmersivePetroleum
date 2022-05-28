@@ -38,7 +38,7 @@ public class IPTileDropLootEntry extends LootPoolSingletonContainer{
 	
 	@Override
 	public LootPoolEntryType getType(){
-		return IPLootFunctions.tileDrop;
+		return IPLootFunctions.TILE_DROP.get();
 	}
 	
 	public static LootPoolSingletonContainer.Builder<?> builder(){

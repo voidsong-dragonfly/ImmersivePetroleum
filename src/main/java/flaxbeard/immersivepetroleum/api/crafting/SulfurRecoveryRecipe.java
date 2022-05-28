@@ -22,8 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
-	public static final RecipeType<SulfurRecoveryRecipe> TYPE = RecipeType.register(ImmersivePetroleum.MODID + ":hydrotreater");
-	
+
 	public static Map<ResourceLocation, SulfurRecoveryRecipe> recipes = new HashMap<>();
 	
 	public static SulfurRecoveryRecipe findRecipe(@Nonnull FluidStack input, @Nonnull FluidStack secondary){
@@ -78,7 +77,7 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	public final FluidTagInput inputFluidSecondary;
 	
 	public SulfurRecoveryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
-		super(ItemStack.EMPTY, TYPE, id);
+		super(ItemStack.EMPTY, IPRecipeTypes.SULFUR_RECOVERY, id);
 		this.output = output;
 		this.outputItem = outputItem;
 		this.inputFluid = inputFluid;

@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,8 +28,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class Reservoir extends IESerializableRecipe{
 	static final Lazy<ItemStack> EMPTY_LAZY = Lazy.of(() -> ItemStack.EMPTY);
-	
-	public static final RecipeType<Reservoir> TYPE = RecipeType.register(ImmersivePetroleum.MODID + ":reservoir");
 	
 	public static Map<ResourceLocation, Reservoir> map = new HashMap<>();
 	
@@ -77,7 +76,7 @@ public class Reservoir extends IESerializableRecipe{
 	 * @param weight The weight for this reservoir
 	 */
 	public Reservoir(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int weight){
-		super(EMPTY_LAZY, TYPE, id);
+		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR.get(), id);
 		this.name = name;
 		this.fluidLocation = fluid.getRegistryName();
 		this.fluid = fluid;
@@ -88,7 +87,7 @@ public class Reservoir extends IESerializableRecipe{
 	}
 	
 	public Reservoir(CompoundTag nbt){
-		super(EMPTY_LAZY, TYPE, new ResourceLocation(nbt.getString("id")));
+		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR.get(), new ResourceLocation(nbt.getString("id")));
 		
 		this.name = nbt.getString("name");
 		

@@ -1,19 +1,21 @@
 package flaxbeard.immersivepetroleum.common.util.loot;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.Serializer;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 public class IPLootFunctions{
-	public static LootPoolEntryType tileDrop;
+	private static final DeferredRegister<LootPoolEntryType> REGISTER = DeferredRegister.create(
+			Registry.LOOT_ENTRY_REGISTRY, ImmersivePetroleum.MODID
+	);
+	public static final RegistryObject<LootPoolEntryType> TILE_DROP = REGISTER.register(
+			IPTileDropLootEntry.ID.getPath(), () -> new LootPoolEntryType(new IPTileDropLootEntry.Serializer())
+	);
 	
 	public static void modConstruction(){
-		tileDrop = registerEntry(IPTileDropLootEntry.ID, new IPTileDropLootEntry.Serializer());
-	}
-	
-	private static LootPoolEntryType registerEntry(ResourceLocation id, Serializer<? extends LootPoolEntryContainer> serializer){
-		return Registry.register(Registry.LOOT_POOL_ENTRY_TYPE, id, new LootPoolEntryType(serializer));
+		REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 }

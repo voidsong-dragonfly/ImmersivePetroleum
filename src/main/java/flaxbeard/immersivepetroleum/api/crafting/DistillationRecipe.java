@@ -21,7 +21,6 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipe extends IPMultiblockRecipe{
-	public static final RecipeType<DistillationRecipe> TYPE = RecipeType.register(ImmersivePetroleum.MODID + ":distillationtower");
 	public static Map<ResourceLocation, DistillationRecipe> recipes = new HashMap<>();
 	
 	/** May return null! */
@@ -47,7 +46,7 @@ public class DistillationRecipe extends IPMultiblockRecipe{
 	protected final double[] chances;
 	
 	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
-		super(ItemStack.EMPTY, TYPE, id);
+		super(ItemStack.EMPTY, IPRecipeTypes.DISTILLATION, id);
 		this.fluidOutput = fluidOutput;
 		this.itemOutput = itemOutput;
 		this.chances = chances;

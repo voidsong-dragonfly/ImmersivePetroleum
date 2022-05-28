@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -11,8 +12,8 @@ import net.minecraftforge.common.util.Lazy;
 public abstract class IPMultiblockRecipe extends MultiblockRecipe{
 	Lazy<Integer> totalProcessTime;
 	Lazy<Integer> totalProcessEnergy;
-	protected IPMultiblockRecipe(ItemStack outputDummy, RecipeType<?> type, ResourceLocation id){
-		super(Lazy.of(() -> outputDummy), type, id);
+	protected IPMultiblockRecipe(ItemStack outputDummy, Supplier<? extends RecipeType<?>> type, ResourceLocation id){
+		super(Lazy.of(() -> outputDummy), type.get(), id);
 	}
 	
 	protected void timeAndEnergy(int time, int energy){
