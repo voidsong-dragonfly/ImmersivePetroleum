@@ -16,6 +16,6 @@ void main() {
     vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 
-    vertexDistance = cylindrical_distance(ModelViewMat, pos);
+    vertexDistance = 1;//TODO cylindrical_distance(ModelViewMat, pos);
     vertexColor = Color;
 }

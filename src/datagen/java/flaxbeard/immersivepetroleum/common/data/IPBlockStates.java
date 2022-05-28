@@ -6,12 +6,13 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.data.models.NongeneratedModels;
+import blusunrize.immersiveengineering.data.models.NongeneratedModels.NongeneratedModel;
 import com.google.common.base.Preconditions;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.data.blockstates.ConnectorBlockBuilder;
 import blusunrize.immersiveengineering.data.models.SplitModelBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -52,11 +53,13 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class IPBlockStates extends BlockStateProvider{
 	/** ResourceLocation("forge","obj") */
 //	private static final ResourceLocation FORGE_LOADER = new ResourceLocation("forge", "obj");
-	
+
 	final ExistingFileHelper exFileHelper;
+	private final NongeneratedModels nongeneratedModels;
 	public IPBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper){
 		super(gen, ImmersivePetroleum.MODID, exFileHelper);
 		this.exFileHelper = exFileHelper;
+		this.nongeneratedModels = new NongeneratedModels(gen, exFileHelper);
 	}
 	
 	@Override
@@ -258,7 +261,7 @@ public class IPBlockStates extends BlockStateProvider{
 				.map(p -> p.subtract(offset));
 		
 		String name = getMultiblockPath(block) + add;
-		BlockModelBuilder base = this.models().withExistingParent(name, mcLoc("block"))
+		NongeneratedModel base = nongeneratedModels.withExistingParent(name, mcLoc("block"))
 				.customLoader(OBJLoaderBuilder::begin).modelLocation(model).detectCullableFaces(false).flipV(true).end()
 				.texture("texture", texture)
 				.texture("particle", texture);
@@ -327,13 +330,14 @@ public class IPBlockStates extends BlockStateProvider{
 			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/generator.obj")).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
-		
+
 		VariantBlockStateBuilder builder = getVariantBuilder(IPContent.Blocks.GAS_GENERATOR.get());
-		ConnectorBlockBuilder.builder(this.models(), builder, (res, mod) -> res.texture("particle", texture))
-			.fixedModel(model)
-			.layers(RenderType.solid(), RenderType.cutout())
-			.rotationData(GasGeneratorBlock.FACING, 0)
-			.build();
+		// TODO just register model for all states, with appropriate rotations
+		//ConnectorBlockBuilder.builder(this.models(), builder, (res, mod) -> res.texture("particle", texture))
+		//	.fixedModel(model)
+		//	.layers(RenderType.solid(), RenderType.cutout())
+		//	.rotationData(GasGeneratorBlock.FACING, 0)
+		//	.build();
 	}
 	
 	/**

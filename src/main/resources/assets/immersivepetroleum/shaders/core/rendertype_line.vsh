@@ -42,6 +42,6 @@ void main() {
 		gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
 	}
 	
-	vertexDistance = cylindrical_distance(ModelViewMat, Position);
+    vertexDistance = 1;//TODO fog_distance(ModelViewMat, Position, FogShape);
 	vertexColor = Color;
 }
