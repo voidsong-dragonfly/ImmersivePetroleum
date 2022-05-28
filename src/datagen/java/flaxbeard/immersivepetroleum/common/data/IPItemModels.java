@@ -77,8 +77,8 @@ public class IPItemModels extends ItemModelProvider{
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
 		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 2, 0), new Vector3f(0, 45, 0), 0.25F);
 		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 2, 0), new Vector3f(0, 45, 0), 0.25F);
-		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.25F);
-		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.25F);
+		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, null, null, 0.25F);
+		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, null, null, 0.25F);
 		doTransform(trans, TransformType.HEAD, new Vector3f(0, 12, 0), null, 0.75F);
 		doTransform(trans, TransformType.GUI, new Vector3f(0, -3, 0), new Vector3f(30, 225, 0), 0.4F);
 		doTransform(trans, TransformType.GROUND, new Vector3f(0, 3, 0), null, 0.25F);
@@ -90,14 +90,14 @@ public class IPItemModels extends ItemModelProvider{
 				.texture("texture", modLoc("block/obj/generator"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 2.0f, 0), new Vector3f(0, 225, 0), 0.4F);
-		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 2.0f, 0), new Vector3f(0, 45, 0), 0.4F);
-		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 2.5f, 0), new Vector3f(75, 225, 0), 0.375F);
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 2.0F, 0), new Vector3f(0, 225, 0), 0.4F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 2.0F, 0), new Vector3f(0, 45, 0), 0.4F);
+		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 2.5F, 0), new Vector3f(75, 225, 0), 0.375F);
 		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, 2.5F, 0), new Vector3f(75, 45, 0), 0.375F);
 		doTransform(trans, TransformType.HEAD, new Vector3f(0, 13, 0), null, 0.8F);
-		doTransform(trans, TransformType.GUI, new Vector3f(0, 0, 0), new Vector3f(30, 225, 0), 0.625F);
+		doTransform(trans, TransformType.GUI, null, new Vector3f(30, 225, 0), 0.625F);
 		doTransform(trans, TransformType.GROUND, new Vector3f(0, 3, 0), null, 0.25F);
-		doTransform(trans, TransformType.FIXED, new Vector3f(0, 0, 0), null, 0.5F);
+		doTransform(trans, TransformType.FIXED, null, null, 0.5F);
 	}
 	
 	private void autolubeItem(){
@@ -107,8 +107,8 @@ public class IPItemModels extends ItemModelProvider{
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
 		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 2, 0), new Vector3f(0, 45, 0), 0.25F);
 		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 2, 0), new Vector3f(0, 45, 0), 0.25F);
-		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.25F);
-		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.25F);
+		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, null, null, 0.25F);
+		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, null, null, 0.25F);
 		doTransform(trans, TransformType.HEAD, new Vector3f(0, 12, 0), null, 0.75F);
 		doTransform(trans, TransformType.GUI, new Vector3f(0, -3, 0), new Vector3f(30, 225, 0), 0.4F);
 		doTransform(trans, TransformType.GROUND, new Vector3f(0, 3, 0), null, 0.25F);
@@ -120,8 +120,8 @@ public class IPItemModels extends ItemModelProvider{
 			.texture("texture", modLoc("multiblock/distillation_tower"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.03125F);
-		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 0.03125F);
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, null, null, 0.03125F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, null, null, 0.03125F);
 		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(-0.75F, -5, -1.25F), new Vector3f(0, 90, 0), 0.03125F);
 		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(1.0F, -5, -1.75F), new Vector3f(0, 270, 0), 0.03125F);
 		doTransform(trans, TransformType.HEAD, new Vector3f(1.5F, 8, 1.5F), null, 0.2F);
@@ -151,8 +151,8 @@ public class IPItemModels extends ItemModelProvider{
 				.texture("texture", modLoc("multiblock/cokerunit"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 225, 0), 0.03125F);
-		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 45, 0), 0.03125F);
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, null, new Vector3f(0, 225, 0), 0.03125F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, null, new Vector3f(0, 45, 0), 0.03125F);
 		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 2.5F, 0), new Vector3f(75, 225, 0), 0.03125F);
 		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, 2.5F, 0), new Vector3f(75, 45, 0), 0.03125F);
 		doTransform(trans, TransformType.HEAD, new Vector3f(0, 12, 0), null, 0.125F);
@@ -166,13 +166,13 @@ public class IPItemModels extends ItemModelProvider{
 				.texture("texture", modLoc("multiblock/hydrotreater"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 225, 0), 0.0625F);
-		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 45, 0), 0.0625F);
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, null, new Vector3f(0, 225, 0), 0.0625F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, null, new Vector3f(0, 45, 0), 0.0625F);
 		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 2.5F, 0), new Vector3f(75, 225, 0), 0.0625F);
 		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, 2.5F, 0), new Vector3f(75, 45, 0), 0.0625F);
 		doTransform(trans, TransformType.HEAD, new Vector3f(0, 8, 0), null, 0.25F);
 		doTransform(trans, TransformType.GUI, new Vector3f(-1, -1, 0), new Vector3f(30, 225, 0), 0.15625F);
-		doTransform(trans, TransformType.GROUND, new Vector3f(0, 0, 0), null, 0.125F);
+		doTransform(trans, TransformType.GROUND, null, null, 0.125F);
 		doTransform(trans, TransformType.FIXED, new Vector3f(0, -1, 0), null, 0.125F);
 	}
 	
@@ -181,14 +181,14 @@ public class IPItemModels extends ItemModelProvider{
 				.texture("texture", modLoc("multiblock/derrick"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.HEAD, new Vector3f(0, 0, 0), null, 1.0F);
-		doTransform(trans, TransformType.GUI, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.GROUND, new Vector3f(0, 0, 0), null, 1.0F);
-		doTransform(trans, TransformType.FIXED, new Vector3f(0, 0, 0), null, 1.0F);
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.HEAD, new Vector3f(0, 7.6F, 0), new Vector3f(0, 180, 0), 0.15625F);
+		doTransform(trans, TransformType.GUI, new Vector3f(0, -2, 0), new Vector3f(30, 45, 0), 0.0625F);
+		doTransform(trans, TransformType.GROUND, new Vector3f(0, 1, 0), null, 0.0625F);
+		doTransform(trans, TransformType.FIXED, new Vector3f(0, -8, 0), null, 0.0625F);
 	}
 	
 	private void oiltankItem(){
@@ -196,27 +196,24 @@ public class IPItemModels extends ItemModelProvider{
 				.texture("texture", modLoc("multiblock/oiltank"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
-		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.HEAD, new Vector3f(0, 0, 0), null, 1.0F);
-		doTransform(trans, TransformType.GUI, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1.0F);
-		doTransform(trans, TransformType.GROUND, new Vector3f(0, 0, 0), null, 1.0F);
-		doTransform(trans, TransformType.FIXED, new Vector3f(0, 0, 0), null, 1.0F);
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, null, null, 0.0625F);
+		doTransform(trans, TransformType.HEAD, new Vector3f(0, 7.6F, 0), new Vector3f(0, 180, 0), 0.15625F);
+		doTransform(trans, TransformType.GUI, new Vector3f(0, -2, 0), new Vector3f(30, 45, 0), 0.125F);
+		doTransform(trans, TransformType.GROUND, new Vector3f(0, 1, 0), null, 0.0625F);
+		doTransform(trans, TransformType.FIXED, new Vector3f(0, -1, 0), new Vector3f(0, 180, 0), 0.0625F);
 	}
 	
-	private final Vector3f ZERO = new Vector3f(0, 0, 0);
-	private void doTransform(ModelBuilder<?>.TransformsBuilder transform, TransformType type, Vector3f translation, @Nullable Vector3f rotationAngle, float scale){
-		if(rotationAngle == null){
-			rotationAngle = ZERO;
-		}
-		
-		transform.transform(type)
-				.translation(translation.x(), translation.y(), translation.z())
-				.rotation(rotationAngle.x(), rotationAngle.y(), rotationAngle.z())
-				.scale(scale)
-				.end();
+	private void doTransform(ModelBuilder<?>.TransformsBuilder transform, TransformType type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale){
+		ModelBuilder<?>.TransformsBuilder.TransformVecBuilder trans = transform.transform(type);
+		if(translation != null)
+			trans.translation(translation.x(), translation.y(), translation.z());
+		if(rotationAngle != null)
+			trans.rotation(rotationAngle.x(), rotationAngle.y(), rotationAngle.z());
+		trans.scale(scale);
+		trans.end();
 	}
 	
 	private ItemModelBuilder obj(ItemLike item, String model){
