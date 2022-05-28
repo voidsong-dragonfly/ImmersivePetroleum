@@ -2,7 +2,17 @@
   "parent": "minecraft:block/block",
   "loader": "immersiveengineering:basic_split",
   "dynamic": false,
-  "base_model": "immersivepetroleum:multiblock/distillation_tower_idle",
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "textures": {
+      "texture": "immersivepetroleum:multiblock/distillation_tower",
+      "particle": "immersivepetroleum:multiblock/distillation_tower"
+    },
+    "loader": "forge:obj",
+    "model": "immersivepetroleum:models/multiblock/obj/distillationtower.obj",
+    "detectCullableFaces": false,
+    "flip-v": true
+  },
   "split_parts": [
     [
       -2,

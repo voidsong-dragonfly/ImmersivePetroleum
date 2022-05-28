@@ -2,7 +2,17 @@
   "parent": "minecraft:block/block",
   "loader": "immersiveengineering:basic_split",
   "dynamic": false,
-  "base_model": "immersivepetroleum:multiblock/oiltank_mirrored",
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "textures": {
+      "texture": "immersivepetroleum:multiblock/oiltank",
+      "particle": "immersivepetroleum:multiblock/oiltank"
+    },
+    "loader": "forge:obj",
+    "model": "immersivepetroleum:models/multiblock/obj/oiltank_mirrored.obj",
+    "detectCullableFaces": false,
+    "flip-v": true
+  },
   "split_parts": [
     [
       2,

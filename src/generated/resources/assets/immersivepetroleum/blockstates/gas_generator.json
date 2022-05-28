@@ -1,23 +1,19 @@
 {
   "variants": {
     "facing=north": {
-      "model": "immersivepetroleum:block/gas_generator_connector",
-      "y": 180,
-      "uvlock": true
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 180
     },
     "facing=south": {
-      "model": "immersivepetroleum:block/gas_generator_connector",
-      "uvlock": true
+      "model": "immersivepetroleum:block/gas_generator"
     },
     "facing=west": {
-      "model": "immersivepetroleum:block/gas_generator_connector",
-      "y": 90,
-      "uvlock": true
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 90
     },
     "facing=east": {
-      "model": "immersivepetroleum:block/gas_generator_connector",
-      "y": 270,
-      "uvlock": true
+      "model": "immersivepetroleum:block/gas_generator",
+      "y": 270
     }
   }
 }
