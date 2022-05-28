@@ -6,13 +6,13 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.data.models.NongeneratedModels;
-import blusunrize.immersiveengineering.data.models.NongeneratedModels.NongeneratedModel;
 import com.google.common.base.Preconditions;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import blusunrize.immersiveengineering.data.models.NongeneratedModels;
+import blusunrize.immersiveengineering.data.models.NongeneratedModels.NongeneratedModel;
 import blusunrize.immersiveengineering.data.models.SplitModelBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -27,7 +27,6 @@ import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblo
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -332,18 +331,17 @@ public class IPBlockStates extends BlockStateProvider{
 			.texture("particle", texture);
 
 		VariantBlockStateBuilder builder = getVariantBuilder(IPContent.Blocks.GAS_GENERATOR.get());
-		// TODO just register model for all states, with appropriate rotations
-		//ConnectorBlockBuilder.builder(this.models(), builder, (res, mod) -> res.texture("particle", texture))
-		//	.fixedModel(model)
-		//	.layers(RenderType.solid(), RenderType.cutout())
-		//	.rotationData(GasGeneratorBlock.FACING, 0)
-		//	.build();
+		for(Direction dir:GasGeneratorBlock.FACING.getPossibleValues()){
+			int rot = (int) (dir.toYRot() % 360);
+			
+			builder.partialState()
+				.with(GasGeneratorBlock.FACING, dir)
+				.setModels(new ConfiguredModel(model, 0, rot, false));
+		}
 	}
 	
 	/**
 	 * From {@link blusunrize.immersiveengineering.common.data.BlockStates}
-	 * 
-	 * @param idleTexture
 	 */
 	private void createMultiblock(Block b, ModelFile masterModel, ModelFile mirroredModel, ResourceLocation particleTexture){
 		createMultiblock(b, masterModel, mirroredModel, IEProperties.MULTIBLOCKSLAVE, IEProperties.FACING_HORIZONTAL, IEProperties.MIRRORED, 180, particleTexture);
