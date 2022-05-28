@@ -1,0 +1,9 @@
+{
+  "display": {},
+  "textures": {
+    "texture": "immersivepetroleum:multiblock/derrick"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/multiblock/obj/derrick.obj",
+  "flip-v": true
+}

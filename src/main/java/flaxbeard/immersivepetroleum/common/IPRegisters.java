@@ -45,17 +45,21 @@ public class IPRegisters{
 		MENU_REGISTER.register(eventBus);
 		RECIPE_SERIALIZERS.register(eventBus);
 	}
-
-	public static final <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor, @Nullable Function<RegistryObject<T>, ? extends BlockItem> blockItem){
-		RegistryObject<T> block = BLOCK_REGISTER.register(name, blockConstructor);
-		if(blockItem != null){
-			registerItem(name, () -> blockItem.apply(block));
-		}
-		return block;
-	}
-
+	
 	public static final <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor){
 		return registerBlock(name, blockConstructor, null);
+	}
+	
+	public static final <T extends Block> RegistryObject<T> registerMultiblockBlock(String name, Supplier<T> blockConstructor){
+		return registerBlock(name, blockConstructor, block -> new BlockItem(block, new Item.Properties()));
+	}
+	
+	public static final <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor, @Nullable Function<T, ? extends BlockItem> blockItem){
+		RegistryObject<T> block = BLOCK_REGISTER.register(name, blockConstructor);
+		if(blockItem != null){
+			registerItem(name, () -> blockItem.apply(block.get()));
+		}
+		return block;
 	}
 	
 	public static final <T extends IPBlockBase> RegistryObject<T> registerIPBlock(String name, Supplier<T> blockConstructor){

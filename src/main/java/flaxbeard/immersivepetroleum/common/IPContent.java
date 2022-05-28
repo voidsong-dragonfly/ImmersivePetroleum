@@ -87,22 +87,22 @@ public class IPContent{
 	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/Content");
 	
 	public static class Multiblock{
-		public static final RegistryObject<DistillationTowerBlock> DISTILLATIONTOWER = IPRegisters.registerBlock(
+		public static final RegistryObject<DistillationTowerBlock> DISTILLATIONTOWER = IPRegisters.registerMultiblockBlock(
 				"distillation_tower", DistillationTowerBlock::new
 		);
-		public static final RegistryObject<PumpjackBlock> PUMPJACK = IPRegisters.registerBlock(
+		public static final RegistryObject<PumpjackBlock> PUMPJACK = IPRegisters.registerMultiblockBlock(
 				"pumpjack", PumpjackBlock::new
 		);
-		public static final RegistryObject<CokerUnitBlock> COKERUNIT = IPRegisters.registerBlock(
+		public static final RegistryObject<CokerUnitBlock> COKERUNIT = IPRegisters.registerMultiblockBlock(
 				"coker_unit", CokerUnitBlock::new
 		);
-		public static final RegistryObject<HydrotreaterBlock> HYDROTREATER = IPRegisters.registerBlock(
+		public static final RegistryObject<HydrotreaterBlock> HYDROTREATER = IPRegisters.registerMultiblockBlock(
 				"hydrotreater", HydrotreaterBlock::new
 		);
-		public static final RegistryObject<DerrickBlock> DERRICK = IPRegisters.registerBlock(
+		public static final RegistryObject<DerrickBlock> DERRICK = IPRegisters.registerMultiblockBlock(
 				"derrick", DerrickBlock::new
 		);
-		public static final RegistryObject<OilTankBlock> OILTANK = IPRegisters.registerBlock(
+		public static final RegistryObject<OilTankBlock> OILTANK = IPRegisters.registerMultiblockBlock(
 				"oiltank", OilTankBlock::new
 		);
 

@@ -13,8 +13,7 @@ public class DerrickMultiblock extends IPTemplateMultiblock{
 	
 	public DerrickMultiblock(){
 		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/derrick"),
-				new BlockPos(2, 0, 2), new BlockPos(2, 1, 4), new BlockPos(5, 17, 5),
-				IPContent.Multiblock.DERRICK);
+				new BlockPos(2, 0, 2), new BlockPos(2, 1, 4), new BlockPos(5, 17, 5), IPContent.Multiblock.DERRICK);
 	}
 	
 	@Override
@@ -24,6 +23,6 @@ public class DerrickMultiblock extends IPTemplateMultiblock{
 
 	@Override
 	public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer){
-		consumer.accept(new IPClientMultiblockProperties(this));
+		consumer.accept(new IPClientMultiblockProperties(this, 2.5, 0.5, 2.5));
 	}
 }

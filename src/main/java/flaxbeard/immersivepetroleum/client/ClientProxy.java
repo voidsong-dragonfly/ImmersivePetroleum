@@ -57,8 +57,10 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntit
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
+import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.KeyMapping;
@@ -274,21 +276,25 @@ public class ClientProxy extends CommonProxy{
 		
 		IP_CATEGORY = man.getRoot().getOrCreateSubnode(modLoc("main"), 100);
 		
-		pumpjack(modLoc("pumpjack"), 0);
-		distillation(modLoc("distillationtower"), 1);
-		coker(modLoc("cokerunit"), 2);
-		hydrotreater(modLoc("hydrotreater"), 3);
+		int priority = 0;
 		
-		handleReservoirManual(modLoc("reservoir"), 3);
+		pumpjack(modLoc("pumpjack"), priority++);
+		distillation(modLoc("distillationtower"), priority++);
+		coker(modLoc("cokerunit"), priority++);
+		hydrotreater(modLoc("hydrotreater"), priority++);
+		derrick(modLoc("derrick"), priority++);
+		oiltank(modLoc("oiltank"), priority++);
 		
-		lubricant(modLoc("lubricant"), 4);
-		man.addEntry(IP_CATEGORY, modLoc("asphalt"), 5);
-		projector(modLoc("projector"), 5);
-		speedboat(modLoc("speedboat"), 6);
-		man.addEntry(IP_CATEGORY, modLoc("napalm"), 7);
-		generator(modLoc("portablegenerator"), 8);
-		autolube(modLoc("automaticlubricator"), 9);
-		flarestack(modLoc("flarestack"), 10);
+		handleReservoirManual(modLoc("reservoir"), priority++);
+		
+		lubricant(modLoc("lubricant"), priority++);
+		man.addEntry(IP_CATEGORY, modLoc("asphalt"), priority++);
+		projector(modLoc("projector"), priority++);
+		speedboat(modLoc("speedboat"), priority++);
+		man.addEntry(IP_CATEGORY, modLoc("napalm"), priority++);
+		generator(modLoc("portablegenerator"), priority++);
+		autolube(modLoc("automaticlubricator"), priority++);
+		flarestack(modLoc("flarestack"), priority++);
 	}
 	
 	private static void flarestack(ResourceLocation location, int priority){
@@ -406,6 +412,24 @@ public class ClientProxy extends CommonProxy{
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement(new SpecialElementData("hydrotreater0", 0, () -> new ManualElementMultiblock(man, HydroTreaterMultiblock.INSTANCE)));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void derrick(ResourceLocation location, int priority){
+		ManualInstance man = ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement(new SpecialElementData("derrick0", 0, () -> new ManualElementMultiblock(man, DerrickMultiblock.INSTANCE)));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	protected static void oiltank(ResourceLocation location, int priority){
+		ManualInstance man = ManualHelper.getManual();
+		
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement(new SpecialElementData("oiltank0", 0, () -> new ManualElementMultiblock(man, OilTankMultiblock.INSTANCE)));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}

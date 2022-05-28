@@ -1,0 +1,9 @@
+{
+  "display": {},
+  "textures": {
+    "texture": "immersivepetroleum:multiblock/oiltank"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/multiblock/obj/oiltank.obj",
+  "flip-v": true
+}
