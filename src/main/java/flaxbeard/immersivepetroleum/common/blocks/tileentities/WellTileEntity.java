@@ -137,6 +137,8 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 			list.forEach(n -> {
 				ints.add(Integer.valueOf(((IntTag) n).getAsInt()));
 			});
+			this.phyiscalPipesList.clear();
+			this.phyiscalPipesList.addAll(ints);
 		}
 	}
 	
