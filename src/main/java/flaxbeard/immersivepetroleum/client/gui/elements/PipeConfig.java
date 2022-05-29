@@ -234,7 +234,7 @@ public class PipeConfig extends Button{
 		}
 		
 		if(!tooltip.isEmpty()){
-			// FIXME GuiUtils.drawHoveringText doesnt exist anymore!
+			// FIXME !GuiUtils.drawHoveringText doesnt exist anymore!
 			/*
 			Minecraft mc = Minecraft.getInstance();
 			int width = mc.getWindow().getGuiScaledWidth();

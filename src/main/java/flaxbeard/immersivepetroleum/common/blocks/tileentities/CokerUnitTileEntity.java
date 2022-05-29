@@ -1100,32 +1100,6 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	// STATIC CLASSES
 	
-	// FIXME !This may need to be redone completely
-	public class CokingProcess extends MultiblockProcessInMachine<CokerUnitRecipe>{
-//		public CokingProcess(CokerUnitRecipe recipe){
-//			super(recipe, Inventory.INPUT.id());
-//			setInputTanks(TANK_INPUT);
-//		}
-		
-		public CokingProcess(ResourceLocation id, BiFunction<Level, ResourceLocation, CokerUnitRecipe> get){
-			super(id, get, Inventory.INPUT.id());
-		}
-		
-		public CokingProcess(CokerUnitRecipe recipe, BiFunction<Level, ResourceLocation, CokerUnitRecipe> get){
-			super(recipe, get, Inventory.INPUT.id());
-		}
-		
-		@Override
-		public boolean canProcess(PoweredMultiblockBlockEntity<?, CokerUnitRecipe> multiblock){
-			return super.canProcess(multiblock);
-		}
-		
-		@Override
-		public void doProcessTick(PoweredMultiblockBlockEntity<?, CokerUnitRecipe> multiblock){
-			super.doProcessTick(multiblock);
-		}
-	}
-	
 	public static enum CokingState{
 		/** Wait for Input */
 		STANDBY,
