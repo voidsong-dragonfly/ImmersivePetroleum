@@ -19,6 +19,8 @@ import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -50,7 +52,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IPMenuProvider<HydrotreaterTileEntity>, IBlockBounds, TickableBE{
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IPMenuProvider<HydrotreaterTileEntity>, IBlockBounds, IPServerTickableTile, IPClientTickableTile{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -211,8 +213,12 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public void tick(){
-		if(this.level.isClientSide || isDummy() || isRSDisabled()){
+	public void tickClient(){
+	}
+	
+	@Override
+	public void tickServer(){
+		if(isDummy() || isRSDisabled()){
 			return;
 		}
 		

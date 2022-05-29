@@ -27,6 +27,8 @@ import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -59,7 +61,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IEBlockInterfaces.IDirectionalBE, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.ISoundBE, EnergyTransferHandler.EnergyConnector, TickableBE{
+public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IEBlockInterfaces.IDirectionalBE, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.ISoundBE, EnergyTransferHandler.EnergyConnector, IPServerTickableTile, IPClientTickableTile{
 	public static final int FUEL_CAPACITY = 8000;
 	
 	protected WireType wireType;
@@ -282,41 +284,42 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
-	public void tick(){
-		if(this.level.isClientSide){
-			ImmersiveEngineering.proxy.handleTileSound(IESounds.dieselGenerator, this, this.isActive, .3f, .75f);
-			if(this.isActive && this.level.getGameTime() % 4 == 0){
-				Direction fl = this.facing;
-				Direction fw = this.facing.getClockWise();
+	public void tickClient(){
+		ImmersiveEngineering.proxy.handleTileSound(IESounds.dieselGenerator, this, this.isActive, .3f, .75f);
+		if(this.isActive && this.level.getGameTime() % 4 == 0){
+			Direction fl = this.facing;
+			Direction fw = this.facing.getClockWise();
+			
+			Vec3i vec = fw.getOpposite().getNormal();
+			
+			double x = this.worldPosition.getX() + .5 + (fl.getStepX() * 2 / 16F) + (-fw.getStepX() * .6125f);
+			double y = this.worldPosition.getY() + .4;
+			double z = this.worldPosition.getZ() + .5 + (fl.getStepZ() * 2 / 16F) + (-fw.getStepZ() * .6125f);
+			
+			this.level.addParticle(this.level.random.nextInt(10) == 0 ? ParticleTypes.LARGE_SMOKE : ParticleTypes.SMOKE, x, y, z, vec.getX() * 0.025, 0, vec.getZ() * 0.025);
+		}
+	}
+	
+	@Override
+	public void tickServer(){
+		boolean lastActive = this.isActive;
+		this.isActive = false;
+		if(!this.level.hasNeighborSignal(this.worldPosition) && this.tank.getFluid() != null){
+			Fluid fluid = this.tank.getFluid().getFluid();
+			int amount = FuelHandler.getFuelUsedPerTick(fluid);
+			if(amount > 0 && this.tank.getFluidAmount() >= amount){
+				int generated = FuelHandler.getFluxGeneratedPerTick(fluid);
 				
-				Vec3i vec = fw.getOpposite().getNormal();
-				
-				double x = this.worldPosition.getX() + .5 + (fl.getStepX() * 2 / 16F) + (-fw.getStepX() * .6125f);
-				double y = this.worldPosition.getY() + .4;
-				double z = this.worldPosition.getZ() + .5 + (fl.getStepZ() * 2 / 16F) + (-fw.getStepZ() * .6125f);
-				
-				this.level.addParticle(this.level.random.nextInt(10) == 0 ? ParticleTypes.LARGE_SMOKE : ParticleTypes.SMOKE, x, y, z, vec.getX() * 0.025, 0, vec.getZ() * 0.025);
-			}
-		}else{
-			boolean lastActive = this.isActive;
-			this.isActive = false;
-			if(!this.level.hasNeighborSignal(this.worldPosition) && this.tank.getFluid() != null){
-				Fluid fluid = this.tank.getFluid().getFluid();
-				int amount = FuelHandler.getFuelUsedPerTick(fluid);
-				if(amount > 0 && this.tank.getFluidAmount() >= amount){
-					int generated = FuelHandler.getFluxGeneratedPerTick(fluid);
-					
-					if(this.energyStorage.receiveEnergy(generated, true) >= generated){
-						this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fluid), false);
-						this.tank.drain(new FluidStack(fluid, amount), FluidAction.EXECUTE);
-						this.isActive = true;
-					}
+				if(this.energyStorage.receiveEnergy(generated, true) >= generated){
+					this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fluid), false);
+					this.tank.drain(new FluidStack(fluid, amount), FluidAction.EXECUTE);
+					this.isActive = true;
 				}
 			}
-			
-			if(lastActive != this.isActive || (!this.level.isClientSide && this.isActive)){
-				setChanged();
-			}
+		}
+		
+		if(lastActive != this.isActive || (!this.level.isClientSide && this.isActive)){
+			setChanged();
 		}
 	}
 	

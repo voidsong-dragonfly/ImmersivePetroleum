@@ -12,6 +12,9 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPTickableBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -39,7 +42,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlayerInteraction, IBlockOverlayText, TickableBE{
+public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlayerInteraction, IBlockOverlayText, IPTickableBE, IPServerTickableTile, IPClientTickableTile{
 	public boolean isSlave;
 	public boolean isActive;
 	public boolean predictablyDraining = false;
@@ -218,10 +221,18 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 	int countClient = 0;
 	
 	@Override
+	public void tickClient(){
+	}
+	
+	@Override
+	public void tickServer(){
+	}
+	
+	// TODO Split it, but mind that things are mixed!
+	
+	@Override
 	public void tick(){
 		if(this.isSlave){
-			// See ApiUtils.checkForNeedlessTicking(te);
-			// EventHandler.REMOVE_FROM_TICKING.add(this);
 			return;
 		}
 		

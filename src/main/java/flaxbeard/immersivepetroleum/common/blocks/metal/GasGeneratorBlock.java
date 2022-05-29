@@ -116,12 +116,10 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 		te.setFacing(pState.getValue(FACING));
 		return te;
 	}
-
+	
 	@Nullable
 	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-			@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type
-	){
-		return createTickerHelper(type, IPTileTypes.GENERATOR);
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
+		return createTickerHelper(level.isClientSide, type, IPTileTypes.GENERATOR);
 	}
 }

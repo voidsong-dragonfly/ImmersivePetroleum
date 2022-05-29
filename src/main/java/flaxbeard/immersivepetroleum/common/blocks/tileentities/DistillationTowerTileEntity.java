@@ -22,6 +22,8 @@ import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -54,8 +56,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe>
-		implements IPMenuProvider<DistillationTowerTileEntity>, IBlockBounds, TickableBE{
+public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe> implements IPMenuProvider<DistillationTowerTileEntity>, IBlockBounds, IPServerTickableTile, IPClientTickableTile{
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;
 	
@@ -139,16 +140,22 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	public void tick(){
+	public void tickClient(){
+		if(isDummy()){
+			return;
+		}
+		
 		if(this.cooldownTicks > 0){
 			this.cooldownTicks--;
 		}
-		
-		//checkForNeedlessTicking();
-		
-		if(this.level.isClientSide || isDummy()){
+	}
+	
+	@Override
+	public void tickServer(){
+		if(isDummy()){
 			return;
 		}
+		
 		super.tickServer();
 
 		boolean update = false;

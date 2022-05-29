@@ -28,18 +28,16 @@ public class WellBlock extends IPBlockBase implements EntityBlock{
 	public Supplier<BlockItem> blockItemSupplier(){
 		throw new UnsupportedOperationException();
 	}
-
+	
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
 		WellTileEntity tile = IPTileTypes.WELL.get().create(pPos, pState);
 		return tile;
 	}
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            @Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type
-    ){
-        return createTickerHelper(type, IPTileTypes.WELL);
-    }
+	
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
+		return createTickerHelper(level.isClientSide, type, IPTileTypes.WELL);
+	}
 }

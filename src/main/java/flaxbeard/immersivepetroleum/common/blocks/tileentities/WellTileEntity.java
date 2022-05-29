@@ -12,6 +12,8 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +29,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class WellTileEntity extends IPTileEntityBase implements TickableBE{
+public class WellTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile{
 	
 	static final int PIPE_WORTH = 6;
 	static final int DEFAULT_PIPELENGTH = PIPE_WORTH * 64;
@@ -139,92 +141,93 @@ public class WellTileEntity extends IPTileEntityBase implements TickableBE{
 	}
 	
 	@Override
-	public void tick(){
-		if(this.level.isClientSide){
-			if(this.spill && this.spillFType != Fluids.EMPTY){
-				BlockPos pPos = this.spillHeight > -1 ? new BlockPos(this.worldPosition.getX(), this.spillHeight, this.worldPosition.getZ()) : this.worldPosition.above();
-				DerrickTileEntity.spawnSpillParticles(this.level, pPos, this.spillFType, 10, -0.25F);
-			}
-		}else{
-			if(this.drillingCompleted){
-				if(this.tappedIslands.size() > 0){
-					if(this.level.getGameTime() % 5 == 0){
-						boolean spill = false;
+	public void tickClient(){
+		if(this.spill && this.spillFType != Fluids.EMPTY){
+			BlockPos pPos = this.spillHeight > -1 ? new BlockPos(this.worldPosition.getX(), this.spillHeight, this.worldPosition.getZ()) : this.worldPosition.above();
+			DerrickTileEntity.spawnSpillParticles(this.level, pPos, this.spillFType, 10, -0.25F);
+		}
+	}
+	
+	@Override
+	public void tickServer(){
+		if(this.drillingCompleted){
+			if(this.tappedIslands.size() > 0){
+				if(this.level.getGameTime() % 5 == 0){
+					boolean spill = false;
+					
+					int height = -1;
+					Fluid fType = Fluids.EMPTY;
+					
+					BlockEntity teHigh = getWorldNonnull().getBlockEntity(getBlockPos().above());
+					if(teHigh instanceof WellPipeTileEntity){
+						Pair<Boolean, BlockPos> result = ((WellPipeTileEntity) teHigh).hasValidConnection();
 						
-						int height = -1;
-						Fluid fType = Fluids.EMPTY;
-						
-						BlockEntity teHigh = getWorldNonnull().getBlockEntity(getBlockPos().above());
-						if(teHigh instanceof WellPipeTileEntity){
-							Pair<Boolean, BlockPos> result = ((WellPipeTileEntity) teHigh).hasValidConnection();
-							
-							// Don't stop spilling even if the pumpjack is ontop, because it is "not designed" to handle the high pressure
-							if(!result.getLeft() || getWorldNonnull().getBlockEntity(result.getRight()) instanceof PumpjackTileEntity){
-								for(ColumnPos cPos:this.tappedIslands){
-									ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
-									
-									// One is enough to trigger spilling
-									if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
-										fType = island.getType().getFluid();
-										height = result.getRight().getY();
-										spill = true;
-										break;
-									}
+						// Don't stop spilling even if the pumpjack is ontop, because it is "not designed" to handle the high pressure
+						if(!result.getLeft() || getWorldNonnull().getBlockEntity(result.getRight()) instanceof PumpjackTileEntity){
+							for(ColumnPos cPos:this.tappedIslands){
+								ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+								
+								// One is enough to trigger spilling
+								if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
+									fType = island.getType().getFluid();
+									height = result.getRight().getY();
+									spill = true;
+									break;
 								}
-							}
-							
-						}else{
-							ColumnPos cPos = this.tappedIslands.get(0);
-							ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
-							
-							if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
-								spill = true;
-								fType = island.getType().getFluid();
-								height = this.worldPosition.getY() + 1;
 							}
 						}
 						
-						if(spill != this.spill){
-							this.spill = spill;
-							
-							if(this.spill){
-								this.spillHeight = height;
-								this.spillFType = fType;
-							}else{
-								this.spillHeight = -1;
-								this.spillFType = Fluids.EMPTY;
-							}
-							
-							setChanged();
+					}else{
+						ColumnPos cPos = this.tappedIslands.get(0);
+						ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+						
+						if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
+							spill = true;
+							fType = island.getType().getFluid();
+							height = this.worldPosition.getY() + 1;
 						}
 					}
 					
-					if(this.spill){
-						for(ColumnPos cPos:this.tappedIslands){
-							ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
-							
-							if(island != null){
-								// Already unpressurized islands are left alone by default
-								island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
-							}
+					if(spill != this.spill){
+						this.spill = spill;
+						
+						if(this.spill){
+							this.spillHeight = height;
+							this.spillFType = fType;
+						}else{
+							this.spillHeight = -1;
+							this.spillFType = Fluids.EMPTY;
+						}
+						
+						setChanged();
+					}
+				}
+				
+				if(this.spill){
+					for(ColumnPos cPos:this.tappedIslands){
+						ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+						
+						if(island != null){
+							// Already unpressurized islands are left alone by default
+							island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
 						}
 					}
 				}
-			}else{
-				if(this.selfDestruct && advanceTimer()){
-					// Sucks to be you if this happens =P
-					getWorldNonnull().setBlockAndUpdate(getBlockPos(), Blocks.BEDROCK.defaultBlockState());
-					
-					if(!this.phyiscalPipesList.isEmpty()){
-						for(int i = 0;i < this.phyiscalPipesList.size();i++){
-							BlockPos pos = getBlockPos();
-							pos = new BlockPos(pos.getX(), this.phyiscalPipesList.get(i).intValue(), pos.getZ());
-							
-							BlockState state = getWorldNonnull().getBlockState(pos);
-							
-							if(state.getBlock() instanceof WellPipeBlock){
-								getWorldNonnull().setBlockAndUpdate(pos, state.setValue(WellPipeBlock.BROKEN, true));
-							}
+			}
+		}else{
+			if(this.selfDestruct && advanceTimer()){
+				// Sucks to be you if this happens =P
+				getWorldNonnull().setBlockAndUpdate(getBlockPos(), Blocks.BEDROCK.defaultBlockState());
+				
+				if(!this.phyiscalPipesList.isEmpty()){
+					for(int i = 0;i < this.phyiscalPipesList.size();i++){
+						BlockPos pos = getBlockPos();
+						pos = new BlockPos(pos.getX(), this.phyiscalPipesList.get(i).intValue(), pos.getZ());
+						
+						BlockState state = getWorldNonnull().getBlockState(pos);
+						
+						if(state.getBlock() instanceof WellPipeBlock){
+							getWorldNonnull().setBlockAndUpdate(pos, state.setValue(WellPipeBlock.BROKEN, true));
 						}
 					}
 				}

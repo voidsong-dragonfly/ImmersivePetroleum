@@ -185,9 +185,9 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
 		if(state.getValue(SLAVE)) return null;
 		
-		return createTickerHelper(type, IPTileTypes.FLARE);
+		return createTickerHelper(level.isClientSide, type, IPTileTypes.FLARE);
 	}
-
+	
 	public static class FlarestackBlockItem extends IPBlockItemBase{
 		public FlarestackBlockItem(Block blockIn){
 			super(blockIn, new Item.Properties().tab(ImmersivePetroleum.creativeTab));

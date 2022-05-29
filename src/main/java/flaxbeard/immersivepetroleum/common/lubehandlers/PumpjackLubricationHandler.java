@@ -59,12 +59,12 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	
 	@Override
 	public void lubricate(Level world, int ticks, PumpjackTileEntity mbte){
-		if(!world.isClientSide){
-			if(ticks % 4 == 0){
-				mbte.tick();
-			}
-		}else{
+		if(world.isClientSide){
 			mbte.activeTicks += 1F / 4F;
+		}else{
+			if(ticks % 4 == 0){
+				mbte.tickServer();
+			}
 		}
 	}
 	

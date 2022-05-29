@@ -20,6 +20,8 @@ import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -47,7 +49,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds, TickableBE{
+public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IBlockBounds, IPServerTickableTile, IPClientTickableTile{
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 5));
 	
@@ -90,15 +92,21 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	}
 	
 	@Override
-	public void tick(){
-		if((this.level.isClientSide || isDummy()) && this.wasActive){
+	public void tickClient(){
+		if(!isDummy() && this.wasActive){
 			this.activeTicks++;
+		}
+	}
+	
+	@Override
+	public void tickServer(){
+		if(isDummy()){
 			return;
 		}
-		super.tickServer();
-
-		boolean active = false;
 		
+		super.tickServer();
+		
+		boolean active = false;
 		if(!isRSDisabled()){
 			BlockEntity teLow = this.getLevelNonnull().getBlockEntity(this.worldPosition.below());
 			

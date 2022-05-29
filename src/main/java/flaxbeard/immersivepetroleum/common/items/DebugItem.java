@@ -251,9 +251,7 @@ public class DebugItem extends IPItemBase{
 						if(well.tappedIslands.isEmpty()){
 							well.tappedIslands.add(new ColumnPos(well.getBlockPos()));
 						}
-						
 					}
-					
 				}
 				
 				return InteractionResult.SUCCESS;

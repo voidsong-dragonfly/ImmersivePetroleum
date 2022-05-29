@@ -22,6 +22,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerIn
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.core.BlockPos;
@@ -52,7 +54,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction, TickableBE{
+public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction, IPServerTickableTile, IPClientTickableTile{
 	
 	public static enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;
@@ -144,17 +146,17 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			nbt.putInt(port.getSerializedName(), getPortStateFor(port).ordinal());
 		}
 	}
-
+	
+	@Override
+	public void tickClient(){
+	}
+	
 	@Override
 	public void tickServer(){
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void tick(){
-		if(isDummy() || level.isClientSide){
+		if(isDummy()){
 			return;
 		}
+		
 		int threshold = 1;
 		int maxTransfer = FluidAttributes.BUCKET_VOLUME;
 		

@@ -6,6 +6,8 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundBE;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.core.BlockPos;
@@ -25,7 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE, TickableBE{
+public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE, IPServerTickableTile, IPClientTickableTile{
 	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").bypassArmor().setIsFire();
 	
 	protected boolean isRedstoneInverted;
@@ -117,64 +119,65 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE, 
 	}
 	
 	@Override
-	public void tick(){
-		if(this.level.isClientSide){
-			ImmersiveEngineering.proxy.handleTileSound(IPSounds.FLARESTACK, this, this.isActive, 1.0F, 0.75F);
-			if(this.isActive){
-				if(this.level.getGameTime() % 2 == 0){
-					float xPos = (this.worldPosition.getX() + 0.50F) + (this.level.random.nextFloat() - 0.5F) * .4375F;
-					float zPos = (this.worldPosition.getZ() + 0.50F) + (this.level.random.nextFloat() - 0.5F) * .4375F;
-					float yPos = (this.worldPosition.getY() + 1.875F) + (0.2F * this.level.random.nextFloat());
-					
-					this.level.addParticle(IPParticleTypes.FLARE_FIRE, xPos, yPos, zPos, 0.0, 0.0625F + (this.drained / (float) this.tank.getCapacity() * 0.125F), 0.0);
-				}
+	public void tickClient(){
+		ImmersiveEngineering.proxy.handleTileSound(IPSounds.FLARESTACK, this, this.isActive, 1.0F, 0.75F);
+		if(this.isActive){
+			if(this.level.getGameTime() % 2 == 0){
+				float xPos = (this.worldPosition.getX() + 0.50F) + (this.level.random.nextFloat() - 0.5F) * .4375F;
+				float zPos = (this.worldPosition.getZ() + 0.50F) + (this.level.random.nextFloat() - 0.5F) * .4375F;
+				float yPos = (this.worldPosition.getY() + 1.875F) + (0.2F * this.level.random.nextFloat());
 				
-			}else if(this.level.getGameTime() % 5 == 0){
-				float xPos = this.worldPosition.getX() + 0.50F + (this.level.random.nextFloat() - 0.5F) * .4375F;
-				float zPos = this.worldPosition.getZ() + 0.50F + (this.level.random.nextFloat() - 0.5F) * .4375F;
-				float yPos = this.worldPosition.getY() + 1.6F;
-				float xa = (this.level.random.nextFloat() - .5F) * .00625F;
-				float ya = (this.level.random.nextFloat() - .5F) * .00625F;
-				
-				this.level.addParticle(ParticleTypes.FLAME, xPos, yPos, zPos, xa, 0.025F, ya);
-			}
-		}else{
-			boolean lastActive = this.isActive;
-			this.isActive = false;
-			
-			int redstone = this.level.getBestNeighborSignal(this.worldPosition);
-			if(this.isRedstoneInverted()){
-				redstone = 15 - redstone;
+				this.level.addParticle(IPParticleTypes.FLARE_FIRE, xPos, yPos, zPos, 0.0, 0.0625F + (this.drained / (float) this.tank.getCapacity() * 0.125F), 0.0);
 			}
 			
-			if(redstone > 0 && this.tank.getFluidAmount() > 0){
-				float signal = redstone / 15F;
-				FluidStack fs = this.tank.drain((int) (this.tank.getCapacity() * signal), FluidAction.SIMULATE);
-				if(fs.getAmount() > 0){
-					this.tank.drain(fs.getAmount(), FluidAction.EXECUTE);
-					this.drained = (short) fs.getAmount();
-					this.isActive = true;
-				}
-			}
+		}else if(this.level.getGameTime() % 5 == 0){
+			float xPos = this.worldPosition.getX() + 0.50F + (this.level.random.nextFloat() - 0.5F) * .4375F;
+			float zPos = this.worldPosition.getZ() + 0.50F + (this.level.random.nextFloat() - 0.5F) * .4375F;
+			float yPos = this.worldPosition.getY() + 1.6F;
+			float xa = (this.level.random.nextFloat() - .5F) * .00625F;
+			float ya = (this.level.random.nextFloat() - .5F) * .00625F;
 			
-			if(this.isActive && this.level.getGameTime() % 10 == 0){
-				// Set *anything* ablaze that's in the danger zone
-				BlockPos min = this.worldPosition.offset(-1, 2, -1);
-				BlockPos max = min.offset(3, 3, 3);
-				List<Entity> list = this.getLevel().getEntitiesOfClass(Entity.class, new AABB(min, max));
-				if(!list.isEmpty()){
-					list.forEach(e -> {
-						if(!e.fireImmune()){
-							e.setSecondsOnFire(15);
-							e.hurt(FLARESTACK, 6.0F * (this.drained / (float) this.tank.getCapacity()));
-						}
-					});
-				}
+			this.level.addParticle(ParticleTypes.FLAME, xPos, yPos, zPos, xa, 0.025F, ya);
+		}
+	}
+	
+	@Override
+	public void tickServer(){
+		boolean lastActive = this.isActive;
+		this.isActive = false;
+		
+		int redstone = this.level.getBestNeighborSignal(this.worldPosition);
+		if(this.isRedstoneInverted()){
+			redstone = 15 - redstone;
+		}
+		
+		if(redstone > 0 && this.tank.getFluidAmount() > 0){
+			float signal = redstone / 15F;
+			FluidStack fs = this.tank.drain((int) (this.tank.getCapacity() * signal), FluidAction.SIMULATE);
+			if(fs.getAmount() > 0){
+				this.tank.drain(fs.getAmount(), FluidAction.EXECUTE);
+				this.drained = (short) fs.getAmount();
+				this.isActive = true;
 			}
-			
-			if(lastActive != this.isActive || (!this.level.isClientSide && this.isActive)){
-				setChanged();
+		}
+		
+		if(this.isActive && this.level.getGameTime() % 10 == 0){
+			// Set *anything* ablaze that's in the danger zone
+			BlockPos min = this.worldPosition.offset(-1, 2, -1);
+			BlockPos max = min.offset(3, 3, 3);
+			List<Entity> list = this.getLevel().getEntitiesOfClass(Entity.class, new AABB(min, max));
+			if(!list.isEmpty()){
+				list.forEach(e -> {
+					if(!e.fireImmune()){
+						e.setSecondsOnFire(15);
+						e.hurt(FLARESTACK, 6.0F * (this.drained / (float) this.tank.getCapacity()));
+					}
+				});
 			}
+		}
+		
+		if(lastActive != this.isActive || (!this.level.isClientSide && this.isActive)){
+			setChanged();
 		}
 	}
 	

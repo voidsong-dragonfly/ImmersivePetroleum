@@ -25,6 +25,8 @@ import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
@@ -68,8 +70,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * @author TwistedGate
  */
-public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe>
-		implements IPMenuProvider<DerrickTileEntity>, IBlockBounds, TickableBE{
+public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPMenuProvider<DerrickTileEntity>, IBlockBounds, IPServerTickableTile, IPClientTickableTile{
 	public enum Inventory{
 		/** Item Pipe Input */
 		INPUT;
@@ -201,41 +202,38 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	static final int POWER = 512;
 	static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
 	static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
-
-	@SuppressWarnings("deprecation")
+	
 	@Override
-	public void tick(){
-		if(isDummy()){
-			return;
-		}
-		
-		if(this.level.isClientSide){
-			// Drilling Particles
-			if(this.drilling){
-				for(int i = 0;i < 10;i++){
-					float rx = (this.level.random.nextFloat() - .5F) * 1.5F;
-					float rz = (this.level.random.nextFloat() - .5F) * 1.5F;
+	public void tickClient(){
+		// Drilling Particles
+		if(this.drilling){
+			for(int i = 0;i < 10;i++){
+				float rx = (this.level.random.nextFloat() - .5F) * 1.5F;
+				float rz = (this.level.random.nextFloat() - .5F) * 1.5F;
+				
+				if(!(rx > -0.625 && rx < 0.625) || !(rz > -0.625 && rz < 0.625)){
+					float xa = (this.level.random.nextFloat() - .5F) / 16;
+					float ya = 0.01F * this.level.random.nextFloat();
+					float za = (this.level.random.nextFloat() - .5F) / 16;
 					
-					if(!(rx > -0.625 && rx < 0.625) || !(rz > -0.625 && rz < 0.625)){
-						float xa = (this.level.random.nextFloat() - .5F) / 16;
-						float ya = 0.01F * this.level.random.nextFloat();
-						float za = (this.level.random.nextFloat() - .5F) / 16;
-						
-						double x = (this.worldPosition.getX() + 0.5) + rx;
-						double y = (this.worldPosition.getY() + 1.625) + this.level.random.nextFloat();
-						double z = (this.worldPosition.getZ() + 0.5) + rz;
-						
-						this.level.addParticle(this.level.random.nextFloat() < 0.5F ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, x, y, z, xa, ya, za);
-					}
+					double x = (this.worldPosition.getX() + 0.5) + rx;
+					double y = (this.worldPosition.getY() + 1.625) + this.level.random.nextFloat();
+					double z = (this.worldPosition.getZ() + 0.5) + rz;
+					
+					this.level.addParticle(this.level.random.nextFloat() < 0.5F ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, x, y, z, xa, ya, za);
 				}
 			}
-			
-			if(this.spilling){
-				spawnSpillParticles(level, this.worldPosition, this.fluidSpilled, 5, 15.75F);
-			}
-			
-			return;
 		}
+		
+		if(this.spilling){
+			spawnSpillParticles(level, this.worldPosition, this.fluidSpilled, 5, 15.75F);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public void tickServer(){
+		if(isDummy()) return;
 		
 		if(this.level.isAreaLoaded(this.getBlockPos(), 2)){
 			boolean forceUpdate = false;

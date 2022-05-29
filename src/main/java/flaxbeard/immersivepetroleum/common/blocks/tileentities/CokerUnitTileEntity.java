@@ -24,6 +24,8 @@ import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -61,9 +63,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements
-		IPMenuProvider<CokerUnitTileEntity>, IBlockBounds, TickableBE{
-
+public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IPMenuProvider<CokerUnitTileEntity>, IBlockBounds, IPServerTickableTile, IPClientTickableTile{
+	
 	public static enum Inventory{
 		/** Inventory Item Input */
 		INPUT,
@@ -229,29 +230,33 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	}
 	
 	@Override
-	public void tick(){
+	public void tickClient(){
 		if(isDummy() || isRSDisabled()){
 			return;
 		}
 		
-		if(this.level.isClientSide){
-			boolean debug = false;
-			for(int i = 0;i < this.chambers.length;i++){
-				if(debug || this.chambers[i].getState() == CokingState.DUMPING){
-					BlockPos cOutPos = getBlockPosForPos(i == 0 ? Chamber_A_OUT : Chamber_B_OUT);
-					Vec3 origin = new Vec3(cOutPos.getX() + 0.5, cOutPos.getY() + 0.125, cOutPos.getZ() + 0.5);
-					for(int j = 0;j < 10;j++){
-						double rX = (Math.random() - 0.5) * 0.4;
-						double rY = (Math.random() - 0.5) * 0.5;
-						double rdx = (Math.random() - 0.5) * 0.05;
-						double rdy = (Math.random() - 0.5) * 0.05;
-						
-						level.addParticle(ParticleTypes.SMOKE,
-								origin.x + rX, origin.y, origin.z + rY,
-								rdx, -(Math.random() * 0.06 + 0.11), rdy);
-					}
+		boolean debug = false;
+		for(int i = 0;i < this.chambers.length;i++){
+			if(debug || this.chambers[i].getState() == CokingState.DUMPING){
+				BlockPos cOutPos = getBlockPosForPos(i == 0 ? Chamber_A_OUT : Chamber_B_OUT);
+				Vec3 origin = new Vec3(cOutPos.getX() + 0.5, cOutPos.getY() + 0.125, cOutPos.getZ() + 0.5);
+				for(int j = 0;j < 10;j++){
+					double rX = (Math.random() - 0.5) * 0.4;
+					double rY = (Math.random() - 0.5) * 0.5;
+					double rdx = (Math.random() - 0.5) * 0.05;
+					double rdy = (Math.random() - 0.5) * 0.05;
+					
+					level.addParticle(ParticleTypes.SMOKE,
+							origin.x + rX, origin.y, origin.z + rY,
+							rdx, -(Math.random() * 0.06 + 0.11), rdy);
 				}
 			}
+		}
+	}
+	
+	@Override
+	public void tickServer(){
+		if(isDummy() || isRSDisabled()){
 			return;
 		}
 		

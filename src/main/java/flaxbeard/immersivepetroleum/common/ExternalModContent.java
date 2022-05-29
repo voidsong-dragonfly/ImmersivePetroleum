@@ -14,6 +14,7 @@ public class ExternalModContent{
 	
 	public static RegistryObject<Fluid> IE_FLUID_CONCRETE_FLUID;
 	
+	@SuppressWarnings("removal")
 	public static final void init(){
 		IE_FLUID_CONCRETE_FLUID = RegistryObject.of(new ResourceLocation(Lib.MODID, "concrete"), ForgeRegistries.FLUIDS);
 		IE_ITEM_PIPE = RegistryObject.of(new ResourceLocation(Lib.MODID, "fluid_pipe"), ForgeRegistries.ITEMS);
