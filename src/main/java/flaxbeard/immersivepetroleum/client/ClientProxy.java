@@ -93,6 +93,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
@@ -104,7 +105,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID)
+@EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
 public class ClientProxy extends CommonProxy{
 	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/ClientProxy");
@@ -194,6 +195,11 @@ public class ClientProxy extends CommonProxy{
 			// It'll be a while until that is in working conditions again
 			// event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
 		}
+	}
+	
+	@SubscribeEvent
+	public static void registerModelLoaders(ModelRegistryEvent event){
+		DerrickRenderer.init();
 	}
 	
 	@Override

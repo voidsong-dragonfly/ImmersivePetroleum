@@ -203,10 +203,15 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
 	static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
 	
+	public int rotation = 0;
+	
 	@Override
 	public void tickClient(){
 		// Drilling Particles
 		if(this.drilling){
+			this.rotation += 9;
+			this.rotation %= 360;
+			
 			for(int i = 0;i < 10;i++){
 				float rx = (this.level.random.nextFloat() - .5F) * 1.5F;
 				float rz = (this.level.random.nextFloat() - .5F) * 1.5F;
@@ -265,6 +270,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 										}
 										
 										well.setChanged();
+										forceUpdate = true;
 									}
 								}else if(well.pipes > 0){
 									final BlockPos dPos = getBlockPos();
@@ -305,6 +311,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 												}
 											}
 											
+											forceUpdate = true;
 											this.drilling = true;
 										}
 									}else{
@@ -318,6 +325,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 												well.usePipe();
 											}
 											
+											forceUpdate = true;
 											this.drilling = true;
 										}
 									}

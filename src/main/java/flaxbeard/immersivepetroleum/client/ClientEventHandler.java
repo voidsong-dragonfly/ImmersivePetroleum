@@ -64,7 +64,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -79,12 +78,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 
 public class ClientEventHandler{
-	
-	@SubscribeEvent
-	public void modelRegistryEvent(ModelRegistryEvent event){
-		// FIXME !"ModelLoader" does not exist anymore!
-//		ModelLoader.addSpecialModel(new ResourceLocation(ImmersivePetroleum.MODID, "models/multiblock/obj/derrick_pipe.obj"));
-	}
 	
 	@SubscribeEvent
 	public void renderLast(RenderLevelLastEvent event){

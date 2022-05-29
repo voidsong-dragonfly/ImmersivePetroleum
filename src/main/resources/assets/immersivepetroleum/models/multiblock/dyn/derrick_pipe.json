@@ -1,0 +1,9 @@
+{
+	"loader": "forge:obj",
+	"model": "immersivepetroleum:models/multiblock/obj/derrick_pipe.obj",
+    "textures": {
+      "texture": "immersivepetroleum:multiblock/derrick",
+      "particle": "immersivepetroleum:multiblock/derrick"
+    },
+	"flip-v": true
+}
