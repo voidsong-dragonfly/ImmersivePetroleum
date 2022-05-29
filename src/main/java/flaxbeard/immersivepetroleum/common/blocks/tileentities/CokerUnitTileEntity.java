@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,7 +14,6 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -231,7 +229,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	@Override
 	public void tickClient(){
-		if(isDummy() || isRSDisabled()){
+		if(isDummy() || !isRSDisabled()){
 			return;
 		}
 		
@@ -256,56 +254,58 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	@Override
 	public void tickServer(){
-		if(isDummy() || isRSDisabled()){
+		if(isDummy()){
 			return;
 		}
 		
 		boolean update = false;
 		
-		ItemStack inputStack = getInventory(Inventory.INPUT);
-		FluidStack inputFluid = this.bufferTanks[TANK_INPUT].getFluid();
-		
-		if(!inputStack.isEmpty() && inputFluid.getAmount() > 0 && CokerUnitRecipe.hasRecipeWithInput(inputStack, inputFluid)){
-			CokerUnitRecipe recipe = CokerUnitRecipe.findRecipe(inputStack, inputFluid);
+		if(!isRSDisabled()){
+			ItemStack inputStack = getInventory(Inventory.INPUT);
+			FluidStack inputFluid = this.bufferTanks[TANK_INPUT].getFluid();
 			
-			if(recipe != null && inputStack.getCount() >= recipe.inputItem.getCount() && inputFluid.getAmount() >= recipe.inputFluid.getAmount()){
-				for(int i = 0;i < this.chambers.length;i++){
-					CokingChamber chamber = this.chambers[i];
-					boolean skipNext = false;
-					
-					switch(chamber.getState()){
-						case STANDBY:{
-							if(chamber.setRecipe(recipe)){
-								update = true;
-								skipNext = true;
+			if(!inputStack.isEmpty() && inputFluid.getAmount() > 0 && CokerUnitRecipe.hasRecipeWithInput(inputStack, inputFluid)){
+				CokerUnitRecipe recipe = CokerUnitRecipe.findRecipe(inputStack, inputFluid);
+				
+				if(recipe != null && inputStack.getCount() >= recipe.inputItem.getCount() && inputFluid.getAmount() >= recipe.inputFluid.getAmount()){
+					for(int i = 0;i < this.chambers.length;i++){
+						CokingChamber chamber = this.chambers[i];
+						boolean skipNext = false;
+						
+						switch(chamber.getState()){
+							case STANDBY:{
+								if(chamber.setRecipe(recipe)){
+									update = true;
+									skipNext = true;
+								}
+								break;
 							}
+							case PROCESSING:{
+								int acceptedStack = chamber.addStack(copyStack(inputStack, recipe.inputItem.getCount()), true);
+								if(acceptedStack >= recipe.inputItem.getCount()){
+									acceptedStack = Math.min(acceptedStack, inputStack.getCount());
+									
+									chamber.addStack(copyStack(inputStack, acceptedStack), false);
+									inputStack.shrink(acceptedStack);
+									
+									skipNext = true;
+									update = true;
+								}
+								break;
+							}
+							default: break;
+						}
+						
+						if(skipNext){
 							break;
 						}
-						case PROCESSING:{
-							int acceptedStack = chamber.addStack(copyStack(inputStack, recipe.inputItem.getCount()), true);
-							if(acceptedStack >= recipe.inputItem.getCount()){
-								acceptedStack = Math.min(acceptedStack, inputStack.getCount());
-								
-								chamber.addStack(copyStack(inputStack, acceptedStack), false);
-								inputStack.shrink(acceptedStack);
-								
-								skipNext = true;
-								update = true;
-							}
-							break;
-						}
-						default: break;
-					}
-					
-					if(skipNext){
-						break;
 					}
 				}
 			}
-		}
-		
-		for(int i = 0;i < this.chambers.length;i++){
-			update |= this.chambers[i].tick(this, i);
+			
+			for(int i = 0;i < this.chambers.length;i++){
+				update |= this.chambers[i].tick(this, i);
+			}
 		}
 		
 		if(!getInventory(Inventory.INPUT_FILLED).isEmpty() && this.bufferTanks[TANK_INPUT].getFluidAmount() < this.bufferTanks[TANK_INPUT].getCapacity()){
