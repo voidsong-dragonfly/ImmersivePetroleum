@@ -10,10 +10,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
-import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import flaxbeard.immersivepetroleum.client.gui.elements.CokerChamberInfoArea;
+import flaxbeard.immersivepetroleum.client.gui.elements.EnergyDisplay;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import net.minecraft.client.renderer.Rect2i;
@@ -38,20 +38,20 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	protected List<InfoArea> makeInfoAreas(){
 		return List.of(
 				new FluidInfoArea(
-						tile.bufferTanks[TANK_INPUT],
-						new Rect2i(leftPos + 32, topPos + 14, 16, 47),
+						this.tile.bufferTanks[TANK_INPUT],
+						new Rect2i(this.leftPos + 32, this.topPos + 14, 16, 47),
 						202, 2, 16, 47,
 						GUI_TEXTURE
 				),
 				new FluidInfoArea(
-						tile.bufferTanks[TANK_OUTPUT],
-						new Rect2i(leftPos + 152, topPos + 14, 16, 47),
+						this.tile.bufferTanks[TANK_OUTPUT],
+						new Rect2i(this.leftPos + 152, this.topPos + 14, 16, 47),
 						202, 2, 16, 47,
 						GUI_TEXTURE
 				),
-				new EnergyInfoArea(leftPos + 168, topPos + 67, tile.energyStorage),
-				new CokerChamberInfoArea(tile.chambers[CHAMBER_A], new Rect2i(leftPos + 74, topPos + 24, 6, 38)),
-				new CokerChamberInfoArea(tile.chambers[CHAMBER_B], new Rect2i(leftPos + 120, topPos + 24, 6, 38))
+				new EnergyDisplay(this.leftPos + 168, this.topPos + 67, 7, 21, this.tile.energyStorage),
+				new CokerChamberInfoArea(this.tile.chambers[CHAMBER_A], new Rect2i(this.leftPos + 74, this.topPos + 24, 6, 38)),
+				new CokerChamberInfoArea(this.tile.chambers[CHAMBER_B], new Rect2i(this.leftPos + 120, this.topPos + 24, 6, 38))
 		);
 	}
 }
