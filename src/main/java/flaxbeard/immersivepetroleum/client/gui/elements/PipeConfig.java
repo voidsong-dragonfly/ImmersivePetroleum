@@ -261,7 +261,7 @@ public class PipeConfig extends Button{
 			int x = mx - margin;
 			int y = my - margin;
 			int w = mx + width + margin;
-			int h = my + height + margin;
+			int h = my + height;
 			
 			int fill = 0xFF000000;
 			int border = 0xFF3F3FFF;
