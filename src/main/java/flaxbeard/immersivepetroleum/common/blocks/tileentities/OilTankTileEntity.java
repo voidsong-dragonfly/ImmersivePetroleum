@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import blusunrize.immersiveengineering.api.fluid.IPressurizedFluidOutput;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.client.utils.TextUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
@@ -54,7 +55,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction, IPServerTickableTile, IPClientTickableTile{
+public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPlayerInteraction, IBlockOverlayText, IBlockBounds, IHammerInteraction, IPServerTickableTile, IPClientTickableTile, IPressurizedFluidOutput{
 	
 	public static enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;
@@ -154,7 +155,6 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		}
 		
 		int threshold = 1;
-		int maxTransfer = FluidAttributes.BUCKET_VOLUME;
 		
 		PortState portStateA = getPortStateFor(Port.DYNAMIC_A),
 				portStateB = getPortStateFor(Port.DYNAMIC_B),
@@ -163,11 +163,11 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		
 		boolean wasBalancing = false;
 		if((portStateA == PortState.OUTPUT && portStateC == PortState.INPUT) || (portStateA == PortState.INPUT && portStateC == PortState.OUTPUT)){
-			wasBalancing |= equalize(Port.DYNAMIC_A, threshold, maxTransfer);
+			wasBalancing |= equalize(Port.DYNAMIC_A, threshold, FluidAttributes.BUCKET_VOLUME);
 		}
 		
 		if((portStateB == PortState.OUTPUT && portStateD == PortState.INPUT) || (portStateB == PortState.INPUT && portStateD == PortState.OUTPUT)){
-			wasBalancing |= equalize(Port.DYNAMIC_B, threshold, maxTransfer);
+			wasBalancing |= equalize(Port.DYNAMIC_B, threshold, FluidAttributes.BUCKET_VOLUME);
 		}
 		
 		if(!isRSDisabled()){
@@ -280,6 +280,12 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	
 	public PortState getPortStateFor(Port port){
 		return this.portConfig.get(port);
+	}
+	
+	static final int MAX_FLUID_IO = FluidAttributes.BUCKET_VOLUME * 10;
+	@Override
+	public int getMaxAcceptedFluidAmount(FluidStack resource){
+		return MAX_FLUID_IO;
 	}
 	
 	@Override
