@@ -268,8 +268,6 @@ public class PipeConfig extends Button{
 			
 			matrix.pushPose();
 			{
-				matrix.translate(0.0, 0.0, 500);
-				
 				GuiComponent.fill(matrix, x, y, w, h, fill);
 				GuiComponent.fill(matrix, x, y, x + 1, h, border);
 				GuiComponent.fill(matrix, x, y, w, y + 1, border);
