@@ -33,25 +33,20 @@ public class IPBlockBase extends Block{
 	@Nullable
 	public static <E extends BlockEntity & IPServerTickableTile & IPClientTickableTile, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(boolean isClient, BlockEntityType<A> actual, BlockEntityType<E> expected){
 		if(isClient){
-//			if(actual instanceof IPClientTickableTile){
-				return createClientTickerHelper(actual, expected);
-//			}
+			return createClientTickerHelper(actual, expected);
 		}else{
-//			if(actual instanceof IPServerTickableTile){
-				return createServerTickerHelper(actual, expected);
-//			}
+			return createServerTickerHelper(actual, expected);
 		}
-//		return null;
-	}
-	
-	@Nullable
-	public static <E extends BlockEntity & IPServerTickableTile, A extends BlockEntity> BlockEntityTicker<A> createServerTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected){
-		return createTickerHelper(actual, expected, IPServerTickableTile::makeTicker);
 	}
 	
 	@Nullable
 	public static <E extends BlockEntity & IPClientTickableTile, A extends BlockEntity> BlockEntityTicker<A> createClientTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected){
 		return createTickerHelper(actual, expected, IPClientTickableTile::makeTicker);
+	}
+	
+	@Nullable
+	public static <E extends BlockEntity & IPServerTickableTile, A extends BlockEntity> BlockEntityTicker<A> createServerTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected){
+		return createTickerHelper(actual, expected, IPServerTickableTile::makeTicker);
 	}
 	
 	/** @deprecated See {@link IPTickableBE} */

@@ -411,6 +411,13 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				this.spilling = true;
 			}
 		}
+		
+		if(this.spilling && extractedFluid != Fluids.EMPTY && this.fluidSpilled != extractedFluid){
+			this.fluidSpilled = extractedFluid;
+		}
+		if(!this.spilling && this.fluidSpilled != Fluids.EMPTY){
+			this.fluidSpilled = Fluids.EMPTY;
+		}
 	}
 	
 	

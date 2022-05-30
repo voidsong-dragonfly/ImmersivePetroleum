@@ -27,6 +27,8 @@ public class FluidSpill extends TextureSheetParticle{
 		setLifetime(50);
 		this.quadSize = 4 / 16F;
 		
+		this.hasPhysics = true;
+		
 		this.yd = motionY;
 		
 		this.ogMotionX = motionX;
@@ -66,6 +68,8 @@ public class FluidSpill extends TextureSheetParticle{
 				this.xd *= 0.7D;
 				this.zd *= 0.7D;
 			}
+			
+			this.hasPhysics = this.yd <= 0.0;
 			
 			this.quadSize *= 0.97D;
 		}
