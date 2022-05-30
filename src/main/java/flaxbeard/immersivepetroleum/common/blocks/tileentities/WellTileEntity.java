@@ -219,8 +219,6 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 		}else{
 			if(this.selfDestruct && advanceTimer()){
 				// Sucks to be you if this happens =P
-				getWorldNonnull().setBlockAndUpdate(getBlockPos(), Blocks.BEDROCK.defaultBlockState());
-				
 				if(!this.phyiscalPipesList.isEmpty()){
 					for(int i = 0;i < this.phyiscalPipesList.size();i++){
 						BlockPos pos = getBlockPos();
@@ -233,6 +231,8 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 						}
 					}
 				}
+				
+				getWorldNonnull().setBlockAndUpdate(getBlockPos(), Blocks.BEDROCK.defaultBlockState());
 			}
 		}
 	}
