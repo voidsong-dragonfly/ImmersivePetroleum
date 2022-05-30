@@ -229,7 +229,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	@Override
 	public void tickClient(){
-		if(isDummy() || !isRSDisabled()){
+		if(isDummy() || isRSDisabled()){
 			return;
 		}
 		
