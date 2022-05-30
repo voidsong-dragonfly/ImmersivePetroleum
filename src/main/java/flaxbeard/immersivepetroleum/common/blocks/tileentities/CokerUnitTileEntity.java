@@ -109,9 +109,9 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	/** Template-Location of the Energy Input Ports.<br><pre>1 1 0<br>2 1 0<br>3 1 0</pre><br> */
 	public static final Set<MultiblockFace> Energy_IN = ImmutableSet.of(
-			new MultiblockFace(1, 1, 0, RelativeBlockFace.UP),
-			new MultiblockFace(2, 1, 0, RelativeBlockFace.UP),
-			new MultiblockFace(3, 1, 0, RelativeBlockFace.UP)
+			new MultiblockFace(1, 1, 0, RelativeBlockFace.BACK),
+			new MultiblockFace(2, 1, 0, RelativeBlockFace.BACK),
+			new MultiblockFace(3, 1, 0, RelativeBlockFace.BACK)
 	);
 
 	/** Template-Location of the Redstone Input Port. (6 1 4)<br> */
@@ -122,7 +122,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public final CokingChamber[] chambers = {new CokingChamber(64, 8000), new CokingChamber(64, 8000)};
 	public CokerUnitTileEntity(BlockEntityType<CokerUnitTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(CokerUnitMultiblock.INSTANCE, 24000, true, type, pWorldPosition, pBlockState);
-		bufferTanks[TANK_INPUT].setValidator(fs -> CokerUnitRecipe.hasRecipeWithInput(fs, true));
+		this.bufferTanks[TANK_INPUT].setValidator(fs -> CokerUnitRecipe.hasRecipeWithInput(fs, true));
 	}
 	
 	@Override
@@ -198,22 +198,22 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	);
 	private final MultiblockCapability<IFluidHandler> fluidOutHandler = MultiblockCapability.make(
 			this, be -> be.fluidOutHandler, CokerUnitTileEntity::master,
-			registerFluidOutput(bufferTanks[TANK_OUTPUT])
+			registerFluidOutput(this.bufferTanks[TANK_OUTPUT])
 	);
 	private final MultiblockCapability<IFluidHandler> fluidInHandler = MultiblockCapability.make(
 			this, be -> be.fluidInHandler, CokerUnitTileEntity::master,
-			registerFluidInput(bufferTanks[TANK_INPUT])
+			registerFluidInput(this.bufferTanks[TANK_INPUT])
 	);
 	
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction facing){
 		if ((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return insertionHandler.getAndCast();
+			return this.insertionHandler.getAndCast();
 		} else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing == getFacing())){
 			if (this.posInMultiblock.equals(Fluid_OUT)){
-				return fluidOutHandler.getAndCast();
+				return this.fluidOutHandler.getAndCast();
 			} else if (this.posInMultiblock.equals(Fluid_IN)) {
-				return fluidInHandler.getAndCast();
+				return this.fluidInHandler.getAndCast();
 			}
 		}
 		return super.getCapability(capability, facing);
@@ -244,7 +244,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					double rdx = (Math.random() - 0.5) * 0.05;
 					double rdy = (Math.random() - 0.5) * 0.05;
 					
-					level.addParticle(ParticleTypes.SMOKE,
+					this.level.addParticle(ParticleTypes.SMOKE,
 							origin.x + rX, origin.y, origin.z + rY,
 							rdx, -(Math.random() * 0.06 + 0.11), rdy);
 				}
@@ -380,19 +380,19 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		ItemStack stack = getInventory(Inventory.INPUT);
 		if(!stack.isEmpty()){
 			int compared = Mth.clamp(Mth.floor(stack.getCount() / (float) Math.min(getSlotLimit(Inventory.INPUT.id()), stack.getMaxStackSize()) * 15), 0, 15);
-			if(compared != lastCompared){
-				lastCompared = compared;
+			if(compared != this.lastCompared){
+				this.lastCompared = compared;
 				update = true;
 			}
 		}else if(lastCompared != 0){
-			lastCompared = 0;
+			this.lastCompared = 0;
 			update = true;
 		}
 		
 		if(update){
 			getRedstonePos().forEach(pos -> {
 				BlockPos p = getBlockPosForPos(pos);
-				level.updateNeighborsAt(p, level.getBlockState(p).getBlock());
+				this.level.updateNeighborsAt(p, this.level.getBlockState(p).getBlock());
 			});
 		}
 	}
@@ -502,12 +502,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		}
 		
 		// All power input sockets
-		if(CokerUnitTileEntity.Energy_IN.stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == facing){
+		if(this.getEnergyPos().stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == facing){
 			return true;
 		}
 		
 		// Redstone controller input
-		if(CokerUnitTileEntity.Redstone_IN.contains(this.posInMultiblock) && hit.getDirection() == facing.getOpposite()){
+		if(this.getRedstonePos().contains(this.posInMultiblock) && hit.getDirection() == facing.getOpposite()){
 			return true;
 		}
 		
