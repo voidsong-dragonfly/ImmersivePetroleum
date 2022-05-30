@@ -81,7 +81,7 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	private void removed(BlockState state, Level world, BlockPos pos){
-		if(world.isClientSide){
+		if(world.isClientSide || state.getValue(BROKEN)){
 			return;
 		}
 		
