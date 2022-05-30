@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.util;
 
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.HitResult;
 
 /**
@@ -26,6 +28,10 @@ import net.minecraft.world.phys.HitResult;
  * @author TwistedGate
  */
 public class MCUtil{
+	
+	public static void bindTexture(ResourceLocation texture){
+		RenderSystem.setShaderTexture(0, texture);
+	}
 	
 	public static Screen getScreen(){
 		Minecraft mc = Minecraft.getInstance();

@@ -8,13 +8,13 @@ import java.util.Optional;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
+import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
@@ -138,7 +138,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int mx, int my){
-		ClientUtils.bindTexture(GUI_TEXTURE);
+		MCUtil.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		for (InfoArea area : areas){
 			area.draw(matrix);

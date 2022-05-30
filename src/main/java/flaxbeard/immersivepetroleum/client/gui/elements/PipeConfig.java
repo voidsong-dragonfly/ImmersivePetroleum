@@ -14,6 +14,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -234,13 +235,52 @@ public class PipeConfig extends Button{
 		}
 		
 		if(!tooltip.isEmpty()){
-			// FIXME !GuiUtils.drawHoveringText doesnt exist anymore!
 			/*
 			Minecraft mc = Minecraft.getInstance();
 			int width = mc.getWindow().getGuiScaledWidth();
 			int height = mc.getWindow().getGuiScaledHeight();
 			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, mc.font);
 			*/
+			
+			// Draw my own crude tooltip, to have *something* here instead of nothing
+			
+			Font font = MCUtil.getFont();
+			int lHeight = font.lineHeight + 2;
+			int margin = 3;
+			int width = 0;
+			int height = lHeight * tooltip.size();
+			for(Component c:tooltip){
+				int sw = font.width(c);
+				if(sw > width)
+					width = sw;
+			}
+
+			mx += 12;
+			my -= height;
+			
+			int x = mx - margin;
+			int y = my - margin;
+			int w = mx + width + margin;
+			int h = my + height + margin;
+			
+			int fill = 0xFF000000;
+			int border = 0xFF3F3FFF;
+			
+			matrix.pushPose();
+			{
+				matrix.translate(0.0, 0.0, 500);
+				
+				GuiComponent.fill(matrix, x, y, w, h, fill);
+				GuiComponent.fill(matrix, x, y, x + 1, h, border);
+				GuiComponent.fill(matrix, x, y, w, y + 1, border);
+				GuiComponent.fill(matrix, w - 1, y, w, h, border);
+				GuiComponent.fill(matrix, x, h - 1, w, h, border);
+				
+				for(int i = 0;i < tooltip.size();i++){
+					GuiComponent.drawString(matrix, font, tooltip.get(i), mx, my + lHeight * i, -1);
+				}
+			}
+			matrix.popPose();
 		}
 	}
 	
