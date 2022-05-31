@@ -468,7 +468,34 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		return this.wellCache;
 	}
 	
-	public void transferGridDataToWell(@Nonnull WellTileEntity well){
+	/** Only gets the well if it exists, does not attempt to create it. May return null. */
+	@Nullable
+	public WellTileEntity getWell(){
+		if(this.wellCache != null && this.wellCache.isRemoved()){
+			this.wellCache = null;
+		}
+		
+		if(this.wellCache == null){
+			Level world = this.getLevelNonnull();
+			WellTileEntity well = null;
+			
+			for(int y = getBlockPos().getY() - 1;y >= world.getMinBuildHeight();y--){
+				BlockPos current = new BlockPos(this.getBlockPos().getX(), y, this.getBlockPos().getZ());
+				BlockState state = world.getBlockState(current);
+				
+				if(state.getBlock() == IPContent.Blocks.WELL.get()){
+					well = (WellTileEntity) world.getBlockEntity(current);
+					break;
+				}
+			}
+			
+			this.wellCache = well;
+		}
+		
+		return this.wellCache;
+	}
+	
+	public void transferGridDataToWell(@Nullable WellTileEntity well){
 		if(well != null){
 			int additionalPipes = 0;
 			List<ColumnPos> list = new ArrayList<>();
