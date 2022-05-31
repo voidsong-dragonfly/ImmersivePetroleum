@@ -49,7 +49,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 	public int additionalPipes = 0;
 	public boolean drillingCompleted;
 	
-	public boolean pastPhyiscalPart;
+	public boolean pastPhysicalPart;
 	
 	private boolean selfDestruct;
 	private int selfDestructTimer;
@@ -67,7 +67,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 	protected void writeCustom(CompoundTag nbt){
 		nbt.putBoolean("spill", this.spill);
 		nbt.putBoolean("drillingcompleted", this.drillingCompleted);
-		nbt.putBoolean("pastphyiscalpart", this.pastPhyiscalPart);
+		nbt.putBoolean("pastphyiscalpart", this.pastPhysicalPart);
 		
 		nbt.putInt("pipes", this.pipes);
 		nbt.putInt("wellpipelength", this.wellPipeLength);
@@ -103,7 +103,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 	protected void readCustom(CompoundTag nbt){
 		this.spill = nbt.getBoolean("spill");
 		this.drillingCompleted = nbt.getBoolean("drillingcompleted");
-		this.pastPhyiscalPart = nbt.getBoolean("pastphyiscalpart");
+		this.pastPhysicalPart = nbt.getBoolean("pastphyiscalpart");
 		
 		this.pipes = nbt.getInt("pipes");
 		this.wellPipeLength = nbt.getInt("wellpipelength");

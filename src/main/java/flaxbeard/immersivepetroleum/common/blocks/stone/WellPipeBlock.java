@@ -98,7 +98,7 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 				}
 			}
 			
-			if(well != null && !well.pastPhyiscalPart){
+			if(well != null && !well.pastPhysicalPart){
 				well.phyiscalPipesList.remove(Integer.valueOf(pos.getY()));
 				if(well.wellPipeLength > 0){
 					well.wellPipeLength -= 1;

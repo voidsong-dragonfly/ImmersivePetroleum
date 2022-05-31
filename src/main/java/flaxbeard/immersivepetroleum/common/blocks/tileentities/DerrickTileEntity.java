@@ -306,7 +306,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 												}
 												
 												if(well.phyiscalPipesList.size() >= realPipeLength && well.wellPipeLength >= realPipeLength){
-													well.pastPhyiscalPart = true;
+													well.pastPhysicalPart = true;
 													well.setChanged();
 												}
 											}
