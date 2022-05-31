@@ -207,12 +207,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction facing){
-		if ((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+		if((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return this.insertionHandler.getAndCast();
-		} else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing == getFacing())){
-			if (this.posInMultiblock.equals(Fluid_OUT)){
+		}else if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if(this.posInMultiblock.equals(Fluid_OUT) && (facing == null || facing == getFacing().getOpposite())){
 				return this.fluidOutHandler.getAndCast();
-			} else if (this.posInMultiblock.equals(Fluid_IN)) {
+			}else if(this.posInMultiblock.equals(Fluid_IN) && (facing == null || facing == getFacing())){
 				return this.fluidInHandler.getAndCast();
 			}
 		}
@@ -257,6 +257,8 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		if(isDummy()){
 			return;
 		}
+		
+		super.tickServer();
 		
 		boolean update = false;
 		
