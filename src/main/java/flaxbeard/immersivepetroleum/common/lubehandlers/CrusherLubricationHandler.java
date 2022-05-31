@@ -13,6 +13,7 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,6 +23,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -60,33 +62,26 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 	
 	@Override
 	public void lubricate(Level world, int ticks, CrusherBlockEntity mbte){
-		// FIXME !This is completely fucked now..
-		/*
 		if(!world.isClientSide){
-			Iterator<MultiblockProcess<CrusherRecipe>> processIterator = mbte.processQueue.iterator();
-			MultiblockProcess<CrusherRecipe> process = processIterator.next();
-			
 			if(ticks % 4 == 0){
-				int consume = mbte.energyStorage.extractEnergy(process.energyPerTick, true);
-				if(consume >= process.energyPerTick){
-					mbte.energyStorage.extractEnergy(process.energyPerTick, false);
-					
-					if(process.processTick < process.getMaxTicks(world))
-						process.processTick++;
-					
-					if(process.processTick >= process.getMaxTicks(world) && mbte.processQueue.size() > 1){
-						process = processIterator.next();
-						
-						if(process.processTick < process.getMaxTicks(world))
-							process.processTick++;
-					}
-				}
+				mbte.tickServer();
 			}
 		}else{
-			mbte.animation_barrelRotation += 18f / 4f;
-			mbte.animation_barrelRotation %= 360f;
+			if(mbte.shouldRenderAsActive()){
+				mbte.animation_barrelRotation += 4.5f;
+				mbte.animation_barrelRotation %= 360f;
+			}
 		}
-		*/
+	}
+	
+	@Override
+	public void lubricateClient(ClientLevel world, int ticks, CrusherBlockEntity mbte){
+		// TODO
+	}
+	
+	@Override
+	public void lubricateServer(ServerLevel world, int ticks, CrusherBlockEntity mbte){
+		// TODO
 	}
 	
 	@Override

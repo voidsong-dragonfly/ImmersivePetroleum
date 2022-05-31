@@ -12,6 +12,7 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +21,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -66,6 +68,16 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 				mbte.tickServer();
 			}
 		}
+	}
+	
+	@Override
+	public void lubricateClient(ClientLevel world, int ticks, PumpjackTileEntity mbte){
+		// TODO
+	}
+	
+	@Override
+	public void lubricateServer(ServerLevel world, int ticks, PumpjackTileEntity mbte){
+		// TODO
 	}
 	
 	@Override

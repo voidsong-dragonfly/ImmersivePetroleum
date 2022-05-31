@@ -15,6 +15,7 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,6 +25,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -98,6 +100,16 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 				wheel.rotation += IEServerConfig.MACHINES.excavator_speed.get() / 4F;
 			}
 		}
+	}
+	
+	@Override
+	public void lubricateClient(ClientLevel world, int ticks, ExcavatorBlockEntity mbte){
+		// TODO
+	}
+	
+	@Override
+	public void lubricateServer(ServerLevel world, int ticks, ExcavatorBlockEntity mbte){
+		// TODO
 	}
 	
 	@Override
