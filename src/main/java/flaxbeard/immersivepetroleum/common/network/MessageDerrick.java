@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -53,6 +54,9 @@ public class MessageDerrick implements INetMessage{
 						
 						derrick.gridStorage = PipeConfig.Grid.fromCompound(this.nbt);
 						derrick.updateMasterBlock(null, true);
+						
+						WellTileEntity well = derrick.getWell();
+						derrick.transferGridDataToWell(well);
 					}
 				}
 			}
