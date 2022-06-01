@@ -11,7 +11,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
-import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,14 +19,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -61,36 +58,27 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 	}
 	
 	@Override
-	public void lubricate(Level world, int ticks, CrusherBlockEntity mbte){
-		if(!world.isClientSide){
-			if(ticks % 4 == 0){
-				mbte.tickServer();
-			}
-		}else{
-			if(mbte.shouldRenderAsActive()){
-				mbte.animation_barrelRotation += 4.5f;
-				mbte.animation_barrelRotation %= 360f;
-			}
+	public void lubricateClient(ClientLevel world, int ticks, CrusherBlockEntity mbte){
+		if(mbte.shouldRenderAsActive()){
+			mbte.animation_barrelRotation += 4.5f;
+			mbte.animation_barrelRotation %= 360f;
 		}
 	}
 	
 	@Override
-	public void lubricateClient(ClientLevel world, int ticks, CrusherBlockEntity mbte){
-		// TODO
-	}
-	
-	@Override
 	public void lubricateServer(ServerLevel world, int ticks, CrusherBlockEntity mbte){
-		// TODO
+		if(ticks % 4 == 0){
+			mbte.tickServer();
+		}
 	}
 	
 	@Override
-	public void spawnLubricantParticles(Level world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherBlockEntity mbte){
+	public void spawnLubricantParticles(ClientLevel world, AutoLubricatorTileEntity lubricator, Direction facing, CrusherBlockEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
 		float location = world.random.nextFloat();
 		
-		boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.POSITIVE ^ !mbte.getIsMirrored();
+		boolean flip = f.getAxis() == Axis.Z ^ facing.getAxisDirection() == AxisDirection.NEGATIVE ^ !mbte.getIsMirrored();
 		float xO = 2.5F;
 		float zO = -0.1F;
 		float yO = 1.3F;
@@ -114,8 +102,8 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 			float r1 = (world.random.nextFloat() - .5F) * 2F;
 			float r2 = (world.random.nextFloat() - .5F) * 2F;
 			float r3 = world.random.nextFloat();
-			BlockState n = Fluids.LUBRICANT.block().get().defaultBlockState();
-			world.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
+			
+			world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}
 	

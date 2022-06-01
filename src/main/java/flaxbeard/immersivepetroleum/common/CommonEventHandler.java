@@ -21,13 +21,14 @@ import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -186,33 +187,34 @@ public class CommonEventHandler{
 				ILubricationHandler lubeHandler = LubricatedHandler.getHandlerForTile(te);
 				if(lubeHandler != null){
 					if(lubeHandler.isMachineEnabled(world, te)){
-						lubeHandler.lubricate(world, info.ticks, te);
+						if(world.isClientSide){
+							lubeHandler.lubricateClient((ClientLevel) world, info.ticks, te);
+						}else{
+							lubeHandler.lubricateServer((ServerLevel) world, info.ticks, te);
+						}
 					}
 					
 					if(world.isClientSide){
 						if(te instanceof MultiblockPartBlockEntity){
 							MultiblockPartBlockEntity<?> part = (MultiblockPartBlockEntity<?>) te;
 							
-							BlockParticleOption lubeParticle = new BlockParticleOption(ParticleTypes.FALLING_DUST, IPContent.Fluids.LUBRICANT.block().get().defaultBlockState());
 							Vec3i size = lubeHandler.getStructureDimensions();
-							
 							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
-							
 							for(int i = 0;i < numBlocks;i++){
 								BlockPos pos = part.getBlockPosForPos(new BlockPos(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
 								if(world.getBlockState(pos) == Blocks.AIR.defaultBlockState())
 									continue;
 								
-								BlockEntity te2 = world.getBlockEntity(info.pos);
+								BlockEntity te2 = world.getBlockEntity(pos);
 								if(te2 != null && te2 instanceof MultiblockPartBlockEntity){
 									if(((MultiblockPartBlockEntity<?>) te2).master() == part.master()){
 										for(Direction facing:Direction.Plane.HORIZONTAL){
-											if(world.random.nextInt(30) == 0){// && world.getBlockState(pos.offset(facing)).getBlock().isReplaceable(world, pos.offset(facing))){
+											if(world.random.nextInt(30) == 0){
 												Vec3i direction = facing.getNormal();
-												world.addParticle(lubeParticle,
-														pos.getX() + .5f + direction.getX() * .65f,
+												world.addParticle(ParticleTypes.FALLING_HONEY,
+														(pos.getX() + .5f) + (direction.getX() * .65f),
 														pos.getY() + 1,
-														pos.getZ() + .5f + direction.getZ() * .65f,
+														(pos.getZ() + .5f) + (direction.getZ() * .65f),
 														0, 0, 0);
 											}
 										}
@@ -222,8 +224,7 @@ public class CommonEventHandler{
 						}
 					}
 					
-					info.ticks--;
-					if(info.ticks == 0)
+					if(info.ticks-- <= 0)
 						toRemove.add(info);
 				}
 			}

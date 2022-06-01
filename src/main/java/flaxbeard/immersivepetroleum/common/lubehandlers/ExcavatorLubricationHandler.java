@@ -13,7 +13,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationH
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
-import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,14 +21,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -78,7 +75,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void lubricate(Level world, int ticks, ExcavatorBlockEntity mbte){
+	public void lubricateClient(ClientLevel world, int ticks, ExcavatorBlockEntity mbte){
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		BlockEntity center = world.getBlockEntity(wheelPos);
 		
@@ -89,31 +86,30 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 				wheel = wheel.master();
 			}
 			
-			if(!world.isClientSide && ticks % 4 == 0){
-				int consumed = IEServerConfig.MACHINES.excavator_consumption.get();
-				int extracted = mbte.energyStorage.extractEnergy(consumed, true);
-				if(extracted >= consumed){
-					mbte.energyStorage.extractEnergy(extracted, false);
-					wheel.rotation += IEServerConfig.MACHINES.excavator_speed.get() / 4F;
-				}
-			}else{
-				wheel.rotation += IEServerConfig.MACHINES.excavator_speed.get() / 4F;
+			wheel.rotation += IEServerConfig.MACHINES.excavator_speed.get() / 4F;
+		}
+	}
+	
+	@Override
+	public void lubricateServer(ServerLevel world, int ticks, ExcavatorBlockEntity mbte){
+		BlockPos wheelPos = mbte.getWheelCenterPos();
+		BlockEntity center = world.getBlockEntity(wheelPos);
+		
+		if(center instanceof BucketWheelBlockEntity){
+			BucketWheelBlockEntity wheel = (BucketWheelBlockEntity) center;
+			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
+				// Just to make absolutely sure it's the master
+				wheel = wheel.master();
+			}
+			
+			if(ticks % 4 == 0){
+				wheel.tickServer();
 			}
 		}
 	}
 	
 	@Override
-	public void lubricateClient(ClientLevel world, int ticks, ExcavatorBlockEntity mbte){
-		// TODO
-	}
-	
-	@Override
-	public void lubricateServer(ServerLevel world, int ticks, ExcavatorBlockEntity mbte){
-		// TODO
-	}
-	
-	@Override
-	public void spawnLubricantParticles(Level world, AutoLubricatorTileEntity lubricator, Direction facing, ExcavatorBlockEntity mbte){
+	public void spawnLubricantParticles(ClientLevel world, AutoLubricatorTileEntity lubricator, Direction facing, ExcavatorBlockEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		
 		float location = world.random.nextFloat();
@@ -142,8 +138,8 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 			float r1 = (world.random.nextFloat() - .5F) * 2F;
 			float r2 = (world.random.nextFloat() - .5F) * 2F;
 			float r3 = world.random.nextFloat();
-			BlockState n = Fluids.LUBRICANT.block().get().defaultBlockState();
-			world.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
+			
+			world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}
 	

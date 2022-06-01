@@ -46,16 +46,14 @@ public class LubricatedHandler{
 		
 		BlockEntity isPlacedCorrectly(Level world, AutoLubricatorTileEntity lubricator, Direction direction);
 		
-		void lubricate(Level world, int ticks, E mbte);
-
 		void lubricateClient(ClientLevel world, int ticks, E mbte);
 		
 		void lubricateServer(ServerLevel world, int ticks, E mbte);
 		
+		void spawnLubricantParticles(ClientLevel world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
+		
 		@OnlyIn(Dist.CLIENT)
 		void renderPipes(AutoLubricatorTileEntity lubricator, E mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay);
-		
-		void spawnLubricantParticles(Level world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
 	}
 	
 	static final Map<Class<? extends BlockEntity>, ILubricationHandler<? extends BlockEntity>> lubricationHandlers = new HashMap<>();
@@ -65,12 +63,12 @@ public class LubricatedHandler{
 		lubricationHandlers.put(tileClass, instance);
 	}
 	
-	public static ILubricationHandler<BlockEntity> getHandlerForTile(BlockEntity te){
+	public static <T extends BlockEntity> ILubricationHandler<T> getHandlerForTile(T te){
 		if(te != null){
 			Class<? extends BlockEntity> teClass = te.getClass();
 			if(lubricationHandlers.containsKey(teClass)){
 				@SuppressWarnings("unchecked")
-				ILubricationHandler<BlockEntity> tmp = (ILubricationHandler<BlockEntity>) lubricationHandlers.get(teClass);
+				ILubricationHandler<T> tmp = (ILubricationHandler<T>) lubricationHandlers.get(teClass);
 				return tmp;
 			}
 		}

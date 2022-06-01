@@ -86,7 +86,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
-		return createGenericTickerHelper(type, IPTileTypes.AUTOLUBE);
+		return createTickerHelper(level.isClientSide, type, IPTileTypes.AUTOLUBE);
 	}
 	
 	@Override

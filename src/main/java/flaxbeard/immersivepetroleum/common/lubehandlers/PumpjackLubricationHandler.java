@@ -60,28 +60,19 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public void lubricate(Level world, int ticks, PumpjackTileEntity mbte){
-		if(world.isClientSide){
-			mbte.activeTicks += 1F / 4F;
-		}else{
-			if(ticks % 4 == 0){
-				mbte.tickServer();
-			}
-		}
-	}
-	
-	@Override
 	public void lubricateClient(ClientLevel world, int ticks, PumpjackTileEntity mbte){
-		// TODO
+		mbte.activeTicks += 1F / 4F;
 	}
 	
 	@Override
 	public void lubricateServer(ServerLevel world, int ticks, PumpjackTileEntity mbte){
-		// TODO
+		if(ticks % 4 == 0){
+			mbte.tickServer();
+		}
 	}
 	
 	@Override
-	public void spawnLubricantParticles(Level world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
+	public void spawnLubricantParticles(ClientLevel world, AutoLubricatorTileEntity lubricator, Direction facing, PumpjackTileEntity mbte){
 		Direction f = mbte.getIsMirrored() ? facing : facing.getOpposite();
 		float location = world.random.nextFloat();
 		
@@ -114,7 +105,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			//world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 			
 			// Because making your own particles is so convoluted and confusing
-			world.addParticle(ParticleTypes.DRIPPING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
+			world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}
 	
