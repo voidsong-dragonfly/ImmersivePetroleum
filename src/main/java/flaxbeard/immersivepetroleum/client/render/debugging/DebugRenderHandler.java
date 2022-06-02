@@ -21,13 +21,19 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.IPTileEntityBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.Port;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
@@ -90,8 +96,72 @@ public class DebugRenderHandler{
 							
 							List<Component> debugOut = new ArrayList<>();
 							BlockEntity te = world.getBlockEntity(result.getBlockPos());
-							boolean isMBPart = te instanceof MultiblockPartBlockEntity<?>;
-							if(isMBPart){
+							
+							if(te instanceof GasGeneratorTileEntity){
+								GasGeneratorTileEntity gas = (GasGeneratorTileEntity) te;
+								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
+								
+							}else if(te instanceof IPTileEntityBase){
+								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
+								
+								if(te instanceof AutoLubricatorTileEntity){
+									AutoLubricatorTileEntity autolube = (AutoLubricatorTileEntity) te;
+									
+									FluidTank tank = autolube.tank;
+									FluidStack fs = tank.getFluid();
+									
+									debugOut.add(toText("isSlave").withStyle(autolube.isSlave ? ChatFormatting.GREEN : ChatFormatting.RED));
+									if(!autolube.isSlave){
+										debugOut.add(toText("Facing: " + autolube.facing.getName()));
+										debugOut.add(toText("Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+									}
+									
+								}else if(te instanceof FlarestackTileEntity){
+									FlarestackTileEntity flare = (FlarestackTileEntity) te;
+									
+								}else if(te instanceof WellTileEntity){
+									WellTileEntity well = (WellTileEntity) te;
+									
+								}else if(te instanceof WellPipeTileEntity){
+									WellPipeTileEntity wellPipe = (WellPipeTileEntity) te;
+									
+								}
+								
+							}else if(te instanceof MultiblockPartBlockEntity<?>){
+								{
+									MultiblockPartBlockEntity<?> generic = (MultiblockPartBlockEntity<?>) te;
+									if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
+										generic = generic.master();
+									}
+									BlockPos tPos = generic.posInMultiblock;
+									Block block = generic.getBlockState().getBlock();
+									
+									debugOut.add(toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
+									
+									MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
+									
+									try{
+										name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
+									}catch(UnsupportedOperationException e){
+										// Don't care, skip if this is thrown
+									}
+									
+									if(generic instanceof PoweredMultiblockBlockEntity<?,?> poweredGeneric){
+										name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
+										debugOut.add(toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
+									}
+									
+									synchronized(LubricatedHandler.lubricatedTiles){
+										for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
+											if(info.pos.equals(generic.getBlockPos())){
+												name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
+											}
+										}
+									}
+									
+									debugOut.add(name);
+								}
+								
 								if(te instanceof DistillationTowerTileEntity tower){
 									distillationtower(debugOut, tower);
 									
@@ -109,46 +179,9 @@ public class DebugRenderHandler{
 								}
 							}
 							
-							if(!debugOut.isEmpty() || isMBPart){
-								if(isMBPart){
-									MultiblockPartBlockEntity<?> generic = (MultiblockPartBlockEntity<?>) te;
-									BlockPos tPos = generic.posInMultiblock;
-									
-									if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
-										generic = generic.master();
-									}
-									
-									BlockPos hit = result.getBlockPos();
-									Block block = generic.getBlockState().getBlock();
-									
-									debugOut.add(0, toText("World XYZ: " + hit.getX() + ", " + hit.getY() + ", " + hit.getZ()));
-									debugOut.add(1, toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
-									
-									MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
-									
-									try{
-										name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
-									}catch(UnsupportedOperationException e){
-										// Don't care, skip if this is thrown
-									}
-									
-									if(generic instanceof PoweredMultiblockBlockEntity<?,?> poweredGeneric){
-
-										name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
-										
-										debugOut.add(2, toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
-									}
-									
-									synchronized(LubricatedHandler.lubricatedTiles){
-										for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
-											if(info.pos.equals(generic.getBlockPos())){
-												name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
-											}
-										}
-									}
-									
-									debugOut.add(2, name);
-								}
+							if(!debugOut.isEmpty()){
+								BlockPos hit = result.getBlockPos();
+								debugOut.add(0, toText("World XYZ: " + hit.getX() + ", " + hit.getY() + ", " + hit.getZ()));
 								
 								renderOverlay(event.getMatrixStack(), debugOut);
 							}
