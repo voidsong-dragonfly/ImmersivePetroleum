@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
@@ -16,6 +15,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -216,13 +216,38 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		}
 	}
 	
+	@Override
+	public Component getName(ItemStack stack){
+		boolean hasUpgrades = getContainedItems(stack).stream().anyMatch(s -> s != ItemStack.EMPTY);
+		
+		Component c = super.getName(stack);
+		if(hasUpgrades){
+			c = new TranslatableComponent("desc.immersivepetroleum.flavour.speedboat.prefix").append(c).withStyle(ChatFormatting.GOLD);
+		}
+		return c;
+	}
+	
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		if(ItemNBTHelper.hasKey(stack, "tank")){
-			FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
-			if(fs != null){
-				tooltip.add(((MutableComponent) fs.getDisplayName()).append(": " + fs.getAmount() + "mB").withStyle(ChatFormatting.GRAY));
+		if(stack.hasTag()){
+			CompoundTag tag = stack.getTag();
+			
+			if(tag.contains("tank")){
+				FluidStack fs = FluidStack.loadFluidStackFromNBT(tag.getCompound("tank"));
+				if(fs != null){
+					tooltip.add(((MutableComponent) fs.getDisplayName()).append(": " + fs.getAmount() + "mB").withStyle(ChatFormatting.GRAY));
+				}
+			}
+			
+			NonNullList<ItemStack> items = getContainedItems(stack);
+			if(items != null && !items.isEmpty()){
+				for(int i = 0;i < items.size();i++){
+					ItemStack upgrade = items.get(i);
+					if(upgrade != ItemStack.EMPTY){
+						tooltip.add(new TranslatableComponent("desc.immersivepetroleum.flavour.speedboat.upgrade", i + 1).append(upgrade.getHoverName()));
+					}
+				}
 			}
 		}
 		
