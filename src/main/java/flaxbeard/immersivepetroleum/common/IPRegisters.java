@@ -12,6 +12,8 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
+import flaxbeard.immersivepetroleum.common.util.IPEffects.IPEffect;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -35,6 +37,7 @@ public class IPRegisters{
 	private static final DeferredRegister<EntityType<?>> ENTITY_REGISTER = DeferredRegister.create(ForgeRegistries.ENTITIES, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<MenuType<?>> MENU_REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ImmersivePetroleum.MODID);
+	private static final DeferredRegister<MobEffect> MOB_EFFECT = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ImmersivePetroleum.MODID);
 	
 	public static final void addRegistersToEventBus(IEventBus eventBus){
 		BLOCK_REGISTER.register(eventBus);
@@ -44,6 +47,7 @@ public class IPRegisters{
 		ENTITY_REGISTER.register(eventBus);
 		MENU_REGISTER.register(eventBus);
 		RECIPE_SERIALIZERS.register(eventBus);
+		MOB_EFFECT.register(eventBus);
 	}
 	
 	public static final <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor){
@@ -99,9 +103,12 @@ public class IPRegisters{
 		return RECIPE_SERIALIZERS.register(name, serializer);
 	}
 	
-	public static <T extends AbstractContainerMenu>
-	RegistryObject<MenuType<T>> registerMenu(String name, Supplier<MenuType<T>> factory){
+	public static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenu(String name, Supplier<MenuType<T>> factory){
 		return MENU_REGISTER.register(name, factory);
+	}
+	
+	public static <T extends IPEffect> RegistryObject<T> registerMobEffect(String name, Supplier<T> constructor){
+		return MOB_EFFECT.register(name, constructor);
 	}
 	
 	private IPRegisters(){

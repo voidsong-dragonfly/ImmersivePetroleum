@@ -123,9 +123,9 @@ public class CommonEventHandler{
 				}
 			}
 			
-			if(entity.getRemainingFireTicks() > 0 && entity.getEffect(IPEffects.ANTI_DISMOUNT_FIRE) != null){
+			if(entity.getRemainingFireTicks() > 0 && entity.getEffect(IPEffects.ANTI_DISMOUNT_FIRE.get()) != null){
 				entity.clearFire();
-				entity.removeEffect(IPEffects.ANTI_DISMOUNT_FIRE);
+				entity.removeEffect(IPEffects.ANTI_DISMOUNT_FIRE.get());
 				event.setCanceled(true);
 			}
 		}
@@ -162,7 +162,7 @@ public class CommonEventHandler{
 					if(fluidstate != Fluids.EMPTY.defaultFluidState() && fluidstate.is(FluidTags.LAVA)){
 						LivingEntity living = (LivingEntity) event.getEntityMounting();
 						
-						living.addEffect(new MobEffectInstance(IPEffects.ANTI_DISMOUNT_FIRE, 1, 0, false, false));
+						living.addEffect(new MobEffectInstance(IPEffects.ANTI_DISMOUNT_FIRE.get(), 1, 0, false, false));
 						return;
 					}
 				}

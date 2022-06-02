@@ -192,6 +192,7 @@ public class IPContent{
 		Multiblock.forceClassLoad();
 		IPMenuTypes.forceClassLoad();
 		Serializers.forceClassLoad();
+		IPEffects.forceClassLoad();
 	}
 
 	public static void preInit(){
@@ -252,7 +253,7 @@ public class IPContent{
 	
 	@SubscribeEvent
 	public static void registerEffects(RegistryEvent.Register<MobEffect> event){
-		IPEffects.init();
+		event.getRegistry().register(IPEffects.ANTI_DISMOUNT_FIRE.get());
 	}
 	
 	@SubscribeEvent

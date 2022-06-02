@@ -77,13 +77,10 @@ public class ImmersivePetroleum{
 		
 		IEventBus eBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IPRegisters.addRegistersToEventBus(eBus);
-		//Serializers.RECIPE_SERIALIZERS.register(eBus);
 		
 		IPContent.populate();
 		IPLootFunctions.modConstruction();
 		IPRecipeTypes.modConstruction();
-		
-		//IPTileTypes.REGISTER.register(eBus);
 		
 		MinecraftForge.EVENT_BUS.register(new IPWorldGen());
 		IPWorldGen.init(eBus);
