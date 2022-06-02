@@ -45,6 +45,7 @@ import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
 import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
 import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
+import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
@@ -56,6 +57,7 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
@@ -555,7 +557,7 @@ public class ClientProxy extends CommonProxy{
 			registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
 			registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
 
-			//ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
+			ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
 		}
 
 		private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){

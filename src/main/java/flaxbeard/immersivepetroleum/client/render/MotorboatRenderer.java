@@ -48,9 +48,9 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 					float a = entity.getRowingTime(0, partialTicks);
 					float b = entity.getRowingTime(1, partialTicks);
 					
-					modelBoat.propeller.xRot = (a > 0 ? b : a) * 15.0F;
+					this.modelBoat.propeller.xRot = (a > 0 ? b : a) * 15.0F;
 				}else{
-					modelBoat.propeller.xRot = 0;
+					this.modelBoat.propeller.xRot = 0;
 				}
 				
 				float pr = entity.isEmergency() ? 0F : entity.propellerRotation;
@@ -63,7 +63,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				if(!entity.isLeftInDown() && !entity.isRightInDown())
 					pr = (float) (pr * Math.pow(0.7, Minecraft.getInstance().getFrameTime()));
 				
-				modelBoat.propellerAssembly.yRot = (float) Math.toRadians(pr * 15);
+				this.modelBoat.propellerAssembly.yRot = (float) Math.toRadians(pr * 15);
 			}
 			
 			this.modelBoat.renderToBuffer(matrix, bufferIn.getBuffer(this.modelBoat.renderType(getEntityTexture(entity.isFireproof))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

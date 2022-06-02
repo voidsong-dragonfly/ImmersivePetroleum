@@ -128,6 +128,63 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		this.entityData.define(UPGRADE_3, ItemStack.EMPTY);
 	}
 	
+	@Override
+	protected void readAdditionalSaveData(CompoundTag compound){
+		super.readAdditionalSaveData(compound);
+		
+		String fluid = "";
+		int amount = 0;
+		ItemStack stack0 = ItemStack.EMPTY;
+		ItemStack stack1 = ItemStack.EMPTY;
+		ItemStack stack2 = ItemStack.EMPTY;
+		ItemStack stack3 = ItemStack.EMPTY;
+		
+		if(compound.contains("tank")){
+			CompoundTag tank = compound.getCompound("tank");
+			fluid = tank.getString("fluid");
+			amount = tank.getInt("amount");
+		}
+		
+		if(compound.contains("upgrades")){
+			CompoundTag upgrades = compound.getCompound("upgrades");
+			stack0 = ItemStack.of(upgrades.getCompound("0"));
+			stack1 = ItemStack.of(upgrades.getCompound("1"));
+			stack2 = ItemStack.of(upgrades.getCompound("2"));
+			stack3 = ItemStack.of(upgrades.getCompound("3"));
+		}
+		
+		this.entityData.set(TANK_FLUID, fluid);
+		this.entityData.set(TANK_AMOUNT, amount);
+		this.entityData.set(UPGRADE_0, stack0);
+		this.entityData.set(UPGRADE_1, stack1);
+		this.entityData.set(UPGRADE_2, stack2);
+		this.entityData.set(UPGRADE_3, stack3);
+	}
+	
+	@Override
+	protected void addAdditionalSaveData(CompoundTag compound){
+		super.addAdditionalSaveData(compound);
+		
+		String fluid = this.entityData.get(TANK_FLUID);
+		int amount = this.entityData.get(TANK_AMOUNT);
+		ItemStack stack0 = this.entityData.get(UPGRADE_0);
+		ItemStack stack1 = this.entityData.get(UPGRADE_1);
+		ItemStack stack2 = this.entityData.get(UPGRADE_2);
+		ItemStack stack3 = this.entityData.get(UPGRADE_3);
+		
+		CompoundTag tank = new CompoundTag();
+		tank.putString("fluid", fluid);
+		tank.putInt("amount", amount);
+		compound.put("tank", tank);
+		
+		CompoundTag upgrades = new CompoundTag();
+		upgrades.put("0", stack0.serializeNBT());
+		upgrades.put("1", stack1.serializeNBT());
+		upgrades.put("2", stack2.serializeNBT());
+		upgrades.put("3", stack3.serializeNBT());
+		compound.put("upgrades", upgrades);
+	}
+	
 	public void setUpgrades(NonNullList<ItemStack> stacks){
 		if(stacks != null && stacks.size() > 0){
 			ItemStack o0 = stacks.get(0) == null ? ItemStack.EMPTY : stacks.get(0);
@@ -205,63 +262,6 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			return FluidStack.EMPTY;
 		
 		return new FluidStack(fluid, amount);
-	}
-	
-	@Override
-	protected void readAdditionalSaveData(CompoundTag compound){
-		super.readAdditionalSaveData(compound);
-		
-		String fluid = "";
-		int amount = 0;
-		ItemStack stack0 = ItemStack.EMPTY;
-		ItemStack stack1 = ItemStack.EMPTY;
-		ItemStack stack2 = ItemStack.EMPTY;
-		ItemStack stack3 = ItemStack.EMPTY;
-		
-		if(compound.contains("tank")){
-			CompoundTag tank = compound.getCompound("tank");
-			fluid = tank.getString("fluid");
-			amount = tank.getInt("amount");
-		}
-		
-		if(compound.contains("upgrades")){
-			CompoundTag upgrades = compound.getCompound("upgrades");
-			stack0 = ItemStack.of(upgrades.getCompound("0"));
-			stack1 = ItemStack.of(upgrades.getCompound("1"));
-			stack2 = ItemStack.of(upgrades.getCompound("2"));
-			stack3 = ItemStack.of(upgrades.getCompound("3"));
-		}
-		
-		this.entityData.set(TANK_FLUID, fluid);
-		this.entityData.set(TANK_AMOUNT, amount);
-		this.entityData.set(UPGRADE_0, stack0);
-		this.entityData.set(UPGRADE_1, stack1);
-		this.entityData.set(UPGRADE_2, stack2);
-		this.entityData.set(UPGRADE_3, stack3);
-	}
-	
-	@Override
-	protected void addAdditionalSaveData(CompoundTag compound){
-		super.addAdditionalSaveData(compound);
-		
-		String fluid = this.entityData.get(TANK_FLUID);
-		int amount = this.entityData.get(TANK_AMOUNT);
-		ItemStack stack0 = this.entityData.get(UPGRADE_0);
-		ItemStack stack1 = this.entityData.get(UPGRADE_1);
-		ItemStack stack2 = this.entityData.get(UPGRADE_2);
-		ItemStack stack3 = this.entityData.get(UPGRADE_3);
-		
-		CompoundTag tank = new CompoundTag();
-		tank.putString("fluid", fluid);
-		tank.putInt("amount", amount);
-		compound.put("tank", tank);
-		
-		CompoundTag upgrades = new CompoundTag();
-		upgrades.put("0", stack0.serializeNBT());
-		upgrades.put("1", stack1.serializeNBT());
-		upgrades.put("2", stack2.serializeNBT());
-		upgrades.put("3", stack3.serializeNBT());
-		compound.put("upgrades", upgrades);
 	}
 	
 	@Override
