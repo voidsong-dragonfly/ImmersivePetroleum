@@ -7,7 +7,6 @@ import com.mojang.math.Vector3f;
 
 import flaxbeard.immersivepetroleum.client.model.ModelMotorboat;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -45,23 +44,35 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 			
 			{
 				if(!entity.isEmergency()){
-					float a = entity.getRowingTime(0, partialTicks);
-					float b = entity.getRowingTime(1, partialTicks);
+					if(entity.isForwardDown()){
+						entity.propellerXRotSpeed += entity.isBoosting ? 0.004F : 0.002F;
+						entity.propellerXRotSpeed = Mth.clamp(entity.propellerXRotSpeed, -1.0F, 1.0F);
+					}
+					if(entity.isBackDown()){
+						entity.propellerXRotSpeed -= 0.002F;
+						entity.propellerXRotSpeed = Mth.clamp(entity.propellerXRotSpeed, -1.0F, 1.0F);
+					}
 					
-					this.modelBoat.propeller.xRot = (a > 0 ? b : a) * 15.0F;
-				}else{
-					this.modelBoat.propeller.xRot = 0;
+					entity.propellerXRot += entity.propellerXRotSpeed;
+					entity.propellerXRot %= 360.0F;
 				}
 				
-				float pr = entity.isEmergency() ? 0F : entity.propellerRotation;
-				if(entity.isLeftInDown() && pr > -1)
-					pr = pr - 0.1F * Minecraft.getInstance().getFrameTime();
+				entity.propellerXRotSpeed *= 0.985F;
+				if(entity.propellerXRotSpeed >= -1.0E-6 && entity.propellerXRotSpeed <= -1.0E-6){
+					entity.propellerXRotSpeed = 0.0F;
+				}
 				
-				if(entity.isRightInDown() && pr < 1)
-					pr = pr + 0.1F * Minecraft.getInstance().getFrameTime();
+				this.modelBoat.propeller.xRot = entity.propellerXRot;
+				
+				float pr = entity.isEmergency() ? 0F : entity.propellerYRotation;
+				if(entity.isLeftInDown() && !entity.isRightInDown() && pr > -1)
+					pr = pr - 0.1F * partialTicks;
+				
+				if(entity.isRightInDown() && !entity.isLeftInDown() && pr < 1)
+					pr = pr + 0.1F * partialTicks;
 				
 				if(!entity.isLeftInDown() && !entity.isRightInDown())
-					pr = (float) (pr * Math.pow(0.7, Minecraft.getInstance().getFrameTime()));
+					pr = (float) (pr * Math.pow(0.7, partialTicks));
 				
 				this.modelBoat.propellerAssembly.yRot = (float) Math.toRadians(pr * 15);
 			}
@@ -84,21 +95,21 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 			if(entity.hasRudders){
 				this.modelBoat.ruddersBase.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 				
-				float pr = entity.propellerRotation;
-				if(entity.isLeftInDown() && pr > -1){
-					pr = pr - 0.1F * Minecraft.getInstance().getFrameTime();
+				float pr = entity.propellerYRotation;
+				if(entity.isLeftInDown() && !entity.isRightInDown() && pr > -1){
+					pr = pr - 0.1F * partialTicks;
 				}
 				
-				if(entity.isRightInDown() && pr < 1){
-					pr = pr + 0.1F * Minecraft.getInstance().getFrameTime();
+				if(entity.isRightInDown() && !entity.isLeftInDown() && pr < 1){
+					pr = pr + 0.1F * partialTicks;
 				}
 				
 				if(!entity.isLeftInDown() && !entity.isRightInDown()){
-					pr = (float) (pr * Math.pow(0.7F, Minecraft.getInstance().getFrameTime()));
+					pr = (float) (pr * Math.pow(0.7F, partialTicks));
 				}
 				
-				this.modelBoat.rudder1.yRot = (float) Math.toRadians(pr * 20f);
-				this.modelBoat.rudder2.yRot = (float) Math.toRadians(pr * 20f);
+				this.modelBoat.rudder1.yRot = (float) Math.toRadians(pr * 20F);
+				this.modelBoat.rudder2.yRot = (float) Math.toRadians(pr * 20F);
 				
 				this.modelBoat.rudder1.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 				this.modelBoat.rudder2.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
