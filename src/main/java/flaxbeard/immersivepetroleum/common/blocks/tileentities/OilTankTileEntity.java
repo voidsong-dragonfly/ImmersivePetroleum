@@ -45,6 +45,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -340,6 +342,13 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	@Override
 	public boolean useNixieFont(Player player, HitResult mop){
 		return false;
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public AABB getRenderBoundingBox(){
+		BlockPos pos = getBlockPos();
+		return new AABB(pos.offset(-3, -1, -3), pos.offset(3, 4, 3));
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);

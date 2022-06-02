@@ -19,6 +19,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -116,6 +118,13 @@ public class FlarestackTileEntity extends IPTileEntityBase implements ISoundBE, 
 		BlockState state = this.level.getBlockState(this.worldPosition);
 		this.level.sendBlockUpdated(this.worldPosition, state, state, 3);
 		this.level.updateNeighborsAt(this.worldPosition, state.getBlock());
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public AABB getRenderBoundingBox(){
+		BlockPos pos = getBlockPos();
+		return new AABB(pos.offset(-1, -1, -1), pos.offset(1, 2, 1));
 	}
 	
 	@Override

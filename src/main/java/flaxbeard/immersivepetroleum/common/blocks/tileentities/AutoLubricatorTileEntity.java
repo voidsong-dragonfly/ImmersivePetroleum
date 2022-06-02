@@ -168,7 +168,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 	@Override
 	public AABB getRenderBoundingBox(){
 		BlockPos pos = getBlockPos();
-		return new AABB(pos, pos.offset(0, 1, 0));
+		return new AABB(pos.offset(-3, -3, -3), pos.offset(3, 3, 3));
 	}
 	
 	@Override
