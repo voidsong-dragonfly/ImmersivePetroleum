@@ -43,7 +43,12 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 	@Nullable
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
-		return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.orEmpty(capability, handler);
+		if(capability != null){
+			if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+				return this.handler.cast();
+			}
+		}
+		return LazyOptional.empty();
 	}
 	
 	public NonNullList<ItemStack> getContainedItems(){
