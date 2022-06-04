@@ -188,9 +188,9 @@ public class CommonEventHandler{
 				if(lubeHandler != null){
 					if(lubeHandler.isMachineEnabled(world, te)){
 						if(world.isClientSide){
-							lubeHandler.lubricateClient((ClientLevel) world, info.ticks, te);
+							lubeHandler.lubricateClient((ClientLevel) world, info.lubricant, info.ticks, te);
 						}else{
-							lubeHandler.lubricateServer((ServerLevel) world, info.ticks, te);
+							lubeHandler.lubricateServer((ServerLevel) world, info.lubricant, info.ticks, te);
 						}
 					}
 					

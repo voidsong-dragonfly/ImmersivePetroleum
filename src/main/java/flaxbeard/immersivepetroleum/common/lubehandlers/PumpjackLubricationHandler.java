@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -60,12 +61,12 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 	}
 	
 	@Override
-	public void lubricateClient(ClientLevel world, int ticks, PumpjackTileEntity mbte){
+	public void lubricateClient(ClientLevel world, Fluid lubricant, int ticks, PumpjackTileEntity mbte){
 		mbte.activeTicks += 1F / 4F;
 	}
 	
 	@Override
-	public void lubricateServer(ServerLevel world, int ticks, PumpjackTileEntity mbte){
+	public void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, PumpjackTileEntity mbte){
 		if(ticks % 4 == 0){
 			mbte.tickServer();
 		}
@@ -101,10 +102,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 			float r1 = (world.random.nextFloat() - .5F) * 2F;
 			float r2 = (world.random.nextFloat() - .5F) * 2F;
 			float r3 = world.random.nextFloat();
-			//BlockState n = Fluids.lubricant.block.getDefaultState();
-			//world.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, n), x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 			
-			// Because making your own particles is so convoluted and confusing
 			world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, r1 * 0.04F, r3 * 0.0125F, r2 * 0.025F);
 		}
 	}

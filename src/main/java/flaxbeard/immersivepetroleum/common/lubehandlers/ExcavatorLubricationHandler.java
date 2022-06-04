@@ -27,6 +27,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -75,7 +76,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void lubricateClient(ClientLevel world, int ticks, ExcavatorBlockEntity mbte){
+	public void lubricateClient(ClientLevel world, Fluid lubricant, int ticks, ExcavatorBlockEntity mbte){
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		BlockEntity center = world.getBlockEntity(wheelPos);
 		
@@ -91,7 +92,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 	}
 	
 	@Override
-	public void lubricateServer(ServerLevel world, int ticks, ExcavatorBlockEntity mbte){
+	public void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, ExcavatorBlockEntity mbte){
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		BlockEntity center = world.getBlockEntity(wheelPos);
 		

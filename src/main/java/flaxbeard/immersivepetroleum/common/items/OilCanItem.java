@@ -32,6 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -91,11 +92,12 @@ public class OilCanItem extends IPItemBase{
 					InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
 						if(handler instanceof FluidHandlerItemStack){
 							FluidHandlerItemStack can = (FluidHandlerItemStack) handler;
+							FluidStack fs = can.getFluid();
 							
-							if(can.getFluid() != null && LubricantHandler.isValidLube(can.getFluid().getFluid())){
-								int amountNeeded = (LubricantHandler.getLubeAmount(can.getFluid().getFluid()) * 5 * 20);
-								if(can.getFluid().getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), 20 * 30)){
-									player.playSound(SoundEvents.BUCKET_EMPTY, 1f, 1f);
+							if(fs != null && LubricantHandler.isValidLube(fs.getFluid())){
+								int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
+								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
+									player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
 									if(!player.isCreative()){
 										can.drain(amountNeeded, FluidAction.EXECUTE);
 									}
@@ -133,10 +135,10 @@ public class OilCanItem extends IPItemBase{
 					if(handler.getFluid() != null && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
 						int amountNeeded = (LubricantHandler.getLubeAmount(handler.getFluid().getFluid()) * 5 * 20);
 						if(handler.getFluid().getAmount() >= amountNeeded){
-							player.playSound(SoundEvents.BUCKET_EMPTY, 1f, 1f);
-							golem.setHealth(Math.max(golem.getHealth() + 2f, golem.getMaxHealth()));
-							golem.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60 * 20, 1));
-							golem.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 60 * 20, 1));
+							player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
+							golem.setHealth(Math.max(golem.getHealth() + 2F, golem.getMaxHealth()));
+							golem.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 1200, 1)); // 1 Minute
+							golem.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 1200, 1)); // 1 Minute
 							if(!player.isCreative()){
 								handler.drain(amountNeeded, FluidAction.EXECUTE);
 							}

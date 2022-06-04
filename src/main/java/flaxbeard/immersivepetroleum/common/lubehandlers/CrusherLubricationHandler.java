@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -58,7 +59,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 	}
 	
 	@Override
-	public void lubricateClient(ClientLevel world, int ticks, CrusherBlockEntity mbte){
+	public void lubricateClient(ClientLevel world, Fluid lubricant, int ticks, CrusherBlockEntity mbte){
 		if(mbte.shouldRenderAsActive()){
 			mbte.animation_barrelRotation += 4.5f;
 			mbte.animation_barrelRotation %= 360f;
@@ -66,7 +67,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 	}
 	
 	@Override
-	public void lubricateServer(ServerLevel world, int ticks, CrusherBlockEntity mbte){
+	public void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, CrusherBlockEntity mbte){
 		if(ticks % 4 == 0){
 			mbte.tickServer();
 		}

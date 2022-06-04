@@ -224,7 +224,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 			if(handler != null){
 				BlockEntity master = handler.isPlacedCorrectly(this.level, this, this.facing);
 				if(master != null && handler.isMachineEnabled(this.level, master)){
-					handler.lubricateClient((ClientLevel) this.level, this.count, master);
+					handler.lubricateClient((ClientLevel) this.level, this.tank.getFluid().getFluid(), this.count, master);
 					
 					if(this.countClient++ % 50 == 0){
 						this.countClient = this.level.random.nextInt(40);
@@ -249,7 +249,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 			if(handler != null){
 				BlockEntity master = handler.isPlacedCorrectly(this.level, this, this.facing);
 				if(master != null && handler.isMachineEnabled(this.level, master)){
-					handler.lubricateServer((ServerLevel) this.level, this.count, master);
+					handler.lubricateServer((ServerLevel) this.level, this.tank.getFluid().getFluid(), this.count, master);
 					
 					if(this.count++ % 4 == 0){
 						this.tank.drain(LubricantHandler.getLubeAmount(this.tank.getFluid()), FluidAction.EXECUTE);
