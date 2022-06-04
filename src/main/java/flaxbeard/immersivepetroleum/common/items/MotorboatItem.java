@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
+import blusunrize.immersiveengineering.api.utils.ItemUtils;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
@@ -51,16 +52,17 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt){
-		return new IPItemStackHandler();
+		return new IPItemStackHandler(4);
 	}
 	
 	@Override
 	public CompoundTag getUpgrades(ItemStack stack){
-		return new CompoundTag();
+		return stack.hasTag() ? stack.getOrCreateTag().getCompound("upgrades") : new CompoundTag();
 	}
 	
 	@Override
 	public void clearUpgrades(ItemStack stack){
+		ItemUtils.removeTag(stack, "upgrades");
 	}
 	
 	@Override
@@ -87,14 +89,14 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			
 			for(int i = 0;i < handler.getSlots();i++){
 				ItemStack u = handler.getStackInSlot(i);
-				if(!u.isEmpty() && u.getItem() instanceof IUpgrade){
-					IUpgrade upg = (IUpgrade) u.getItem();
+				if(u.getItem() instanceof IUpgrade upg){
 					if(upg.getUpgradeTypes(u).contains(UPGRADE_TYPE) && upg.canApplyUpgrades(stack, u)){
 						upg.applyUpgrades(stack, u, nbt);
 					}
 				}
 			}
 			
+			stack.getOrCreateTag().put("upgrades", nbt);
 			finishUpgradeRecalculation(stack);
 		});
 	}
