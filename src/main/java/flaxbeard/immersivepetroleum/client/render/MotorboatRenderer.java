@@ -45,12 +45,10 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 			{
 				if(!entity.isEmergency()){
 					if(entity.isForwardDown()){
-						entity.propellerXRotSpeed += entity.isBoosting ? 0.004F : 0.002F;
-						entity.propellerXRotSpeed = Mth.clamp(entity.propellerXRotSpeed, -1.0F, 1.0F);
+						entity.propellerXRotSpeed += entity.isBoosting ? 0.2F : 0.1F;
 					}
 					if(entity.isBackDown()){
-						entity.propellerXRotSpeed -= 0.002F;
-						entity.propellerXRotSpeed = Mth.clamp(entity.propellerXRotSpeed, -1.0F, 1.0F);
+						entity.propellerXRotSpeed -= 0.2F;
 					}
 					
 					entity.propellerXRot += entity.propellerXRotSpeed;
@@ -58,11 +56,11 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				}
 				
 				entity.propellerXRotSpeed *= 0.985F;
-				if(entity.propellerXRotSpeed >= -1.0E-6 && entity.propellerXRotSpeed <= -1.0E-6){
+				if(entity.propellerXRotSpeed != 0.0F && entity.propellerXRotSpeed >= -1.0E-3F && entity.propellerXRotSpeed <= 1.0E-3F){
 					entity.propellerXRotSpeed = 0.0F;
 				}
 				
-				this.modelBoat.propeller.xRot = entity.propellerXRot;
+				this.modelBoat.propeller.xRot = entity.propellerXRot * Mth.DEG_TO_RAD;
 				
 				float pr = entity.isEmergency() ? 0F : entity.propellerYRotation;
 				if(entity.isLeftInDown() && !entity.isRightInDown() && pr > -1)

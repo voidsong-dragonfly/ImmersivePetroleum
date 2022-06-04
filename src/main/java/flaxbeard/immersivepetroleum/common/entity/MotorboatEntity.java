@@ -98,8 +98,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public boolean hasPaddles = false;
 	public boolean isBoosting = false;
 	public float lastMoving;
-	public float propellerYRotation = 0.0F;
 	
+	public float propellerYRotation = 0.0F;
 	public float propellerXRot = 0.0F;
 	public float propellerXRotSpeed = 0.0F;
 	

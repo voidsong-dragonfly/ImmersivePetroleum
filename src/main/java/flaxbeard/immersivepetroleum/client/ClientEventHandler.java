@@ -54,6 +54,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -438,12 +439,11 @@ public class ClientEventHandler{
 						GuiHelper.drawTexturedRect(builder, matrix, -24, -68, 31, 62, 256f, 179, 210, 9, 71);
 						
 						matrix.translate(-23, -37, 0);
-						int capacity = boat.getMaxFuel();
+						float capacity = boat.getMaxFuel();
 						if(capacity > 0){
 							FluidStack fuel = boat.getContainedFluid();
 							int amount = fuel.getAmount();
-							float cap = (float) capacity;
-							float angle = 83 - (166 * amount / cap);
+							float angle = 83 - (166 * amount / capacity);
 							matrix.pushPose();
 							matrix.mulPose(new Quaternion(0, 0, angle, true));
 							GuiHelper.drawTexturedRect(builder, matrix, 6, -2, 24, 4, 256f, 91, 123, 80, 87);
@@ -460,25 +460,25 @@ public class ClientEventHandler{
 					if(holdingDebugItem && MCUtil.getFont() != null){
 						matrix.pushPose();
 						{
-							matrix.translate(dx, dy, 0);
 							Font font = MCUtil.getFont();
 							
 							int capacity = boat.getMaxFuel();
 							FluidStack fs = boat.getContainedFluid();
-							int amount = fs == FluidStack.EMPTY || fs.getFluid() == null ? 0 : fs.getAmount();
+							int amount = (fs == FluidStack.EMPTY || fs.getFluid() == null) ? 0 : fs.getAmount();
 							
 							Vec3 vec = boat.getDeltaMovement();
-							
-							float rot = boat.propellerYRotation;
-							
 							float speed = (float) Math.sqrt(vec.x * vec.x + vec.z * vec.z);
 							
-							String out0 = String.format(Locale.US, "Fuel: %s/%sMB", amount, capacity);
-							String out1 = String.format(Locale.US, "Speed: %.2f", speed);
-							String out2 = String.format(Locale.US, "Rot: %s", rot);
-							font.drawShadow(matrix, out0, -90, -104, 0xFFFFFFFF);
-							font.drawShadow(matrix, out1, -90, -95, 0xFFFFFFFF);
-							font.drawShadow(matrix, out2, -90, -86, 0xFFFFFFFF);
+							String[] array = {
+									String.format(Locale.US, "Fuel: %05d/%d mB (%s)", amount, capacity, fs.getDisplayName().getString()),
+									String.format(Locale.US, "Speed: %.3f", speed),
+									String.format(Locale.US, "PropXRot: %07.3f° (%.3frad)", boat.propellerXRot, boat.propellerXRot * Mth.DEG_TO_RAD),
+									String.format(Locale.US, "PropSpeed: %06.3f°", boat.propellerXRotSpeed),
+							};
+							int w = 3, h = 3;
+							for(int i = 0;i < array.length;i++){
+								font.drawShadow(matrix, array[i], w, h + (9 * i), -1);
+							}
 						}
 						matrix.popPose();
 					}
