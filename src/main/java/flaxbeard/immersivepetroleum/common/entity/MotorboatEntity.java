@@ -490,9 +490,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		
 		float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F));
 		float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F));
-		Vector3f vec = normalizeVector(new Vector3f(xO, zO, 0.0F));
+		Vector3f vec = new Vector3f(xO, zO, 0.0F);
+		vec.normalize();
 		
-		if(this.hasIcebreaker && !isEmergency()){
+		if(!this.level.isClientSide && this.hasIcebreaker && !isEmergency()){
 			AABB bb = getBoundingBox().inflate(0.1);
 			BlockPos.MutableBlockPos mutableBlockPos0 = new BlockPos.MutableBlockPos(bb.minX + 0.001D, bb.minY + 0.001D, bb.minZ + 0.001D);
 			BlockPos.MutableBlockPos mutableBlockPos1 = new BlockPos.MutableBlockPos(bb.maxX - 0.001D, bb.maxY - 0.001D, bb.maxZ - 0.001D);
@@ -506,10 +507,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 							BlockState BlockState = this.level.getBlockState(mutableBlockPos2);
 							
 							Vector3f vec2 = new Vector3f((float) (i + 0.5f - getX()), (float) (k + 0.5f - getZ()), 0.0F);
-							normalizeVector(vec2);
+							vec2.normalize();
 							
-							float sim = dotVector(vec2, vec);
-							
+							float sim = vec2.dot(vec);
 							if(BlockState.getBlock() == Blocks.ICE && sim > .3f){
 								this.level.destroyBlock(mutableBlockPos2, false);
 								this.level.setBlockAndUpdate(mutableBlockPos2, Blocks.WATER.defaultBlockState());
@@ -521,30 +521,32 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		}
 		
 		this.checkInsideBlocks();
-		List<Entity> list = this.level.getEntities(this, this.getBoundingBox().inflate((double) 0.2F, (double) -0.01F, (double) 0.2F), EntitySelector.pushableBy(this));
-		if(!list.isEmpty()){
-			boolean flag = !this.level.isClientSide && !(this.getControllingPassenger() instanceof Player);
-			
-			for(int j = 0;j < list.size();++j){
-				Entity entity = list.get(j);
+		
+		if(!this.level.isClientSide){
+			List<Entity> list = this.level.getEntities(this, this.getBoundingBox().inflate((double) 0.2F, (double) -0.01F, (double) 0.2F), EntitySelector.pushableBy(this));
+			if(!list.isEmpty()){
+				boolean flag = !(this.getControllingPassenger() instanceof Player);
 				
-				if(!entity.hasPassenger(this)){
-					if(flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getBbWidth() < this.getBbWidth() && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)){
-						entity.startRiding(this);
-					}else{
-						this.push(entity);
-						
-						if(this.hasIcebreaker){
-							if(entity instanceof LivingEntity && !(entity instanceof Player) && this.getControllingPassenger() instanceof Player){
-								Vector3f vec2 = new Vector3f((float) (entity.getX() - getX()), (float) (entity.getZ() - getZ()), 0.0F);
-								normalizeVector(vec2);
-								
-								float sim = dotVector(vec2, vec);
-								
-								if(sim > .5f){
-									Vec3 motion = entity.getDeltaMovement();
-									entity.hurt(DamageSource.playerAttack((Player) this.getControllingPassenger()), 4);
-									entity.setDeltaMovement(new Vec3(motion.x + (vec2.x() * .75F), motion.y, motion.z + (vec2.y() * .75F)));
+				for(int j = 0;j < list.size();++j){
+					Entity entity = list.get(j);
+					
+					if(!entity.hasPassenger(this)){
+						if(flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getBbWidth() < this.getBbWidth() && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)){
+							entity.startRiding(this);
+						}else{
+							this.push(entity);
+							
+							if(this.hasIcebreaker){
+								if(entity instanceof LivingEntity && !(entity instanceof Player) && this.getControllingPassenger() instanceof Player){
+									Vector3f vec2 = new Vector3f((float) (entity.getX() - getX()), (float) (entity.getZ() - getZ()), 0.0F);
+									vec2.normalize();
+									
+									float sim = vec2.dot(vec);
+									if(sim > .5f){
+										Vec3 motion = entity.getDeltaMovement();
+										entity.hurt(DamageSource.playerAttack((Player) this.getControllingPassenger()), 4);
+										entity.setDeltaMovement(new Vec3(motion.x + (vec2.x() * .75F), motion.y, motion.z + (vec2.y() * .75F)));
+									}
 								}
 							}
 						}
@@ -552,23 +554,6 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				}
 			}
 		}
-	}
-	
-	/** Because fuck you for making that client side only */
-	private Vector3f normalizeVector(Vector3f vec){
-		float f = vec.x() * vec.x() + vec.y() * vec.y() + vec.z() * vec.z();
-		if(!((double) f < 1.0E-5D)){
-			float f1 = 1 / Mth.sqrt(f);
-			vec.setX(vec.x() * f1);
-			vec.setX(vec.y() * f1);
-			vec.setX(vec.z() * f1);
-		}
-		return vec;
-	}
-	
-	/** Because fuck you for making that client side only */
-	private float dotVector(Vector3f a, Vector3f b){
-		return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
 	}
 	
 	@Override
