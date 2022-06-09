@@ -15,6 +15,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -120,7 +121,7 @@ public class GuiReactiveList extends Button{
 		return this.maxOffset;
 	}
 	
-	static final ResourceLocation TEXTURE = new ResourceLocation("immersiveengineering", "textures/gui/hud_elements.png");
+	static final ResourceLocation TEXTURE = ResourceUtils.ie("textures/gui/hud_elements.png");
 	
 	@Override
 	public void render(PoseStack transform, int mx, int my, float partialTicks){

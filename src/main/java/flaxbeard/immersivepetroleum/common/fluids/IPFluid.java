@@ -13,6 +13,7 @@ import org.apache.commons.lang3.mutable.MutableObject;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -50,8 +51,8 @@ public class IPFluid extends FlowingFluid{
 	
 	public IPFluid(IPFluidEntry entry, int density, int viscosity){
 		this(entry,
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + entry.name + "_still"),
-				new ResourceLocation(ImmersivePetroleum.MODID, "block/fluid/" + entry.name + "_flow"), IPFluid.createBuilder(density, viscosity));
+				ResourceUtils.ip("block/fluid/" + entry.name + "_still"),
+				ResourceUtils.ip("block/fluid/" + entry.name + "_flow"), IPFluid.createBuilder(density, viscosity));
 	}
 	
 	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){

@@ -10,14 +10,15 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.IPShaders;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 public class IPRenderTypes extends RenderStateShard{
-	static final ResourceLocation activeTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/distillation_tower_active.png");
-	static final ResourceLocation oilTankTexture = new ResourceLocation(ImmersivePetroleum.MODID, "textures/multiblock/oiltank.png");
+	static final ResourceLocation activeTexture = ResourceUtils.ip("textures/multiblock/distillation_tower_active.png");
+	static final ResourceLocation oilTankTexture = ResourceUtils.ip("textures/multiblock/oiltank.png");
 	
 	/**
 	 * Intended to only be used by {@link MultiblockDistillationTowerRenderer}

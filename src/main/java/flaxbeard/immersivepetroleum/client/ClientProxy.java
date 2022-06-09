@@ -65,6 +65,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -282,27 +283,27 @@ public class ClientProxy extends CommonProxy{
 	public void setupManualPages(){
 		ManualInstance man = ManualHelper.getManual();
 		
-		IP_CATEGORY = man.getRoot().getOrCreateSubnode(modLoc("main"), 100);
+		IP_CATEGORY = man.getRoot().getOrCreateSubnode(ResourceUtils.ip("main"), 100);
 		
 		int priority = 0;
 		
-		pumpjack(modLoc("pumpjack"), priority++);
-		distillation(modLoc("distillationtower"), priority++);
-		coker(modLoc("cokerunit"), priority++);
-		hydrotreater(modLoc("hydrotreater"), priority++);
-		derrick(modLoc("derrick"), priority++);
-		oiltank(modLoc("oiltank"), priority++);
+		pumpjack(ResourceUtils.ip("pumpjack"), priority++);
+		distillation(ResourceUtils.ip("distillationtower"), priority++);
+		coker(ResourceUtils.ip("cokerunit"), priority++);
+		hydrotreater(ResourceUtils.ip("hydrotreater"), priority++);
+		derrick(ResourceUtils.ip("derrick"), priority++);
+		oiltank(ResourceUtils.ip("oiltank"), priority++);
 		
-		handleReservoirManual(modLoc("reservoir"), priority++);
+		handleReservoirManual(ResourceUtils.ip("reservoir"), priority++);
 		
-		lubricant(modLoc("lubricant"), priority++);
-		man.addEntry(IP_CATEGORY, modLoc("asphalt"), priority++);
-		projector(modLoc("projector"), priority++);
-		speedboat(modLoc("speedboat"), priority++);
-		man.addEntry(IP_CATEGORY, modLoc("napalm"), priority++);
-		generator(modLoc("portablegenerator"), priority++);
-		autolube(modLoc("automaticlubricator"), priority++);
-		flarestack(modLoc("flarestack"), priority++);
+		lubricant(ResourceUtils.ip("lubricant"), priority++);
+		man.addEntry(IP_CATEGORY, ResourceUtils.ip("asphalt"), priority++);
+		projector(ResourceUtils.ip("projector"), priority++);
+		speedboat(ResourceUtils.ip("speedboat"), priority++);
+		man.addEntry(IP_CATEGORY, ResourceUtils.ip("napalm"), priority++);
+		generator(ResourceUtils.ip("portablegenerator"), priority++);
+		autolube(ResourceUtils.ip("automaticlubricator"), priority++);
+		flarestack(ResourceUtils.ip("flarestack"), priority++);
 	}
 	
 	private static void flarestack(ResourceLocation location, int priority){

@@ -3,16 +3,15 @@ package flaxbeard.immersivepetroleum.common.multiblocks;
 import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 
 public class CokerUnitMultiblock extends IPTemplateMultiblock{
 	public static final CokerUnitMultiblock INSTANCE = new CokerUnitMultiblock();
 	
 	public CokerUnitMultiblock(){
-		super(new ResourceLocation(ImmersivePetroleum.MODID, "multiblocks/cokerunit"),
+		super(ResourceUtils.ip("multiblocks/cokerunit"),
 				new BlockPos(4, 0, 2), new BlockPos(4, 1, 4), new BlockPos(9, 23, 5),
 				IPContent.Multiblock.COKERUNIT);
 	}

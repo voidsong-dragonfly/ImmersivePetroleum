@@ -4,13 +4,12 @@ import javax.annotation.Nullable;
 
 import com.mojang.math.Vector3f;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
@@ -236,20 +235,12 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void createBucket(Fluid f){
-		withExistingParent(f.getBucket().asItem().getRegistryName().getPath(), forgeLoc("item/bucket"))
+		withExistingParent(f.getBucket().asItem().getRegistryName().getPath(), ResourceUtils.forge("item/bucket"))
 			.customLoader(DynamicBucketModelBuilder::begin)
 			.fluid(f);
 	}
 	
 	private String name(ItemLike item){
 		return item.asItem().getRegistryName().getPath();
-	}
-	
-	protected ResourceLocation ieLoc(String str){
-		return new ResourceLocation(ImmersiveEngineering.MODID, str);
-	}
-	
-	protected ResourceLocation forgeLoc(String str){
-		return new ResourceLocation("forge", str);
 	}
 }

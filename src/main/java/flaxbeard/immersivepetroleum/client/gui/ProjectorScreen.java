@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
-import static flaxbeard.immersivepetroleum.ImmersivePetroleum.MODID;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +17,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -51,7 +50,7 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.util.Lazy;
 
 public class ProjectorScreen extends Screen{
-	static final ResourceLocation GUI_TEXTURE = new ResourceLocation(MODID, "textures/gui/projector.png");
+	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/projector.png");
 	
 	static final Component GUI_CONFIRM = translation("gui.immersivepetroleum.projector.button.confirm");
 	static final Component GUI_CANCEL = translation("gui.immersivepetroleum.projector.button.cancel");

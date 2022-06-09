@@ -2,10 +2,9 @@ package flaxbeard.immersivepetroleum.common.network;
 
 import java.util.function.Function;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -16,7 +15,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public class IPPacketHandler{
 	public static final String NET_VERSION = "1";
 	public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder
-			.named(new ResourceLocation(ImmersivePetroleum.MODID, "main"))
+			.named(ResourceUtils.ip("main"))
 			.networkProtocolVersion(() -> NET_VERSION)
 			.serverAcceptedVersions(NET_VERSION::equals)
 			.clientAcceptedVersions(NET_VERSION::equals)

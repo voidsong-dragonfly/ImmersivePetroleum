@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.data.models.NongeneratedModels;
@@ -27,6 +26,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblo
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -81,7 +81,7 @@ public class IPBlockStates extends BlockStateProvider{
 			.setModels(new ConfiguredModel(dummyConveyorModel));
 		getItemBuilder(IPContent.Blocks.DUMMYCONVEYOR.get())
 			.parent(dummyConveyorModel)
-			.texture("particle", new ResourceLocation(ImmersiveEngineering.MODID, "block/conveyor/conveyor"));
+			.texture("particle", ResourceUtils.ie("block/conveyor/conveyor"));
 		
 		// Multiblocks
 		distillationtower();
@@ -107,7 +107,7 @@ public class IPBlockStates extends BlockStateProvider{
 		{
 			Block wellPipe = IPContent.Blocks.WELL_PIPE.get();
 			
-			ResourceLocation ieConreteTexture = new ResourceLocation("immersiveengineering", "block/stone_decoration/concrete");
+			ResourceLocation ieConreteTexture = ResourceUtils.ie("block/stone_decoration/concrete");
 			ResourceLocation concrete_cracked = modLoc("block/concrete_cracked");
 			ResourceLocation wellPipeTexture = modLoc("block/well_pipe_top");
 			
@@ -277,7 +277,7 @@ public class IPBlockStates extends BlockStateProvider{
 	private void autolubricator(){
 		ResourceLocation texture = modLoc("models/lubricator");
 		
-		BlockModelBuilder lube_empty = this.models().withExistingParent("lube_empty", new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty")).texture("particle", texture);
+		BlockModelBuilder lube_empty = this.models().withExistingParent("lube_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture);
 		
 		BlockModelBuilder lubeModel = this.models().withExistingParent(getPath(IPContent.Blocks.AUTO_LUBRICATOR.get()), mcLoc("block"))
 				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/autolubricator.obj")).flipV(true).end()
@@ -303,7 +303,7 @@ public class IPBlockStates extends BlockStateProvider{
 	private void flarestack(){
 		ResourceLocation texture = modLoc("block/obj/flarestack");
 		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("flare_empty",
-				new ResourceLocation(ImmersiveEngineering.MODID, "block/ie_empty"))
+				ResourceUtils.ie("block/ie_empty"))
 				.texture("particle", texture));
 		
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.FLARESTACK.get()), mcLoc("block"))

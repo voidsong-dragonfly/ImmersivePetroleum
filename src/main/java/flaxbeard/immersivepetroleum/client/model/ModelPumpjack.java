@@ -3,8 +3,8 @@ package flaxbeard.immersivepetroleum.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModelPumpjack extends IPModel{
 	public static final String ID = "pumpjackarm";
-	public static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/pumpjack_armature.png");
+	public static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/pumpjack_armature.png");
 	
 	public ModelPart origin;
 	public ModelPart swingy;

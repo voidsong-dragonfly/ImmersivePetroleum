@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -76,9 +75,5 @@ public class CommonProxy{
 	
 	public Player getClientPlayer(){
 		return null;
-	}
-	
-	protected static ResourceLocation modLoc(String str){
-		return new ResourceLocation(ImmersivePetroleum.MODID, str);
 	}
 }

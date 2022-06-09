@@ -10,9 +10,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -32,7 +32,7 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	
 	/* Called from ClientProxy during ModelRegistryEvent */
 	public static final void init(){
-		DERRICK_PIPE_RL = new ResourceLocation(ImmersivePetroleum.MODID, "multiblock/dyn/derrick_pipe");
+		DERRICK_PIPE_RL = ResourceUtils.ip("multiblock/dyn/derrick_pipe");
 		ForgeModelBakery.addSpecialModel(DERRICK_PIPE_RL);
 	}
 	

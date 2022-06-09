@@ -8,12 +8,12 @@ import com.mojang.math.Quaternion;
 import blusunrize.immersiveengineering.common.blocks.metal.BucketWheelBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.ExcavatorBlockEntity;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -156,7 +156,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		return null;
 	}
 	
-	private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersivePetroleum.MODID, "textures/models/lube_pipe.png");
+	private static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/lube_pipe.png");
 	private static Supplier<IPModel> pipes_normal;
 	private static Supplier<IPModel> pipes_mirrored;
 	

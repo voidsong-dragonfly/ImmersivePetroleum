@@ -7,6 +7,7 @@ import com.mojang.math.Vector3f;
 
 import flaxbeard.immersivepetroleum.client.model.ModelMotorboat;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -19,8 +20,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;;
 
 @OnlyIn(Dist.CLIENT)
 public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
-	private static ResourceLocation texture = rl("textures/models/boat_motor.png");
-	private static ResourceLocation textureArmor = rl("textures/models/boat_motor_armor.png");
+	private static ResourceLocation texture = ResourceUtils.ip("textures/models/boat_motor.png");
+	private static ResourceLocation textureArmor = ResourceUtils.ip("textures/models/boat_motor_armor.png");
 	
 	/** instance of ModelBoat for rendering */
 	protected final ModelMotorboat modelBoat = new ModelMotorboat();
@@ -155,9 +156,5 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 		
 		matrix.scale(-1.0F, -1.0F, 1.0F);
 		matrix.mulPose(Vector3f.YP.rotationDegrees(90.0F));
-	}
-	
-	private static ResourceLocation rl(String str){
-		return new ResourceLocation("immersivepetroleum", str);
 	}
 }

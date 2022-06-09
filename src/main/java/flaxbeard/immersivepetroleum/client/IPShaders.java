@@ -6,8 +6,8 @@ import com.mojang.blaze3d.shaders.AbstractUniform;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,12 +32,12 @@ public class IPShaders{
 	
 	@SubscribeEvent
 	public static void registerShaders(RegisterShadersEvent event) throws IOException{
-		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_line"), DefaultVertexFormat.POSITION_COLOR), s -> {
+		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_line"), DefaultVertexFormat.POSITION_COLOR), s -> {
 			ImmersivePetroleum.log.info("rendertype_line shader loaded.");
 			shader_line = s;
 		});
 		
-		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_projection"), DefaultVertexFormat.POSITION_COLOR_TEX), s -> {
+		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_projection"), DefaultVertexFormat.POSITION_COLOR_TEX), s -> {
 			ImmersivePetroleum.log.info("rendertype_projection shader loaded.");
 			shader_projection = s;
 			
@@ -45,12 +45,12 @@ public class IPShaders{
 			projection_time = shader_projection.safeGetUniform("Time");
 		});
 		
-		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_translucent_postion_color"), DefaultVertexFormat.POSITION_COLOR), s -> {
+		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_translucent_postion_color"), DefaultVertexFormat.POSITION_COLOR), s -> {
 			ImmersivePetroleum.log.info("rendertype_translucent_postion_color shader loaded.");
 			shader_translucent_postion_color = s;
 		});
 		
-		event.registerShader(new ShaderInstance(event.getResourceManager(), rl("rendertype_translucent"), DefaultVertexFormat.BLOCK), s -> {
+		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_translucent"), DefaultVertexFormat.BLOCK), s -> {
 			ImmersivePetroleum.log.info("rendertype_translucent shader loaded.");
 			shader_translucent_full = s;
 		});
@@ -70,9 +70,5 @@ public class IPShaders{
 	
 	public static ShaderInstance getTranslucentPostionColorShader(){
 		return shader_translucent_postion_color;
-	}
-	
-	private static ResourceLocation rl(String path){
-		return new ResourceLocation(ImmersivePetroleum.MODID, path);
 	}
 }

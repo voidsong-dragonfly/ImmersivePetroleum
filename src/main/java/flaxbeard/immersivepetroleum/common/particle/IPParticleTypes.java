@@ -2,11 +2,10 @@ package flaxbeard.immersivepetroleum.common.particle;
 
 import com.mojang.serialization.Codec;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.resources.ResourceLocation;
 
 public class IPParticleTypes{
 	public static final SimpleParticleType FLARE_FIRE = createBasicParticle("flare_fire", false);
@@ -14,7 +13,7 @@ public class IPParticleTypes{
 	
 	private static SimpleParticleType createBasicParticle(String name, boolean alwaysShow){
 		SimpleParticleType particleType = new SimpleParticleType(alwaysShow);
-		particleType.setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, name));
+		particleType.setRegistryName(ResourceUtils.ip(name));
 		return particleType;
 	}
 	
@@ -26,7 +25,7 @@ public class IPParticleTypes{
 				return codec;
 			}
 		};
-		type.setRegistryName(new ResourceLocation(ImmersivePetroleum.MODID, name));
+		type.setRegistryName(ResourceUtils.ip(name));
 		return type;
 	}
 }

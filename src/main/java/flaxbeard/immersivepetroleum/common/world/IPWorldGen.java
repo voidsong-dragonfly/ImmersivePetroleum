@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +36,7 @@ public class IPWorldGen{
 	}
 	
 	public static void registerReservoirGen(){
-		Holder<PlacedFeature> reservoirFeature = register(new ResourceLocation(ImmersivePetroleum.MODID, "reservoir"), RESERVOIR_FEATURE, new NoneFeatureConfiguration());
+		Holder<PlacedFeature> reservoirFeature = register(ResourceUtils.ip("reservoir"), RESERVOIR_FEATURE, new NoneFeatureConfiguration());
 		features.put("reservoirs", reservoirFeature);
 	}
 	

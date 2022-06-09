@@ -16,13 +16,14 @@ import flaxbeard.immersivepetroleum.client.gui.elements.CokerChamberInfoArea;
 import flaxbeard.immersivepetroleum.client.gui.elements.EnergyDisplay;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
-	public static final ResourceLocation GUI_TEXTURE = new ResourceLocation("immersivepetroleum", "textures/gui/coker.png");
+	public static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/coker.png");
 	
 	CokerUnitTileEntity tile;
 	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, Inventory inv, Component title){

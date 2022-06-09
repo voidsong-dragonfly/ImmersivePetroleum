@@ -8,7 +8,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public class IPTileDropLootEntry extends LootPoolSingletonContainer{
-	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "tile_drop");
+	public static final ResourceLocation ID = ResourceUtils.ip("tile_drop");
 	
 	protected IPTileDropLootEntry(int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn){
 		super(weightIn, qualityIn, conditionsIn, functionsIn);

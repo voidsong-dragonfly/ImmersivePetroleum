@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common;
 
-import blusunrize.immersiveengineering.api.Lib;
-import net.minecraft.resources.ResourceLocation;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
@@ -16,8 +15,8 @@ public class ExternalModContent{
 	
 	@SuppressWarnings("removal")
 	public static final void init(){
-		IE_FLUID_CONCRETE_FLUID = RegistryObject.of(new ResourceLocation(Lib.MODID, "concrete"), ForgeRegistries.FLUIDS);
-		IE_ITEM_PIPE = RegistryObject.of(new ResourceLocation(Lib.MODID, "fluid_pipe"), ForgeRegistries.ITEMS);
+		IE_FLUID_CONCRETE_FLUID = RegistryObject.of(ResourceUtils.ie("concrete"), ForgeRegistries.FLUIDS);
+		IE_ITEM_PIPE = RegistryObject.of(ResourceUtils.ie("fluid_pipe"), ForgeRegistries.ITEMS);
 		// TODO IEBlocks.MetalDevices.sampleDrill for CommonEventHandler.handlePickupItem??
 	}
 	
