@@ -202,9 +202,9 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void cokerunit(){
-		ResourceLocation texture = modLoc("multiblock/cokerunit");
-		ResourceLocation modelNormal = modLoc("models/multiblock/obj/cokerunit.obj");
-		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/cokerunit_mirrored.obj");
+		ResourceLocation texture = modLoc("multiblock/cokerunit_new");
+		ResourceLocation modelNormal = modLoc("models/multiblock/obj/cokerunit_new.obj");
+		ResourceLocation modelMirrored = modLoc("models/multiblock/obj/cokerunit_new_mirrored.obj");
 		
 		BlockModelBuilder normal = multiblockModel(IPContent.Multiblock.COKERUNIT.get(), modelNormal, texture, "", CokerUnitMultiblock.INSTANCE, false);
 		BlockModelBuilder mirrored = multiblockModel(IPContent.Multiblock.COKERUNIT.get(), modelMirrored, texture, "_mirrored", CokerUnitMultiblock.INSTANCE, true);
