@@ -130,10 +130,10 @@ public class DebugRenderHandler{
 							}else if(te instanceof MultiblockPartBlockEntity<?>){
 								{
 									MultiblockPartBlockEntity<?> generic = (MultiblockPartBlockEntity<?>) te;
+									BlockPos tPos = generic.posInMultiblock;
 									if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
 										generic = generic.master();
 									}
-									BlockPos tPos = generic.posInMultiblock;
 									Block block = generic.getBlockState().getBlock();
 									
 									debugOut.add(toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
