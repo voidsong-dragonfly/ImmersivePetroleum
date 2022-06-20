@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -93,29 +94,28 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public static final int CHAMBER_B = 1;
 	
 	/** Template-Location of the Chamber A Item Output */
-	public static final BlockPos Chamber_A_OUT = new BlockPos(2, 2, 2);
+	public static final BlockPos Chamber_A_OUT = new BlockPos(2, 0, 2);
 	
 	/** Template-Location of the Chamber B Item Output */
-	public static final BlockPos Chamber_B_OUT = new BlockPos(6, 2, 2);
+	public static final BlockPos Chamber_B_OUT = new BlockPos(6, 0, 2);
 	
-	/** Template-Location of the Fluid Input Port. (6 0 0)<br> */
-	public static final BlockPos Fluid_IN = new BlockPos(6, 0, 0);
+	/** Template-Location of the Fluid Input Port. (2 0 4)<br> */
+	public static final BlockPos Fluid_IN = new BlockPos(2, 0, 4);
 	
-	/** Template-Location of the Fluid Output Port. (3 0 4)<br> */
-	public static final BlockPos Fluid_OUT = new BlockPos(3, 0, 4);
+	/** Template-Location of the Fluid Output Port. (5 0 4)<br> */
+	public static final BlockPos Fluid_OUT = new BlockPos(5, 0, 4);
 	
-	/** Template-Location of the Item Input Port. (4 0 0)<br> */
-	public static final BlockPos Item_IN = new BlockPos(4, 0, 0);
+	/** Template-Location of the Item Input Port. (3 0 4)<br> */
+	public static final BlockPos Item_IN = new BlockPos(3, 0, 4);
 	
 	/** Template-Location of the Energy Input Ports.<br><pre>1 1 0<br>2 1 0<br>3 1 0</pre><br> */
 	public static final Set<MultiblockFace> Energy_IN = ImmutableSet.of(
-			new MultiblockFace(1, 1, 0, RelativeBlockFace.BACK),
-			new MultiblockFace(2, 1, 0, RelativeBlockFace.BACK),
-			new MultiblockFace(3, 1, 0, RelativeBlockFace.BACK)
+			new MultiblockFace(6, 1, 4, RelativeBlockFace.FRONT),
+			new MultiblockFace(7, 1, 4, RelativeBlockFace.FRONT)
 	);
 
 	/** Template-Location of the Redstone Input Port. (6 1 4)<br> */
-	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(6, 1, 4));
+	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(1, 1, 4));
 	
 	public final NonNullList<ItemStack> inventory = NonNullList.withSize(Inventory.values().length, ItemStack.EMPTY);
 	public final FluidTank[] bufferTanks = {new FluidTank(16000), new FluidTank(16000)};
@@ -212,7 +212,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		}else if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
 			if(this.posInMultiblock.equals(Fluid_OUT) && (facing == null || facing == getFacing().getOpposite())){
 				return this.fluidOutHandler.getAndCast();
-			}else if(this.posInMultiblock.equals(Fluid_IN) && (facing == null || facing == getFacing())){
+			}else if(this.posInMultiblock.equals(Fluid_IN) && (facing == null || facing == getFacing().getOpposite())){
 				return this.fluidInHandler.getAndCast();
 			}
 		}
@@ -237,12 +237,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		for(int i = 0;i < this.chambers.length;i++){
 			if(debug || this.chambers[i].getState() == CokingState.DUMPING){
 				BlockPos cOutPos = getBlockPosForPos(i == 0 ? Chamber_A_OUT : Chamber_B_OUT);
-				Vec3 origin = new Vec3(cOutPos.getX() + 0.5, cOutPos.getY() + 0.125, cOutPos.getZ() + 0.5);
+				Vec3 origin = new Vec3(cOutPos.getX() + 0.5, cOutPos.getY() + 2.125, cOutPos.getZ() + 0.5);
 				for(int j = 0;j < 10;j++){
 					double rX = (Math.random() - 0.5) * 0.4;
 					double rY = (Math.random() - 0.5) * 0.5;
-					double rdx = (Math.random() - 0.5) * 0.05;
-					double rdy = (Math.random() - 0.5) * 0.05;
+					double rdx = (Math.random() - 0.5) * 0.10;
+					double rdy = (Math.random() - 0.5) * 0.10;
 					
 					this.level.addParticle(ParticleTypes.SMOKE,
 							origin.x + rX, origin.y, origin.z + rY,
@@ -355,7 +355,8 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			BlockPos outPos = getBlockPosForPos(Fluid_OUT).relative(getFacing().getOpposite());
 			update |= FluidUtil.getFluidHandler(this.level, outPos, getFacing()).map(out -> {
 				if(this.bufferTanks[TANK_OUTPUT].getFluidAmount() > 0){
-					FluidStack fs = FluidHelper.copyFluid(this.bufferTanks[TANK_OUTPUT].getFluid(), 100, true);
+					FluidStack fs = this.bufferTanks[TANK_OUTPUT].getFluid();
+					fs = FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), 250));
 					int accepted = out.fill(fs, FluidAction.SIMULATE);
 					if(accepted > 0){
 						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), true), FluidAction.EXECUTE);
@@ -548,12 +549,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		int bZ = posInMultiblock.getZ();
 		
 		// Primary Ladder
-		if((bX == 0 && bZ == 2) && (bY >= 3 && bY <= 12)){
+		if((bX == 8 && bZ == 2) && (bY >= 5 && bY <= 13)){
 			return true;
 		}
 		
 		// Secondary Ladder
-		if((bX == 1 && bZ == 2) && (bY >= 13 && bY <= 17)){
+		if((bX == 7 && bZ == 2) && (bY >= 15 && bY <= 21)){
 			return true;
 		}
 		
@@ -579,515 +580,326 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		
 		List<AABB> main = new ArrayList<>();
 		
-		// Beams
-		if(bY >= 3 && bY <= 12){
-			// Vertical Corners
-			if(bX == 0 && bZ == 0){
-				main.add(new AABB(0.125, 0.0, 0.125, 0.375, 1.0, 0.375)); // Corner Beam -X-Z
-			}else if(bX == 0 && bZ == 4){
-				main.add(new AABB(0.125, 0.0, 0.625, 0.375, 1.0, 0.875)); // Corner Beam -X+Z
-			}else if(bX == 8 && bZ == 0){
-				main.add(new AABB(0.625, 0.0, 0.125, 0.875, 1.0, 0.375)); // Corner Beam +X-Z
-			}else if(bX == 8 && bZ == 4){
-				main.add(new AABB(0.625, 0.0, 0.625, 0.875, 1.0, 0.875)); // Corner Beam +X+Z
+		if((bY >= 15 && bY <= 22) && bZ == 2 && (bX == 2 || bX == 6)){
+			// The two vertical pipes at the very top
+			main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75));
+		}
+		
+		{ // Catwalk Railings
+			if(bY == 22 || bY == 18){
+				if(bX == 1){
+					main.add(new AABB(0.0, 0.0, 0.0, 0.0625, 1.0, 1.0)); // West Plate
+				}
+				if(bX == 7){
+					main.add(new AABB(0.9375, 0.0, 0.0, 1.0, 1.0, 1.0)); // East Plate
+				}
+				if(bZ == 1){
+					main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.0625)); // South Plate
+				}
+				if(bZ == 3){
+					main.add(new AABB(0.0, 0.0, 0.9375, 1.0, 1.0, 1.0)); // North Plate
+				}
 			}
-			
-			// Vertical Center
-			if(bX == 4 && bZ == 4){
-				main.add(new AABB(0.375, 0.0, 0.625, 0.625, 1.0, 0.875)); // Center Beam +Z
-			}else if(bY >= 4 && bX == 4 && bZ == 0){
-				main.add(new AABB(0.375, 0.0, 0.125, 0.625, 1.0, 0.375)); // Center Beam -Z
-			}
-			
-			// Horiontal
-			if(bY == 5 || bY == 10){
-				if(bX > 0 && bX < 8){
+			if(bY == 14 || bY == 9){
+				if(bX >= 0 && bX <= 8){
 					if(bZ == 0){
-						main.add(new AABB(0.0, 0.125, 0.125, 1.0, 0.375, 0.375)); // Horizontal Beam -Z
-					}else if(bZ == 4){
-						main.add(new AABB(0.0, 0.125, 0.625, 1.0, 0.375, 0.875)); // Horizontal Beam +Z
+						main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.0625)); // South Plate
 					}
-				}else{
-					if(bX == 0 && bZ == 0){
-						main.add(new AABB(0.125, 0.125, 0.125, 0.375, 0.375, 1.0)); // Beam Intersection -X
-						main.add(new AABB(0.125, 0.125, 0.125, 1.0, 0.375, 0.375)); // Beam Intersection -Z
-					}else if(bX == 0 && bZ == 4){
-						main.add(new AABB(0.125, 0.125, 0.125, 0.375, 0.375, 0.875)); // Beam Intersection -X
-						main.add(new AABB(0.125, 0.125, 0.625, 1.0, 0.375, 0.875)); // Beam Intersection +Z
-					}else if(bX == 8 && bZ == 0){
-						main.add(new AABB(0.625, 0.125, 0.125, 0.875, 0.375, 1.0)); // Beam Intersection +X
-						main.add(new AABB(0.125, 0.125, 0.125, 0.875, 0.375, 0.375)); // Beam Intersection -Z
-					}else if(bX == 8 && bZ == 4){
-						main.add(new AABB(0.0, 0.125, 0.625, 0.875, 0.375, 0.875)); // Beam Intersection +Z
-						main.add(new AABB(0.625, 0.125, 0.0, 0.875, 0.375, 0.875)); // Beam Intersection +X
+					if(bZ == 4){
+						main.add(new AABB(0.0, 0.0, 0.9375, 1.0, 1.0, 1.0)); // North Plate
 					}
 					
-					if(bX == 0 && (bZ == 1 || bZ == 3)){
-						main.add(new AABB(0.125, 0.125, 0.0, 0.375, 0.375, 1.0)); // Horizontal Beam -X
+					if(bX == 8 && (bZ == 0 || bZ == 4)){
+						main.add(new AABB(0.9375, 0.0, 0.0, 1.0, 1.0, 1.0)); // East Plate
 					}
 					
-					if(bX == 8 && (bZ > 0 && bZ < 4)){
-						main.add(new AABB(0.625, 0.125, 0.0, 0.875, 0.375, 1.0)); // Horizontal Beam +X
+					if(bX == 0 && (bZ == 0 || bZ == 4)){
+						main.add(new AABB(0.0, 0.0, 0.0, 0.0625, 1.0, 1.0)); // West Plate
 					}
 				}
 			}
 		}
 		
-		// Ground layer slabs
+		// Catwalk
+		{
+			// Lower 2
+			{
+				if(bY == 8 || bY == 13){
+					if(!(bX >= 1 && bX <= 3 && bZ >= 1 && bZ <= 3) && !(bX >= 5 && bX <= 7 && bZ >= 1 && bZ <= 3)){
+						if(!(bX == 8 && bZ == 2)){
+							main.add(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
+						}
+					}
+				}
+			}
+			
+			// Upper 2
+			{
+				if(bY == 17 || bY == 21){
+					if(bX >= 1 && bX <= 7 && bZ >= 1 && bZ <= 3){
+						if(!((bX == 2 || bX == 6 || bX == 7) && bZ == 2))
+						main.add(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
+					}
+				}
+			}
+		}
+		
+		// Support Beams
+		{
+			// Vertical Beams
+			boolean lower = bY >= 4 && bY <= 13;
+			boolean upper = bY >= 14 && bY <= 21;
+			if(lower || upper){
+				// Corners
+				if((lower && bX == 0 && bZ == 0) || (upper && ((bX == 1 && bZ == 1) || (bX == 5 && bZ == 1)))){
+					main.add(new AABB(0.125, 0.0, 0.125, 0.375, 1.0, 0.375));
+				}
+				if((lower && bX == 0 && bZ == 4) || (upper && ((bX == 1 && bZ == 3) || (bX == 5 && bZ == 3)))){
+					main.add(new AABB(0.125, 0.0, 0.625, 0.375, 1.0, 0.875));
+				}
+				if((lower && bX == 8 && bZ == 0) || (upper && ((bX == 3 && bZ == 1) || (bX == 7 && bZ == 1)))){
+					main.add(new AABB(0.625, 0.0, 0.125, 0.875, 1.0, 0.375));
+				}
+				if((lower && bX == 8 && bZ == 4) || (upper && ((bX == 3 && bZ == 3) || (bX == 7 && bZ == 3)))){
+					main.add(new AABB(0.625, 0.0, 0.625, 0.875, 1.0, 0.875));
+				}
+				
+				// Middle
+				if(lower && bX == 4 && bZ == 0){
+					main.add(new AABB(0.375, 0.0, 0.125, 0.625, 1.0, 0.375));
+				}
+				if(lower && bX == 4 && bZ == 4){
+					main.add(new AABB(0.375, 0.0, 0.625, 0.625, 1.0, 0.875));
+				}
+			}
+			
+			// Horizontal Beams
+			if(bY == 6 || bY == 11){
+				//main.add(new AABB(0.0, 0.125, 0.0, 1.0, 0.375, 1.0));
+				if(bX >= 0 && bX <= 8){
+					if(bZ == 0){
+						double xa = (bX == 0) ? 0.125 : 0.0;
+						double xb = (bX == 8) ? 0.875 : 1.0;
+						main.add(new AABB(xa, 0.125, 0.125, xb, 0.375, 0.375));
+					}
+					if(bZ == 4){
+						double xa = (bX == 0) ? 0.125 : 0.0;
+						double xb = (bX == 8) ? 0.875 : 1.0;
+						main.add(new AABB(xa, 0.125, 0.625, xb, 0.375, 0.875));
+					}
+				}
+				if(bZ >= 0 && bZ <= 4){
+					if(bX == 0){
+						double za = (bZ == 0) ? 0.125 : 0.0;
+						double zb = (bZ == 4) ? 0.875 : 1.0;
+						main.add(new AABB(0.125, 0.125, za, 0.375, 0.375, zb));
+					}
+					if(bX == 8 && bZ != 2){
+						double za = (bZ == 0) ? 0.125 : 0.0;
+						double zb = (bZ == 4) ? 0.875 : 1.0;
+						main.add(new AABB(0.625, 0.125, za, 0.875, 0.375, zb));
+					}
+				}
+			}
+		}
+		
+		{ // Pipes
+			
+			// Up, Down, North, South, East, West Connection
+			boolean u = false, d = false, n = false, s = false, e = false, w = false;
+			
+			// Straight & T Pipes
+			{
+				// Vertical, Horizontal-X, Horizontal-Z
+				boolean v = false, hX = false, hZ = false;
+				
+				if(((bY >= 1 && bY <= 7 && bY != 3) && bX == 2 && bZ == 4) || ((bY >= 9 && bY <= 13) && bX == 0 && bZ == 2) || (bY == 1 && bX == 5 && bZ == 4)){
+					v = true;
+					
+					if(bY == 2 || bY == 7 || (bX == 5 && bZ == 4)){
+						u = true;
+					}
+					if(bY == 1 || bY == 4 || bY == 9){
+						d = true;
+					}
+				}
+				
+				if(bY == 0){
+					if(bX == 3 && bZ == 3){
+						hZ = n = s = true;
+					}
+				}
+				
+				if(bY == 1){
+					if(bX == 4 && bZ == 2){
+						v = u = d = true;
+					}
+				}
+				if(bY == 2){
+					if(bX == 3 && bZ == 3){
+						hX = w = true;
+					}
+					if(bX == 4 && bZ == 3){
+						hX = e = true;
+					}
+					if((bX == 3 || bX == 5) && bZ == 2){
+						hX = e = w = true;
+					}
+					if(bX == 4 && bZ == 2){
+						hX = e = w = d = true;
+						main.add(new AABB(0.25, 0.125, 0.25, 0.75, 0.25, 0.75));
+					}
+					if(bX == 5 && bZ == 3){
+						hX = e = w = s = true;
+						main.add(new AABB(0.25, 0.25, 0.75, 0.75, 0.75, 0.875));
+					}
+				}
+				if(bY == 8){
+					if(bX == 1 && bZ == 4){
+						hX = e = w = true;
+					}
+					if(bX == 0 && bZ == 3){
+						hZ = n = s = true;
+					}
+				}
+				
+				if(v) main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75)); // Vertical Pipe
+				if(hX) main.add(new AABB(0.0, 0.25, 0.25, 1.0, 0.75, 0.75)); // Horizontal-X Pipe
+				if(hZ) main.add(new AABB(0.25, 0.25, 0.0, 0.75, 0.75, 1.0)); // Horizontal-Z Pipe
+			}
+			
+			// 90° Bends
+			{
+				if(bY == 0){
+					if(bX == 4 && bZ == 2){
+						u = w = true;
+						main.add(new AABB(0.125, 0.25, 0.25, 0.75, 0.875, 0.75));
+					}
+					if(bX == 3 && bZ == 2){
+						e = s = true;
+						main.add(new AABB(0.25, 0.25, 0.25, 0.875, 0.75, 0.875));
+					}
+				}
+				if(bY == 2){
+					if(bX == 2 && bZ == 3){
+						n = e = true;
+						main.add(new AABB(0.25, 0.25, 0.125, 0.875, 0.75, 0.75));
+					}
+					if(bX == 5 && bZ == 4){
+						d = n = true;
+						main.add(new AABB(0.25, 0.125, 0.125, 0.75, 0.75, 0.75));
+					}
+					if(bX == 6 && bZ == 3){
+						w = n = true;
+						main.add(new AABB(0.125, 0.25, 0.125, 0.75, 0.75, 0.75));
+					}
+				}
+				if(bY == 8){
+					if(bX == 0 && bZ == 2){
+						u = s = true;
+						main.add(new AABB(0.25, 0.25, 0.25, 0.75, 0.875, 0.875));
+					}
+					if(bX == 0 && bZ == 4){
+						n = e = true;
+						main.add(new AABB(0.25, 0.25, 0.125, 0.875, 0.75, 0.75));
+					}
+					if(bX == 2 && bZ == 4){
+						d = w = true;
+						main.add(new AABB(0.125, 0.125, 0.25, 0.75, 0.75, 0.75));
+					}
+				}
+			}
+			
+			if(u) main.add(new AABB(0.125, 0.875, 0.125, 0.875, 1.0, 0.875)); // Top Connection
+			if(d) main.add(new AABB(0.125, 0.0, 0.125, 0.875, 0.125, 0.875)); // Bottom Connection
+			if(n) main.add(new AABB(0.125, 0.125, 0.0, 0.875, 0.875, 0.125)); // North Connection
+			if(s) main.add(new AABB(0.125, 0.125, 0.875, 0.875, 0.875, 1.0)); // South Connection
+			if(e) main.add(new AABB(0.875, 0.125, 0.125, 1.0, 0.875, 0.875)); // East Connection
+			if(w) main.add(new AABB(0.0, 0.125, 0.125, 0.125, 0.875, 0.875)); // West Connection
+		}
+		
+		// Redstone Controller
+		if(bX == 1 && bZ == 4){
+			if(bY == 0){ // Bottom
+				return Arrays.asList(
+						new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0),
+						new AABB(0.75, 0.0, 0.625, 0.875, 1.0, 0.875),
+						new AABB(0.125, 0.0, 0.625, 0.25, 1.0, 0.875)
+				);
+			}
+			if(bY == 1){ // Top
+				return Arrays.asList(new AABB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
+			}
+		}
+		
+		// Power Sockets
+		if(bY == 1 && bZ == 4 && (bX == 6 || bX == 7)){
+			main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.875));
+			main.add(new AABB(0.25, 0.25, 0.875, 0.75, 0.75, 1.0));
+		}
+		
+		// Power Cables
+		if((bX == 6 && bY == 2 && bZ == 4) || (bY >= 4 && bY <= 13 && bX == 4 && bZ == 2)){
+			main.add(new AABB(0.3125, 0.0, 0.3125, 0.6875, 1.0, 0.6875));
+		}
+		
+		// Bitumen input Sign
+		if(bY == 1 && bX == 3 && bZ == 4){
+			main.add(new AABB(0.0, 0.9375, 0.875, 1.0, 1.0625, 1.0));
+			main.add(new AABB(0.0625, 0.0625, 0.875, 0.9375, 0.9375, 0.9375));
+		}
+		
+		// Primary Ladder
+		if((bX == 8 && bZ == 2) && (bY >= 5 && bY <= 13)){
+			main.add(new AABB(0.0, 0.0, 0.125, 0.0625, 1.0, 0.875)); // West Plate
+		}
+		
+		// Secondary Ladder
+		if((bX == 7 && bZ == 2) && (bY >= 15 && bY <= 21)){
+			main.add(new AABB(0.0, 0.0, 0.125, 0.0625, 1.0, 0.875)); // West Plate
+		}
+		
+		// Baseplate
 		if(bY == 0){
-			if((bZ == 1 || bZ == 3) || ((bX == 5 || bX == 7) && bZ == 0) || ((bX == 1 || (bX >= 5 && bX <= 7)) && bZ == 4)){
+			if(!((bZ == 0 || bZ == 4) && (bX == 0 || bX == 4 || bX == 8)) && !(bZ == 4 && (bX == 2 || bX == 3 || (bX >= 5 && bX <= 7)))){
 				main.add(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 			}
 		}
 		
-		// Fluid output box bottom
-		if(bY == 0 && bZ == 4 && (bX == 2 || bX == 3)){
-			main.add(new AABB(0.0, 0.0, -0.25, 1.0, 1.0, 1.0));
-		}
-		// Fluid output box top
-		if(bY == 1 && bZ == 4 && (bX == 2 || bX == 3)){
-			main.add(new AABB(0.0, 0.0, -0.25, 1.0, 0.625, 1.0));
-		}
-		
-		// Redstone Controller
-		if(bY == 0 && bX == 6 && bZ == 4){
-			main.add(new AABB(0.75, 0.5, 0.625, 0.875, 1.0, 0.875));
-			main.add(new AABB(0.125, 0.5, 0.625, 0.25, 1.0, 0.875));
-		}else if(bY == 1 && bX == 6 && bZ == 4){
-			main.add(new AABB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
-		}
-		
-		// Power Sockets
-		if(bY == 1 && bZ == 0 && (bX>=1 && bX<=3)){
-			main.add(new AABB(0.0, 0.0, 0.25, 1.0, 1.0, 1.25));
-			main.add(new AABB(0.25, 0.25, 0.0, 0.75, 0.75, 0.5));
-		}
-		if(bY == 0 && bZ == 0 && (bX>=1 && bX<=3)){
-			main.add(new AABB(0.0, 0.0, 0.25, 1.0, 1.0, 1.25));
-		}
-		
-		// Slopes
-		if(bY == 3){
-			if(bZ == 0){
-				if(bX == 3){
-					main.add(new AABB(0.0, 0.0, 0.0625, 0.25, 0.25, 1.0));
-					main.add(new AABB(0.25, 0.0, 0.0625, 0.5, 0.5, 1.0));
-					main.add(new AABB(0.50, 0.0, 0.0625, 0.75, 0.75, 1.0));
-					main.add(new AABB(0.75, 0.0, 0.0625, 1.0, 1.0, 1.0));
-				}
-				if(bX == 4){
-					main.add(new AABB(0.0, 0.0, 0.0625, 1.0, 1.0, 1.0));
-				}
-				if(bX == 5){
-					main.add(new AABB(0.0, 0.0, 0.0625, 0.25, 1.0, 1.0));
-					main.add(new AABB(0.25, 0.0, 0.0625, 0.5, 0.75, 1.0));
-					main.add(new AABB(0.50, 0.0, 0.0625, 0.75, 0.5, 1.0));
-					main.add(new AABB(0.75, 0.0, 0.0625, 1.0, 0.25, 1.0));
-				}
-			}else if(bX == 4 && bZ == 3){
-				main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.25));
-				main.add(new AABB(0.0, 0.0, 0.25, 1.0, 0.75, 0.5));
-				main.add(new AABB(0.0, 0.0, 0.5, 1.0, 0.5, 0.75));
-				main.add(new AABB(0.0, 0.0, 0.75, 1.0, 0.25, 1.0));
-			}
-		}
-		
-		// First and Second Platform Shape
-		if((bY == 7 || bY == 12) && !(bX == 0 && bZ == 2)){
-			if(!(bX > 0 && bX < 8 && bZ > 0 && bZ < 4) || (bX==4 && bZ>=1 && bZ<=3)){
-				main.add(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
-			}
-		}
-		
-		// Top Platform
-		if(bY == 17){
-			if((bX >= 1 && bX <= 7) && (bZ == 1 || bZ == 3) || (bX == 7 && bZ == 2)){
-				main.add(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
-			}
-		}
-		
-		// Primary Ladder
-		if(bX == 0 && bZ == 2){
-			if(bY >= 3 && bY <= 12){
-				main.add(new AABB(1.005, 0.0, 0.125, 1.005, 1.0, 0.875));
-				
-				if(bY >= 5){
-					main.add(new AABB(0.0, 0.0, 0.0, 0.0625, 1.0, 1.0));
-					if(!(bY==8 || bY==9)){
-						main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.0625));
-						main.add(new AABB(0.0, 0.0, 0.9375, 1.0, 1.0, 1.0));
-					}
-				}
-			}
-		}
-		
-		// Secondary Ladder
-		if(bX == 1 && bZ == 2){
-			if(bY >= 13 && bY <= 17){
-				main.add(new AABB(0.875, 0.0, 0.125, 0.9375, 1.0, 0.875));
-				
-				if(bY >= 15){ // Cage
-					main.add(new AABB(0.0, 0.0, 0.0, 0.0625, 1.0, 1.0));
-					main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.0625));
-					main.add(new AABB(0.0, 0.0, 0.9375, 1.0, 1.0, 1.0));
-				}
-			}
-		}
-		
-		// All Pipes
+		// Chambers
 		{
-			if(bX == 2 && bZ == 4){
-				if(bY == 1){
-					main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75)); // Pipe Y
-					main.add(new AABB(0.125, 0.875, 0.875, 0.875, 1.0, 0.125)); // Pipe Connector +Y
+			if(bY >= 4 && bY <= 13){
+				if(bX == 1 || bX == 5){
+					if(bZ == 1) Arrays.asList(new AABB(0.0625, 0.0, 0.0625, 1.0, 1.0, 1.0));
+					if(bZ == 2) Arrays.asList(new AABB(0.0625, 0.0, 0.0, 1.0, 1.0, 1.0));
+					if(bZ == 3) Arrays.asList(new AABB(0.0625, 0.0, 0.0, 1.0, 1.0, 0.9375));
 				}
-				if(bY >= 3 && bY <= 6){
-					main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75)); // Pipe Y
-					if(bY==3 || bY==5 || bY==6){
-						main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125)); // Pipe Connector -Y
-					}
-					if(bY==4 || bY==5 || bY==6){
-						main.add(new AABB(0.125, 0.875, 0.875, 0.875, 1.0, 0.125)); // Pipe Connector +Y
-					}
+				if(bX == 2 || bX == 6){
+					if(bZ == 1) Arrays.asList(new AABB(0.0, 0.0, 0.0625, 1.0, 1.0, 1.0));
+					if(bZ == 3) Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 0.9375));
 				}
-			}
-			
-			if(bX == 6 && bZ == 0){
-				if(bY >= 1 && bY <= 6 && bY != 2){
-					main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75)); // Pipe Y
-				}
-				
-				if(bY == 1){
-					main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125)); // Pipe Connector -Y
-					main.add(new AABB(0.125, 0.875, 0.875, 0.875, 1.0, 0.125)); // Pipe Connector +Y
-				}
-				if(bY == 3){
-					main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125)); // Pipe Connector -Y
-				}
-				if(bY == 6){
-					main.add(new AABB(0.125, 0.875, 0.875, 0.875, 1.0, 0.125)); // Pipe Connector +Y
-				}
-			}
-			
-			// Pipes in slabs
-			if(bY == 7){
-				switch(bX){
-					case 2:{
-						if(bZ == 4){
-							main.add(new AABB(0.875, 0.125, 0.875, 1.0, 0.875, 0.125)); // Pipe Connector +X
-							main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125)); // Pipe Connector -Y
-							main.add(new AABB(0.25, 0.125, 0.75, 0.875, 0.875, 0.25)); // Pipe Bend -Y +X
-						}
-						break;
-					}
-					case 3:{
-						if(bZ == 4){
-							main.add(new AABB(0.0, 0.25, 0.75, 1.0, 0.75, 0.25)); // Pipe X
-							main.add(new AABB(0.0, 0.125, 0.875, 0.125, 0.875, 0.125)); // Pipe Connector -X
-						}
-						break;
-					}
-					case 4:{
-						if(bZ == 4){
-							main.add(new AABB(0.0, 0.25, 0.75, 1.0, 0.75, 0.25)); // Pipe X
-						}
-						break;
-					}
-					case 5:{
-						if(bZ == 4){
-							main.add(new AABB(0.0, 0.25, 0.75, 1.0, 0.75, 0.25)); // Pipe X
-							main.add(new AABB(0.875, 0.125, 0.875, 1.0, 0.875, 0.125)); // Pipe Connector +X
-						}
-						break;
-					}
-					case 6:{
-						if(bZ == 0){
-							main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125)); // Pipe Connector -Y
-							main.add(new AABB(0.875, 0.125, 0.875, 1.0, 0.875, 0.125)); // Pipe Connector +X
-							main.add(new AABB(0.25, 0.125, 0.75, 0.875, 0.75, 0.25)); // Pipe Bend 					
-						}else if(bZ == 4){
-							main.add(new AABB(0.0, 0.125, 0.875, 0.125, 0.875, 0.125)); // Pipe Connector -X
-							main.add(new AABB(0.125, 0.25, 0.75, 0.75, 0.75, 0.125)); // Pipe Bend -X -Z
-						}
-						break;
-					}
-					case 7:{
-						if(bZ == 0){
-							main.add(new AABB(0.0, 0.125, 0.875, 0.125, 0.875, 0.125)); // Pipe Connector -X
-							main.add(new AABB(0.875, 0.125, 0.875, 1.0, 0.875, 0.125)); // Pipe Connector +X
-							main.add(new AABB(0.0, 0.25, 0.75, 1.0, 0.75, 0.25)); // Pipe X
-						}
-						break;
-					}
-					case 8:{
-						if(bZ == 0){
-							main.add(new AABB(0.0, 0.125, 0.875, 0.125, 0.875, 0.125)); // Pipe Connector -X
-							main.add(new AABB(0.125, 0.125, 0.875, 0.875, 0.875, 1.0)); // Pipe Connector +Z
-							main.add(new AABB(0.625, 0.0, 0.125, 0.875, 1.0, 0.375)); // Vertical Corner Beam +X-Z
-							main.add(new AABB(0.125, 0.25, 0.875, 0.75, 0.75, 0.25)); // Pipe Bend -X +Z
-						}else if(bZ == 1){
-							main.add(new AABB(0.125, 0.125, 0.125, 0.875, 0.875, 0.0)); // Pipe Connector -Z
-							main.add(new AABB(0.125, 0.125, 0.875, 0.875, 0.875, 1.0)); // Pipe Connector +Z
-							main.add(new AABB(0.25, 0.25, 0.0, 0.75, 0.75, 1.0)); // Pipe X
-						}else if(bZ == 2){
-							main.add(new AABB(0.125, 0.125, 0.125, 0.875, 0.875, 0.0)); // Pipe Connector -Z
-							main.add(new AABB(0.25, 0.25, 0.125, 0.75, 0.875, 0.75)); // Pipe Bend -Y +X
-						}else if(bZ == 4){
-							main.add(new AABB(0.625, 0.0, 0.625, 0.875, 1.0, 0.875)); // Vertical Corner Beam +X+Z
-						}
-						break;
-					}
-				}
-			}
-			
-			// Vertical Pipe to the one below
-			if(bX == 8 && bZ == 2){
-				if(bY >= 8 && bY <= 13){
-					main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75)); // Pipe Y
-				}
-				if(bY == 8){
-					main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125)); // Pipe Connector -Y
-				}
-				if(bY == 13){
-					main.add(new AABB(0.125, 0.875, 0.875, 0.875, 1.0, 0.125)); // Pipe Connector +Y
-				}
-			}
-			
-			// Horizontal Pipe to the one below
-			if(bY == 14){
-				if(bX >= 3 && bX <= 6 && bZ == 2){
-					main.add(new AABB(0.0, 0.25, 0.75, 1.0, 0.75, 0.25)); // Pipe X
-					
-					if(bX == 6){
-						main.add(new AABB(0.875, 0.125, 0.875, 1.0, 0.875, 0.125)); // Pipe Connector +X
-					}
-				}
-				if(bX == 7 && bZ == 2){
-					main.add(new AABB(0.0, 0.125, 0.875, 0.125, 0.875, 0.125)); // Pipe Connector -X
-					main.add(new AABB(0.875, 0.125, 0.875, 1.0, 0.875, 0.125)); // Pipe Connector +X
-					main.add(new AABB(0.0, 0.25, 0.75, 1.0, 0.75, 0.25)); // Pipe X
-				}
-				if(bX == 8 && bZ == 2){
-					main.add(new AABB(0.0, 0.125, 0.875, 0.125, 0.875, 0.125)); // Pipe Connector -X
-					main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125)); // Pipe Connector -Y
-					main.add(new AABB(0.125, 0.125, 0.75, 0.75, 0.75, 0.25)); // Pipe Bend -Y +X
-				}
-			}
-			
-			// Top 2 Vertical Pipes
-			if(bY >= 13 && bY <= 22){
-				if(bX == 3 && bZ == 2){
-					main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75).move(-0.25, 0, 0)); // Pipe Y
-					if(bY == 13){
-						main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125).move(-0.25, 0, 0)); // Pipe Connector -Y
-					}
-				}
-				
-				if(bX == 5 && bZ == 2){
-					main.add(new AABB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75).move(0.25, 0, 0)); // Pipe Y
-					if(bY == 13){
-						main.add(new AABB(0.125, 0.0, 0.875, 0.875, 0.125, 0.125).move(0.25, 0, 0)); // Pipe Connector -Y
-					}
+				if(bX == 3 || bX == 7){
+					if(bZ == 1) Arrays.asList(new AABB(0.0, 0.0, 0.0625, 0.9375, 1.0, 1.0));
+					if(bZ == 2) Arrays.asList(new AABB(0.0, 0.0, 0.0, 0.9375, 1.0, 1.0));
+					if(bZ == 3) Arrays.asList(new AABB(0.0, 0.0, 0.0, 0.9375, 1.0, 0.9375));
 				}
 			}
 		}
 		
-		// Frame below top platform
+		// Fences
 		{
-			// When viewed from the side with the power inputs
-			if(bZ == 1){
-				// Right
-				if(bX == 2){
-					switch(bY){
-						case 13:{
-							main.add(new AABB(0.0625, 0.0, 0.25, 0.3125, 1.0, 0.5625));
-							
-							main.add(new AABB(0.0625, 0.0, 0.0, 0.3125, 0.25, 1.0));
-							main.add(new AABB(0.0, 0.0, 0.25, 1.0, 0.25, 0.5));
-							break;
-						}
-						case 14:{
-							main.add(new AABB(0.0625, 0.0, 0.3125, 0.3125, 1.0, 0.625));
-							break;
-						}
-						case 15:{
-							main.add(new AABB(0.0625, 0.0, 0.375, 0.3125, 1.0, 0.6875));
-							
-							main.add(new AABB(0.0625, 0.25, 0.375, 0.3125, 0.5, 1.0));
-							main.add(new AABB(0.0625, 0.25, 0.4375, 1.0, 0.5, 0.6875));
-							break;
-						}
-						case 16:{
-							main.add(new AABB(0.0625, 0.0, 0.4375, 0.3125, 1.0, 0.75));
-							break;
-						}
-						case 17:{
-							main.add(new AABB(0.0625, 0.0, 0.5, 0.3125, 1.0, 0.8125));
-							break;
-						}
+			if(bY == 0 || bY == 1){
+				if(bZ >= 1 && bZ <= 3){
+					if(bX == 0){
+						main.add(new AABB(0.375, 0.0, 0.0, 0.4375, 1.0, 1.0));
+					}
+					if(bX == 8){
+						main.add(new AABB(0.5625, 0.0, 0.0, 0.625, 1.0, 1.0));
 					}
 				}
-				
-				// Middle
-				if(bX == 4){
-					switch(bY){
-						case 13:{
-							main.add(new AABB(0.375, 0.0, 0.25, 0.625, 1.0, 0.5625));
-							
-							main.add(new AABB(0.375, 0.0, 0.0, 0.625, 0.25, 1.0));
-							main.add(new AABB(0.0, 0.0, 0.25, 1.0, 0.25, 0.5));
-							break;
-						}
-						case 14:{
-							main.add(new AABB(0.375, 0.0, 0.3125, 0.625, 1.0, 0.625));
-							break;
-						}
-						case 15:{
-							main.add(new AABB(0.375, 0.0, 0.375, 0.625, 1.0, 0.6875));
-							
-							main.add(new AABB(0.0, 0.25, 0.4375, 1.0, 0.5, 0.6875));
-							main.add(new AABB(0.375, 0.25, 0.5, 0.625, 0.5, 1.0));
-							break;
-						}
-						case 16:{
-							main.add(new AABB(0.375, 0.0, 0.4375, 0.625, 1.0, 0.75));
-							break;
-						}
-						case 17:{
-							main.add(new AABB(0.375, 0.0, 0.5, 0.625, 1.0, 0.8125));
-							break;
-						}
-					}
-				}
-				
-				// Left
-				if(bX == 6){
-					switch(bY){
-						case 13:{
-							main.add(new AABB(0.6875, 0.0, 0.25, 0.9375, 1.0, 0.5625));
-							
-							main.add(new AABB(0.6875, 0.0, 0.0, 0.9375, 0.25, 1.0));
-							main.add(new AABB(0.0, 0.0, 0.25, 1.0, 0.25, 0.5));
-							break;
-						}
-						case 14:{
-							main.add(new AABB(0.6875, 0.0, 0.3125, 0.9375, 1.0, 0.625));
-							break;
-						}
-						case 15:{
-							main.add(new AABB(0.6875, 0.0, 0.375, 0.9375, 1.0, 0.6875));
-							
-							main.add(new AABB(0.6875, 0.25, 0.375, 0.9375, 0.5, 1.0));
-							main.add(new AABB(0.0, 0.25, 0.4375, 0.75, 0.5, 0.6875));
-							break;
-						}
-						case 16:{
-							main.add(new AABB(0.6875, 0.0, 0.4375, 0.9375, 1.0, 0.75));
-							break;
-						}
-						case 17:{
-							main.add(new AABB(0.6875, 0.0, 0.5, 0.9375, 1.0, 0.8125));
-							break;
-						}
-					}
-				}
-			}
-			
-			// When viewed from the side with the redstone controller
-			if(bZ == 3){
-				// Left
-				if(bX == 2){
-					switch(bY){
-						case 13:{
-							main.add(new AABB(0.0625, 0.0, 0.4375, 0.3125, 1.0, 0.75));
-							
-							main.add(new AABB(0.0625, 0.0, 0.0, 0.3125, 0.25, 1.0));
-							main.add(new AABB(0.0, 0.0, 0.5, 1.0, 0.25, 0.75));
-							break;
-						}
-						case 14:{
-							main.add(new AABB(0.0625, 0.0, 0.375, 0.3125, 1.0, 0.6875));
-							break;
-						}
-						case 15:{
-							main.add(new AABB(0.0625, 0.0, 0.3125, 0.3125, 1.0, 0.625));
-							
-							main.add(new AABB(0.0625, 0.25, 0.0, 0.3125, 0.5, 0.5));
-							main.add(new AABB(0.0625, 0.25, 0.3125, 1.0, 0.5, 0.5625));
-							break;
-						}
-						case 16:{
-							main.add(new AABB(0.0625, 0.0, 0.25, 0.3125, 1.0, 0.5625));
-							break;
-						}
-						case 17:{
-							main.add(new AABB(0.0625, 0.0, 0.1875, 0.3125, 1.0, 0.5));
-							break;
-						}
-					}
-				}
-				
-				// Middle
-				if(bX == 4){
-					switch(bY){
-						case 13:{
-							main.add(new AABB(0.375, 0.0, 0.4375, 0.625, 1.0, 0.75));
-							
-							main.add(new AABB(0.375, 0.0, 0.0, 0.625, 0.25, 1.0));
-							main.add(new AABB(0.0, 0.0, 0.5, 1.0, 0.25, 0.75));
-							break;
-						}
-						case 14:{
-							main.add(new AABB(0.375, 0.0, 0.375, 0.625, 1.0, 0.6875));
-							break;
-						}
-						case 15:{
-							main.add(new AABB(0.375, 0.0, 0.3125, 0.625, 1.0, 0.625));
-							
-							main.add(new AABB(0.0, 0.25, 0.3125, 1.0, 0.5, 0.5625));
-							main.add(new AABB(0.375, 0.25, 0.0, 0.625, 0.5, 0.5));
-							break;
-						}
-						case 16:{
-							main.add(new AABB(0.375, 0.0, 0.25, 0.625, 1.0, 0.5625));
-							break;
-						}
-						case 17:{
-							main.add(new AABB(0.375, 0.0, 0.1875, 0.625, 1.0, 0.5));
-							break;
-						}
-					}
-				}
-				
-				// Right
-				if(bX == 6){
-					switch(bY){
-						case 13:{
-							main.add(new AABB(0.6875, 0.0, 0.4375, 0.9375, 1.0, 0.75));
-							
-							main.add(new AABB(0.6875, 0.0, 0.0, 0.9375, 0.25, 1.0));
-							main.add(new AABB(0.0, 0.0, 0.5, 1.0, 0.25, 0.75));
-							break;
-						}
-						case 14:{
-							main.add(new AABB(0.6875, 0.0, 0.375, 0.9375, 1.0, 0.6875));
-							break;
-						}
-						case 15:{
-							main.add(new AABB(0.6875, 0.0, 0.3125, 0.9375, 1.0, 0.625));
-							
-							main.add(new AABB(0.6875, 0.25, 0.0, 0.9375, 0.5, 0.5));
-							main.add(new AABB(0.0, 0.25, 0.3125, 0.75, 0.5, 0.5625));
-							break;
-						}
-						case 16:{
-							main.add(new AABB(0.6875, 0.0, 0.25, 0.9375, 1.0, 0.5625));
-							break;
-						}
-						case 17:{
-							main.add(new AABB(0.6875, 0.0, 0.1875, 0.9375, 1.0, 0.5));
-							break;
-						}
+				if(bX >= 1 && bX <= 3 || bX >= 5 && bX <= 7){
+					if(bZ == 0){
+						main.add(new AABB(0.0, 0.0, 0.375, 1.0, 1.0, 0.4375));
 					}
 				}
 			}
