@@ -1074,6 +1074,13 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		
 		/** returns true when the coker should update, false otherwise */
 		public boolean tick(CokerUnitTileEntity cokerunit, int chamberId){
+			if(this.recipe == null){
+				if(this.state != CokingState.STANDBY){
+					this.state = CokingState.STANDBY;
+				}
+				return true;
+			}
+			
 			switch(this.state){
 				case STANDBY:{
 					if(this.recipe != null){

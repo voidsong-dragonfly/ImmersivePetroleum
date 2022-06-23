@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.util;
 
+import com.blamejared.crafttweaker.api.CraftTweakerConstants;
+
 import blusunrize.immersiveengineering.api.Lib;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.resources.ResourceLocation;
@@ -10,11 +12,9 @@ public class ResourceUtils{
 		return new ResourceLocation(ImmersivePetroleum.MODID, str);
 	}
 	
-	/*// TODO
 	public static ResourceLocation ct(String str){
-		return new ResourceLocation(CraftTweaker.MODID, str);
+		return new ResourceLocation(CraftTweakerConstants.MOD_ID, str);
 	}
-	*/
 	
 	public static ResourceLocation ie(String str){
 		return new ResourceLocation(Lib.MODID, str);
