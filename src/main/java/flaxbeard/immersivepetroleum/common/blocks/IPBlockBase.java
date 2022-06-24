@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPTickableBE;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -47,20 +46,6 @@ public class IPBlockBase extends Block{
 	@Nullable
 	public static <E extends BlockEntity & IPServerTickableTile, A extends BlockEntity> BlockEntityTicker<A> createServerTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected){
 		return createTickerHelper(actual, expected, IPServerTickableTile::makeTicker);
-	}
-	
-	/** @deprecated See {@link IPTickableBE} */
-	@Nullable
-	@Deprecated(forRemoval = true)
-	public static <E extends BlockEntity & IPTickableBE, A extends BlockEntity> BlockEntityTicker<A> createGenericTickerHelper(BlockEntityType<A> actual, RegistryObject<BlockEntityType<E>> expected){
-		return createTickerHelper(actual, expected.get(), IPTickableBE::makeTicker);
-	}
-	
-	/** @deprecated See {@link IPTickableBE} */
-	@Nullable
-	@Deprecated(forRemoval = true)
-	public static <E extends BlockEntity & IPTickableBE, A extends BlockEntity> BlockEntityTicker<A> createGenericTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected){
-		return createTickerHelper(actual, expected, IPTickableBE::makeTicker);
 	}
 	
 	@SuppressWarnings("unchecked")
