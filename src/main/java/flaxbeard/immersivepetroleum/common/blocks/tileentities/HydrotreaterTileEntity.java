@@ -218,34 +218,32 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	
 	@Override
 	public void tickServer(){
-		if(isDummy() || isRSDisabled()){
-			return;
-		}
-		
 		boolean update = false;
 		
-		if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
-			if(this.tanks[TANK_INPUT_A].getFluidAmount() > 0 || this.tanks[TANK_INPUT_B].getFluidAmount() > 0){
-				SulfurRecoveryRecipe recipe = SulfurRecoveryRecipe.findRecipe(this.tanks[TANK_INPUT_A].getFluid(), this.tanks[TANK_INPUT_B].getFluid());
-				
-				if(recipe != null && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
-					if(this.tanks[TANK_INPUT_A].getFluidAmount() >= recipe.getInputFluid().getAmount() && (recipe.getSecondaryInputFluid() == null || (this.tanks[TANK_INPUT_B].getFluidAmount() >= recipe.getSecondaryInputFluid().getAmount()))){
-						int[] inputs, inputAmounts;
-						
-						if(recipe.getSecondaryInputFluid() != null){
-							inputs = new int[]{TANK_INPUT_A, TANK_INPUT_B};
-							inputAmounts = new int[]{recipe.getInputFluid().getAmount(), recipe.getSecondaryInputFluid().getAmount()};
-						}else{
-							inputs = new int[]{TANK_INPUT_A};
-							inputAmounts = new int[]{recipe.getInputFluid().getAmount()};
-						}
-						
-						MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<SulfurRecoveryRecipe>(recipe, this::getRecipeForId)
-								.setInputTanks(inputs)
-								.setInputAmounts(inputAmounts);
-						if(addProcessToQueue(process, true)){
-							addProcessToQueue(process, false);
-							update = true;
+		if(!isRSDisabled()){
+			if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
+				if(this.tanks[TANK_INPUT_A].getFluidAmount() > 0 || this.tanks[TANK_INPUT_B].getFluidAmount() > 0){
+					SulfurRecoveryRecipe recipe = SulfurRecoveryRecipe.findRecipe(this.tanks[TANK_INPUT_A].getFluid(), this.tanks[TANK_INPUT_B].getFluid());
+					
+					if(recipe != null && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
+						if(this.tanks[TANK_INPUT_A].getFluidAmount() >= recipe.getInputFluid().getAmount() && (recipe.getSecondaryInputFluid() == null || (this.tanks[TANK_INPUT_B].getFluidAmount() >= recipe.getSecondaryInputFluid().getAmount()))){
+							int[] inputs, inputAmounts;
+							
+							if(recipe.getSecondaryInputFluid() != null){
+								inputs = new int[]{TANK_INPUT_A, TANK_INPUT_B};
+								inputAmounts = new int[]{recipe.getInputFluid().getAmount(), recipe.getSecondaryInputFluid().getAmount()};
+							}else{
+								inputs = new int[]{TANK_INPUT_A};
+								inputAmounts = new int[]{recipe.getInputFluid().getAmount()};
+							}
+							
+							MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<SulfurRecoveryRecipe>(recipe, this::getRecipeForId)
+									.setInputTanks(inputs)
+									.setInputAmounts(inputAmounts);
+							if(addProcessToQueue(process, true)){
+								addProcessToQueue(process, false);
+								update = true;
+							}
 						}
 					}
 				}
@@ -303,41 +301,41 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 
 	private final MultiblockCapability<IFluidHandler> inputAHandler = MultiblockCapability.make(
-			this, be -> be.inputAHandler, HydrotreaterTileEntity::master, registerFluidInput(tanks[TANK_INPUT_A])
+			this, be -> be.inputAHandler, HydrotreaterTileEntity::master, registerFluidInput(this.tanks[TANK_INPUT_A])
 	);
 	private final MultiblockCapability<IFluidHandler> inputBHandler = MultiblockCapability.make(
-			this, be -> be.inputBHandler, HydrotreaterTileEntity::master, registerFluidInput(tanks[TANK_INPUT_B])
+			this, be -> be.inputBHandler, HydrotreaterTileEntity::master, registerFluidInput(this.tanks[TANK_INPUT_B])
 	);
 	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
-			this, be -> be.outputHandler, HydrotreaterTileEntity::master, registerFluidOutput(tanks[TANK_OUTPUT])
+			this, be -> be.outputHandler, HydrotreaterTileEntity::master, registerFluidOutput(this.tanks[TANK_OUTPUT])
 	);
 
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-			if (this.posInMultiblock.equals(Fluid_IN_A) && (side == null || side == getFacing().getOpposite())){
-				return inputAHandler.getAndCast();
-			} else if (this.posInMultiblock.equals(Fluid_IN_B) && (side == null || side == Direction.UP)){
-				return inputBHandler.getAndCast();
-			} else if (this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == Direction.UP)){
-				return outputHandler.getAndCast();
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if(this.posInMultiblock.equals(Fluid_IN_A) && (side == null || side == getFacing().getOpposite())){
+				return this.inputAHandler.getAndCast();
+			}else if(this.posInMultiblock.equals(Fluid_IN_B) && (side == null || side == Direction.UP)){
+				return this.inputBHandler.getAndCast();
+			}else if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == Direction.UP)){
+				return this.outputHandler.getAndCast();
 			}
 		}
 		return super.getCapability(capability, side);
 	}
-
+	
 	@Override
 	public HydrotreaterTileEntity getGuiMaster(){
 		return master();
 	}
-
+	
 	@Nonnull
 	@Override
 	public BEContainerIP<? super HydrotreaterTileEntity, ?> getContainerTypeIP(){
 		return IPMenuTypes.HYDROTREATER;
 	}
-
+	
 	@Override
 	public boolean canUseGui(Player player){
 		return this.formed;
