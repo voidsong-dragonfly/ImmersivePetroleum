@@ -305,14 +305,14 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side){
-		if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
 			for(Port port:Port.values()){
 				if(port.matches(this.posInMultiblock)){
 					OilTankTileEntity master = isDummy() ? master() : this;
-					if (master == null) {
+					if(master == null){
 						return LazyOptional.empty();
 					}
-					return switch (master.portConfig.get(port)){
+					return switch(master.portConfig.get(port)){
 						case INPUT -> inputHandler.getAndCast();
 						case OUTPUT -> outputHandler.getAndCast();
 					};
