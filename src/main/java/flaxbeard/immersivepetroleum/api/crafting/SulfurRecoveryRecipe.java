@@ -28,8 +28,14 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(secondary);
 		
 		for(SulfurRecoveryRecipe recipe:recipes.values()){
-			if((recipe.inputFluid != null && recipe.inputFluid.test(input)) && (secondary.isEmpty() || (recipe.inputFluidSecondary != null && secondary != null && recipe.inputFluidSecondary.test(secondary)))){
-				return recipe;
+			if(secondary.isEmpty()){
+				if(recipe.inputFluidSecondary == null && (recipe.inputFluid != null && recipe.inputFluid.test(input))){
+					return recipe;
+				}
+			}else{
+				if((recipe.inputFluid != null && recipe.inputFluid.test(input)) && (recipe.inputFluidSecondary != null && recipe.inputFluidSecondary.test(secondary))){
+					return recipe;
+				}
 			}
 		}
 		return null;
@@ -74,6 +80,17 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	@Nullable
 	public final FluidTagInput inputFluidSecondary;
 	
+	/**
+	 * 
+	 * @param id
+	 * @param output
+	 * @param outputItem
+	 * @param inputFluid
+	 * @param inputFluidSecondary
+	 * @param chance
+	 * @param energy
+	 * @param time
+	 */
 	public SulfurRecoveryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
 		super(ItemStack.EMPTY, IPRecipeTypes.SULFUR_RECOVERY, id);
 		this.output = output;
