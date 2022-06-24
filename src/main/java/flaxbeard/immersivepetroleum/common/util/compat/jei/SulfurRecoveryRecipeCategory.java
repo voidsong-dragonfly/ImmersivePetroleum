@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,6 +11,7 @@ import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -22,7 +22,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecoveryRecipe>{
 	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater");
@@ -44,10 +43,11 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 			.setOverlay(this.tankOverlay, 0, 0)
 			.addIngredients(ForgeTypes.FLUID_STACK, recipe.inputFluid.getMatchingFluidStacks());
 		
-		builder.addSlot(RecipeIngredientRole.INPUT, 3, 3)
+		IRecipeSlotBuilder secondary = builder.addSlot(RecipeIngredientRole.INPUT, 3, 3)
 			.setFluidRenderer(1, false, 20, 51)
-			.setOverlay(this.tankOverlay, 0, 0)
-			.addIngredients(ForgeTypes.FLUID_STACK, recipe.inputFluidSecondary != null ? recipe.inputFluidSecondary.getMatchingFluidStacks() : Arrays.asList(FluidStack.EMPTY));
+			.setOverlay(this.tankOverlay, 0, 0);
+		if(recipe.inputFluidSecondary != null)
+			secondary.addIngredients(ForgeTypes.FLUID_STACK, recipe.inputFluidSecondary.getMatchingFluidStacks());
 		
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 71, 3)
 			.setFluidRenderer(1, false, 20, 51)
