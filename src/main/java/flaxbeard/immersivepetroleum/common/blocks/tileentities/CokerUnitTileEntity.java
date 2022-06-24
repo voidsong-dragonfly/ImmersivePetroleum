@@ -1046,12 +1046,20 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			return this.timer;
 		}
 		
+		private boolean setStage(CokingState state){
+			if(this.state != state){
+				this.state = state;
+				return true;
+			}
+			return false;
+		}
+		
 		@Nullable
 		public CokerUnitRecipe getRecipe(){
 			return this.recipe;
 		}
 		
-		/** Expected input. (DO NOT EDIT THE RETURNED STACK) */
+		/** Expected input. */
 		public ItemStack getInputItem(){
 			if(this.recipe == null){
 				return ItemStack.EMPTY;
@@ -1059,13 +1067,13 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			return this.recipe.inputItem.getMatchingStacks()[0];
 		}
 		
-		/** Expected output. (DO NOT EDIT THE RETURNED STACK) */
+		/** Expected output. */
 		public ItemStack getOutputItem(){
 			if(this.recipe == null){
 				return ItemStack.EMPTY;
 			}
 			
-			return this.recipe.outputItem.get();
+			return this.recipe.outputItem.get().copy();
 		}
 		
 		public FluidTank getTank(){
@@ -1075,17 +1083,13 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		/** returns true when the coker should update, false otherwise */
 		public boolean tick(CokerUnitTileEntity cokerunit, int chamberId){
 			if(this.recipe == null){
-				if(this.state != CokingState.STANDBY){
-					this.state = CokingState.STANDBY;
-				}
-				return true;
+				return setStage(CokingState.STANDBY);
 			}
 			
 			switch(this.state){
 				case STANDBY:{
 					if(this.recipe != null){
-						this.state = CokingState.PROCESSING;
-						return true;
+						return setStage(CokingState.PROCESSING);
 					}
 					break;
 				}
@@ -1103,7 +1107,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 								this.outputAmount++;
 								
 								if(this.inputAmount <= 0){
-									this.state = CokingState.DRAIN_RESIDUE;
+									setStage(CokingState.DRAIN_RESIDUE);
 								}
 							}
 							
@@ -1127,8 +1131,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 							return true;
 						}
 					}else{
-						this.state = CokingState.FLOODING;
-						return true;
+						return setStage(CokingState.FLOODING);
 					}
 					break;
 				}
@@ -1145,8 +1148,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 								this.tank.fill(accepted, FluidAction.EXECUTE);
 							}
 						}else if(this.tank.getFluidAmount() >= max){
-							this.state = CokingState.DUMPING;
-							return true;
+							return setStage(CokingState.DUMPING);
 						}
 					}
 					break;
@@ -1185,7 +1187,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					
 					if(this.outputAmount <= 0 && this.tank.isEmpty()){
 						this.recipe = null;
-						this.state = CokingState.STANDBY;
+						setStage(CokingState.STANDBY);
 						
 						update = true;
 					}
