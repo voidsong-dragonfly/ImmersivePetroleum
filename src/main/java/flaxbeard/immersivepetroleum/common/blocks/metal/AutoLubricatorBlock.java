@@ -49,11 +49,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	public static final BooleanProperty SLAVE = BooleanProperty.create("slave");
 	
 	public AutoLubricatorBlock(){
-		super(Block.Properties.of(material)
-				.strength(5.0F, 6.0F)
-				//.harvestTool(ToolType.AXE) // TODO Harvest Tool tag stuff
-				.sound(SoundType.METAL)
-				.noOcclusion());
+		super(Block.Properties.of(material).strength(5.0F, 6.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
 		
 		registerDefaultState(getStateDefinition().any()
 				.setValue(FACING, Direction.NORTH)

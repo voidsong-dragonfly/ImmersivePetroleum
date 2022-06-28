@@ -20,9 +20,7 @@ public class AsphaltBlock extends IPBlockBase{
 	protected static final float SPEED_FACTOR = 1.20F;
 	
 	public AsphaltBlock(){
-		super(Block.Properties.of(Material.STONE).speedFactor(SPEED_FACTOR).strength(2.0F, 10.0F)
-				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
-				.sound(SoundType.STONE));
+		super(Block.Properties.of(Material.STONE).speedFactor(SPEED_FACTOR).strength(2.0F, 10.0F).sound(SoundType.STONE).requiresCorrectToolForDrops());
 	}
 	
 	@Override

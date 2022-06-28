@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "immersivepetroleum:asphalt",
+    "immersivepetroleum:asphalt_stair",
+    "immersivepetroleum:asphalt_slab",
+    "immersivepetroleum:petcoke_block",
+    "immersivepetroleum:well_pipe",
+    "immersivepetroleum:auto_lubricator"
+  ]
+}

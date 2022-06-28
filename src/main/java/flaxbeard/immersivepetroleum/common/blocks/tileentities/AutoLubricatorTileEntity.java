@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -42,7 +43,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlayerInteraction, IBlockOverlayText, IPServerTickableTile, IPClientTickableTile{
+public class AutoLubricatorTileEntity extends IPTileEntityBase implements IEBlockInterfaces.IPlayerInteraction, IBlockOverlayText, IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IReadOnPlacement{
 	public boolean isSlave;
 //	public boolean predictablyDraining = false;
 	public Direction facing = Direction.NORTH;
@@ -87,13 +88,15 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPlaye
 			nbt.put("tank", tankTag);
 	}
 	
+	@Override
 	public void readOnPlacement(LivingEntity placer, ItemStack stack){
 		if(stack.hasTag()){
 			readTank(stack.getTag());
 		}
 	}
 	
-	public List<ItemStack> getTileDrops(LootContext context){
+	@Override
+	public List<ItemStack> getBlockEntityDrop(LootContext context){
 		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
 		if(state.getValue(AutoLubricatorBlock.SLAVE)){
 			return Arrays.asList(ItemStack.EMPTY);

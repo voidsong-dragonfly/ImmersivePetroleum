@@ -41,13 +41,10 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	
 	public GasGeneratorBlock(){
-		super(Block.Properties.of(material)
-				.strength(5.0F, 6.0F)
-				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
-				.sound(SoundType.METAL)
-				.noOcclusion());
+		super(Block.Properties.of(material).strength(5.0F, 6.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
 		
-		registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
+		registerDefaultState(getStateDefinition().any()
+				.setValue(FACING, Direction.NORTH));
 	}
 	
 	@Override

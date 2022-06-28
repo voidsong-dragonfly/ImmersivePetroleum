@@ -27,11 +27,10 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	public static final BooleanProperty BROKEN = BooleanProperty.create("broken");
 	
 	public WellPipeBlock(){
-		super(Block.Properties.of(Material.STONE, MaterialColor.PODZOL).strength(75.0F, 10.0F)
-				//.harvestTool(ToolType.PICKAXE) // TODO Harvest Tool tag stuff
-				.sound(SoundType.STONE));
+		super(Block.Properties.of(Material.STONE, MaterialColor.PODZOL).strength(75.0F, 10.0F).sound(SoundType.STONE).requiresCorrectToolForDrops());
 		
-		registerDefaultState(getStateDefinition().any().setValue(BROKEN, false));
+		registerDefaultState(getStateDefinition().any()
+				.setValue(BROKEN, false));
 	}
 	
 	@Override

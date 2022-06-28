@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "immersivepetroleum:gas_generator",
+    "immersivepetroleum:flarestack"
+  ]
+}
