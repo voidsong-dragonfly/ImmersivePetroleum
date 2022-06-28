@@ -137,12 +137,10 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		
 		@Override
 		protected boolean canPlace(BlockPlaceContext con, BlockState state){
-			// No point in checking if the second block above is empty if it
-			// can't even place on the first one
 			if(super.canPlace(con, state)){
-				BlockPos pos = con.getClickedPos().offset(0, 1, 0);
-				BlockState otherState = con.getLevel().getBlockState(pos);
-				otherState.isAir();
+				BlockPos otherPos = con.getClickedPos().relative(Direction.UP);
+				BlockState otherState = con.getLevel().getBlockState(otherPos);
+				
 				return otherState.isAir();
 			}
 			return false;

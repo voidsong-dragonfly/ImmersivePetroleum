@@ -91,20 +91,15 @@ public class ReservoirIsland{
 	/**
 	 * Sets the reservoirs current fluid capacity in millibuckets.
 	 * 
-	 * @param capacity of this reservoir. (Range: 0 - 4294967295; Clamped})
+	 * @param capacity of this reservoir. (Range: 0 - {@value #MAX_AMOUNT}; Clamped})
 	 */
 	public ReservoirIsland setCapacity(long capacity){
 		this.capacity = clamp(capacity, 0L, MAX_AMOUNT);
 		return this;
 	}
 	
-	/** Copy of {@link MathHelper#clamp(long, long, long)} Because F-You Minecraft, you and your stupid client-only BS */
 	public static long clamp(long num, long min, long max){
-		if(num < min){
-			return min;
-		}else{
-			return num > max ? max : num;
-		}
+		return Math.max(min, Math.min(max, num));
 	}
 	
 	/**

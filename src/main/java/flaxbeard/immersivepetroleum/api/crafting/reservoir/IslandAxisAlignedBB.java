@@ -37,7 +37,6 @@ public class IslandAxisAlignedBB{
 		return this.maxZ;
 	}
 	
-	// May end up never using it, but its here already just incase i do
 	public BlockPos getCenter(){
 		return this.center;
 	}
@@ -59,6 +58,11 @@ public class IslandAxisAlignedBB{
 		return bounds;
 	}
 	
+	@Override
+	public String toString(){
+		return String.format("IslandAxisAlignedBB [minX = %d, minZ = %d, maxX = %d, maxZ = %d]", this.minX, this.minZ, this.maxX, this.maxZ);
+	}
+
 	public static IslandAxisAlignedBB readFromNBT(CompoundTag nbt){
 		int minX = nbt.getInt("minX");
 		int minZ = nbt.getInt("minZ");

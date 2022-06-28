@@ -281,25 +281,16 @@ public class DebugRenderHandler{
 											if(n > -1){
 												int c = (int) Math.round(9 * n);
 												
-												if(c <= 0){
-													color = DyeColor.BLACK;
-												}else if(c == 1){
-													color = DyeColor.BLUE;
-												}else if(c == 2){
-													color = DyeColor.CYAN;
-												}else if(c == 3){
-													color = DyeColor.GREEN;
-												}else if(c == 4){
-													color = DyeColor.LIME;
-												}else if(c == 5){
-													color = DyeColor.YELLOW;
-												}else if(c == 6){
-													color = DyeColor.ORANGE;
-												}else if(c == 7){
-													color = DyeColor.RED;
-												}else if(c > 7){
-													color = DyeColor.WHITE;
-												}
+												color = switch(c){
+													case 1 -> DyeColor.BLUE;
+													case 2 -> DyeColor.CYAN;
+													case 3 -> DyeColor.GREEN;
+													case 4 -> DyeColor.LIME;
+													case 5 -> DyeColor.YELLOW;
+													case 6 -> DyeColor.ORANGE;
+													case 7 -> DyeColor.RED;
+													default -> c > 7 ? DyeColor.WHITE : color;
+												};
 												
 												int r = (color.getTextColor() & 0xFF0000) >> 16;
 												int g = (color.getTextColor() & 0x00FF00) >> 8;

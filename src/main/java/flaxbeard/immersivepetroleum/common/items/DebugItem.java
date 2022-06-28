@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.lwjgl.glfw.GLFW;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
@@ -134,8 +135,9 @@ public class DebugItem extends IPItemBase{
 				case SEEDBASED_RESERVOIR_AREA_TEST:{
 					BlockPos playerPos = playerIn.blockPosition();
 					
-					ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
-					if(island != null){
+					if(ReservoirHandler.getIsland(worldIn, playerPos) != null){
+						ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
+						
 						int x = playerPos.getX();
 						int z = playerPos.getZ();
 						
@@ -155,9 +157,43 @@ public class DebugItem extends IPItemBase{
 								island.getCapacity(),
 								pressure,
 								island.getFlow(pressure),
-								new FluidStack(island.getType().getFluid(),1).getDisplayName().getString());
+								new FluidStack(island.getType().getFluid(), 1).getDisplayName().getString());
 						
 						playerIn.displayClientMessage(new TextComponent(out), true);
+					}else{
+						
+						// TODO Experimental: Find closest island tapping point
+						
+						double radius = 32;
+						radius *= radius;
+						
+						List<ReservoirIsland> list = ReservoirHandler.findNearbyReservoirs(worldIn, playerPos, radius);
+						if(!list.isEmpty()){
+							
+							// Find the Closest coordinate that can access one of them
+							double smallest = radius;
+							ColumnPos p = null;
+							for(ReservoirIsland island:list){
+								IslandAxisAlignedBB IAABB = island.getBoundingBox();
+								for(int z = IAABB.minZ() + 1;z < IAABB.maxZ();z++){
+									for(int x = IAABB.minX() + 1;x < IAABB.maxX();x++){
+										if(island.contains(x, z)){
+											double xa = (x + 0.5) - (playerPos.getX() + 0.5);
+											double za = (z + 0.5) - (playerPos.getZ() + 0.5);
+											double dst = xa * xa + za * za;
+											if(dst < radius && dst < smallest){
+												smallest = dst;
+												p = new ColumnPos(x, z);
+											}
+										}
+									}
+								}
+							}
+
+							playerIn.displayClientMessage(new TextComponent(String.format(Locale.ENGLISH, "Found %s to be the closest (%.0f)", p, Math.sqrt(smallest))), true);
+						}else{
+							playerIn.displayClientMessage(new TextComponent("Nothing.."), true);
+						}
 					}
 					
 //					if(worldIn instanceof ServerWorld){

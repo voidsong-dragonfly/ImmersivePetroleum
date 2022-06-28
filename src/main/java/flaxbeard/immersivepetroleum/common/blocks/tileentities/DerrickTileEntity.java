@@ -247,7 +247,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			this.drilling = this.spilling = false;
 			
 			// Check if lower than 64 and stop working, then also display a message as to why in GUI
-			if(this.worldPosition.getY() < 64){
+			if(this.worldPosition.getY() < 63){
 				if(this.fluidSpilled == Fluids.EMPTY){
 					this.fluidSpilled = Fluids.WATER;
 				}

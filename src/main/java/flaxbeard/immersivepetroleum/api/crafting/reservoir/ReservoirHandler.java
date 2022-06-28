@@ -25,7 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
@@ -161,6 +161,26 @@ public class ReservoirHandler{
 		}
 	}
 	
+	public static List<ReservoirIsland> findNearbyReservoirs(Level world, BlockPos pos, double sqrRadius){
+		return findNearbyReservoirs(world, new ColumnPos(pos), sqrRadius);
+	}
+	
+	public static List<ReservoirIsland> findNearbyReservoirs(Level world, ColumnPos pos, double sqrRadius){
+		List<ReservoirIsland> withinRadius = new ArrayList<>();
+		
+		ResourceKey<Level> dimension = world.dimension();
+		synchronized(RESERVOIR_ISLAND_LIST){
+			for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
+				// Very naive method, but it'll do for testing/playing around.
+				if(island.getBoundingBox().getCenter().distToCenterSqr(pos.x + 0.5, 0, pos.z + 0.5) <= sqrRadius){
+					withinRadius.add(island);
+				}
+			}
+		}
+		
+		return withinRadius;
+	}
+	
 	/**
 	 * Adds a reservoir type to the pool of valid reservoirs
 	 * 
@@ -190,13 +210,12 @@ public class ReservoirHandler{
 		if(!world.isClientSide){
 			if(generator == null || ((WorldGenLevel) world).getSeed() != lastSeed){
 				lastSeed = ((WorldGenLevel) world).getSeed();
-				generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(lastSeed)), ImmutableList.of(0));
+				generator = new PerlinSimplexNoise(new WorldgenRandom(new SingleThreadedRandomSource(lastSeed)), ImmutableList.of(0));
+//				generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(lastSeed)), ImmutableList.of(0));
 			}
 		}
 		
 		double noise = Math.abs(generator.getValue(x * scale, z * scale, false));
-//		double noise = Math.abs(generator.getSurfaceNoiseValue(x * scale, z * scale, scale, x * scale)) / .55;
-		
 		if(noise > d0){
 			return (noise - d0) / d1;
 		}
