@@ -10,13 +10,17 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ExternalModContent{
 	public static RegistryObject<Item> IE_ITEM_PIPE;
+	public static RegistryObject<Item> IE_ITEM_BUCKSHOT;
+	public static RegistryObject<Item> IE_ITEM_EMPTY_SHELL;
 	
 	public static RegistryObject<Fluid> IE_FLUID_CONCRETE_FLUID;
 	
-	@SuppressWarnings("removal")
 	public static final void init(){
-		IE_FLUID_CONCRETE_FLUID = RegistryObject.of(ResourceUtils.ie("concrete"), ForgeRegistries.FLUIDS);
-		IE_ITEM_PIPE = RegistryObject.of(ResourceUtils.ie("fluid_pipe"), ForgeRegistries.ITEMS);
+		IE_ITEM_PIPE = RegistryObject.create(ResourceUtils.ie("fluid_pipe"), ForgeRegistries.ITEMS);
+		IE_ITEM_BUCKSHOT = RegistryObject.create(ResourceUtils.ie("buckshot"), ForgeRegistries.ITEMS);
+		IE_ITEM_EMPTY_SHELL = RegistryObject.create(ResourceUtils.ie("empty_shell"), ForgeRegistries.ITEMS);
+		
+		IE_FLUID_CONCRETE_FLUID = RegistryObject.create(ResourceUtils.ie("concrete"), ForgeRegistries.FLUIDS);
 		// TODO IEBlocks.MetalDevices.sampleDrill for CommonEventHandler.handlePickupItem??
 	}
 	

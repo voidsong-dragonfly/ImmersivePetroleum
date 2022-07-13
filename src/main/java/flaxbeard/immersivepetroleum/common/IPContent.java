@@ -27,6 +27,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.HydrotreaterBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.OilTankBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
+import flaxbeard.immersivepetroleum.common.blocks.metal.SeismicSurveyBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltStairs;
@@ -138,6 +139,11 @@ public class IPContent{
 		
 		public static final RegistryObject<WellBlock> WELL = IPRegisters.registerBlock("well", WellBlock::new);
 		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerBlock("well_pipe", WellPipeBlock::new);
+		
+		/**
+		 * TODO Highly Experimental. Name not final. Function not final.
+		 */
+		public static final RegistryObject<SeismicSurveyBlock> SEISMIC_SURVEY = IPRegisters.registerIPBlock("seismic_survey", SeismicSurveyBlock::new);
 		
 		private static void forceClassLoad(){
 			registerItemBlock(ASPHALT_SLAB);

@@ -10,6 +10,7 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileE
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.SeismicSurveyTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -30,4 +31,9 @@ public class IPTileTypes{
 	public static final RegistryObject<BlockEntityType<FlarestackTileEntity>> FLARE = IPRegisters.registerTE("flarestack", FlarestackTileEntity::new, IPContent.Blocks.FLARESTACK);
 	public static final RegistryObject<BlockEntityType<WellTileEntity>> WELL = IPRegisters.registerTE("well", WellTileEntity::new, IPContent.Blocks.WELL);
 	public static final RegistryObject<BlockEntityType<WellPipeTileEntity>> WELL_PIPE = IPRegisters.registerTE("well_pipe", WellPipeTileEntity::new, IPContent.Blocks.WELL_PIPE);
+	
+	/**
+	 * TODO Highly Experimental. Name not final. Function not final.
+	 */
+	public static final RegistryObject<BlockEntityType<SeismicSurveyTileEntity>> SEISMIC_SURVEY = IPRegisters.registerTE("reservoir_finder", SeismicSurveyTileEntity::new, IPContent.Blocks.SEISMIC_SURVEY);
 }
