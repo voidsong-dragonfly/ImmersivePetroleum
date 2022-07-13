@@ -170,7 +170,7 @@ public class DebugItem extends IPItemBase{
 						List<ReservoirIsland> list = ReservoirHandler.findNearbyReservoirs(worldIn, playerPos, radius);
 						if(!list.isEmpty()){
 							
-							// Find the Closest coordinate that can access one of them
+							// Find the Closest coordinate that can tap into one of them
 							double smallest = radius;
 							ColumnPos p = null;
 							for(ReservoirIsland island:list){
@@ -189,8 +189,8 @@ public class DebugItem extends IPItemBase{
 									}
 								}
 							}
-
-							playerIn.displayClientMessage(new TextComponent(String.format(Locale.ENGLISH, "Found %s to be the closest (%.0f)", p, Math.sqrt(smallest))), true);
+							
+							playerIn.displayClientMessage(new TextComponent(String.format(Locale.ENGLISH, "Found %s to be the closest (%.0f, [%d, %d])", p, Math.sqrt(smallest), p.x - playerPos.getX(), p.z - playerPos.getZ())), false);
 						}else{
 							playerIn.displayClientMessage(new TextComponent("Nothing.."), true);
 						}

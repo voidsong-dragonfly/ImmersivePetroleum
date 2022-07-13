@@ -97,16 +97,13 @@ public class DebugRenderHandler{
 							List<Component> debugOut = new ArrayList<>();
 							BlockEntity te = world.getBlockEntity(result.getBlockPos());
 							
-							if(te instanceof GasGeneratorTileEntity){
-								GasGeneratorTileEntity gas = (GasGeneratorTileEntity) te;
+							if(te instanceof GasGeneratorTileEntity gas){
 								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
 								
 							}else if(te instanceof IPTileEntityBase){
 								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
 								
-								if(te instanceof AutoLubricatorTileEntity){
-									AutoLubricatorTileEntity autolube = (AutoLubricatorTileEntity) te;
-									
+								if(te instanceof AutoLubricatorTileEntity autolube){
 									FluidTank tank = autolube.tank;
 									FluidStack fs = tank.getFluid();
 									
@@ -116,15 +113,9 @@ public class DebugRenderHandler{
 										debugOut.add(toText("Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 									}
 									
-								}else if(te instanceof FlarestackTileEntity){
-									FlarestackTileEntity flare = (FlarestackTileEntity) te;
-									
-								}else if(te instanceof WellTileEntity){
-									WellTileEntity well = (WellTileEntity) te;
-									
-								}else if(te instanceof WellPipeTileEntity){
-									WellPipeTileEntity wellPipe = (WellPipeTileEntity) te;
-									
+								}else if(te instanceof FlarestackTileEntity flare){
+								}else if(te instanceof WellTileEntity well){
+								}else if(te instanceof WellPipeTileEntity wellPipe){
 								}
 								
 							}else if(te instanceof MultiblockPartBlockEntity<?>){
