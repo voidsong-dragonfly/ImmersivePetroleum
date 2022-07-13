@@ -47,6 +47,7 @@ public class PipeConfig extends Button{
 	private final int dynTextureWidth, dynTextureHeight;
 	private final DynamicTexture gridTexture;
 	private final RenderType gridTextureRenderType;
+	private final ResourceLocation dynTextureRL;
 	
 	private final int pipeNormalColor;
 	private final int pipePerforatedColor;
@@ -69,8 +70,8 @@ public class PipeConfig extends Button{
 		this.dynTextureWidth = gridWidth;
 		this.dynTextureHeight = gridHeight;
 		this.gridTexture = new DynamicTexture(this.dynTextureWidth, this.dynTextureHeight, true);
-		ResourceLocation loc = MCUtil.getTextureManager().register("pipegrid/" + this.hashCode(), this.gridTexture);
-		this.gridTextureRenderType = RenderType.text(loc);
+		this.dynTextureRL = MCUtil.getTextureManager().register("pipegrid/" + this.hashCode(), this.gridTexture);
+		this.gridTextureRenderType = RenderType.text(this.dynTextureRL);
 		
 		this.pipeNormalColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_normal_color.get(), 16);
 		this.pipePerforatedColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_perforated_color.get(), 16);
@@ -100,6 +101,7 @@ public class PipeConfig extends Button{
 	/** This has to be called at the end of its life! */
 	public void dispose(){
 		this.gridTexture.close();
+		MCUtil.getTextureManager().release(this.dynTextureRL);
 	}
 	
 	public void updateTexture(){
