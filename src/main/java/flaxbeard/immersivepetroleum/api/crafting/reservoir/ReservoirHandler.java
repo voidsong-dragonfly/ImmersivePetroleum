@@ -127,10 +127,12 @@ public class ReservoirHandler{
 		return totalWeight;
 	}
 	
+	/** May only be called on the server-side. Returns null on client-side. */
 	public static ReservoirIsland getIsland(Level world, BlockPos pos){
 		return getIsland(world, new ColumnPos(pos));
 	}
 	
+	/** May only be called on the server-side. Returns null on client-side. */
 	public static ReservoirIsland getIsland(Level world, ColumnPos pos){
 		if(world.isClientSide){
 			return null;
@@ -161,11 +163,17 @@ public class ReservoirHandler{
 		}
 	}
 	
+	/** May only be called on the server-side. Returns an unmodifiable empty list on client-side. */
 	public static List<ReservoirIsland> findNearbyReservoirs(Level world, BlockPos pos, double sqrRadius){
 		return findNearbyReservoirs(world, new ColumnPos(pos), sqrRadius);
 	}
 	
+	/** May only be called on the server-side. Returns an unmodifiable empty list on client-side. */
 	public static List<ReservoirIsland> findNearbyReservoirs(Level world, ColumnPos pos, double sqrRadius){
+		if(world.isClientSide){
+			return List.of();
+		}
+		
 		List<ReservoirIsland> withinRadius = new ArrayList<>();
 		
 		ResourceKey<Level> dimension = world.dimension();
