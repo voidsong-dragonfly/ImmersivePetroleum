@@ -11,6 +11,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.platform.NativeImage;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.RenderType;
@@ -24,10 +25,15 @@ import net.minecraft.resources.ResourceLocation;
  * @author TwistedGate
  */
 public class DynamicTextureWrapper{
-	private static final Cache<UUID, DynamicTextureWrapper> DYN_TEXTURE_CACHE = CacheBuilder.newBuilder()
-			.removalListener((s) -> ((DynamicTextureWrapper) s.getValue()).dispose())
-			.expireAfterAccess(5, TimeUnit.MINUTES)
-			.maximumSize(512)
+	public static final Cache<UUID, DynamicTextureWrapper> DYN_TEXTURE_CACHE = CacheBuilder.newBuilder()
+			.removalListener((s) -> {
+				DynamicTextureWrapper wrapper = ((DynamicTextureWrapper) s.getValue());
+				wrapper.dispose();
+				
+				ImmersivePetroleum.log.info("Disposed survey result texture {}", wrapper.rl);
+			})
+			.expireAfterAccess(1, TimeUnit.MINUTES) // TODO !!!Don't forget to set this back to 5 Minutes.
+			.maximumSize(50)
 			.build();
 	
 	/** Returns null if no valid UUID is provided */
@@ -35,12 +41,15 @@ public class DynamicTextureWrapper{
 		UUID uuid = dataTag.hasUUID("uuid") ? dataTag.getUUID("uuid") : null;
 		if(uuid != null){
 			DynamicTextureWrapper tex = DYN_TEXTURE_CACHE.getIfPresent(uuid);
-			if(tex == null){
+			if(tex == null || tex.texture.getPixels() == null){
 				tex = new DynamicTextureWrapper(width, height, uuid);
+				DYN_TEXTURE_CACHE.invalidate(uuid);
 				DYN_TEXTURE_CACHE.put(uuid, tex);
 				
 				byte[] mapData = dataTag.getByteArray("map");
 				tex.write(mapData);
+				
+				ImmersivePetroleum.log.info("Created survey result texture {}", tex.rl);
 			}
 			return tex;
 		}
@@ -64,6 +73,11 @@ public class DynamicTextureWrapper{
 			}
 			return tex;
 		}
+	}
+	
+	public static void clearCache(){
+		DYN_TEXTURE_CACHE.invalidateAll();
+		DYN_TEXTURE_CACHE.cleanUp();
 	}
 	
 	public final int width;
@@ -97,16 +111,18 @@ public class DynamicTextureWrapper{
 		if(mapData == null || mapData.length != (this.width * this.height))
 			return;
 		
-		NativeImage image = this.texture.getPixels();
-		for(int y = 0;y < this.width;y++){
-			for(int x = 0;x < this.width;x++){
-				int b = ((int) mapData[(y * this.height) + x]) & 0xFF;
-				
-				int rgba = (0xFF << 24) | (b << 16) | (b << 8) | b;
-				image.setPixelRGBA(x, y, rgba);
+		if(this.texture.getPixels() != null){
+			NativeImage image = this.texture.getPixels();
+			for(int y = 0;y < this.width;y++){
+				for(int x = 0;x < this.width;x++){
+					int b = ((int) mapData[(y * this.height) + x]) & 0xFF;
+					
+					int rgba = (b << 16) | (b << 8) | b;
+					image.setPixelRGBA(x, y, 0xFF000000 | rgba);
+				}
 			}
+			this.texture.upload();
 		}
-		this.texture.upload();
 	}
 	
 	public boolean isDisposed(){
@@ -115,6 +131,5 @@ public class DynamicTextureWrapper{
 	
 	public void dispose(){
 		this.texture.close();
-		MCUtil.getTextureManager().release(this.rl);
 	}
 }

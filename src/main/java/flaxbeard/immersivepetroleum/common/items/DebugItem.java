@@ -10,6 +10,7 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
+import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
@@ -278,6 +279,9 @@ public class DebugItem extends IPItemBase{
 				Level world = context.getLevel();
 				if(world.isClientSide){
 					// Client
+					
+					player.displayClientMessage(new TextComponent(DynamicTextureWrapper.DYN_TEXTURE_CACHE.size()+""), false);
+					
 				}else{
 					// Server
 					

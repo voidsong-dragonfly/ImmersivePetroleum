@@ -10,6 +10,7 @@ import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ReloadableServerResources;
@@ -34,6 +35,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		if(dataPackRegistries != null){
 			lists(dataPackRegistries.getRecipeManager());
 		}
+		DynamicTextureWrapper.clearCache();
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)

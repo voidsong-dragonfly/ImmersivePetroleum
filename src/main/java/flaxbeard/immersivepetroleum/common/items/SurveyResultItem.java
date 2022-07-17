@@ -49,14 +49,18 @@ public class SurveyResultItem extends IPItemBase{
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
 		if(stack.hasTag() && stack.getTag() != null){
-			if(stack.getTag().contains("surveyscan") && flagIn == TooltipFlag.Default.ADVANCED){
+			if(stack.getTag().contains("surveyscan") ){
 				CompoundTag tag = stack.getTagElement("surveyscan");
 				
-				UUID uuid = tag.hasUUID("uuid") ? tag.getUUID("uuid") : null;
-				byte[] mapData = tag.getByteArray("map");
+				tooltip.add(new TextComponent("Hold in Hand."));
 				
-				tooltip.add(new TextComponent("ID: " + (uuid != null ? uuid.toString() : "Null")));
-				tooltip.add(new TextComponent("dSize: " + (mapData != null ? mapData.length : 0)));
+				if(flagIn == TooltipFlag.Default.ADVANCED){
+					UUID uuid = tag.hasUUID("uuid") ? tag.getUUID("uuid") : null;
+					byte[] mapData = tag.getByteArray("map");
+					
+					tooltip.add(new TextComponent("ID: " + (uuid != null ? uuid.toString() : "Null")));
+					tooltip.add(new TextComponent("dSize: " + (mapData != null ? mapData.length : 0)));
+				}
 			}
 			
 			if(stack.getTag().contains("islandscan")){
@@ -65,7 +69,9 @@ public class SurveyResultItem extends IPItemBase{
 				long amount = tag.getLong("amount");
 				String fluidTranslation = tag.getString("fluid");
 				
-				tooltip.add(new TextComponent(String.format(Locale.ENGLISH, "%,.3f/%,.3f Buckets of ", amount/1000D, capacity/1000D)).append(new TranslatableComponent(fluidTranslation)));
+				tooltip.add(new TranslatableComponent(fluidTranslation).withStyle(ChatFormatting.DARK_GRAY));
+				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.survey_result.amount", String.format(Locale.ENGLISH, "%,.3f", amount / 1000D)).withStyle(ChatFormatting.DARK_GRAY));
+				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.survey_result.capacity", String.format(Locale.ENGLISH, "%,.3f", capacity / 1000D)).withStyle(ChatFormatting.DARK_GRAY));
 			}
 		}
 	}

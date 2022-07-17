@@ -9,16 +9,17 @@ import com.mojang.math.Quaternion;
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.SeismicSurveyTileEntity;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
@@ -37,6 +38,8 @@ public class RenderTests{
 	
 	static final Tesselator TESSELATOR = new Tesselator();
 	
+	private static final ResourceLocation OVERLAY = ResourceUtils.ip("textures/gui/seismic_overlay.png");
+	
 	@SubscribeEvent
 	public void renderGameOverlayEvent(RenderGameOverlayEvent.Post event){
 		Minecraft mc = Minecraft.getInstance();
@@ -48,11 +51,11 @@ public class RenderTests{
 			if((main != ItemStack.EMPTY && main.getItem() == IPContent.Items.SURVEYRESULT.get()) || (off != ItemStack.EMPTY && off.getItem() == IPContent.Items.SURVEYRESULT.get())){
 				PoseStack matrix = event.getMatrixStack();
 				
-				int width = event.getWindow().getGuiScaledWidth();
-				int height = event.getWindow().getGuiScaledHeight();
+				int guiScaledWidth = event.getWindow().getGuiScaledWidth();
+				int guiScaledHeight = event.getWindow().getGuiScaledHeight();
 				
-				float xCenter = width / 2F;
-				float yCenter = height / 2F;
+				float xCenter = guiScaledWidth / 2F;
+				float yCenter = guiScaledHeight / 2F;
 				
 				CompoundTag tag;
 				if((main.hasTag() && main.getTag() != null) && (tag = main.getTagElement("surveyscan")) != null){
@@ -63,24 +66,40 @@ public class RenderTests{
 						
 						matrix.pushPose();
 						{
-							float yRot = mc.player.getYRot();
-							matrix.translate(xCenter, yCenter, -SeismicSurveyTileEntity.SCAN_SIZE);
-							matrix.mulPose(new Quaternion(0, 0, -yRot, true));
-							matrix.translate(-wrapper.width, -wrapper.height, 0);
-							
-							int a = wrapper.width * 2;
-							int b = wrapper.height * 2;
+							matrix.translate(xCenter, yCenter, 0);
 							
 							matrix.pushPose();
 							{
+								matrix.translate(-wrapper.width / 2F, -wrapper.height / 2F, 0);
+								
+								int a = wrapper.width;
+								int b = wrapper.height;
 								VertexConsumer builder = buffer.getBuffer(wrapper.renderType);
 								builder.defaultColor(255, 255, 255, 255);
 								Matrix4f mat = matrix.last().pose();
 								
+								builder.vertex(mat, 0, 0, 0).uv(1.0F, 1.0F).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, 0, b, 0).uv(1.0F, 0.0F).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, a, b, 0).uv(0.0F, 0.0F).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, a, 0, 0).uv(0.0F, 1.0F).uv2(0xF000F0).endVertex();
+							}
+							matrix.popPose();
+							
+							matrix.pushPose();
+							{
+								final int w = 85;
+								final int h = 85;
+								
+								matrix.translate(-w / 2F, -h / 2F, 1);
+								
+								VertexConsumer builder = buffer.getBuffer(RenderType.text(OVERLAY));
+								builder.defaultColor(255, 255, 255, 255);
+								Matrix4f mat = matrix.last().pose();
+								
 								builder.vertex(mat, 0, 0, 0).uv(0.0F, 0.0F).uv2(0xF000F0).endVertex();
-								builder.vertex(mat, 0, b, 0).uv(0.0F, 1.0F).uv2(0xF000F0).endVertex();
-								builder.vertex(mat, a, b, 0).uv(1.0F, 1.0F).uv2(0xF000F0).endVertex();
-								builder.vertex(mat, a, 0, 0).uv(1.0F, 0.0F).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, 0, h, 0).uv(0.0F, 1.0F).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, w, h, 0).uv(1.0F, 1.0F).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, w, 0, 0).uv(1.0F, 0.0F).uv2(0xF000F0).endVertex();
 							}
 							matrix.popPose();
 						}
