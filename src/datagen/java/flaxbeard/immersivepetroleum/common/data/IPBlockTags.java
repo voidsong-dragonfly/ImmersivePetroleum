@@ -32,7 +32,8 @@ public class IPBlockTags extends BlockTagsProvider{
 			IPContent.Blocks.PETCOKE.get(),
 			IPContent.Blocks.GAS_GENERATOR.get(),
 			IPContent.Blocks.FLARESTACK.get(),
-			IPContent.Blocks.WELL_PIPE.get()
+			IPContent.Blocks.WELL_PIPE.get(),
+			IPContent.Blocks.SEISMIC_SURVEY.get()
 		);
 		
 		tag(BlockTags.MINEABLE_WITH_AXE).add(
@@ -50,7 +51,8 @@ public class IPBlockTags extends BlockTagsProvider{
 		
 		tag(BlockTags.NEEDS_IRON_TOOL).add(
 			IPContent.Blocks.GAS_GENERATOR.get(),
-			IPContent.Blocks.FLARESTACK.get()
+			IPContent.Blocks.FLARESTACK.get(),
+			IPContent.Blocks.SEISMIC_SURVEY.get()
 		);
 	}
 }

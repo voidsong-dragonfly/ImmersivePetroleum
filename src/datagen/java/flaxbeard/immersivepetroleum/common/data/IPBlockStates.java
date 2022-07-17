@@ -95,6 +95,7 @@ public class IPBlockStates extends BlockStateProvider{
 		simpleBlockWithItem(IPContent.Blocks.PETCOKE.get());
 		gasGenerator();
 		asphaltBlocks();
+		simpleBlockWithItem(IPContent.Blocks.SEISMIC_SURVEY.get());
 		
 		{
 			Block well = IPContent.Blocks.WELL.get();

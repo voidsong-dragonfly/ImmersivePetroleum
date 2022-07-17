@@ -34,6 +34,7 @@ public class IPBlockLoot implements Consumer<BiConsumer<ResourceLocation, LootTa
 		registerSelfDropping(IPContent.Blocks.ASPHALT_STAIR.get());
 		registerSelfDropping(IPContent.Blocks.FLARESTACK.get());
 		registerSelfDropping(IPContent.Blocks.PETCOKE.get());
+		registerSelfDropping(IPContent.Blocks.SEISMIC_SURVEY.get());
 		
 		register(IPContent.Blocks.GAS_GENERATOR.get(), tileDrop());
 		register(IPContent.Blocks.AUTO_LUBRICATOR.get(), tileDrop());

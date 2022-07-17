@@ -50,6 +50,8 @@ public class IPItemModels extends ItemModelProvider{
 		genericItem(IPContent.BoatUpgrades.RUDDERS.get());
 		genericItem(IPContent.BoatUpgrades.TANK.get());
 		
+		genericItem(IPContent.Items.SURVEYRESULT.get());
+		
 		generatorItem();
 		autolubeItem();
 		flarestackItem();

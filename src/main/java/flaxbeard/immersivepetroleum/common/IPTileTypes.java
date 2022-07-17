@@ -35,5 +35,5 @@ public class IPTileTypes{
 	/**
 	 * TODO Highly Experimental. Name not final. Function not final.
 	 */
-	public static final RegistryObject<BlockEntityType<SeismicSurveyTileEntity>> SEISMIC_SURVEY = IPRegisters.registerTE("reservoir_finder", SeismicSurveyTileEntity::new, IPContent.Blocks.SEISMIC_SURVEY);
+	public static final RegistryObject<BlockEntityType<SeismicSurveyTileEntity>> SEISMIC_SURVEY = IPRegisters.registerTE("seismic_survey", SeismicSurveyTileEntity::new, IPContent.Blocks.SEISMIC_SURVEY);
 }

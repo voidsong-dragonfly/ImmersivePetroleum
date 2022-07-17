@@ -17,6 +17,7 @@
 	"block.immersivepetroleum.auto_lubricator": "Automatic Lubricator",
 	"block.immersivepetroleum.gas_generator": "Portable Generator",
 	"block.immersivepetroleum.flarestack": "Flarestack",
+	"block.immersivepetroleum.seismic_survey": "Seismic Survey Tool",
 	
 	"block.immersivepetroleum.pumpjack": "Pumpjack",
 	"block.immersivepetroleum.distillation_tower": "Distillation Tower",
@@ -38,6 +39,7 @@
 	"item.immersivepetroleum.projector.specific": "%s Projector",
 	"item.immersivepetroleum.speedboat": "Motorboat",
 	"item.immersivepetroleum.oil_can": "Lubricant Can",
+	"item.immersivepetroleum.survey_result": "Survey Result",
 	
 	"item.immersivepetroleum.bitumen": "Bitumen",
 	"item.immersivepetroleum.petcoke": "Petcoke",

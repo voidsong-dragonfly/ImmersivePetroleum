@@ -13,6 +13,7 @@ import com.mojang.math.Matrix4f;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -70,7 +71,8 @@ public class PipeConfig extends Button{
 		this.dynTextureWidth = gridWidth;
 		this.dynTextureHeight = gridHeight;
 		this.gridTexture = new DynamicTexture(this.dynTextureWidth, this.dynTextureHeight, true);
-		this.dynTextureRL = MCUtil.getTextureManager().register("pipegrid/" + this.hashCode(), this.gridTexture);
+		this.dynTextureRL = ResourceUtils.ip("pipegrid/" + this.hashCode());
+		MCUtil.getTextureManager().register(this.dynTextureRL, this.gridTexture);
 		this.gridTextureRenderType = RenderType.text(this.dynTextureRL);
 		
 		this.pipeNormalColor = Integer.valueOf(IPClientConfig.GRID_COLORS.pipe_normal_color.get(), 16);

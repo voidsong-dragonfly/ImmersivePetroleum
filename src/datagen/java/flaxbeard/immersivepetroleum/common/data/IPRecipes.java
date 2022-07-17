@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.api.crafting.builders.CrusherRecipeBuilde
 import blusunrize.immersiveengineering.api.crafting.builders.GeneratorFuelBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.SqueezerRecipeBuilder;
+import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.register.IEBlocks.MetalDecoration;
@@ -311,6 +312,18 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
 			.unlockedBy("has_"+toPath(IEBlocks.MetalDevices.FLUID_PIPE), has(IEBlocks.MetalDevices.FLUID_PIPE))
 			.save(this.out, rl("flarestack"));
+		
+		ShapedRecipeBuilder.shaped(Blocks.SEISMIC_SURVEY.get())
+			.pattern("SBH")
+			.pattern("SBS")
+			.pattern("MLM")
+			.define('S', IEBlocks.MetalDecoration.STEEL_SCAFFOLDING.get(MetalScaffoldingType.STANDARD))
+			.define('L', IEBlocks.MetalDecoration.ENGINEERING_LIGHT)
+			.define('M', IEItems.Ingredients.COMPONENT_IRON)
+			.define('H', IEItems.Ingredients.GUNPART_HAMMER)
+			.define('B', IEItems.Ingredients.GUNPART_BARREL)
+			.unlockedBy("has_steel_ingot", has(IETags.getTagsFor(EnumMetals.STEEL).ingot))
+			.save(this.out, rl("seismic_survey_tool"));
 	}
 	
 	private void itemRecipes(){

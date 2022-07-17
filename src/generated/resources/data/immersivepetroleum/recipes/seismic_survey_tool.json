@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SBH",
+    "SBS",
+    "MLM"
+  ],
+  "key": {
+    "S": {
+      "item": "immersiveengineering:steel_scaffolding_standard"
+    },
+    "L": {
+      "item": "immersiveengineering:light_engineering"
+    },
+    "M": {
+      "item": "immersiveengineering:component_iron"
+    },
+    "H": {
+      "item": "immersiveengineering:gunpart_hammer"
+    },
+    "B": {
+      "item": "immersiveengineering:gunpart_barrel"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:seismic_survey"
+  }
+}

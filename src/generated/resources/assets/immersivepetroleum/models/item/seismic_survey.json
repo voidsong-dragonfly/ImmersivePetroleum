@@ -1,0 +1,6 @@
+{
+  "parent": "immersivepetroleum:block/seismic_survey",
+  "textures": {
+    "particle": "immersivepetroleum:block/seismic_survey"
+  }
+}

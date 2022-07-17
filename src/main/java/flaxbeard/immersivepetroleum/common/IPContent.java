@@ -48,6 +48,7 @@ import flaxbeard.immersivepetroleum.common.items.IPUpgradeItem;
 import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.items.OilCanItem;
 import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
+import flaxbeard.immersivepetroleum.common.items.SurveyResultItem;
 import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
@@ -167,6 +168,7 @@ public class IPContent{
 			}
 		});
 		public static final RegistryObject<Item> PETCOKEDUST = IPRegisters.registerItem("petcoke_dust", IPItemBase::new);
+		public static final RegistryObject<Item> SURVEYRESULT = IPRegisters.registerItem("survey_result", SurveyResultItem::new);
 		
 		private static void forceClassLoad(){
 		}

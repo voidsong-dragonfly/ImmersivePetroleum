@@ -14,16 +14,4 @@ public class IPItemBase extends Item implements IColouredItem{
 	public IPItemBase(Item.Properties properties){
 		super(properties.tab(ImmersivePetroleum.creativeTab));
 	}
-	
-	/** @deprecated */
-	public IPItemBase(String name){
-		this(name, new Item.Properties());
-		throw new UnsupportedOperationException();
-	}
-	
-	/** @deprecated */
-	public IPItemBase(String name, Item.Properties properties){
-		super(properties.tab(ImmersivePetroleum.creativeTab));
-		throw new UnsupportedOperationException();
-	}
 }

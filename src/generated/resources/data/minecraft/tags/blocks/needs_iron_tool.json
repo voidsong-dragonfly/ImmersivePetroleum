@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "immersivepetroleum:gas_generator",
-    "immersivepetroleum:flarestack"
+    "immersivepetroleum:flarestack",
+    "immersivepetroleum:seismic_survey"
   ]
 }

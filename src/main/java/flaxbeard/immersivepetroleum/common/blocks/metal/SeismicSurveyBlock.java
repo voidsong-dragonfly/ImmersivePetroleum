@@ -1,6 +1,11 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
@@ -24,6 +29,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -66,15 +73,32 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 		return te;
 	}
 	
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
+		return createTickerHelper(level.isClientSide, type, IPTileTypes.SEISMIC_SURVEY);
+	}
+	
 	@Override
 	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player){
 		if(state.getValue(SLAVE)){
-			worldIn.destroyBlock(pos.offset(0, -1, 0), !player.isCreative());
+			worldIn.destroyBlock(pos.below(), !player.isCreative());
 		}else{
-			worldIn.destroyBlock(pos.offset(0, 1, 0), false);
+			worldIn.destroyBlock(pos.above(), false);
 		}
 		
 		super.playerWillDestroy(worldIn, pos, state, player);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public List<ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootContext.Builder builder){
+		if(state.getValue(SLAVE)){
+			// TODO Don't know how else i would do this yet
+			return Collections.emptyList();
+		}
+		
+		return super.getDrops(state, builder);
 	}
 	
 	@Override
