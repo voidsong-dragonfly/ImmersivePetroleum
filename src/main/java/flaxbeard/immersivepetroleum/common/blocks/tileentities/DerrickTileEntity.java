@@ -393,7 +393,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		
 		if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
 			Direction facing = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
-			BlockPos outputPos = getBlockPosForPos(Fluid_OUT).relative(facing, 2);
+			BlockPos outputPos = getBlockPosForPos(Fluid_OUT).relative(facing, 1);
 			IFluidHandler output = FluidUtil.getFluidHandler(this.level, outputPos, facing.getOpposite()).orElse(null);
 			if(output != null){
 				FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
