@@ -82,7 +82,7 @@ import net.minecraftforge.fml.common.Mod;
 
 public class ProjectorItem extends IPItemBase{
 	public ProjectorItem(){
-		super(new Item.Properties().stacksTo(1));
+		super(new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
 	}
 	
 	@Override

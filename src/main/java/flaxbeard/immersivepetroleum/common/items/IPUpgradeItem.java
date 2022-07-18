@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -19,7 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	private Set<String> set;
 	public IPUpgradeItem(String type){
-		super(new Item.Properties().stacksTo(1));
+		super(new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
 //		super("upgrade_" + name, new Item.Properties().stacksTo(1));
 		this.set = ImmutableSet.of(type);
 	}

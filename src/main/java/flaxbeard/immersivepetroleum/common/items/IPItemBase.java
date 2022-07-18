@@ -7,11 +7,11 @@ import net.minecraft.world.item.Item;
 public class IPItemBase extends Item implements IColouredItem{
 	/** For basic items */
 	public IPItemBase(){
-		this(new Item.Properties());
+		this(new Item.Properties().tab(ImmersivePetroleum.creativeTab));
 	}
 	
 	/** For items that require special attention */
 	public IPItemBase(Item.Properties properties){
-		super(properties.tab(ImmersivePetroleum.creativeTab));
+		super(properties);
 	}
 }

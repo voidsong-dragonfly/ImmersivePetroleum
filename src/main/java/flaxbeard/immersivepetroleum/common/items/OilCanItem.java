@@ -4,6 +4,7 @@ import java.util.List;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import net.minecraft.ChatFormatting;
@@ -41,7 +42,7 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 public class OilCanItem extends IPItemBase{
 	public OilCanItem(){
-		super(new Item.Properties().stacksTo(1));
+		super(new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
 	}
 	
 	@Override
