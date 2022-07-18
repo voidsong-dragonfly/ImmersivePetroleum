@@ -14,7 +14,6 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
@@ -68,10 +67,22 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 	public void tickServer(){
 	}
 	
+	public SeismicSurveyTileEntity master(){
+		if(this.isSlave){
+			for(int i = 1;i < 3;i++){
+				BlockEntity te = this.level.getBlockEntity(getBlockPos().offset(0, -i, 0));
+				if(te instanceof SeismicSurveyTileEntity seis && !seis.isSlave){
+					return seis;
+				}
+			}
+		}
+		return this;
+	}
+	
 	public boolean interact(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand){
-		BlockEntity master = this.isSlave ? this.level.getBlockEntity(getBlockPos().offset(0, -1, 0)) : this;
-		if(master != null && master instanceof SeismicSurveyTileEntity survey){
-			pos = survey.getBlockPos();
+		SeismicSurveyTileEntity master = master();
+		if(master != null){
+			pos = master.getBlockPos();
 			
 			ItemStack held = player.getItemInHand(InteractionHand.MAIN_HAND);
 			
@@ -79,30 +90,30 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 			final double bY = (pos.getY() + 0.0625);
 			final double bZ = (pos.getZ() + 0.5);
 			
-			if(player.isShiftKeyDown() && !survey.stack.isEmpty()){
+			if(player.isShiftKeyDown() && !master.stack.isEmpty()){
 				if(!world.isClientSide){
-					Block.popResourceFromFace(world, pos.above(), Direction.UP, survey.stack);
-					survey.stack = ItemStack.EMPTY;
-					survey.setChanged();
+					Block.popResource(world, player.blockPosition(), master.stack);
+					master.stack = ItemStack.EMPTY;
+					master.setChanged();
 				}
 				
 				return true;
 			}else if(held.isEmpty()){
 				boolean fire = false;
 				
-				if(!survey.stack.isEmpty()){
-					if(survey.stack.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
+				if(!master.stack.isEmpty()){
+					if(master.stack.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
 						fire = true;
 						if(!world.isClientSide){
-							survey.stack = new ItemStack(ExternalModContent.IE_ITEM_EMPTY_SHELL.get());
-							survey.setChanged();
+							master.stack = new ItemStack(ExternalModContent.IE_ITEM_EMPTY_SHELL.get());
+							master.setChanged();
 						}
 						
 					}else{
 						if(!world.isClientSide){
-							Block.popResourceFromFace(world, pos.above(), Direction.UP, survey.stack);
-							survey.stack = ItemStack.EMPTY;
-							survey.setChanged();
+							Block.popResource(world, player.blockPosition(), master.stack);
+							master.stack = ItemStack.EMPTY;
+							master.setChanged();
 							
 							world.playSound(null, bX, bY, bZ, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 0.25F);
 							world.playSound(null, bX, bY, bZ, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE, SoundSource.BLOCKS, 0.25F, 0.1F);
@@ -151,8 +162,6 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						world.playSound(null, bX, bY, bZ, sound, SoundSource.BLOCKS, volume, 0.5F);
 					}
 					
-					// TODO This is the point where it would check for reservoirs and do *something*. Perhaps a map, book or anything else that is able to Display some information.
-					
 					if(!world.isClientSide){
 						ReservoirIsland island = ReservoirHandler.getIsland(world, pos);
 						
@@ -166,7 +175,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 							CompoundTag result = stack.getOrCreateTagElement("islandscan");
 							result.putInt("x", pos.getX());
 							result.putInt("z", pos.getZ());
-							result.putLong("capacity", island.getCapacity());
+							result.putByte("status", (byte) (island.getAmount() / (float) island.getCapacity() * 100));
 							result.putLong("amount", island.getAmount());
 							result.putString("fluid", fs.getTranslationKey());
 							
@@ -203,7 +212,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 							result.putByteArray("map", mapData);
 						}
 						
-						Block.popResourceFromFace(world, pos.above(), Direction.UP, stack);
+						Block.popResource(world, player.blockPosition(), stack);
 					}
 					
 					return true;
@@ -211,11 +220,11 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 				
 				return false;
 			}else if(held.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
-				if(survey.stack.isEmpty()){
+				if(master.stack.isEmpty()){
 					if(!world.isClientSide){
 						ItemStack copy = held.copy();
 						copy.setCount(1);
-						survey.stack = copy;
+						master.stack = copy;
 						
 						if(!player.isCreative()){
 							held.shrink(1);
@@ -224,7 +233,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 							}
 						}
 						
-						survey.setChanged();
+						master.setChanged();
 					}
 					
 					return true;

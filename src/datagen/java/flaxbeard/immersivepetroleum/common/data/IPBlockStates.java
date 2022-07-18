@@ -91,11 +91,15 @@ public class IPBlockStates extends BlockStateProvider{
 		derrick();
 		oiltank();
 		
+		// Oddballs
+		autolubricator();
+		flarestack();
+		seismicsurvey();
+		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.PETCOKE.get());
 		gasGenerator();
 		asphaltBlocks();
-		simpleBlockWithItem(IPContent.Blocks.SEISMIC_SURVEY.get());
 		
 		{
 			Block well = IPContent.Blocks.WELL.get();
@@ -132,9 +136,6 @@ public class IPBlockStates extends BlockStateProvider{
 				.with(WellPipeBlock.BROKEN, true)
 				.setModels(new ConfiguredModel(wellPipeModel_cracked), new ConfiguredModel(wellPipeModel_cracked_mirrored));
 		}
-		
-		autolubricator();
-		flarestack();
 		
 		// Fluids
 		for(IPFluid.IPFluidEntry f:IPFluid.FLUIDS){
@@ -303,9 +304,7 @@ public class IPBlockStates extends BlockStateProvider{
 	
 	private void flarestack(){
 		ResourceLocation texture = modLoc("block/obj/flarestack");
-		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("flare_empty",
-				ResourceUtils.ie("block/ie_empty"))
-				.texture("particle", texture));
+		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("flare_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture));
 		
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.FLARESTACK.get()), mcLoc("block"))
 				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/flarestack.obj")).flipV(true).end()
@@ -313,6 +312,26 @@ public class IPBlockStates extends BlockStateProvider{
 				.texture("particle", texture);
 		
 		VariantBlockStateBuilder flarestackBuilder = getVariantBuilder(IPContent.Blocks.FLARESTACK.get());
+		
+		flarestackBuilder.partialState()
+			.with(FlarestackBlock.SLAVE, false)
+			.setModels(new ConfiguredModel(flarestackModel, 0, 0, false));
+		
+		flarestackBuilder.partialState()
+			.with(FlarestackBlock.SLAVE, true)
+			.setModels(emptyModel);
+	}
+	
+	private void seismicsurvey(){
+		ResourceLocation texture = modLoc("block/obj/seismic_survey_tool");
+		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("seismic_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture));
+		
+		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.SEISMIC_SURVEY.get()), mcLoc("block"))
+				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/seismic_survey_tool.obj")).flipV(true).end()
+				.texture("texture", texture)
+				.texture("particle", texture);
+		
+		VariantBlockStateBuilder flarestackBuilder = getVariantBuilder(IPContent.Blocks.SEISMIC_SURVEY.get());
 		
 		flarestackBuilder.partialState()
 			.with(FlarestackBlock.SLAVE, false)

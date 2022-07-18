@@ -23,6 +23,7 @@ public class BlockRenderLayers{
 		setRenderLayer(IPContent.Blocks.AUTO_LUBRICATOR, RenderType.translucent());
 		setRenderLayer(IPContent.Blocks.GAS_GENERATOR, BlockRenderLayers::solidCutout);
 		setRenderLayer(IPContent.Blocks.FLARESTACK, RenderType.cutout());
+		setRenderLayer(IPContent.Blocks.SEISMIC_SURVEY, RenderType.cutout());
 		
 		setRenderLayer(IPContent.Blocks.WELL, RenderType.cutout());
 		

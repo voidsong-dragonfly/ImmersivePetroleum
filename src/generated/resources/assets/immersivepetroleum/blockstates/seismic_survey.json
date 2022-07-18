@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "slave=false": {
       "model": "immersivepetroleum:block/seismic_survey"
+    },
+    "slave=true": {
+      "model": "immersivepetroleum:block/seismic_empty"
     }
   }
 }

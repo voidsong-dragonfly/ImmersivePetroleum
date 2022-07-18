@@ -55,6 +55,7 @@ public class IPItemModels extends ItemModelProvider{
 		generatorItem();
 		autolubeItem();
 		flarestackItem();
+		surveyToolItem();
 		
 		// Multiblock items
 		pumpjackItem();
@@ -84,6 +85,21 @@ public class IPItemModels extends ItemModelProvider{
 		doTransform(trans, TransformType.GUI, new Vector3f(0, -3, 0), new Vector3f(30, 225, 0), 0.4F);
 		doTransform(trans, TransformType.GROUND, new Vector3f(0, 3, 0), null, 0.25F);
 		doTransform(trans, TransformType.FIXED, new Vector3f(0, -4, 0), null, 0.5F);
+	}
+	
+	private void surveyToolItem(){
+		ItemModelBuilder model = obj(IPContent.Blocks.SEISMIC_SURVEY.get(), "block/obj/seismic_survey_tool.obj")
+				.texture("texture", modLoc("block/obj/seismic_survey_tool"));
+		
+		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
+		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, null, null, 0.2F);
+		doTransform(trans, TransformType.FIRST_PERSON_RIGHT_HAND, null, null, 0.2F);
+		doTransform(trans, TransformType.THIRD_PERSON_LEFT_HAND, new Vector3f(0, -2, 0), null, 0.2F);
+		doTransform(trans, TransformType.THIRD_PERSON_RIGHT_HAND, new Vector3f(0, -2, 0), null, 0.2F);
+		doTransform(trans, TransformType.HEAD, new Vector3f(0, 12, 0), null, 0.75F);
+		doTransform(trans, TransformType.GUI, new Vector3f(0, -4, 0), new Vector3f(30, 225, 0), 0.3F);
+		doTransform(trans, TransformType.GROUND, new Vector3f(0, 3, 0), null, 0.2F);
+		doTransform(trans, TransformType.FIXED, new Vector3f(0, -4, 0), null, 0.3F);
 	}
 	
 	private void generatorItem(){

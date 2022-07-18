@@ -1,6 +1,10 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
   "textures": {
-    "all": "immersivepetroleum:block/seismic_survey"
-  }
+    "texture": "immersivepetroleum:block/obj/seismic_survey_tool",
+    "particle": "immersivepetroleum:block/obj/seismic_survey_tool"
+  },
+  "loader": "forge:obj",
+  "model": "immersivepetroleum:models/block/obj/seismic_survey_tool.obj",
+  "flip-v": true
 }

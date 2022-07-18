@@ -41,6 +41,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	private static final Material material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
@@ -57,13 +59,29 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
+	public Supplier<BlockItem> blockItemSupplier(){
+		return () -> new AutoLubricatorBlockItem(this);
+	}
+	
+	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(FACING, SLAVE);
 	}
 	
 	@Override
-	public Supplier<BlockItem> blockItemSupplier(){
-		return () -> new AutoLubricatorBlockItem(this);
+	public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos){
+		return 0;
+	}
+	
+	@Override
+	public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos){
+		return true;
+	}
+	
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos){
+		return 1.0F;
 	}
 	
 	@Override

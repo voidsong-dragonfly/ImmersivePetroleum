@@ -59,19 +59,18 @@ public class SurveyResultItem extends IPItemBase{
 					byte[] mapData = tag.getByteArray("map");
 					
 					tooltip.add(new TextComponent("ID: " + (uuid != null ? uuid.toString() : "Null")));
-					tooltip.add(new TextComponent("dSize: " + (mapData != null ? mapData.length : 0)));
+					tooltip.add(new TextComponent("dSize: " + (mapData != null ? mapData.length : "Null")));
 				}
 			}
 			
 			if(stack.getTag().contains("islandscan")){
 				CompoundTag tag = stack.getTagElement("islandscan");
-				long capacity = tag.getLong("capacity");
 				long amount = tag.getLong("amount");
+				byte percentage = tag.getByte("status");
 				String fluidTranslation = tag.getString("fluid");
 				
 				tooltip.add(new TranslatableComponent(fluidTranslation).withStyle(ChatFormatting.DARK_GRAY));
-				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.survey_result.amount", String.format(Locale.ENGLISH, "%,.3f", amount / 1000D)).withStyle(ChatFormatting.DARK_GRAY));
-				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.survey_result.capacity", String.format(Locale.ENGLISH, "%,.3f", capacity / 1000D)).withStyle(ChatFormatting.DARK_GRAY));
+				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.survey_result.amount", String.format(Locale.ENGLISH, "%,.3f", amount / 1000D), percentage).withStyle(ChatFormatting.DARK_GRAY));
 			}
 		}
 	}
