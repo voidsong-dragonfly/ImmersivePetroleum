@@ -50,6 +50,7 @@ import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRen
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
 import flaxbeard.immersivepetroleum.client.render.RenderTests;
+import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -205,6 +206,7 @@ public class ClientProxy extends CommonProxy{
 	@SubscribeEvent
 	public static void registerModelLoaders(ModelRegistryEvent event){
 		DerrickRenderer.init();
+		SeismicSurveyBarrelRenderer.init();
 	}
 	
 	@Override
@@ -556,9 +558,11 @@ public class ClientProxy extends CommonProxy{
 		public static void registerRenders(RegisterRenderers ev){
 			registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
 			registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
-			registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
 			registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
 			registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
+			
+			registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
+			registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
 
 			ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
 		}

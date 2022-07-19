@@ -1,16 +1,13 @@
 package flaxbeard.immersivepetroleum.client.render;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.SeismicSurveyTileEntity;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,40 +19,35 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 
-public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
+public class SeismicSurveyBarrelRenderer implements BlockEntityRenderer<SeismicSurveyTileEntity>{
 	
-	static final ResourceLocation DERRICK_PIPE_RL = ResourceUtils.ip("multiblock/dyn/derrick_pipe");
+	static final ResourceLocation BARREL = ResourceUtils.ip("block/dyn/seismic_survey_tool_barrel");
 	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
 	
 	/* Called from ClientProxy during ModelRegistryEvent */
 	public static final void init(){
-		ForgeModelBakery.addSpecialModel(DERRICK_PIPE_RL);
+		ForgeModelBakery.addSpecialModel(BARREL);
 	}
 	
 	@Override
-	public boolean shouldRenderOffScreen(DerrickTileEntity te){
+	public boolean shouldRenderOffScreen(SeismicSurveyTileEntity pBlockEntity){
 		return true;
 	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void render(DerrickTileEntity te, float partialTicks, PoseStack matrix, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(!te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos())){
+	public void render(SeismicSurveyTileEntity te, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int light, int overlay){
+		if(te.isSlave || !te.getLevel().hasChunkAt(te.getBlockPos())){
 			return;
 		}
 		
-		renderPipe(matrix, bufferIn, te, partialTicks, combinedLightIn, combinedOverlayIn);
-	}
-	
-	static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);
-	private void renderPipe(PoseStack matrix, MultiBufferSource buffer, DerrickTileEntity te, float partialTicks, int light, int overlay){
 		matrix.pushPose();
 		{
-			float rot = te.rotation + (te.drilling ? 9 * partialTicks : 0);
+			double d = te.timer / (double) SeismicSurveyTileEntity.DELAY;
 			
-			matrix.translate(0.5, 0.0, 0.5);
-			matrix.mulPose(new Quaternion(Y_AXIS, rot, true));
-			List<BakedQuad> quads = f.apply(DERRICK_PIPE_RL).getQuads(null, null, null, EmptyModelData.INSTANCE);
+			matrix.translate(0, -0.125 * (1 - d), 0);
+			
+			List<BakedQuad> quads = f.apply(BARREL).getQuads(null, null, null, EmptyModelData.INSTANCE);
 			Pose last = matrix.last();
 			VertexConsumer solid = buffer.getBuffer(RenderType.solid());
 			for(BakedQuad quad:quads){

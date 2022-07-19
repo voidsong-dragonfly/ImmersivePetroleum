@@ -40,6 +40,11 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 	public static final int SCAN_SIZE = SCAN_RADIUS * 2 + 1;
 	private static final int SCAN_RADIUS_SQR = SCAN_RADIUS * SCAN_RADIUS;
 	
+	public static final int DELAY = 10;
+	
+	/** Used for recoil animation. Also prevents ejecting the shell for the duration. */
+	public int timer = 0;
+	
 	@Nonnull
 	public ItemStack stack = ItemStack.EMPTY;
 	public boolean isSlave;
@@ -48,15 +53,17 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 	}
 	
 	@Override
-	protected void writeCustom(CompoundTag compound){
-		compound.putBoolean("slave", this.isSlave);
-		compound.put("stack", this.stack.serializeNBT());
+	protected void writeCustom(CompoundTag tag){
+		tag.putBoolean("slave", this.isSlave);
+		tag.putInt("timer", this.timer);
+		tag.put("stack", this.stack.serializeNBT());
 	}
 	
 	@Override
-	protected void readCustom(CompoundTag compound){
-		this.isSlave = compound.getBoolean("slave");
-		this.stack = ItemStack.of(compound.getCompound("stack"));
+	protected void readCustom(CompoundTag tag){
+		this.isSlave = tag.getBoolean("slave");
+		this.timer = tag.getInt("timer");
+		this.stack = ItemStack.of(tag.getCompound("stack"));
 	}
 	
 	@Override
@@ -65,6 +72,10 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 	
 	@Override
 	public void tickServer(){
+		if(this.timer > 0){
+			this.timer--;
+			setChanged();
+		}
 	}
 	
 	public SeismicSurveyTileEntity master(){
@@ -80,166 +91,173 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 	}
 	
 	public boolean interact(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand){
-		SeismicSurveyTileEntity master = master();
-		if(master != null){
-			pos = master.getBlockPos();
+		if(this.timer > 0){
+			return false;
+		}
+		
+		ItemStack held = player.getItemInHand(InteractionHand.MAIN_HAND);
+		
+		if(player.isShiftKeyDown() && !this.stack.isEmpty()){
+			if(!world.isClientSide){
+				Block.popResource(world, player.blockPosition(), this.stack);
+				this.stack = ItemStack.EMPTY;
+				this.setChanged();
+			}
 			
-			ItemStack held = player.getItemInHand(InteractionHand.MAIN_HAND);
+			return true;
+		}else if(held.isEmpty()){
+			boolean fire = false;
 			
-			final double bX = (pos.getX() + 0.5);
-			final double bY = (pos.getY() + 0.0625);
-			final double bZ = (pos.getZ() + 0.5);
-			
-			if(player.isShiftKeyDown() && !master.stack.isEmpty()){
-				if(!world.isClientSide){
-					Block.popResource(world, player.blockPosition(), master.stack);
-					master.stack = ItemStack.EMPTY;
-					master.setChanged();
-				}
-				
-				return true;
-			}else if(held.isEmpty()){
-				boolean fire = false;
-				
-				if(!master.stack.isEmpty()){
-					if(master.stack.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
-						fire = true;
-						if(!world.isClientSide){
-							master.stack = new ItemStack(ExternalModContent.IE_ITEM_EMPTY_SHELL.get());
-							master.setChanged();
-						}
-						
-					}else{
-						if(!world.isClientSide){
-							Block.popResource(world, player.blockPosition(), master.stack);
-							master.stack = ItemStack.EMPTY;
-							master.setChanged();
-							
-							world.playSound(null, bX, bY, bZ, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 0.25F);
-							world.playSound(null, bX, bY, bZ, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE, SoundSource.BLOCKS, 0.25F, 0.1F);
-						}
-						
-						return true;
-					}
-				}
-				
-				// Boom Effect
-				if(fire){
-					if(world.isClientSide){
-						if(!player.isCreative()){
-							double dst = Math.sqrt(player.distanceToSqr(bX, bY, bZ));
-							if(dst < 4.0){
-								double scale = 1.0 - Mth.clamp(dst / 3D, 0.0, 1.0);
-								
-								player.hurtDuration = 40;
-								player.hurtTime = 40 + (int) (30 * scale);
-								player.hurtDir = Math.random() < 0.5 ? 180F : 0F;
-							}
-						}
-						
-						double hSpeed = 0.05;
-						for(float i = 0;i < 360;i += 11.25F){
-							double xa = Math.sin(Math.toRadians(i));
-							double za = Math.cos(Math.toRadians(i));
-							
-							xa += (0.5 - Math.random()) * 1.5;
-							za += (0.5 - Math.random()) * 1.5;
-							
-							xa *= 0.75;
-							za *= 0.75;
-							
-							world.addParticle(Math.random() < 0.5 ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, bX + xa, bY, bZ + za, hSpeed * xa, 0, hSpeed * za);
-						}
-					}else{
-						SoundEvent sound = ((BulletItem) ExternalModContent.IE_ITEM_BUCKSHOT.get()).getType().getSound();
-						if(sound == null){
-							sound = IESounds.revolverFire;
-						}
-						
-						double dst = Math.sqrt(player.distanceToSqr(bX, bY, bZ));
-						float volume = (float)(1.0 - Mth.clamp(dst / 3D, 0.0, 0.85));
-						
-						world.playSound(null, bX, bY, bZ, sound, SoundSource.BLOCKS, volume, 0.5F);
-					}
+			if(!this.stack.isEmpty()){
+				if(this.stack.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
+					fire = true;
 					
 					if(!world.isClientSide){
-						ReservoirIsland island = ReservoirHandler.getIsland(world, pos);
-						
-						ItemStack stack = new ItemStack(IPContent.Items.SURVEYRESULT.get());
-						
-						if(island != null){
-							// Give info about the current one.
-							
-							FluidStack fs = new FluidStack(island.getType().getFluid(), 1);
-							
-							CompoundTag result = stack.getOrCreateTagElement("islandscan");
-							result.putInt("x", pos.getX());
-							result.putInt("z", pos.getZ());
-							result.putByte("status", (byte) (island.getAmount() / (float) island.getCapacity() * 100));
-							result.putLong("amount", island.getAmount());
-							result.putString("fluid", fs.getTranslationKey());
-							
-						}else{
-							// Find one nearby instead.
-							
-							double sqrt2048 = Math.sqrt(SCAN_RADIUS_SQR * 2);
-							byte[] mapData = new byte[SCAN_SIZE * SCAN_SIZE];
-							for(int j = -SCAN_RADIUS, a = 0;j <= SCAN_RADIUS;j++,a++){
-								for(int i = -SCAN_RADIUS, b = 0;i <= SCAN_RADIUS;i++,b++){
-									int x = pos.getX() - i;
-									int z = pos.getZ() - j;
-									
-									int data;
-									double current = ReservoirHandler.noiseFor(world, x, z);
-									if(current == -1){
-										data = 0;
-									}else{
-										data = (int) Mth.clamp(255 * current, 0, 255);
-									}
-									
-									int noise = 31 + (int) (127 * Math.random());
-									
-									double blend = Math.sqrt(i * i + j * j) / sqrt2048;
-									int lerped = (int)(Mth.clampedLerp(data, noise, blend));
-									mapData[(a * SCAN_SIZE) + b] = (byte)(lerped & 0xFF);
-								}
-							}
-							
-							CompoundTag result = stack.getOrCreateTagElement("surveyscan");
-							result.putUUID("uuid", UUID.randomUUID());
-							result.putInt("x", pos.getX());
-							result.putInt("z", pos.getZ());
-							result.putByteArray("map", mapData);
-						}
-						
-						Block.popResource(world, player.blockPosition(), stack);
+						this.timer = DELAY;
+						this.stack = new ItemStack(ExternalModContent.IE_ITEM_EMPTY_SHELL.get());
+						this.setChanged();
 					}
 					
-					return true;
-				}
-				
-				return false;
-			}else if(held.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
-				if(master.stack.isEmpty()){
+				}else{
 					if(!world.isClientSide){
-						ItemStack copy = held.copy();
-						copy.setCount(1);
-						master.stack = copy;
+						Block.popResource(world, player.blockPosition(), this.stack);
+						this.stack = ItemStack.EMPTY;
+						this.setChanged();
 						
-						if(!player.isCreative()){
-							held.shrink(1);
-							if(held.isEmpty()){
-								player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-							}
-						}
+						final double bX = (pos.getX() + 0.5);
+						final double bY = (pos.getY() + 0.5);
+						final double bZ = (pos.getZ() + 0.5);
 						
-						master.setChanged();
+						world.playSound(null, bX, bY, bZ, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 0.25F);
+						world.playSound(null, bX, bY, bZ, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE, SoundSource.BLOCKS, 0.25F, 0.1F);
 					}
 					
 					return true;
 				}
 			}
+			
+			// Boom Effect
+			if(fire){
+				if(world.isClientSide){
+					if(!player.isCreative()){
+						double dst = Math.sqrt(player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
+						if(dst < 4.0){
+							double scale = 1.0 - Mth.clamp(dst / 3D, 0.0, 1.0);
+							
+							player.hurtDuration = 40;
+							player.hurtTime = 40 + (int) (30 * scale);
+							player.hurtDir = Math.random() < 0.5 ? 180F : 0F;
+						}
+					}
+					
+					final double bX = (pos.getX() + 0.5);
+					final double bY = (pos.getY() + 0.25);
+					final double bZ = (pos.getZ() + 0.5);
+					
+					double hSpeed = 0.05;
+					for(float i = 0;i < 360;i += 11.25F){
+						double xa = Math.sin(Math.toRadians(i));
+						double za = Math.cos(Math.toRadians(i));
+						
+						xa *= 0.75;
+						za *= 0.75;
+						
+						world.addParticle(Math.random() < 0.5 ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, bX + xa, bY, bZ + za, hSpeed * xa, 0, hSpeed * za);
+					}
+				}else{
+					SoundEvent sound = ((BulletItem) ExternalModContent.IE_ITEM_BUCKSHOT.get()).getType().getSound();
+					if(sound == null){
+						sound = IESounds.revolverFire;
+					}
+					
+					final double bX = (pos.getX() + 0.5);
+					final double bY = (pos.getY() + 0.5);
+					final double bZ = (pos.getZ() + 0.5);
+					
+					double dst = Math.sqrt(player.distanceToSqr(bX, bY, bZ));
+					float volume = (float)(1.0 - Mth.clamp(dst / 3D, 0.0, 0.85));
+					
+					world.playSound(null, bX, bY, bZ, sound, SoundSource.BLOCKS, volume, 0.5F);
+				}
+				
+				if(!world.isClientSide){
+					ReservoirIsland island = ReservoirHandler.getIsland(world, pos);
+					
+					ItemStack stack = new ItemStack(IPContent.Items.SURVEYRESULT.get());
+					
+					if(island != null){
+						// Give info about the current one.
+						
+						FluidStack fs = new FluidStack(island.getType().getFluid(), 1);
+						
+						CompoundTag result = stack.getOrCreateTagElement("islandscan");
+						result.putInt("x", pos.getX());
+						result.putInt("z", pos.getZ());
+						result.putByte("status", (byte) (island.getAmount() / (float) island.getCapacity() * 100));
+						result.putLong("amount", island.getAmount());
+						result.putString("fluid", fs.getTranslationKey());
+						
+					}else{
+						// Find one nearby instead.
+						
+						double sqrt2048 = Math.sqrt(SCAN_RADIUS_SQR * 2);
+						byte[] mapData = new byte[SCAN_SIZE * SCAN_SIZE];
+						for(int j = -SCAN_RADIUS, a = 0;j <= SCAN_RADIUS;j++,a++){
+							for(int i = -SCAN_RADIUS, b = 0;i <= SCAN_RADIUS;i++,b++){
+								int x = pos.getX() - i;
+								int z = pos.getZ() - j;
+								
+								int data;
+								double current = ReservoirHandler.noiseFor(world, x, z);
+								if(current == -1){
+									data = 0;
+								}else{
+									data = (int) Mth.clamp(255 * current, 0, 255);
+								}
+								
+								int noise = 31 + (int) (127 * Math.random());
+								
+								double blend = Math.sqrt(i * i + j * j) / sqrt2048;
+								int lerped = (int)(Mth.clampedLerp(data, noise, blend));
+								mapData[(a * SCAN_SIZE) + b] = (byte)(lerped & 0xFF);
+							}
+						}
+						
+						CompoundTag result = stack.getOrCreateTagElement("surveyscan");
+						result.putUUID("uuid", UUID.randomUUID());
+						result.putInt("x", pos.getX());
+						result.putInt("z", pos.getZ());
+						result.putByteArray("map", mapData);
+					}
+					
+					Block.popResource(world, player.blockPosition(), stack);
+				}
+				
+				return true;
+			}
+			
+			return false;
+		}else if(held.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
+			if(this.stack.isEmpty()){
+				if(!world.isClientSide){
+					ItemStack copy = held.copy();
+					copy.setCount(1);
+					this.stack = copy;
+					
+					if(!player.isCreative()){
+						held.shrink(1);
+						if(held.isEmpty()){
+							player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+						}
+					}
+					
+					this.setChanged();
+				}
+				
+				return true;
+			}
 		}
+		
 		return false;
 	}
 	

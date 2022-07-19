@@ -97,6 +97,9 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
+		if(state.getValue(SLAVE)){
+			return null;
+		}
 		return createTickerHelper(level.isClientSide, type, IPTileTypes.SEISMIC_SURVEY);
 	}
 	
@@ -148,7 +151,9 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
 		BlockEntity te = world.getBlockEntity(pos);
 		if(te instanceof SeismicSurveyTileEntity survey){
-			if(survey.interact(state, world, pos, player, hand)){
+			survey = survey.master();
+			
+			if(survey != null && survey.interact(state, world, survey.getBlockPos(), player, hand)){
 				return InteractionResult.SUCCESS;
 			}
 		}
