@@ -145,7 +145,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 							for(ColumnPos cPos:well.tappedIslands){
 								ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 								if(island != null){
-									FluidStack fluid = new FluidStack(island.getType().getFluid(), island.extract(extractSpeed, FluidAction.SIMULATE));
+									FluidStack fluid = new FluidStack(island.getFluid(), island.extract(extractSpeed, FluidAction.SIMULATE));
 									
 									if(portEast_output != null){
 										int accepted = portEast_output.fill(fluid, FluidAction.SIMULATE);

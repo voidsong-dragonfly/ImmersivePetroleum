@@ -188,7 +188,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 					if(island != null){
 						// Give info about the current one.
 						
-						FluidStack fs = new FluidStack(island.getType().getFluid(), 1);
+						FluidStack fs = new FluidStack(island.getFluid(), 1);
 						
 						CompoundTag result = stack.getOrCreateTagElement("islandscan");
 						result.putInt("x", pos.getX());

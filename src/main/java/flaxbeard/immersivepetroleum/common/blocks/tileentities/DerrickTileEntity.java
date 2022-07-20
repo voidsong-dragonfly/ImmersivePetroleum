@@ -382,8 +382,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 			if(island != null){
 				if(extractedFluid == Fluids.EMPTY){
-					extractedFluid = island.getType().getFluid();
-				}else if(island.getType().getFluid() != extractedFluid){
+					extractedFluid = island.getFluid();
+				}else if(island.getFluid() != extractedFluid){
 					continue;
 				}
 				

@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
@@ -68,20 +69,22 @@ public class ReservoirIsland{
 		this.islandAABB = new IslandAxisAlignedBB(minX, minZ, maxX, maxZ);
 	}
 	
+	/**
+	 * 
+	 * @param amount of fluid in this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Capacity Clamped})
+	 * @param capacity of this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Clamped})
+	 * @return
+	 */
 	public ReservoirIsland setAmountAndCapacity(long amount, long capacity){
-		capacity = clamp(capacity, 0L, MAX_AMOUNT);
-		amount = clamp(amount, 0L, capacity);
-		
-		this.capacity = capacity;
-		this.amount = amount;
-		
+		setCapacity(capacity);
+		setAmount(amount);
 		return this;
 	}
 	
 	/**
 	 * Sets the reservoirs current fluid amount in millibuckets.
 	 * 
-	 * @param amount of fluid in this reservoir. (Range: 0 - 4294967295; Capacity Clamped})
+	 * @param amount of fluid in this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Capacity Clamped})
 	 */
 	public ReservoirIsland setAmount(long amount){
 		this.amount = clamp(amount, 0L, this.capacity);
@@ -91,7 +94,7 @@ public class ReservoirIsland{
 	/**
 	 * Sets the reservoirs current fluid capacity in millibuckets.
 	 * 
-	 * @param capacity of this reservoir. (Range: 0 - {@value #MAX_AMOUNT}; Clamped})
+	 * @param capacity of this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Clamped})
 	 */
 	public ReservoirIsland setCapacity(long capacity){
 		this.capacity = clamp(capacity, 0L, MAX_AMOUNT);
@@ -110,7 +113,7 @@ public class ReservoirIsland{
 		return this;
 	}
 	
-	/** While this returns long it only goes up to {@value #MAX_AMOUNT} */
+	/** While this returns long it only goes up to {@value ReservoirIsland#MAX_AMOUNT} */
 	public long getAmount(){
 		return this.amount;
 	}
@@ -127,6 +130,10 @@ public class ReservoirIsland{
 	@Nonnull
 	public Reservoir getType(){
 		return this.reservoir;
+	}
+	
+	public Fluid getFluid(){
+		return this.reservoir.getFluid();
 	}
 	
 	public IslandAxisAlignedBB getBoundingBox(){

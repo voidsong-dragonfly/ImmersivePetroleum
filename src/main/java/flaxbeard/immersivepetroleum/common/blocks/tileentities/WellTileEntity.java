@@ -171,7 +171,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 								
 								// One is enough to trigger spilling
 								if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
-									fType = island.getType().getFluid();
+									fType = island.getFluid();
 									height = result.getRight().getY();
 									spill = true;
 									break;
@@ -185,7 +185,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 						
 						if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
 							spill = true;
-							fType = island.getType().getFluid();
+							fType = island.getFluid();
 							height = this.worldPosition.getY() + 1;
 						}
 					}

@@ -158,7 +158,7 @@ public class DebugItem extends IPItemBase{
 								island.getCapacity(),
 								pressure,
 								island.getFlow(pressure),
-								new FluidStack(island.getType().getFluid(), 1).getDisplayName().getString());
+								new FluidStack(island.getFluid(), 1).getDisplayName().getString());
 						
 						playerIn.displayClientMessage(new TextComponent(out), true);
 					}else{
