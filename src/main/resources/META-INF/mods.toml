@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[39,)"
-issueTrackerURL="https://github.com/Flaxbeard/ImmersivePetroleum/issues"
+issueTrackerURL="https://github.com/TwistedGate/ImmersivePetroleum/issues"
 license="All rights reserved"
 
 [[mods]] #mandatory
@@ -8,7 +8,7 @@ license="All rights reserved"
 	version="${file.jarVersion}"
 	displayName="Immersive Petroleum"
 	displayURL="https://minecraft.curseforge.com/projects/immersive-petroleum"
-	authors="Flaxbeard"
+	authors="Flaxbeard and Maintained by TwistedGate"
 	description="Adds oil and oil processing features to Immersive Engineering."
 	logoFile="logo.png"
 	#updateJSONURL=""
