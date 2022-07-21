@@ -11,12 +11,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.util.Lazy;
 
 public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecipe>{
 	
 	@Override
-	public CokerUnitRecipe readFromJson(ResourceLocation recipeId, JsonObject json){
+	public CokerUnitRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		FluidTagInput outputFluid = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "resultfluid"));
 		FluidTagInput inputFluid = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "inputfluid"));
 		
