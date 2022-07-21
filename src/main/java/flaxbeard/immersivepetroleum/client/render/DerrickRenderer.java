@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client.render;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.PoseStack;

@@ -17,11 +17,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.fluids.FluidStack;
 
 public class DistillationRecipeSerializer extends IERecipeSerializer<DistillationRecipe>{
 	@Override
-	public DistillationRecipe readFromJson(ResourceLocation recipeId, JsonObject json){
+	public DistillationRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
 		JsonArray fluidResults = GsonHelper.getAsJsonArray(json, "results");
 		JsonArray itemResults = GsonHelper.getAsJsonArray(json, "byproducts");

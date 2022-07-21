@@ -13,12 +13,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRecoveryRecipe>{
 	
 	@Override
-	public SulfurRecoveryRecipe readFromJson(ResourceLocation id, JsonObject json){
+	public SulfurRecoveryRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
 		FluidTagInput inputFluid0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
 		FluidTagInput inputFluid1 = null;
@@ -32,7 +33,7 @@ public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRec
 		int energy = GsonHelper.getAsInt(json, "energy");
 		int time = GsonHelper.getAsInt(json, "time");
 		
-		return new SulfurRecoveryRecipe(id, output, itemWithChance.getA(), inputFluid0, inputFluid1, itemWithChance.getB(), energy, time);
+		return new SulfurRecoveryRecipe(recipeId, output, itemWithChance.getA(), inputFluid0, inputFluid1, itemWithChance.getB(), energy, time);
 	}
 	
 	@Override
