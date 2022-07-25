@@ -24,7 +24,6 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -32,7 +31,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -62,11 +60,8 @@ public class OilCanItem extends IPItemBase{
 		
 		FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
 			if(fluid != null && fluid.getAmount() > 0){
-				FluidAttributes att = fluid.getFluid().getAttributes();
-				ChatFormatting rarity = att.getRarity() == Rarity.COMMON ? ChatFormatting.GRAY : att.getRarity().color;
-				
-				Component out = ((MutableComponent) fluid.getDisplayName()).withStyle(rarity)
-						.append(new TextComponent(": " + fluid.getAmount() + "/8000mB").withStyle(ChatFormatting.GRAY));
+				Component out = ((MutableComponent) fluid.getDisplayName())
+						.append(new TextComponent(": " + fluid.getAmount() + "/8000mB")).withStyle(ChatFormatting.GRAY);
 				tooltip.add(out);
 			}else{
 				tooltip.add(new TextComponent(I18n.get(Lib.DESC_FLAVOUR + "drill.empty")));
