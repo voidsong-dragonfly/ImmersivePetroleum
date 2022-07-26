@@ -70,7 +70,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public static final EntityType<MotorboatEntity> TYPE = createType();
 	
 	private static EntityType<MotorboatEntity> createType(){
-		EntityType<MotorboatEntity> ret = EntityType.Builder.<MotorboatEntity> of(MotorboatEntity::new, MobCategory.MISC).sized(1.375F, 0.5625F).build(ImmersivePetroleum.MODID + ":speedboat");
+		EntityType<MotorboatEntity> ret = EntityType.Builder.<MotorboatEntity> of(MotorboatEntity::new, MobCategory.MISC)
+				.sized(1.375F, 0.5625F)
+				.clientTrackingRange(10)
+				.build(ImmersivePetroleum.MODID + ":speedboat");
 		ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
 		return ret;
 	}
@@ -419,7 +422,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		this.tickLerp();
 		
 		if(this.isControlledByLocalInstance()){
-			if(this.getPassengers().isEmpty() || !(this.getPassengers().get(0) instanceof Player)){
+			if(!(this.getFirstPassenger() instanceof Player)){
 				this.setPaddleState(false, false);
 			}
 			
@@ -438,8 +441,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		
 		if(this.level.isClientSide){
 			if(!isEmergency()){
-				float moving = (this.inputUp || this.inputDown) ? (isBoosting ? .9F : .7F) : 0.5F;
-				if(lastMoving != moving){
+				float moving = (this.inputUp || this.inputDown) ? (this.isBoosting ? .9F : .7F) : 0.5F;
+				if(this.lastMoving != moving){
 					ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
 				}
 				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, this.isVehicle() && this.getContainedFluid() != FluidStack.EMPTY && this.getContainedFluid().getAmount() > 0, this.inputUp || this.inputDown ? .5f : .3f, moving);
@@ -448,24 +451,24 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				if(this.inputUp && this.level.random.nextInt(2) == 0){
 					if(isInLava()){
 						if(this.level.random.nextInt(3) == 0){
-							float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-							float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-							float yO = .4F + (level.random.nextFloat() - .5F) * .3F;
+							float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+							float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+							float yO = .4F + (this.level.random.nextFloat() - .5F) * .3F;
 							Vec3 motion = getDeltaMovement();
-							level.addParticle(ParticleTypes.LAVA, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, -2 * motion.x(), 0, -2 * motion.z());
+							this.level.addParticle(ParticleTypes.LAVA, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, -2 * motion.x(), 0, -2 * motion.z());
 						}
 					}else{
-						float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-						float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-						float yO = .1F + (level.random.nextFloat() - .5F) * .3F;
-						level.addParticle(ParticleTypes.BUBBLE, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, 0, 0, 0);
+						float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+						float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+						float yO = .1F + (this.level.random.nextFloat() - .5F) * .3F;
+						this.level.addParticle(ParticleTypes.BUBBLE, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, 0, 0, 0);
 					}
 				}
-				if(isBoosting && this.level.random.nextInt(2) == 0){
-					float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-					float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (level.random.nextFloat() - .5F) * .3F;
-					float yO = .8F + (level.random.nextFloat() - .5F) * .3F;
-					level.addParticle(ParticleTypes.SMOKE, getX() - xO * 1.3F, getY() + yO, getZ() - zO * 1.3F, 0, 0, 0);
+				if(this.isBoosting && this.level.random.nextInt(2) == 0){
+					float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+					float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+					float yO = .8F + (this.level.random.nextFloat() - .5F) * .3F;
+					this.level.addParticle(ParticleTypes.SMOKE, getX() - xO * 1.3F, getY() + yO, getZ() - zO * 1.3F, 0, 0, 0);
 				}
 			}else{
 				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
@@ -583,7 +586,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					f -= 0.005F;
 				}
 				
-				this.setDeltaMovement(this.getDeltaMovement().add((double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f), 0.0D, (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f)));
+				double xa = (double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f);
+				double za = (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f);
+				Vec3 motion = this.getDeltaMovement().add(xa, 0.0F, za);
+				this.setDeltaMovement(motion);
 				this.setPaddleState(this.inputRight && !this.inputLeft || this.inputUp, this.inputLeft && !this.inputRight || this.inputUp);
 			}else{
 				FluidStack fluid = getContainedFluid();
@@ -609,7 +615,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					fluid.setAmount(Math.max(0, fluid.getAmount() - toConsume));
 					setContainedFluid(fluid);
 					
-					if(this.level.isClientSide)
+					if(this.level.isClientSide){
 						IPPacketHandler.sendToServer(new MessageConsumeBoatFuel(toConsume));
 					
 					setPaddleState(this.inputUp, this.inputDown);
@@ -617,7 +623,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					setPaddleState(false, false);
 				}
 				
-				Vec3 motion = this.getDeltaMovement().add((double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f), 0.0D, (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f));
+				double xa = (double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f);
+				double za = (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f);
+				Vec3 motion = this.getDeltaMovement().add(xa, 0.0F, za);
+				this.setDeltaMovement(motion);
 				
 				if(this.inputLeft || this.inputRight){
 					float speed = Mth.sqrt((float) (motion.x * motion.x + motion.z * motion.z));
@@ -643,8 +652,6 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				}
 
 				this.setYRot(this.getYRot() + this.deltaRotation);
-
-				this.setDeltaMovement(motion);
 				this.setPaddleState((this.inputRight && !this.inputLeft || this.inputUp), (this.inputLeft && !this.inputRight || this.inputUp));
 			}
 		}
@@ -703,24 +710,24 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	@Override
 	public float getWaterLevelAbove(){
-		AABB axisalignedbb = this.getBoundingBox();
-		int i = Mth.floor(axisalignedbb.minX);
-		int j = Mth.ceil(axisalignedbb.maxX);
-		int k = Mth.floor(axisalignedbb.maxY);
-		int l = Mth.ceil(axisalignedbb.maxY - this.lastYd);
-		int i1 = Mth.floor(axisalignedbb.minZ);
-		int j1 = Mth.ceil(axisalignedbb.maxZ);
-		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
+		AABB aabb = this.getBoundingBox();
+		int i = Mth.floor(aabb.minX);
+		int j = Mth.ceil(aabb.maxX);
+		int k = Mth.floor(aabb.maxY);
+		int l = Mth.ceil(aabb.maxY - this.lastYd);
+		int i1 = Mth.floor(aabb.minZ);
+		int j1 = Mth.ceil(aabb.maxZ);
+		BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
 		
 		label39: for(int k1 = k;k1 < l;++k1){
 			float f = 0.0F;
 			
 			for(int l1 = i;l1 < j;++l1){
 				for(int i2 = i1;i2 < j1;++i2){
-					blockpos$mutable.set(l1, k1, i2);
-					FluidState fluidstate = this.level.getFluidState(blockpos$mutable);
+					blockpos.set(l1, k1, i2);
+					FluidState fluidstate = this.level.getFluidState(blockpos);
 					if(fluidstate.is(FluidTags.WATER) || (this.isFireproof && fluidstate.is(FluidTags.LAVA))){
-						f = Math.max(f, fluidstate.getHeight(this.level, blockpos$mutable));
+						f = Math.max(f, fluidstate.getHeight(this.level, blockpos));
 					}
 					
 					if(f >= 1.0F){
@@ -730,7 +737,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			}
 			
 			if(f < 1.0F){
-				return (float) blockpos$mutable.getY() + f;
+				return (float) blockpos.getY() + f;
 			}
 		}
 		
@@ -739,26 +746,26 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	@Override
 	protected boolean checkInWater(){
-		AABB axisalignedbb = this.getBoundingBox();
-		int i = Mth.floor(axisalignedbb.minX);
-		int j = Mth.ceil(axisalignedbb.maxX);
-		int k = Mth.floor(axisalignedbb.minY);
-		int l = Mth.ceil(axisalignedbb.minY + 0.001D);
-		int i1 = Mth.floor(axisalignedbb.minZ);
-		int j1 = Mth.ceil(axisalignedbb.maxZ);
+		AABB aabb = this.getBoundingBox();
+		int i = Mth.floor(aabb.minX);
+		int j = Mth.ceil(aabb.maxX);
+		int k = Mth.floor(aabb.minY);
+		int l = Mth.ceil(aabb.minY + 0.001D);
+		int i1 = Mth.floor(aabb.minZ);
+		int j1 = Mth.ceil(aabb.maxZ);
 		boolean flag = false;
-		this.waterLevel = Double.MIN_VALUE;
-		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
+		this.waterLevel = -Double.MAX_VALUE;
+		BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
 		
 		for(int k1 = i;k1 < j;++k1){
 			for(int l1 = k;l1 < l;++l1){
 				for(int i2 = i1;i2 < j1;++i2){
-					blockpos$mutable.set(k1, l1, i2);
-					FluidState fluidstate = this.level.getFluidState(blockpos$mutable);
+					blockpos.set(k1, l1, i2);
+					FluidState fluidstate = this.level.getFluidState(blockpos);
 					if(fluidstate.is(FluidTags.WATER) || (this.isFireproof && fluidstate.is(FluidTags.LAVA))){
-						float f = (float) l1 + fluidstate.getHeight(this.level, blockpos$mutable);
+						float f = (float) l1 + fluidstate.getHeight(this.level, blockpos);
 						this.waterLevel = Math.max((double) f, this.waterLevel);
-						flag |= axisalignedbb.minY < (double) f;
+						flag |= aabb.minY < (double) f;
 					}
 				}
 			}
@@ -769,23 +776,23 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	@Override
 	protected Status isUnderwater(){
-		AABB axisalignedbb = this.getBoundingBox();
-		double d0 = axisalignedbb.maxY + 0.001D;
-		int i = Mth.floor(axisalignedbb.minX);
-		int j = Mth.ceil(axisalignedbb.maxX);
-		int k = Mth.floor(axisalignedbb.maxY);
+		AABB aabb = this.getBoundingBox();
+		double d0 = aabb.maxY + 0.001D;
+		int i = Mth.floor(aabb.minX);
+		int j = Mth.ceil(aabb.maxX);
+		int k = Mth.floor(aabb.maxY);
 		int l = Mth.ceil(d0);
-		int i1 = Mth.floor(axisalignedbb.minZ);
-		int j1 = Mth.ceil(axisalignedbb.maxZ);
+		int i1 = Mth.floor(aabb.minZ);
+		int j1 = Mth.ceil(aabb.maxZ);
 		boolean flag = false;
-		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
+		BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
 		
 		for(int k1 = i;k1 < j;++k1){
 			for(int l1 = k;l1 < l;++l1){
 				for(int i2 = i1;i2 < j1;++i2){
-					blockpos$mutable.set(k1, l1, i2);
-					FluidState fluidstate = this.level.getFluidState(blockpos$mutable);
-					if((fluidstate.is(FluidTags.WATER) || ((this.isFireproof && fluidstate.is(FluidTags.LAVA)))) && d0 < (double) ((float) blockpos$mutable.getY() + fluidstate.getHeight(this.level, blockpos$mutable))){
+					blockpos.set(k1, l1, i2);
+					FluidState fluidstate = this.level.getFluidState(blockpos);
+					if((fluidstate.is(FluidTags.WATER) || ((this.isFireproof && fluidstate.is(FluidTags.LAVA)))) && d0 < (double) ((float) blockpos.getY() + fluidstate.getHeight(this.level, blockpos))){
 						if(!fluidstate.isSource()){
 							return Boat.Status.UNDER_FLOWING_WATER;
 						}
