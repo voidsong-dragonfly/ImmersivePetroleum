@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
@@ -9,6 +10,7 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,6 +18,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -172,9 +176,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 		
 		if(this.isActive && this.level.getGameTime() % 10 == 0){
 			// Set *anything* ablaze that's in the danger zone
-			BlockPos min = this.worldPosition.offset(-1, 2, -1);
-			BlockPos max = min.offset(3, 3, 3);
-			List<Entity> list = this.getLevel().getEntitiesOfClass(Entity.class, new AABB(min, max));
+			List<Entity> list = this.getLevel().getEntitiesOfClass(Entity.class, new AABB(this.worldPosition).inflate(1));
 			if(!list.isEmpty()){
 				list.forEach(e -> {
 					if(!e.fireImmune()){
@@ -182,6 +184,17 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 						e.hurt(FLARESTACK, 6.0F * (this.drained / (float) this.tank.getCapacity()));
 					}
 				});
+				
+				List<Entity> goats = list.stream().filter(e -> e instanceof Goat).collect(Collectors.toList());
+				if(!goats.isEmpty()){
+					final List<Player> players = this.getLevel().getEntitiesOfClass(Player.class, new AABB(this.worldPosition).inflate(8));
+					for(Entity g:goats){
+						if(!g.isAlive()){
+							players.forEach(p -> Utils.unlockIPAdvancement(p, "main/flarestack"));
+							break;
+						}
+					}
+				}
 			}
 		}
 		

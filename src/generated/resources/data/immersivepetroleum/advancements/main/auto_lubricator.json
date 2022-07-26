@@ -1,0 +1,28 @@
+{
+  "parent": "immersivepetroleum:main/root",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:auto_lubricator"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.auto_lubricator"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.auto_lubricator.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

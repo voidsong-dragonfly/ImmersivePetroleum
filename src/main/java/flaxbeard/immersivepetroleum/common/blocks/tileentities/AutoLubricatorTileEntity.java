@@ -5,7 +5,6 @@ import java.util.List;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
@@ -13,6 +12,7 @@ import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,6 +90,16 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	public void readOnPlacement(LivingEntity placer, ItemStack stack){
 		if(stack.hasTag()){
 			readTank(stack.getTag());
+		}
+		
+		if(placer instanceof Player player){
+			BlockPos target = this.worldPosition.relative(this.facing);
+			BlockEntity te = this.level.getBlockEntity(target);
+			
+			ILubricationHandler<BlockEntity> handler = LubricatedHandler.getHandlerForTile(te);
+			if(handler != null && handler.isPlacedCorrectly(this.level, this, this.facing) != null){
+				Utils.unlockIPAdvancement(player, "main/auto_lubricator");
+			}
 		}
 	}
 	

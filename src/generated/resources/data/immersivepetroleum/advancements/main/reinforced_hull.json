@@ -1,0 +1,28 @@
+{
+  "parent": "immersivepetroleum:main/motorboat",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:upgrade_reinforced_hull"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.reinforced_hull"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.reinforced_hull.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

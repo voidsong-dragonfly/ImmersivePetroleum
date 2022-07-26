@@ -1,0 +1,37 @@
+{
+  "parent": "immersivepetroleum:main/mb_distillationtower",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:bitumen"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.bitumen"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.bitumen.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "bitumen": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:bitumen"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "bitumen"
+    ]
+  ]
+}

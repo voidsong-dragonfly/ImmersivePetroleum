@@ -1,0 +1,42 @@
+{
+  "parent": "immersivepetroleum:main/bitumen",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:coker_unit"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.mb_cokerunit"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.mb_cokerunit.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "rewards": {
+    "experience": 50,
+    "loot": [
+      "minecraft:cookie"
+    ]
+  },
+  "criteria": {
+    "cokerunit": {
+      "trigger": "immersiveengineering:multiblock_formed",
+      "conditions": {
+        "multiblock": "immersivepetroleum:multiblocks/cokerunit",
+        "item": {
+          "items": [
+            "immersiveengineering:hammer"
+          ]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "cokerunit"
+    ]
+  ]
+}

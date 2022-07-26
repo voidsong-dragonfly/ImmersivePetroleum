@@ -6,7 +6,6 @@ import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.IESounds;
-import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
@@ -16,6 +15,7 @@ import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageConsumeBoatFuel;
 import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -101,6 +101,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public boolean hasPaddles = false;
 	public boolean isBoosting = false;
 	public float lastMoving;
+	
+	/** Only needed and used on Server side */
+	protected float oYRot;
 	
 	public float propellerYRotation = 0.0F;
 	public float propellerXRot = 0.0F;
@@ -368,6 +371,11 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				FluidUtil.interactWithFluidHandler(player, hand, tank);
 				
 				setContainedFluid(tank.getFluid());
+				
+				Utils.unlockIPAdvancement(player, "main/motorboat");
+				if(this.hasTank && tank.getFluidAmount() == tank.getCapacity()){
+					Utils.unlockIPAdvancement(player, "main/tank");
+				}
 			}
 			return InteractionResult.SUCCESS;
 		}
@@ -381,14 +389,24 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public void setInput(boolean p_184442_1_, boolean p_184442_2_, boolean p_184442_3_, boolean p_184442_4_){
-		super.setInput(p_184442_1_, p_184442_2_, p_184442_3_, p_184442_4_);
-		this.isBoosting = isEmergency() ? false : (inputUp && Minecraft.getInstance().options.keyJump.isDown());
+	public void setInput(boolean pLeftInputDown, boolean pRightInputDown, boolean pForwardInputDown, boolean pBackInputDown){
+		super.setInput(pLeftInputDown, pRightInputDown, pForwardInputDown, pBackInputDown);
+		this.isBoosting = isEmergency() ? false : (pForwardInputDown && Minecraft.getInstance().options.keyJump.isDown());
 	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(){
+		if(!this.level.isClientSide && this.getFirstPassenger() instanceof Player player){
+			// TODO
+			float diff = this.getYRot() - this.oYRot;
+			if(diff < -5.0F || diff > 5.0F){
+				Utils.unlockIPAdvancement(player, "main/rudders");
+			}
+			
+			this.oYRot = this.getYRot();
+		}
+		
 		this.oldStatus = this.status;
 		this.status = this.getStatus();
 		if(this.status != Boat.Status.UNDER_WATER && this.status != Boat.Status.UNDER_FLOWING_WATER){
@@ -414,11 +432,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		this.zo = this.getZ();
 		
 		{ // From Entity.tick()
-			if(!this.level.isClientSide){
-				this.setSharedFlag(6, this.isCurrentlyGlowing());
-			}
 			this.baseTick();
 		}
+		
 		this.tickLerp();
 		
 		if(this.isControlledByLocalInstance()){
@@ -443,10 +459,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			if(!isEmergency()){
 				float moving = (this.inputUp || this.inputDown) ? (this.isBoosting ? .9F : .7F) : 0.5F;
 				if(this.lastMoving != moving){
+					this.lastMoving = moving;
 					ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
 				}
 				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, this.isVehicle() && this.getContainedFluid() != FluidStack.EMPTY && this.getContainedFluid().getAmount() > 0, this.inputUp || this.inputDown ? .5f : .3f, moving);
-				lastMoving = moving;
 				
 				if(this.inputUp && this.level.random.nextInt(2) == 0){
 					if(isInLava()){
@@ -470,8 +486,6 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					float yO = .8F + (this.level.random.nextFloat() - .5F) * .3F;
 					this.level.addParticle(ParticleTypes.SMOKE, getX() - xO * 1.3F, getY() + yO, getZ() - zO * 1.3F, 0, 0, 0);
 				}
-			}else{
-				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
 			}
 		}
 		
@@ -586,8 +600,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					f -= 0.005F;
 				}
 				
-				double xa = (double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f);
-				double za = (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f);
+				double xa = (double) (Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * f);
+				double za = (double) (Mth.cos(this.getYRot() * Mth.DEG_TO_RAD) * f);
 				Vec3 motion = this.getDeltaMovement().add(xa, 0.0F, za);
 				this.setDeltaMovement(motion);
 				this.setPaddleState(this.inputRight && !this.inputLeft || this.inputUp, this.inputLeft && !this.inputRight || this.inputUp);
@@ -615,16 +629,15 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					fluid.setAmount(Math.max(0, fluid.getAmount() - toConsume));
 					setContainedFluid(fluid);
 					
-					if(this.level.isClientSide){
-						IPPacketHandler.sendToServer(new MessageConsumeBoatFuel(toConsume));
+					IPPacketHandler.sendToServer(new MessageConsumeBoatFuel(toConsume));
 					
 					setPaddleState(this.inputUp, this.inputDown);
 				}else{
 					setPaddleState(false, false);
 				}
 				
-				double xa = (double) (Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * f);
-				double za = (double) (Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * f);
+				double xa = (double) (Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * f);
+				double za = (double) (Mth.cos(this.getYRot() * Mth.DEG_TO_RAD) * f);
 				Vec3 motion = this.getDeltaMovement().add(xa, 0.0F, za);
 				this.setDeltaMovement(motion);
 				

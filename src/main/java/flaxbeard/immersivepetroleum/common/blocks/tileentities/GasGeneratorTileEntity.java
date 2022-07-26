@@ -241,6 +241,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)){
 			setChanged();
+			flaxbeard.immersivepetroleum.common.util.Utils.unlockIPAdvancement(player, "main/gas_generator");
 			return true;
 		}else if(player.isShiftKeyDown()){
 			boolean added = false;

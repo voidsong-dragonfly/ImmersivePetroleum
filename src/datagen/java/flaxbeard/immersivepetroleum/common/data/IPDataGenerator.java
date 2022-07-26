@@ -30,6 +30,7 @@ public class IPDataGenerator{
 			generator.addProvider(new IPFluidTags(generator, exhelper));
 			generator.addProvider(new IPLootGenerator(generator));
 			generator.addProvider(new IPRecipes(generator));
+			generator.addProvider(new IPAdvancements(generator, exhelper));
 		}
 		
 		if(event.includeClient()){

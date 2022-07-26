@@ -1,0 +1,37 @@
+{
+  "parent": "immersivepetroleum:main/root",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:napalm_bucket"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.napalm"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.napalm.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:napalm_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

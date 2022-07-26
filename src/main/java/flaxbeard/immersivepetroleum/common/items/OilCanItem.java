@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -97,6 +98,7 @@ public class OilCanItem extends IPItemBase{
 									if(!player.isCreative()){
 										can.drain(amountNeeded, FluidAction.EXECUTE);
 									}
+									Utils.unlockIPAdvancement(player, "main/oil_can");
 									return InteractionResult.SUCCESS;
 								}
 							}

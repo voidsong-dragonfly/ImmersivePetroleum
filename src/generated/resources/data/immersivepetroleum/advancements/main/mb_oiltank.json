@@ -1,0 +1,36 @@
+{
+  "parent": "immersivepetroleum:main/mb_derrick",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:oiltank"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.mb_oiltank"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.mb_oiltank.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "oiltank": {
+      "trigger": "immersiveengineering:multiblock_formed",
+      "conditions": {
+        "multiblock": "immersivepetroleum:multiblocks/oiltank",
+        "item": {
+          "items": [
+            "immersiveengineering:hammer"
+          ]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "oiltank"
+    ]
+  ]
+}

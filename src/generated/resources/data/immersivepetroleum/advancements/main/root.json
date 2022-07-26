@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:seismic_survey"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.root"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.root.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "immersivepetroleum:textures/block/asphalt.png"
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

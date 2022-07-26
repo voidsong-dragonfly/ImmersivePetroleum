@@ -113,7 +113,7 @@ public class IPContent{
 	}
 	
 	public static class Fluids{
-		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("oil", CrudeOilFluid::new);
+		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("oil", CrudeOilFluid::new); // TODO Rename to "crudeoil"
 		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new);
 		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new);
 		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000));

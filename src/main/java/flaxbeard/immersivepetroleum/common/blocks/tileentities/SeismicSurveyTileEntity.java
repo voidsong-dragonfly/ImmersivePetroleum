@@ -13,6 +13,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -196,6 +197,10 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						result.putByte("status", (byte) (island.getAmount() / (float) island.getCapacity() * 100));
 						result.putLong("amount", island.getAmount());
 						result.putString("fluid", fs.getTranslationKey());
+						
+						if(fs.getFluid().equals(IPContent.Fluids.CRUDEOIL.get())){
+							Utils.unlockIPAdvancement(player, "main/root");
+						}
 						
 					}else{
 						// Find one nearby instead.

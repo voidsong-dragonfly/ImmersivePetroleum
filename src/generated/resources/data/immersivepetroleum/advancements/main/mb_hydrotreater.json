@@ -1,0 +1,36 @@
+{
+  "parent": "immersivepetroleum:main/mb_distillationtower",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:hydrotreater"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.mb_hydrotreater"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.mb_hydrotreater.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "hydrotreater": {
+      "trigger": "immersiveengineering:multiblock_formed",
+      "conditions": {
+        "multiblock": "immersivepetroleum:multiblocks/hydrotreater",
+        "item": {
+          "items": [
+            "immersiveengineering:hammer"
+          ]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "hydrotreater"
+    ]
+  ]
+}

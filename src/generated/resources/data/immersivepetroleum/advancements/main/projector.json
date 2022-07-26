@@ -1,0 +1,37 @@
+{
+  "parent": "immersivepetroleum:main/root",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:projector"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.projector"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.projector.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "projector": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:projector"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "projector"
+    ]
+  ]
+}

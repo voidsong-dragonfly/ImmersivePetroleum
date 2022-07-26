@@ -1,0 +1,67 @@
+{
+  "parent": "immersivepetroleum:main/motorboat",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:upgrade_rudders"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.rudders"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.rudders.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "riding_motorboat": {
+      "trigger": "minecraft:started_riding",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "vehicle": {
+                "type": "immersivepetroleum:speedboat"
+              }
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    },
+    "killed_skeleton": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "type": "minecraft:skeleton"
+            },
+            "entity": "this"
+          }
+        ],
+        "killing_blow": {
+          "is_projectile": true
+        }
+      }
+    },
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "riding_motorboat"
+    ],
+    [
+      "killed_skeleton"
+    ],
+    [
+      "code_trigger"
+    ]
+  ]
+}
