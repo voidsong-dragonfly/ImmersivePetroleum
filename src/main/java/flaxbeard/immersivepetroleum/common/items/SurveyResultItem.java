@@ -15,8 +15,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 /**
- * TODO Highly Experimental.
- * 
  * @author TwistedGate
  */
 public class SurveyResultItem extends IPItemBase{

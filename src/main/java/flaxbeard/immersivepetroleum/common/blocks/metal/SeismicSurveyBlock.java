@@ -45,8 +45,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
- * TODO Highly Experimental. Name not final. Function not final.
- * 
  * @author TwistedGate
  */
 public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{

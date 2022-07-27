@@ -51,19 +51,6 @@ public class IPSaveData extends SavedData{
 			}
 		}
 		
-		/*
-		ListNBT oilList = nbt.getList("oilInfo", NBT.TAG_COMPOUND);
-		PumpjackHandler.reservoirsCache.clear();
-		for(int i = 0;i < oilList.size();i++){
-			CompoundNBT tag = oilList.getCompound(i);
-			DimensionChunkCoords coords = DimensionChunkCoords.readFromNBT(tag);
-			if(coords != null){
-				ReservoirWorldInfo info = ReservoirWorldInfo.readFromNBT(tag.getCompound("info"));
-				PumpjackHandler.reservoirsCache.put(coords, info);
-			}
-		}
-		*/
-		
 		ListTag lubricatedList = nbt.getList("lubricated", Tag.TAG_COMPOUND);
 		LubricatedHandler.lubricatedTiles.clear();
 		for(int i = 0;i < lubricatedList.size();i++){
@@ -92,18 +79,6 @@ public class IPSaveData extends SavedData{
 		}
 		nbt.put("reservoirs", reservoirs);
 		
-		/*
-		ListNBT oilList = new ListNBT();
-		for(Map.Entry<DimensionChunkCoords, ReservoirWorldInfo> e:PumpjackHandler.reservoirsCache.entrySet()){
-			if(e.getKey() != null && e.getValue() != null){
-				CompoundNBT tag = e.getKey().writeToNBT();
-				tag.put("info", e.getValue().writeToNBT());
-				oilList.add(tag);
-			}
-		}
-		nbt.put("oilInfo", oilList);
-		*/
-		
 		ListTag lubricatedList = new ListTag();
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
 			if(info != null){
@@ -115,7 +90,6 @@ public class IPSaveData extends SavedData{
 		
 		return nbt;
 	}
-	
 	
 	private static IPSaveData INSTANCE;
 	

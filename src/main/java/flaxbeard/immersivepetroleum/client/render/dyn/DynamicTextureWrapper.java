@@ -30,7 +30,7 @@ public class DynamicTextureWrapper{
 				
 				ImmersivePetroleum.log.info("Disposed survey result texture {}", wrapper.rl);
 			})
-			.expireAfterAccess(1, TimeUnit.MINUTES) // TODO !!!Don't forget to set this back to 5 Minutes.
+			.expireAfterAccess(5, TimeUnit.MINUTES)
 			.maximumSize(50)
 			.build();
 	

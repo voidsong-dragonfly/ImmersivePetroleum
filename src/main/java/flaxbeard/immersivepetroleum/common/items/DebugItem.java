@@ -6,7 +6,6 @@ import java.util.Locale;
 import org.lwjgl.glfw.GLFW;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
@@ -162,6 +161,61 @@ public class DebugItem extends IPItemBase{
 						
 						playerIn.displayClientMessage(new TextComponent(out), true);
 					}
+					
+//					if(worldIn instanceof ServerWorld){
+//						if(ReservoirHandler.generator == null){
+//							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
+//						}
+//					}
+//					
+//					BlockPos playerPos = playerIn.getPosition();
+//					ColumnPos playerColumn = new ColumnPos(playerPos);
+//					
+//					ChunkPos cPos = new ChunkPos(playerPos);
+//					int cx = cPos.getXStart();
+//					int cz = cPos.getZStart();
+//					
+//					ColumnPos current = ReservoirIsland.getFirst(cx, cz);
+//					if(current != null){
+//						long timer = System.currentTimeMillis();
+//						
+//						List<ColumnPos> poly = new ArrayList<>();
+//						
+//						ReservoirIsland.next(poly, current.x, current.z);
+//						
+//						poly = edgy(poly);
+//						
+//						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.WHITE_CONCRETE.getDefaultState()));
+//						
+//						poly = direction(poly);
+//						
+//						poly = optimizeLines(poly);
+//						
+//						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.ORANGE_CONCRETE.getDefaultState()));
+//						
+//						/*
+//						 * After this point the list would be stored inside the
+//						 * Island class and everything below would be there
+//						 * instead
+//						 */
+//						
+//						// Point inside Polygon Test
+//						{
+//							ReservoirIsland island = new ReservoirIsland(poly, Reservoir.map.get(new ResourceLocation(ImmersivePetroleum.MODID, "oil")), 0);
+//							
+//							long t = System.nanoTime();
+//							boolean inside = island.polygonContains(playerColumn);
+//							t = System.nanoTime() - t;
+//							
+//							String out = inside + " (" + (t/1000000F) + "ms)";
+//							playerIn.sendStatusMessage(new StringTextComponent(out), true);
+//						}
+//						
+//						timer = System.currentTimeMillis() - timer;
+//						ImmersivePetroleum.log.info("Time: {}ms, Points: {}", timer, poly.size());
+//					}else{
+//						ImmersivePetroleum.log.info("Nothing here.");
+//					}
 					
 					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}

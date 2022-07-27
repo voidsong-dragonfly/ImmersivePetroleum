@@ -3,9 +3,9 @@ package flaxbeard.immersivepetroleum.common;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.register.IEContainerTypes;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
@@ -39,7 +39,7 @@ public class IPMenuTypes{
 		RegistryObject<MenuType<C>> typeRef = IPRegisters.registerMenu(name, () -> {
 			Mutable<MenuType<C>> typeBox = new MutableObject<>();
 			MenuType<C> type = new MenuType<>((IContainerFactory<C>) (windowId, inv, data) -> {
-				Level world = ImmersiveEngineering.proxy.getClientWorld();
+				Level world = ImmersivePetroleum.proxy.getClientWorld();
 				BlockPos pos = data.readBlockPos();
 				BlockEntity te = world.getBlockEntity(pos);
 				return container.construct(typeBox.getValue(), windowId, inv, (T) te);

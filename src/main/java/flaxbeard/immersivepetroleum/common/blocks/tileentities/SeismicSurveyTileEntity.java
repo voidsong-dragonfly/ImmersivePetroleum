@@ -31,8 +31,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * TODO Highly Experimental. Name not final. Function not final.
- * 
  * @author TwistedGate
  */
 public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile{

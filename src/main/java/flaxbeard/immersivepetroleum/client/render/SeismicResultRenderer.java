@@ -22,8 +22,6 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * TODO Highly Experimental.
- * 
  * @author TwistedGate
  */
 public class SeismicResultRenderer{
