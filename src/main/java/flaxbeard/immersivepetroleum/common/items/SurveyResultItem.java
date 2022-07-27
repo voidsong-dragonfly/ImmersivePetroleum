@@ -15,7 +15,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 /**
- * TODO Highly Experimental. Name not final. Function not final.
+ * TODO Highly Experimental.
  * 
  * @author TwistedGate
  */

@@ -49,7 +49,7 @@ import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
-import flaxbeard.immersivepetroleum.client.render.RenderTests;
+import flaxbeard.immersivepetroleum.client.render.SeismicResultRenderer;
 import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
@@ -185,7 +185,7 @@ public class ClientProxy extends CommonProxy{
 		MinecraftForge.EVENT_BUS.register(new RecipeReloadListener(null));
 		
 		MinecraftForge.EVENT_BUS.register(new DebugRenderHandler());
-		MinecraftForge.EVENT_BUS.register(new RenderTests());
+		MinecraftForge.EVENT_BUS.register(new SeismicResultRenderer());
 		
 		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(keybind_preview_flip);

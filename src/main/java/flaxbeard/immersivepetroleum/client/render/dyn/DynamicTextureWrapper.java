@@ -20,8 +20,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * 
- * 
  * @author TwistedGate
  */
 public class DynamicTextureWrapper{

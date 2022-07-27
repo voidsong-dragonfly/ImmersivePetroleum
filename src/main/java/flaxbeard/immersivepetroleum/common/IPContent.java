@@ -142,7 +142,7 @@ public class IPContent{
 		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerBlock("well_pipe", WellPipeBlock::new);
 		
 		/**
-		 * TODO Highly Experimental. Name not final. Function not final.
+		 * TODO Highly Experimental.
 		 */
 		public static final RegistryObject<SeismicSurveyBlock> SEISMIC_SURVEY = IPRegisters.registerIPBlock("seismic_survey", SeismicSurveyBlock::new);
 		

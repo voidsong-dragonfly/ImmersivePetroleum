@@ -22,11 +22,11 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * TODO Highly Experimental. Name not final. Function not final.
+ * TODO Highly Experimental.
  * 
  * @author TwistedGate
  */
-public class RenderTests{
+public class SeismicResultRenderer{
 	
 	@SubscribeEvent
 	public void renderHandEvent(RenderHandEvent event){

@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.data;
 
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockAdvancementTrigger;
