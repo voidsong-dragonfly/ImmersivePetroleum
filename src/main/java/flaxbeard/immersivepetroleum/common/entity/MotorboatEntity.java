@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common.entity;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.Lib;
@@ -41,10 +42,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -272,7 +275,39 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	@Override
 	public double getPassengersRidingOffset(){
-		return isInLava() ? -0.1D + (3.9F / 16F) : -0.1D;
+		return 0.3D;
+	}
+	
+	@Override
+	public Vec3 getDismountLocationForPassenger(LivingEntity pLivingEntity){
+		Vec3 vec3 = getCollisionHorizontalEscapeVector((double) (this.getBbWidth() * Mth.SQRT_OF_TWO), (double) pLivingEntity.getBbWidth(), pLivingEntity.getYRot());
+		double d0 = this.getX() + vec3.x;
+		double d1 = this.getZ() + vec3.z;
+		BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);
+		BlockPos blockpos1 = blockpos.below();
+		if(!this.level.isWaterAt(blockpos1) && !this.level.getFluidState(blockpos1).is(FluidTags.LAVA)){
+			List<Vec3> list = Lists.newArrayList();
+			double d2 = this.level.getBlockFloorHeight(blockpos);
+			if(DismountHelper.isBlockFloorValid(d2)){
+				list.add(new Vec3(d0, (double) blockpos.getY() + d2, d1));
+			}
+			
+			double d3 = this.level.getBlockFloorHeight(blockpos1);
+			if(DismountHelper.isBlockFloorValid(d3)){
+				list.add(new Vec3(d0, (double) blockpos1.getY() + d3, d1));
+			}
+			
+			for(Pose pose:pLivingEntity.getDismountPoses()){
+				for(Vec3 vec31:list){
+					if(DismountHelper.canDismountTo(this.level, vec31, pLivingEntity, pose)){
+						pLivingEntity.setPose(pose);
+						return vec31;
+					}
+				}
+			}
+		}
+		
+		return new Vec3(this.getX(), this.getBoundingBox().maxY, this.getZ());
 	}
 	
 	@Override
