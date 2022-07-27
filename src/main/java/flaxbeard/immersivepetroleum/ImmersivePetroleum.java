@@ -15,7 +15,6 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import flaxbeard.immersivepetroleum.common.advancement.IPAdvancementTriggers;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPCommonConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
@@ -94,7 +93,6 @@ public class ImmersivePetroleum{
 		
 		proxy.preInit();
 		
-		IPAdvancementTriggers.preInit();
 		IPContent.preInit();
 		IPPacketHandler.preInit();
 		
