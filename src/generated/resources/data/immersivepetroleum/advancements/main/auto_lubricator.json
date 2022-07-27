@@ -1,5 +1,5 @@
 {
-  "parent": "immersivepetroleum:main/root",
+  "parent": "immersivepetroleum:main/mb_distillationtower",
   "display": {
     "icon": {
       "item": "immersivepetroleum:auto_lubricator"

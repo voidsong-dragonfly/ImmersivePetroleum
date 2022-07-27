@@ -72,17 +72,17 @@ public class IPAdvancements extends AdvancementProvider{
 			.addCriterion("hydrotreater", createMultiblockTrigger("hydrotreater"))
 			.save(consumer, ResourceUtils.ip("main/mb_hydrotreater"), this.fileHelper);
 		
-		motorboat(consumer, start);
+		motorboat(consumer, tower);
 		
-		advancement(start, IPContent.Blocks.GAS_GENERATOR.get(), "gas_generator", FrameType.TASK, true, true, false)
+		advancement(tower, IPContent.Blocks.GAS_GENERATOR.get(), "gas_generator", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/gas_generator"), this.fileHelper);
 		
-		advancement(start, IPContent.Blocks.AUTO_LUBRICATOR.get(), "auto_lubricator", FrameType.TASK, true, true, false)
+		advancement(tower, IPContent.Blocks.AUTO_LUBRICATOR.get(), "auto_lubricator", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/auto_lubricator"), this.fileHelper);
 		
-		advancement(start, IPContent.Items.OIL_CAN.get(), "oil_can", FrameType.TASK, true, true, false)
+		advancement(tower, IPContent.Items.OIL_CAN.get(), "oil_can", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/oil_can"), this.fileHelper);
 		
@@ -94,7 +94,7 @@ public class IPAdvancements extends AdvancementProvider{
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/flarestack"), this.fileHelper);
 		
-		advancement(start, IPContent.Fluids.NAPALM.bucket().get(), "napalm", FrameType.TASK, true, true, false)
+		advancement(tower, IPContent.Fluids.NAPALM.bucket().get(), "napalm", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.NAPALM.bucket().get()))
 			.save(consumer, ResourceUtils.ip("main/napalm"), this.fileHelper);
 	}
