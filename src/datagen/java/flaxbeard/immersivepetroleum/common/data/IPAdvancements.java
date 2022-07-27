@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common.data;
 
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockAdvancementTrigger;
@@ -61,7 +62,7 @@ public class IPAdvancements extends AdvancementProvider{
 		
 		Advancement cokerunit = advancement(bitumen, IPContent.Multiblock.COKERUNIT.get(), "mb_cokerunit", FrameType.GOAL, true, true, false)
 			.addCriterion("cokerunit", createMultiblockTrigger("cokerunit"))
-			.rewards(reward(50, "advancements/coker_from_reward"))
+			.rewards(reward(10, ResourceUtils.ip("advancements/forming_coker_reward")))
 			.save(consumer, ResourceUtils.ip("main/mb_cokerunit"), this.fileHelper);
 		
 		advancement(cokerunit, IPContent.Items.PETCOKE.get(), "petcoke", FrameType.TASK, true, true, false)
@@ -117,6 +118,7 @@ public class IPAdvancements extends AdvancementProvider{
 			.save(consumer, ResourceUtils.ip("main/reinforced_hull"), this.fileHelper);
 		
 		advancement(fill_motorboat, IPContent.BoatUpgrades.RUDDERS.get(), "rudders", FrameType.CHALLENGE, true, true, false)
+			.rewards(reward(50, ResourceUtils.ie("advancements/shader_rare")))
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/rudders"), this.fileHelper);
 		
@@ -150,10 +152,10 @@ public class IPAdvancements extends AdvancementProvider{
 		return builder;
 	}
 	
-	protected static AdvancementRewards reward(int exp, @Nullable String lootTable){
+	protected static AdvancementRewards reward(int exp, @Nullable ResourceLocation lootTable){
 		ResourceLocation[] loot = new ResourceLocation[0];
-		if(lootTable != null && !lootTable.isEmpty()){
-			loot = new ResourceLocation[]{ResourceUtils.ip(lootTable)};
+		if(lootTable != null){
+			loot = new ResourceLocation[]{lootTable};
 		}
 		return new AdvancementRewards(exp, loot, new ResourceLocation[0], CommandFunction.CacheableFunction.NONE);
 	}

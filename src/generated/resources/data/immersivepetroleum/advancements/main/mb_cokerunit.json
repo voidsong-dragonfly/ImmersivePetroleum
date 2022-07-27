@@ -16,9 +16,9 @@
     "hidden": false
   },
   "rewards": {
-    "experience": 50,
+    "experience": 10,
     "loot": [
-      "immersivepetroleum:advancements/coker_from_reward"
+      "immersivepetroleum:advancements/forming_coker_reward"
     ]
   },
   "criteria": {

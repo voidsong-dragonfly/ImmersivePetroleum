@@ -25,6 +25,6 @@ public class ResourceUtils{
 	}
 	
 	public static final ResourceLocation mc(String str){
-		return new ResourceLocation("minecraft", str);
+		return new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, str);
 	}
 }

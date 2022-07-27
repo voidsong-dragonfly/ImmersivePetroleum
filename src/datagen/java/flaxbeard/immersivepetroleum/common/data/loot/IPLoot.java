@@ -24,7 +24,7 @@ public class IPLoot implements Consumer<BiConsumer<ResourceLocation, LootTable.B
 					.setRolls(ConstantValue.exactly(1))
 					.apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 1)));
 			
-			out.accept(ResourceUtils.ip("advancements/coker_from_reward"), LootTable.lootTable().withPool(pool));
+			out.accept(ResourceUtils.ip("advancements/forming_coker_reward"), LootTable.lootTable().withPool(pool));
 		}
 	}
 	

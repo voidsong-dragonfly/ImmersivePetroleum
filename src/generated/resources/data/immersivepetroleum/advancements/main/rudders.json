@@ -15,6 +15,12 @@
     "announce_to_chat": true,
     "hidden": false
   },
+  "rewards": {
+    "experience": 50,
+    "loot": [
+      "immersiveengineering:advancements/shader_rare"
+    ]
+  },
   "criteria": {
     "code_trigger": {
       "trigger": "minecraft:impossible"
