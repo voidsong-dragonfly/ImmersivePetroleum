@@ -7,23 +7,16 @@ import javax.annotation.Nullable;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockAdvancementTrigger;
 import blusunrize.immersiveengineering.common.register.IEItems.Tools;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.advancement.TriggerTest;
-import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.advancements.critereon.DamageSourcePredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ImpossibleTrigger;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.KilledTrigger;
-import net.minecraft.advancements.critereon.StartRidingTrigger;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -123,8 +116,9 @@ public class IPAdvancements extends AdvancementProvider{
 			.save(consumer, ResourceUtils.ip("main/reinforced_hull"), this.fileHelper);
 		
 		// TODO This needs a trigger that resets, or that checks if all conditions are satisfied at the same time
+		
 		advancement(fill_motorboat, IPContent.BoatUpgrades.RUDDERS.get(), "rudders", FrameType.CHALLENGE, true, true, false)
-			.addCriterion("test", TriggerTest.TriggerInstance.create())
+			/*.addCriterion("test", TriggerTest.TriggerInstance.create())
 			.addCriterion("riding_motorboat", StartRidingTrigger.TriggerInstance.playerStartsRiding(
 				EntityPredicate.Builder.entity().vehicle(
 					EntityPredicate.Builder.entity().of(MotorboatEntity.TYPE).build()
@@ -135,9 +129,10 @@ public class IPAdvancements extends AdvancementProvider{
 					EntityPredicate.Builder.entity().of(EntityType.SKELETON),
 					DamageSourcePredicate.Builder.damageType().isProjectile(true)
 				)
-			)
+			)*/
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/rudders"), this.fileHelper);
+		
 		
 		advancement(fill_motorboat, IPContent.BoatUpgrades.TANK.get(), "tank", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())

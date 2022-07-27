@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,6 +34,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
@@ -49,7 +51,7 @@ import net.minecraftforge.event.TickEvent.WorldTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -260,9 +262,18 @@ public class CommonEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void test(LivingEvent.LivingUpdateEvent event){
-		if(event.getEntityLiving() instanceof Player){
-			// event.getEntityLiving().setFire(1);
+	public void livingDeath(LivingDeathEvent event){
+		if(event.getEntityLiving() instanceof Skeleton skelly && !skelly.level.isClientSide){
+			DamageSource src = event.getSource();
+			if(src.getEntity() instanceof Player player && !player.level.isClientSide){
+				if(src.isProjectile()){
+					if(player.getVehicle() instanceof MotorboatEntity motorboat && !motorboat.level.isClientSide){
+						if(motorboat.isSpinningFastEnough() && motorboat.hasRudders){
+							Utils.unlockIPAdvancement(player, "main/rudders");
+						}
+					}
+				}
+			}
 		}
 	}
 	

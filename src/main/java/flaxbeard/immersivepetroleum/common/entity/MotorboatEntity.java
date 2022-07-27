@@ -102,9 +102,6 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public boolean isBoosting = false;
 	public float lastMoving;
 	
-	/** Only needed and used on Server side */
-	protected float oYRot;
-	
 	public float propellerYRotation = 0.0F;
 	public float propellerXRot = 0.0F;
 	public float propellerXRotSpeed = 0.0F;
@@ -394,16 +391,21 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		this.isBoosting = isEmergency() ? false : (pForwardInputDown && Minecraft.getInstance().options.keyJump.isDown());
 	}
 	
+	/** Only needed and used on Server side */
+	protected float oYRot;
+	protected boolean fastEnough;
+	
+	/** Does not change client-side */
+	public boolean isSpinningFastEnough(){
+		return this.fastEnough;
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(){
-		if(!this.level.isClientSide && this.getFirstPassenger() instanceof Player player){
-			// TODO
+		if(!this.level.isClientSide){
 			float diff = this.getYRot() - this.oYRot;
-			if(diff < -5.0F || diff > 5.0F){
-				Utils.unlockIPAdvancement(player, "main/rudders");
-			}
-			
+			this.fastEnough = diff <= -5.0F || diff >= 5.0F;
 			this.oYRot = this.getYRot();
 		}
 		
