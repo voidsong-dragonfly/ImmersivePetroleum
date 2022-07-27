@@ -71,7 +71,7 @@ public class IPAdvancements extends AdvancementProvider{
 			.addCriterion("hydrotreater", createMultiblockTrigger("hydrotreater"))
 			.save(consumer, ResourceUtils.ip("main/mb_hydrotreater"), this.fileHelper);
 		
-		motorboat(consumer);
+		motorboat(consumer, start);
 		
 		advancement(start, IPContent.Blocks.GAS_GENERATOR.get(), "gas_generator", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
@@ -98,8 +98,8 @@ public class IPAdvancements extends AdvancementProvider{
 			.save(consumer, ResourceUtils.ip("main/napalm"), this.fileHelper);
 	}
 	
-	private void motorboat(Consumer<Advancement> consumer){
-		Advancement fill_motorboat = advancement(null, IPContent.Items.SPEEDBOAT.get(), "motorboat", FrameType.TASK, true, true, false)
+	private void motorboat(Consumer<Advancement> consumer, Advancement start){
+		Advancement fill_motorboat = advancement(start, IPContent.Items.SPEEDBOAT.get(), "motorboat", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/motorboat"), this.fileHelper);
 		
@@ -115,24 +115,9 @@ public class IPAdvancements extends AdvancementProvider{
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/reinforced_hull"), this.fileHelper);
 		
-		// TODO This needs a trigger that resets, or that checks if all conditions are satisfied at the same time
-		
 		advancement(fill_motorboat, IPContent.BoatUpgrades.RUDDERS.get(), "rudders", FrameType.CHALLENGE, true, true, false)
-			/*.addCriterion("test", TriggerTest.TriggerInstance.create())
-			.addCriterion("riding_motorboat", StartRidingTrigger.TriggerInstance.playerStartsRiding(
-				EntityPredicate.Builder.entity().vehicle(
-					EntityPredicate.Builder.entity().of(MotorboatEntity.TYPE).build()
-				)
-			))
-			.addCriterion("killed_skeleton",
-				KilledTrigger.TriggerInstance.playerKilledEntity(
-					EntityPredicate.Builder.entity().of(EntityType.SKELETON),
-					DamageSourcePredicate.Builder.damageType().isProjectile(true)
-				)
-			)*/
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/rudders"), this.fileHelper);
-		
 		
 		advancement(fill_motorboat, IPContent.BoatUpgrades.TANK.get(), "tank", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
