@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.data;
+package flaxbeard.immersivepetroleum.common.data.loot;
 
 import java.util.Arrays;
 import java.util.function.BiConsumer;

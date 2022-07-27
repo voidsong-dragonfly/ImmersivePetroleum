@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import com.mojang.datafixers.util.Pair;
 
-import flaxbeard.immersivepetroleum.common.data.IPBlockLoot;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +24,10 @@ public class IPLootGenerator extends LootTableProvider{
 
 	@Override
 	protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables(){
-		return List.of(Pair.of(IPBlockLoot::new, LootContextParamSets.BLOCK));
+		return List.of(
+				Pair.of(IPLoot::new, LootContextParamSets.EMPTY),
+				Pair.of(IPBlockLoot::new, LootContextParamSets.BLOCK)
+			);
 	}
 
 	@Override

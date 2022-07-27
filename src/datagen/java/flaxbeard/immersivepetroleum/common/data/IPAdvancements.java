@@ -14,11 +14,12 @@ import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.critereon.ImpossibleTrigger;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.commands.CommandFunction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -60,7 +61,7 @@ public class IPAdvancements extends AdvancementProvider{
 		
 		Advancement cokerunit = advancement(bitumen, IPContent.Multiblock.COKERUNIT.get(), "mb_cokerunit", FrameType.GOAL, true, true, false)
 			.addCriterion("cokerunit", createMultiblockTrigger("cokerunit"))
-			.rewards(reward(50, Items.COOKIE))
+			.rewards(reward(50, "advancements/coker_from_reward"))
 			.save(consumer, ResourceUtils.ip("main/mb_cokerunit"), this.fileHelper);
 		
 		advancement(cokerunit, IPContent.Items.PETCOKE.get(), "petcoke", FrameType.TASK, true, true, false)
@@ -149,12 +150,11 @@ public class IPAdvancements extends AdvancementProvider{
 		return builder;
 	}
 	
-	protected static AdvancementRewards.Builder reward(int exp, @Nullable ItemLike itemlike){
-		AdvancementRewards.Builder builder = new AdvancementRewards.Builder();
-		builder.addExperience(exp);
-		if(itemlike != null){
-			builder.addLootTable(itemlike.asItem().getRegistryName());
+	protected static AdvancementRewards reward(int exp, @Nullable String lootTable){
+		ResourceLocation[] loot = new ResourceLocation[0];
+		if(lootTable != null && !lootTable.isEmpty()){
+			loot = new ResourceLocation[]{ResourceUtils.ip(lootTable)};
 		}
-		return builder;
+		return new AdvancementRewards(exp, loot, new ResourceLocation[0], CommandFunction.CacheableFunction.NONE);
 	}
 }

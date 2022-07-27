@@ -18,7 +18,7 @@
   "rewards": {
     "experience": 50,
     "loot": [
-      "minecraft:cookie"
+      "immersivepetroleum:advancements/coker_from_reward"
     ]
   },
   "criteria": {
