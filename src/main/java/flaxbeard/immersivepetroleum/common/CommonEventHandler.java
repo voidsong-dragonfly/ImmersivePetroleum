@@ -266,11 +266,9 @@ public class CommonEventHandler{
 		if(event.getEntityLiving() instanceof Skeleton skelly && !skelly.level.isClientSide){
 			DamageSource src = event.getSource();
 			if(src.getEntity() instanceof Player player && !player.level.isClientSide){
-				if(src.isProjectile()){
-					if(player.getVehicle() instanceof MotorboatEntity motorboat && !motorboat.level.isClientSide){
-						if(motorboat.isSpinningFastEnough() && motorboat.hasRudders){
-							Utils.unlockIPAdvancement(player, "main/rudders");
-						}
+				if(player.getVehicle() instanceof MotorboatEntity motorboat && !motorboat.level.isClientSide){
+					if(src.isProjectile() && motorboat.isSpinningFastEnough() && motorboat.hasRudders){
+						Utils.unlockIPAdvancement(player, "main/rudders");
 					}
 				}
 			}

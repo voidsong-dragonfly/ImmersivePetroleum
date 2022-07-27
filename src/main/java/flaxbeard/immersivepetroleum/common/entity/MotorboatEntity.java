@@ -379,6 +379,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		
 		if(!this.level.isClientSide && !player.isShiftKeyDown() && this.outOfControlTicks < 60.0F && !player.isPassengerOfSameVehicle(this)){
 			player.startRiding(this);
+			if(this.level.dimension().equals(Level.NETHER) && this.isFireproof){
+				Utils.unlockIPAdvancement(player, "main/reinforced_hull");
+			}
 			return InteractionResult.SUCCESS;
 		}
 		
@@ -391,9 +394,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		this.isBoosting = isEmergency() ? false : (pForwardInputDown && Minecraft.getInstance().options.keyJump.isDown());
 	}
 	
-	/** Only needed and used on Server side */
+	/* Only needed and used on Server side */
 	protected float oYRot;
 	protected boolean fastEnough;
+	protected int oFuelAmount;
 	
 	/** Does not change client-side */
 	public boolean isSpinningFastEnough(){
@@ -403,11 +407,29 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	@SuppressWarnings("deprecation")
 	@Override
 	public void tick(){
+		// Advancement Stuff
+		
 		if(!this.level.isClientSide){
-			float diff = this.getYRot() - this.oYRot;
-			this.fastEnough = diff <= -5.0F || diff >= 5.0F;
-			this.oYRot = this.getYRot();
+			// Spin
+			{
+				float diff = this.getYRot() - this.oYRot;
+				this.fastEnough = diff <= -5.0F || diff >= 5.0F;
+				this.oYRot = this.getYRot();
+			}
+			// Fuel
+			{
+				int current = this.entityData.get(TANK_AMOUNT).intValue();
+				int diff = current - this.oFuelAmount;
+				if(diff != 0 && current == 0){
+					if(this.getFirstPassenger() instanceof Player player && this.hasPaddles){
+						Utils.unlockIPAdvancement(player, "main/paddles");
+					}
+				}
+				this.oFuelAmount = current;
+			}
 		}
+		
+		// -----------------------------------------------------
 		
 		this.oldStatus = this.status;
 		this.status = this.getStatus();
@@ -519,6 +541,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			BlockPos.MutableBlockPos mutableBlockPos2 = new BlockPos.MutableBlockPos();
 			
 			if(this.level.hasChunksAt(mutableBlockPos0, mutableBlockPos1)){
+				boolean brokeIce = false;
 				for(int i = mutableBlockPos0.getX();i <= mutableBlockPos1.getX();++i){
 					for(int j = mutableBlockPos0.getY();j <= mutableBlockPos1.getY();++j){
 						for(int k = mutableBlockPos0.getZ();k <= mutableBlockPos1.getZ();++k){
@@ -532,9 +555,14 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 							if(BlockState.getBlock() == Blocks.ICE && sim > .3f){
 								this.level.destroyBlock(mutableBlockPos2, false);
 								this.level.setBlockAndUpdate(mutableBlockPos2, Blocks.WATER.defaultBlockState());
+								brokeIce = true;
 							}
 						}
 					}
+				}
+				
+				if(brokeIce && this.getFirstPassenger() instanceof Player player){
+					Utils.unlockIPAdvancement(player, "main/ice_breaker");
 				}
 			}
 		}
