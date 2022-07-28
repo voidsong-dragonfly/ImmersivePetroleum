@@ -268,7 +268,7 @@ public class DebugRenderHandler{
 										{
 											DyeColor color = DyeColor.BLACK;
 											
-											double n = ReservoirHandler.noiseFor(world, x, z);
+											double n = ReservoirHandler.getValueOf(world, x, z);
 											if(n > -1){
 												int c = (int) Math.round(9 * n);
 												

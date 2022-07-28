@@ -57,7 +57,7 @@ public class ReservoirHandler{
 				int x = chunkX + i;
 				int z = chunkZ + j;
 				
-				if(ReservoirHandler.noiseFor(world, x, z) > -1){
+				if(ReservoirHandler.getValueOf(world, x, z) > -1){
 					// Getting the biome now to prevent lockups
 					ResourceLocation biome = world.getBiome(new BlockPos(x, 64, z)).value().getRegistryName();
 					
@@ -188,7 +188,7 @@ public class ReservoirHandler{
 	 * @param z Block Position
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
-	public static double noiseFor(@Nonnull Level world, int x, int z){
+	public static double getValueOf(@Nonnull Level world, int x, int z){
 		if(!world.isClientSide){
 			if(generator == null || ((WorldGenLevel) world).getSeed() != lastSeed){
 				lastSeed = ((WorldGenLevel) world).getSeed();
@@ -207,7 +207,7 @@ public class ReservoirHandler{
 	
 	/** Recursively discover the whole island */
 	static void next(Level world, List<ColumnPos> list, int x, int z){
-		if(ReservoirHandler.noiseFor(world, x, z) > -1 && !list.contains(new ColumnPos(x, z))){
+		if(ReservoirHandler.getValueOf(world, x, z) > -1 && !list.contains(new ColumnPos(x, z))){
 			list.add(new ColumnPos(x, z));
 			
 			next(world, list, x + 1, z);
@@ -254,25 +254,25 @@ public class ReservoirHandler{
 		poly.forEach(pos -> {
 			for(int z = -1;z <= 1;z++){
 				for(int x = -1;x <= 1;x++){
-					if(ReservoirHandler.noiseFor(world, pos.x + 1, pos.z) == -1){
+					if(ReservoirHandler.getValueOf(world, pos.x + 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x + 1, pos.z);
 						if(!list.contains(p)){
 							list.add(p);
 						}
 					}
-					if(ReservoirHandler.noiseFor(world, pos.x - 1, pos.z) == -1){
+					if(ReservoirHandler.getValueOf(world, pos.x - 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x - 1, pos.z);
 						if(!list.contains(p)){
 							list.add(p);
 						}
 					}
-					if(ReservoirHandler.noiseFor(world, pos.x, pos.z + 1) == -1){
+					if(ReservoirHandler.getValueOf(world, pos.x, pos.z + 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z + 1);
 						if(!list.contains(p)){
 							list.add(p);
 						}
 					}
-					if(ReservoirHandler.noiseFor(world, pos.x, pos.z - 1) == -1){
+					if(ReservoirHandler.getValueOf(world, pos.x, pos.z - 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z - 1);
 						if(!list.contains(p)){
 							list.add(p);

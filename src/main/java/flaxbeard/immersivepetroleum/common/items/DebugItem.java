@@ -126,7 +126,7 @@ public class DebugItem extends IPItemBase{
 					int x = playerPos.getX() - cPos.getMinBlockX();
 					int z = playerPos.getZ() - cPos.getMinBlockZ();
 					
-					double noise = ReservoirHandler.noiseFor(worldIn, (chunkX + x), (chunkZ + z));
+					double noise = ReservoirHandler.getValueOf(worldIn, (chunkX + x), (chunkZ + z));
 					
 					playerIn.displayClientMessage(new TextComponent((chunkX + " " + chunkZ) + ": " + noise), true);
 					
@@ -152,7 +152,7 @@ public class DebugItem extends IPItemBase{
 						
 						String out = String.format(Locale.ENGLISH,
 								"Noise: %.3f, Amount: %d/%d, Pressure: %.3f, Flow: %d, Type: %s", 
-								ReservoirHandler.noiseFor(worldIn, x, z),
+								ReservoirHandler.getValueOf(worldIn, x, z),
 								island.getAmount(),
 								island.getCapacity(),
 								pressure,

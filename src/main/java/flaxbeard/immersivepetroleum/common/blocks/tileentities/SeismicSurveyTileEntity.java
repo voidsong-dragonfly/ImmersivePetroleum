@@ -211,7 +211,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 								int z = pos.getZ() - j;
 								
 								int data;
-								double current = ReservoirHandler.noiseFor(world, x, z);
+								double current = ReservoirHandler.getValueOf(world, x, z);
 								if(current == -1){
 									data = 0;
 								}else{

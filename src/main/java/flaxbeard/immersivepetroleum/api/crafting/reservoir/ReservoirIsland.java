@@ -196,7 +196,7 @@ public class ReservoirIsland{
 	
 	public float getPressure(Level world, int x, int z){
 		// prevents outside use
-		double noise = ReservoirHandler.noiseFor(world, x, z);
+		double noise = ReservoirHandler.getValueOf(world, x, z);
 		
 		if(noise > 0.0D){
 			// Pressure should drop from 100% to 0%
