@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -35,7 +36,9 @@ public class ReservoirIsland{
 	/** "Unsigned 32-Bit" */
 	public static final long MAX_AMOUNT = 0xFFFFFFFFL;
 	
+	@Nonnull
 	private Reservoir reservoir;
+	@Nonnull
 	private List<ColumnPos> poly;
 	private IslandAxisAlignedBB islandAABB;
 	private long amount;
@@ -43,7 +46,10 @@ public class ReservoirIsland{
 	
 	private ReservoirIsland(){}
 	
-	public ReservoirIsland(List<ColumnPos> poly, Reservoir reservoir, long amount){
+	public ReservoirIsland(@Nonnull List<ColumnPos> poly, @Nonnull Reservoir reservoir, long amount){
+		Objects.requireNonNull(poly);
+		Objects.requireNonNull(reservoir);
+		
 		this.poly = poly;
 		this.reservoir = reservoir;
 		setAmountAndCapacity(amount, amount);
@@ -109,7 +115,7 @@ public class ReservoirIsland{
 	 * Sets the Reservoir Type
 	 */
 	public ReservoirIsland setReservoirType(@Nonnull Reservoir reservoir){
-		this.reservoir = reservoir;
+		this.reservoir = Objects.requireNonNull(reservoir);
 		return this;
 	}
 	
