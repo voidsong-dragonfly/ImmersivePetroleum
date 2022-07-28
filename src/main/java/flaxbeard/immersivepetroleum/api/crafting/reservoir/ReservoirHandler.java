@@ -163,32 +163,6 @@ public class ReservoirHandler{
 		}
 	}
 	
-	/** May only be called on the server-side. Returns an unmodifiable empty list on client-side. */
-	public static List<ReservoirIsland> findNearbyReservoirs(Level world, BlockPos pos, double sqrRadius){
-		return findNearbyReservoirs(world, new ColumnPos(pos), sqrRadius);
-	}
-	
-	/** May only be called on the server-side. Returns an unmodifiable empty list on client-side. */
-	public static List<ReservoirIsland> findNearbyReservoirs(Level world, ColumnPos pos, double sqrRadius){
-		if(world.isClientSide){
-			return List.of();
-		}
-		
-		List<ReservoirIsland> withinRadius = new ArrayList<>();
-		
-		ResourceKey<Level> dimension = world.dimension();
-		synchronized(RESERVOIR_ISLAND_LIST){
-			for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
-				// Very naive method, but it'll do for testing/playing around.
-				if(island.getBoundingBox().getCenter().distToCenterSqr(pos.x + 0.5, 0, pos.z + 0.5) <= sqrRadius){
-					withinRadius.add(island);
-				}
-			}
-		}
-		
-		return withinRadius;
-	}
-	
 	/**
 	 * Adds a reservoir type to the pool of valid reservoirs
 	 * 
