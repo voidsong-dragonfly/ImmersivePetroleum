@@ -266,13 +266,11 @@ public class DebugRenderHandler{
 										
 										matrix.pushPose();
 										{
-											DyeColor color = DyeColor.BLACK;
-											
 											double n = ReservoirHandler.getValueOf(world, x, z);
 											if(n > -1){
 												int c = (int) Math.round(9 * n);
 												
-												color = switch(c){
+												DyeColor color = switch(c){
 													case 1 -> DyeColor.BLUE;
 													case 2 -> DyeColor.CYAN;
 													case 3 -> DyeColor.GREEN;
@@ -280,7 +278,7 @@ public class DebugRenderHandler{
 													case 5 -> DyeColor.YELLOW;
 													case 6 -> DyeColor.ORANGE;
 													case 7 -> DyeColor.RED;
-													default -> c > 7 ? DyeColor.WHITE : color;
+													default -> c > 7 ? DyeColor.WHITE : DyeColor.BLACK;
 												};
 												
 												int r = (color.getTextColor() & 0xFF0000) >> 16;

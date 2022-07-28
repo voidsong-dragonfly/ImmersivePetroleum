@@ -2,9 +2,11 @@ package flaxbeard.immersivepetroleum.api.crafting.reservoir;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -82,14 +84,16 @@ public class ReservoirHandler{
 							}
 						}
 						
-						List<ColumnPos> poly = new ArrayList<>();
-						next(world, poly, x, z);
-						poly = optimizeIsland(world, poly);
+						Set<ColumnPos> pol = new HashSet<>();
+						next(world, pol, x, z);
+						List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
 						
-						int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
-						ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
-						RESERVOIR_ISLAND_LIST.put(dimensionKey, island);
-						IPSaveData.markInstanceAsDirty();
+						if(!poly.isEmpty()){
+							int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
+							ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
+							RESERVOIR_ISLAND_LIST.put(dimensionKey, island);
+							IPSaveData.markInstanceAsDirty();
+						}
 					}
 				}
 			}
@@ -206,7 +210,7 @@ public class ReservoirHandler{
 	}
 	
 	/** Recursively discover the whole island */
-	static void next(Level world, List<ColumnPos> list, int x, int z){
+	static void next(Level world, Set<ColumnPos> list, int x, int z){
 		if(ReservoirHandler.getValueOf(world, x, z) > -1 && !list.contains(new ColumnPos(x, z))){
 			list.add(new ColumnPos(x, z));
 			
@@ -250,39 +254,40 @@ public class ReservoirHandler{
 	
 	/** Keep edges/corners and dump the rest */
 	private static List<ColumnPos> keepOutline(Level world, List<ColumnPos> poly){
-		final List<ColumnPos> list = new ArrayList<>();
+		final Set<ColumnPos> set = new HashSet<>();
+		
 		poly.forEach(pos -> {
 			for(int z = -1;z <= 1;z++){
 				for(int x = -1;x <= 1;x++){
 					if(ReservoirHandler.getValueOf(world, pos.x + 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x + 1, pos.z);
-						if(!list.contains(p)){
-							list.add(p);
+						if(!set.contains(p)){
+							set.add(p);
 						}
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x - 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x - 1, pos.z);
-						if(!list.contains(p)){
-							list.add(p);
+						if(!set.contains(p)){
+							set.add(p);
 						}
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x, pos.z + 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z + 1);
-						if(!list.contains(p)){
-							list.add(p);
+						if(!set.contains(p)){
+							set.add(p);
 						}
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x, pos.z - 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z - 1);
-						if(!list.contains(p)){
-							list.add(p);
+						if(!set.contains(p)){
+							set.add(p);
 						}
 					}
 				}
 			}
 		});
 		
-		return list;
+		return new ArrayList<>(set);
 	}
 	
 	/**
@@ -355,6 +360,7 @@ public class ReservoirHandler{
 			}
 			
 			// Diagonal lines?
+			// Causes issues on some occasions, this is why it's "disabled"
 			boolean debug = false;
 			if(debug){
 				for(int j = 1;j < 64;j++){
