@@ -25,7 +25,7 @@
 	
 	"fluid.immersivepetroleum.diesel": "柴油",
 	"fluid.immersivepetroleum.diesel_sulfur": "硫化柴油",
-	"fluid.immersivepetroleum.oil": "原油",
+	"fluid.immersivepetroleum.crudeoil": "原油",
 	"fluid.immersivepetroleum.lubricant": "润滑油",
 	"fluid.immersivepetroleum.gasoline": "汽油",
 	"fluid.immersivepetroleum.napalm": "凝固汽油",
@@ -42,7 +42,7 @@
 	"item.immersivepetroleum.petcoke_dust": "石油焦粉",
 	"item.immersivepetroleum.diesel_sulfur_bucket": "硫化柴油桶",
 	"item.immersivepetroleum.diesel_bucket": "柴油桶",
-	"item.immersivepetroleum.oil_bucket": "原油桶",
+	"item.immersivepetroleum.crudeoil_bucket": "原油桶",
 	"item.immersivepetroleum.lubricant_bucket": "润滑油桶",
 	"item.immersivepetroleum.gasoline_bucket": "汽油桶",
 	"item.immersivepetroleum.napalm_bucket": "凝固汽油桶",

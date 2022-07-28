@@ -25,7 +25,7 @@
 	
 	"fluid.immersivepetroleum.diesel": "Дизельное топливо",
 	"fluid.immersivepetroleum.diesel_sulfur": "Сернистое дизельное топливо",
-	"fluid.immersivepetroleum.oil": "Нефть",
+	"fluid.immersivepetroleum.crudeoil": "Нефть",
 	"fluid.immersivepetroleum.lubricant": "Смазка",
 	"fluid.immersivepetroleum.gasoline": "Бензин",
 	"fluid.immersivepetroleum.napalm": "Напалм",
@@ -41,7 +41,7 @@
 	"item.immersivepetroleum.petcoke": "Нефтяной кокс",
 	"item.immersivepetroleum.petcoke_dust": "Пыль нефтяного кокса",
 	"item.immersivepetroleum.diesel_bucket": "Ведро дизельного топлива",
-	"item.immersivepetroleum.oil_bucket": "Ведро нефти",
+	"item.immersivepetroleum.crudeoil_bucket": "Ведро нефти",
 	"item.immersivepetroleum.lubricant_bucket": "Ведро смазки",
 	"item.immersivepetroleum.gasoline_bucket": "Ведро бензина",
 	"item.immersivepetroleum.napalm_bucket": "Ведро напалма",

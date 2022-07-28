@@ -28,7 +28,7 @@
 	
 	"fluid.immersivepetroleum.diesel": "Diesel",
 	"fluid.immersivepetroleum.diesel_sulfur": "Sulfurized Diesel",
-	"fluid.immersivepetroleum.oil": "Crude Oil",
+	"fluid.immersivepetroleum.crudeoil": "Crude Oil",
 	"fluid.immersivepetroleum.lubricant": "Lubricant",
 	"fluid.immersivepetroleum.gasoline": "Gasoline",
 	"fluid.immersivepetroleum.napalm": "Napalm",
@@ -46,7 +46,7 @@
 	"item.immersivepetroleum.petcoke_dust": "Petcoke Dust",
 	"item.immersivepetroleum.diesel_bucket": "Bucket of Diesel",
 	"item.immersivepetroleum.diesel_sulfur_bucket": "Bucket of Sulfurized Diesel",
-	"item.immersivepetroleum.oil_bucket": "Bucket of Crude Oil",
+	"item.immersivepetroleum.crudeoil_bucket": "Bucket of Crude Oil",
 	"item.immersivepetroleum.lubricant_bucket": "Bucket of Lubricant",
 	"item.immersivepetroleum.gasoline_bucket": "Bucket of Gasoline",
 	"item.immersivepetroleum.napalm_bucket": "Bucket of Napalm",

@@ -19,7 +19,7 @@
 	"block.immersivepetroleum.distillationtower": "蒸留塔",
 	
 	"fluid.immersivepetroleum.diesel": "ディーゼル",
-	"fluid.immersivepetroleum.oil": "原油",
+	"fluid.immersivepetroleum.crudeoil": "原油",
 	"fluid.immersivepetroleum.lubricant": "潤滑油",
 	"fluid.immersivepetroleum.gasoline": "ガソリン",
 	"fluid.immersivepetroleum.napalm": "ナパーム",
@@ -34,7 +34,7 @@
 	"item.immersivepetroleum.bitumen": "瀝青",
 	"item.immersivepetroleum.petcoke": "石油コークス",
 	"item.immersivepetroleum.diesel_bucket": "ディーゼル入りバケツ",
-	"item.immersivepetroleum.oil_bucket": "原油入りバケツ",
+	"item.immersivepetroleum.crudeoil_bucket": "原油入りバケツ",
 	"item.immersivepetroleum.lubricant_bucket": "潤滑油入りバケツ",
 	"item.immersivepetroleum.gasoline_bucket": "ガソリン入りバケツ",
 	"item.immersivepetroleum.napalm_bucket": "ナパーム入りバケツ",

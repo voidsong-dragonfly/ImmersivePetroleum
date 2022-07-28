@@ -25,7 +25,7 @@
 	
 	"fluid.immersivepetroleum.diesel": "경유",
 	"fluid.immersivepetroleum.diesel_sulfur": "황화 경유",
-	"fluid.immersivepetroleum.oil": "원유",
+	"fluid.immersivepetroleum.crudeoil": "원유",
 	"fluid.immersivepetroleum.lubricant": "윤활유",
 	"fluid.immersivepetroleum.gasoline": "휘발유",
 	"fluid.immersivepetroleum.napalm": "네이팜",
@@ -42,7 +42,7 @@
 	"item.immersivepetroleum.petcoke_dust": "석유 코크스 가루",
 	"item.immersivepetroleum.diesel_bucket": "경유 양동이",
 	"item.immersivepetroleum.diesel_sulfur_bucket": "황화 경유 양동이",
-	"item.immersivepetroleum.oil_bucket": "원유 양동이",
+	"item.immersivepetroleum.crudeoil_bucket": "원유 양동이",
 	"item.immersivepetroleum.lubricant_bucket": "윤활유 양동이",
 	"item.immersivepetroleum.gasoline_bucket": "휘발유 양동이",
 	"item.immersivepetroleum.napalm_bucket": "네이팜 양동이",

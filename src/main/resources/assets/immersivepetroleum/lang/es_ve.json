@@ -25,7 +25,7 @@
 	
 	"fluid.immersivepetroleum.diesel": "Diésel",
 	"fluid.immersivepetroleum.diesel_sulfur": "Diésel sulfurizado",
-	"fluid.immersivepetroleum.oil": "Petróleo crudo",
+	"fluid.immersivepetroleum.crudeoil": "Petróleo crudo",
 	"fluid.immersivepetroleum.lubricant": "Lubricante",
 	"fluid.immersivepetroleum.gasoline": "Gasolina",
 	"fluid.immersivepetroleum.napalm": "Napalm",
@@ -42,7 +42,7 @@
 	"item.immersivepetroleum.petcoke_dust": "Polvo de coque de petróleo",
 	"item.immersivepetroleum.diesel_bucket": "Cubo con diésel",
 	"item.immersivepetroleum.diesel_sulfur_bucket": "Cubo con diésel sulfurizado",
-	"item.immersivepetroleum.oil_bucket": "Cubo con petróleo crudo",
+	"item.immersivepetroleum.crudeoil_bucket": "Cubo con petróleo crudo",
 	"item.immersivepetroleum.lubricant_bucket": "Cubo con lubricante",
 	"item.immersivepetroleum.gasoline_bucket": "Cubo con gasolina",
 	"item.immersivepetroleum.napalm_bucket": "Cubo con napalm",
