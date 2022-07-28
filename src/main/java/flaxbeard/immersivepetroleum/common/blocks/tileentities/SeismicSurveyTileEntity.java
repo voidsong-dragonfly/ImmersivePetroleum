@@ -98,7 +98,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 		
 		if(player.isShiftKeyDown() && !this.stack.isEmpty()){
 			if(!world.isClientSide){
-				Block.popResource(world, player.blockPosition(), this.stack);
+				Block.popResource(world, player.blockPosition().above(), this.stack);
 				this.stack = ItemStack.EMPTY;
 				this.setChanged();
 			}
@@ -119,7 +119,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 					
 				}else{
 					if(!world.isClientSide){
-						Block.popResource(world, player.blockPosition(), this.stack);
+						Block.popResource(world, player.blockPosition().above(), this.stack);
 						this.stack = ItemStack.EMPTY;
 						this.setChanged();
 						
@@ -233,7 +233,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						result.putByteArray("map", mapData);
 					}
 					
-					Block.popResource(world, player.blockPosition(), stack);
+					Block.popResource(world, player.blockPosition().above(), stack);
 				}
 				
 				return true;
