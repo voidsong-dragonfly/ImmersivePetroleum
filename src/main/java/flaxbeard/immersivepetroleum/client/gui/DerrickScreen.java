@@ -82,7 +82,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	protected void renderLabels(PoseStack matrix, int x, int y){
 		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 		
-		if(this.tile.getBlockPos().getY() < 64){
+		if(this.tile.getBlockPos().getY() <= 62){
 			drawInfoTextCentered(matrix, new TextComponent("! WARNING !"), 0, 0xEF0000);
 			drawInfoTextCentered(matrix, new TextComponent("Derrick is being flooded"), 2, 0xEF0000);
 			drawInfoTextCentered(matrix, new TextComponent("below the water table"), 3, 0xEF0000);
