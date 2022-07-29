@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.common.world;
 
-import java.util.List;
-
 import com.google.common.collect.HashMultimap;
 
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
@@ -11,12 +9,9 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
-import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
 public class FeatureReservoir extends Feature<NoneFeatureConfiguration>{
 	public static HashMultimap<ResourceKey<Level>, ChunkPos> generatedReservoirChunks = HashMultimap.create();
@@ -29,9 +24,7 @@ public class FeatureReservoir extends Feature<NoneFeatureConfiguration>{
 	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> pContext){
 		WorldGenLevel reader = pContext.level();
 		BlockPos pos = pContext.origin();
-		if(ReservoirHandler.generator == null){
-			ReservoirHandler.generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(reader.getSeed())), List.of(0));
-		}
+		ReservoirHandler.initGenerator(reader);
 		
 		ResourceKey<Level> dimension = reader.getLevel().dimension();
 		ChunkAccess chunk = reader.getChunk(pos);

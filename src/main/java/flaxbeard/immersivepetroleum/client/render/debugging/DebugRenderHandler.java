@@ -219,7 +219,7 @@ public class DebugRenderHandler{
 	
 	@SubscribeEvent
 	public void reservoirDebuggingRenderLast(RenderLevelLastEvent event){
-		if(ReservoirHandler.generator == null){
+		if(ReservoirHandler.getGenerator() == null){
 			return;
 		}
 		

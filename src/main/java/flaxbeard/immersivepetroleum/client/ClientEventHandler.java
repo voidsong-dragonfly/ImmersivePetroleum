@@ -128,7 +128,7 @@ public class ClientEventHandler{
 	
 	@SubscribeEvent
 	public void reservoirDebuggingOverlayText(RenderGameOverlayEvent.Post event){
-		if(ReservoirHandler.generator == null){
+		if(ReservoirHandler.getGenerator() == null){
 			return;
 		}
 		

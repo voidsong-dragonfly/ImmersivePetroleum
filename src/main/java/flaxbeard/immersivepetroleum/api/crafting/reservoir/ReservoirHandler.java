@@ -43,9 +43,8 @@ public class ReservoirHandler{
 	
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
 	
-	static long lastSeed;
-	public static PerlinSimplexNoise generator;
-	public static double noiseThreshold = 0;
+	private static long lastSeed;
+	private static PerlinSimplexNoise generator;
 	
 	public static void scanChunkForNewReservoirs(ServerLevel world, ChunkPos chunkPos, Random random){
 		int chunkX = chunkPos.getMinBlockX();
@@ -193,12 +192,8 @@ public class ReservoirHandler{
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
 	public static double getValueOf(@Nonnull Level world, int x, int z){
-		if(!world.isClientSide){
-			if(generator == null || ((WorldGenLevel) world).getSeed() != lastSeed){
-				lastSeed = ((WorldGenLevel) world).getSeed();
-				generator = new PerlinSimplexNoise(new WorldgenRandom(new SingleThreadedRandomSource(lastSeed)), ImmutableList.of(0));
-//				generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(lastSeed)), ImmutableList.of(0));
-			}
+		if(!world.isClientSide && world instanceof WorldGenLevel worldGen){
+			initGenerator(worldGen);
 		}
 		
 		double noise = Math.abs(generator.getValue(x * scale, z * scale, false));
@@ -207,6 +202,18 @@ public class ReservoirHandler{
 		}
 		
 		return -1D;
+	}
+	
+	public static void initGenerator(WorldGenLevel world){
+		if(generator == null || world.getSeed() != lastSeed){
+			lastSeed = world.getSeed();
+			generator = new PerlinSimplexNoise(new WorldgenRandom(new SingleThreadedRandomSource(lastSeed)), ImmutableList.of(0));
+//			generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(lastSeed)), ImmutableList.of(0));
+		}
+	}
+	
+	public static PerlinSimplexNoise getGenerator(){
+		return generator;
 	}
 	
 	/** Recursively discover the whole island */
