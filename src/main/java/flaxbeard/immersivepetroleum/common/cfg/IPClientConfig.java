@@ -4,7 +4,6 @@ import java.util.function.Predicate;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -65,13 +64,8 @@ public class IPClientConfig{
 	}
 	
 	public static class Miscellaneous{
-		public final BooleanValue sample_displayBorder;
 		Miscellaneous(ForgeConfigSpec.Builder builder){
 			builder.push("Miscellaneous");
-			
-			sample_displayBorder = builder
-					.comment("Unused for now!", "Display chunk border while holding Core Samples", "Default: true")
-					.define("sample_displayBorder", true);
 			
 			builder.pop();
 		}

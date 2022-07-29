@@ -10,9 +10,6 @@ import java.util.Random;
 import java.util.Set;
 
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.metal.SampleDrillBlockEntity;
-import blusunrize.immersiveengineering.common.items.CoresampleItem;
-import blusunrize.immersiveengineering.common.register.IEBlocks;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
@@ -28,7 +25,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -52,9 +48,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class CommonEventHandler{
@@ -69,47 +63,6 @@ public class CommonEventHandler{
 	public void onUnload(WorldEvent.Unload event){
 		if(!event.getWorld().isClientSide()){
 			IPSaveData.markInstanceAsDirty();
-		}
-	}
-	
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void handlePickupItem(RightClickBlock event){
-		// TODO Reuse to find islands?
-		boolean disable = true;
-		if(disable) return;
-		
-		
-		BlockPos pos = event.getPos();
-		BlockState state = event.getWorld().getBlockState(pos);
-		if(state.getBlock() == IEBlocks.MetalDevices.SAMPLE_DRILL.get()){
-			BlockEntity te = event.getWorld().getBlockEntity(pos);
-			if(te instanceof SampleDrillBlockEntity){
-				SampleDrillBlockEntity drill = (SampleDrillBlockEntity) te;
-				if(drill.isDummy()){
-					drill = (SampleDrillBlockEntity) drill.master();
-				}
-				
-				if(!drill.sample.isEmpty()){
-					ColumnPos cPos = CoresampleItem.getCoords(drill.sample);
-					if(cPos != null){
-//						try{
-//							World world = event.getWorld();
-//							DimensionChunkCoords coords = new DimensionChunkCoords(world.getDimensionKey(), cPos.x >> 4, cPos.z >> 4);
-//							
-//							ReservoirWorldInfo info = PumpjackHandler.getOrCreateOilWorldInfo(world, coords, false);
-//							if(info != null && info.getType() != null){
-//								ItemNBTHelper.putString(drill.sample, "resType", info.getType().name);
-//								ItemNBTHelper.putInt(drill.sample, "resAmount", info.current);
-//							}else{
-//								ItemNBTHelper.putInt(drill.sample, "resAmount", 0);
-//							}
-//							
-//						}catch(Exception e){
-//							ImmersivePetroleum.log.warn("This aint good!", e);
-//						}
-					}
-				}
-			}
 		}
 	}
 	

@@ -44,18 +44,16 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	
 	@SuppressWarnings("unused")
 	public ModelMotorboat(){
-		final float HALF_PI = (float) (Math.PI / 2F);
-		
 		MeshDefinition meshDefinition = new MeshDefinition();
 		PartDefinition rootDefinition = meshDefinition.getRoot();
 		
-		rootDefinition.addOrReplaceChild("boat_side0", singleCube(0, 0, -14.0F, -9.0F, -3.0F, 28, 16, 3), PartPose.offsetAndRotation(0.0F, 3.0F, 1.0F, HALF_PI, 0.0F, 0.0F));
+		rootDefinition.addOrReplaceChild("boat_side0", singleCube(0, 0, -14.0F, -9.0F, -3.0F, 28, 16, 3), PartPose.offsetAndRotation(0.0F, 3.0F, 1.0F, Mth.HALF_PI, 0.0F, 0.0F));
 		rootDefinition.addOrReplaceChild("boat_side1", singleCube(0, 19, -13.0F, -7.0F, -1.0F, 18, 6, 2), PartPose.offsetAndRotation(-15.0F, 4.0F, 4.0F, 0.0F, (Mth.PI * 3F / 2F), 0.0F));
-		rootDefinition.addOrReplaceChild("boat_side2", singleCube(0, 27, -8.0F, -7.0F, -1.0F, 16, 6, 2), PartPose.offsetAndRotation(15.0F, 4.0F, 0.0F, 0.0F, HALF_PI, 0.0F));
+		rootDefinition.addOrReplaceChild("boat_side2", singleCube(0, 27, -8.0F, -7.0F, -1.0F, 16, 6, 2), PartPose.offsetAndRotation(15.0F, 4.0F, 0.0F, 0.0F, Mth.HALF_PI, 0.0F));
 		rootDefinition.addOrReplaceChild("boat_side3", singleCube(0, 35, -14.0F, -7.0F, -1.0F, 28, 6, 2), PartPose.offsetAndRotation(0.0F, 4.0F, -9.0F, 0.0F, Mth.PI, 0.0F));
 		rootDefinition.addOrReplaceChild("boat_side4", singleCube(0, 43, -14.0F, -7.0F, -1.0F, 28, 6, 2), PartPose.offset(0.0F, 4.0F, 9.0F));
 		
-		rootDefinition.addOrReplaceChild("no_water", singleCube(0, 0, -14.0F, -9.0F, -3.0F, 28, 16, 3), PartPose.offsetAndRotation(0.0F, -3.0F, 1.0F, HALF_PI, 0.0F, 0.0F));
+		rootDefinition.addOrReplaceChild("no_water", singleCube(0, 0, -14.0F, -9.0F, -3.0F, 28, 16, 3), PartPose.offsetAndRotation(0.0F, -3.0F, 1.0F, Mth.HALF_PI, 0.0F, 0.0F));
 		
 		rootDefinition.addOrReplaceChild("motor", singleCube(104, 0, -19.0F, -8.0F, -3, 6, 5, 6), PartPose.ZERO);
 		

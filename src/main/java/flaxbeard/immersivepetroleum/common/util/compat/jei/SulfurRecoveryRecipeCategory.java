@@ -8,6 +8,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -70,10 +71,10 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 		int chance = (int)(100 * recipe.chance);
 		
 		matrix.pushPose();
-		String text0 = I18n.get("desc.immersiveengineering.info.ift", JEIStuff.FORMATTER.format(energy));
+		String text0 = I18n.get("desc.immersiveengineering.info.ift", Utils.fDecimal(energy));
 		font.draw(matrix, text0, bWidth / 2 - font.width(text0) / 2, bHeight - (font.lineHeight * 2), 0);
 
-		String text1 = I18n.get("desc.immersiveengineering.info.seconds", JEIStuff.FORMATTER.format(time / 20D));
+		String text1 = I18n.get("desc.immersiveengineering.info.seconds", Utils.fDecimal(time / 20D));
 		font.draw(matrix, text1, bWidth / 2 - font.width(text1) / 2, bHeight - font.lineHeight, 0);
 		
 		String text2 = String.format(Locale.US, "%d%%", chance);

@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.util;
 
+import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -23,6 +24,32 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
  * @author TwistedGate
  */
 public class Utils{
+	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
+	
+	public static String fDecimal(byte number){
+		return FORMATTER.format(number);
+	}
+	
+	public static String fDecimal(short number){
+		return FORMATTER.format(number);
+	}
+	
+	public static String fDecimal(int number){
+		return FORMATTER.format(number);
+	}
+	
+	public static String fDecimal(long number){
+		return FORMATTER.format(number);
+	}
+	
+	public static String fDecimal(float number){
+		return FORMATTER.format(number);
+	}
+	
+	public static String fDecimal(double number){
+		return FORMATTER.format(number);
+	}
+	
 	/** Copy of {@link blusunrize.immersiveengineering.common.util.Utils#unlockIEAdvancement(Player, String)} */
 	public static void unlockIPAdvancement(Player player, String name){
 		if(player instanceof ServerPlayer){

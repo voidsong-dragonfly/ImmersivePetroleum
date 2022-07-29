@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.client;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,6 +67,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -469,7 +469,6 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
-	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
 	protected static EntryData createContent(){
 		ArrayList<ItemStack> list = new ArrayList<>();
 		final Reservoir[] reservoirs = Reservoir.map.values().toArray(new Reservoir[0]);
@@ -538,7 +537,7 @@ public class ClientProxy extends CommonProxy{
 			if(reservoir.residual > 0){
 				repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName);
 			}
-			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, FORMATTER.format(reservoir.minSize), FORMATTER.format(reservoir.maxSize), repRate, bioBLWL));
+			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, Utils.fDecimal(reservoir.minSize), Utils.fDecimal(reservoir.maxSize), repRate, bioBLWL));
 			
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");

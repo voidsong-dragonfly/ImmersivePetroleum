@@ -11,6 +11,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class ModelPumpjack extends IPModel{
 	public static final String ID = "pumpjackarm";
@@ -68,17 +69,17 @@ public class ModelPumpjack extends IPModel{
 		
 		float dist = 8.5F;
 		
-		float sin = (float) Math.sin(this.swingy.zRot);
-		float cos = (float) Math.cos(this.swingy.zRot);
+		float sin = Mth.sin(this.swingy.zRot);
+		float cos = Mth.cos(this.swingy.zRot);
 		this.connector.setPos(24 - dist * sin, 30 + dist * cos, 26);
 		if(sin < 0){
-			this.connector.zRot = (float) (1F * (Math.PI / 2) + Math.atan(25F / (dist * sin)));
+			this.connector.zRot = (float) (1F * Mth.HALF_PI + Math.atan(25F / (dist * sin)));
 		}else if(sin > 0){
-			this.connector.zRot = (float) (3F * (Math.PI / 2) + Math.atan(25F / (dist * sin)));
+			this.connector.zRot = (float) (3F * Mth.HALF_PI + Math.atan(25F / (dist * sin)));
 		}
 		
-		float sin2 = (float) Math.sin(this.arm.zRot);
-		float cos2 = (float) Math.cos(this.arm.zRot);
+		float sin2 = Mth.sin(this.arm.zRot);
+		float cos2 = Mth.cos(this.arm.zRot);
 		
 		float x = 24 - dist * sin;
 		float y = 30 + dist * cos;
@@ -90,7 +91,7 @@ public class ModelPumpjack extends IPModel{
 		float ty = 48 + w * -sin2 + h * cos2;
 		
 		this.connector.setPos(x, y, 26);
-		this.connector.zRot = (float) (3F * (Math.PI / 2) + Math.atan2(ty - y, tx - x));
+		this.connector.zRot = (float) (3F * Mth.HALF_PI + Math.atan2(ty - y, tx - x));
 		
 		this.wellConnector.setPos(88F, 16F, 24F);
 		this.wellConnector2.setPos(88F, 16F, 24F);
@@ -107,7 +108,7 @@ public class ModelPumpjack extends IPModel{
 		this.wellConnector.setPos(56 + x2, 48 + y2, 24);
 		this.wellConnector2.setPos(56 + x2, 48 + y2, 24);
 		
-		float zRot = (float) (3F * (Math.PI / 2) + Math.atan2(ty2 - y2, tx2 - x2));
+		float zRot = (float) (3F * Mth.HALF_PI + Math.atan2(ty2 - y2, tx2 - x2));
 		this.wellConnector.zRot = zRot;
 		this.wellConnector2.zRot = zRot;
 		

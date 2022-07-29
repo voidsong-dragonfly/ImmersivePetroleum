@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
@@ -25,8 +24,6 @@ import net.minecraft.world.item.ItemStack;
 @JeiPlugin
 public class JEIStuff implements IModPlugin{
 	private static final ResourceLocation ID = ResourceUtils.ip("main");
-	
-	public static final DecimalFormat FORMATTER = new DecimalFormat("#.##");
 	
 	private RecipeType<DistillationRecipe> distillation_type;
 	private RecipeType<CokerUnitRecipe> coker_type;
