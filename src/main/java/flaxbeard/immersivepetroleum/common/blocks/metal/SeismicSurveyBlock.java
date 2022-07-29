@@ -24,7 +24,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -37,6 +36,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -126,7 +126,7 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public List<ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootContext.Builder builder){
+	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder){
 		if(state.getValue(SLAVE)){
 			// TODO Don't know how else i would do this yet
 			return Collections.emptyList();
@@ -136,12 +136,14 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void destroy(LevelAccessor world, BlockPos pos, BlockState state){
-		BlockEntity te = world.getBlockEntity(pos);
-		if(!((Level) world).isClientSide && te instanceof SeismicSurveyTileEntity survey && !survey.isSlave){
-			if(!survey.stack.isEmpty()){
-				Block.popResource((Level) world, pos, survey.stack);
+	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving){
+		if(pState.hasBlockEntity() && (!pState.is(pNewState.getBlock()) || !pNewState.hasBlockEntity())){
+			if(!pLevel.isClientSide && pLevel.getBlockEntity(pPos) instanceof SeismicSurveyTileEntity survey && !survey.isSlave){
+				if(!survey.stack.isEmpty()){
+					Block.popResource((Level) pLevel, pPos, survey.stack);
+				}
 			}
+			pLevel.removeBlockEntity(pPos);
 		}
 	}
 	
