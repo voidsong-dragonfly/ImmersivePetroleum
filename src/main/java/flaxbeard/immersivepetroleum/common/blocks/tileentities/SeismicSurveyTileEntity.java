@@ -25,7 +25,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
@@ -98,7 +97,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 		
 		if(player.isShiftKeyDown() && !this.stack.isEmpty()){
 			if(!world.isClientSide){
-				Block.popResource(world, player.blockPosition().above(), this.stack);
+				Utils.dropItemNoDelay(world, player.blockPosition().above(), this.stack);
 				this.stack = ItemStack.EMPTY;
 				this.setChanged();
 			}
@@ -119,7 +118,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 					
 				}else{
 					if(!world.isClientSide){
-						Block.popResource(world, player.blockPosition().above(), this.stack);
+						Utils.dropItemNoDelay(world, player.blockPosition().above(), this.stack);
 						this.stack = ItemStack.EMPTY;
 						this.setChanged();
 						
@@ -233,7 +232,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						result.putByteArray("map", mapData);
 					}
 					
-					Block.popResource(world, player.blockPosition().above(), stack);
+					Utils.dropItemNoDelay(world, player.blockPosition().above(), stack);
 				}
 				
 				return true;

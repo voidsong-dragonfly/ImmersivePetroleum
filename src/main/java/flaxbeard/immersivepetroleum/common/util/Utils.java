@@ -1,14 +1,20 @@
 package flaxbeard.immersivepetroleum.common.util;
 
+import java.util.function.Consumer;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 /**
@@ -33,5 +39,30 @@ public class Utils{
 		if(stack.isEmpty())
 			return false;
 		return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
+	}
+	
+	public static void dropItem(Level level, BlockPos pos, ItemStack stack){
+		dropItem(level, pos, stack, e -> {
+			e.setDefaultPickUpDelay();
+		});
+	}
+	
+	public static void dropItemNoDelay(Level level, BlockPos pos, ItemStack stack){
+		dropItem(level, pos, stack, e -> {
+			e.setNoPickUpDelay();
+		});
+	}
+	
+	public static void dropItem(Level level, BlockPos pos, ItemStack stack, Consumer<ItemEntity> func){
+		if(!level.isClientSide && !stack.isEmpty() && !level.restoringBlockSnapshots){
+			double f = EntityType.ITEM.getHeight() / 2.0D;
+			double x = pos.getX() + 0.5D;
+			double y = pos.getY() + 0.5D - f;
+			double z = pos.getZ() + 0.5D;
+			
+			ItemEntity entity = new ItemEntity(level, x, y, z, stack);
+			func.accept(entity);
+			level.addFreshEntity(entity);
+		}
 	}
 }
