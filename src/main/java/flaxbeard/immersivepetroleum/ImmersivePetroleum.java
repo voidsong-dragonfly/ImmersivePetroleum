@@ -16,7 +16,6 @@ import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
-import flaxbeard.immersivepetroleum.common.cfg.IPCommonConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
@@ -64,7 +63,6 @@ public class ImmersivePetroleum{
 	public ImmersivePetroleum(){
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, IPServerConfig.ALL);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, IPClientConfig.ALL);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, IPCommonConfig.ALL);
 		
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
