@@ -15,10 +15,10 @@ import blusunrize.immersiveengineering.data.models.NongeneratedModels.Nongenerat
 import blusunrize.immersiveengineering.data.models.SplitModelBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
+import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;

@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.blocks.metal;
+package flaxbeard.immersivepetroleum.common.blocks.wooden;
 
 import java.util.function.Supplier;
 
@@ -45,13 +45,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
-	private static final Material material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
+	private static final Material material = new Material(MaterialColor.WOOD, false, false, true, true, false, false, PushReaction.BLOCK);
 	
 	public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty SLAVE = BooleanProperty.create("slave");
 	
 	public AutoLubricatorBlock(){
-		super(Block.Properties.of(material).strength(5.0F, 6.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
+		super(Block.Properties.of(material).strength(5.0F, 6.0F).sound(SoundType.WOOD).requiresCorrectToolForDrops().noOcclusion());
 		
 		registerDefaultState(getStateDefinition().any()
 				.setValue(FACING, Direction.NORTH)

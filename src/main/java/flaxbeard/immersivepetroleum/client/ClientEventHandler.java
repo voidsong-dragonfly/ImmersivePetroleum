@@ -35,7 +35,7 @@ import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.metal.AutoLubricatorBlock;
+import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.util.MCUtil;
