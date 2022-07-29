@@ -14,9 +14,9 @@ import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
 import blusunrize.immersiveengineering.client.ClientUtils;
+import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.client.Minecraft;
@@ -28,7 +28,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -100,16 +99,14 @@ public class ProjectorScreen extends Screen{
 		this.searchField = addRenderableWidget(new SearchField(this.font, this.guiLeft + 25, this.guiTop + 13));
 		
 		addRenderableWidget(new ConfirmButton(this.guiLeft + 115, this.guiTop + 10, but -> {
-			LocalPlayer player = MCUtil.getPlayer();
-			
 			this.settings.setMode(Settings.Mode.PROJECTION);
 			
-			ItemStack held = player.getItemInHand(this.hand);
+			ItemStack held = MCUtil.getPlayer().getItemInHand(this.hand);
 			this.settings.applyTo(held);
 			this.settings.sendPacketToServer(this.hand);
 			MCUtil.getScreen().onClose();
 			
-			player.displayClientMessage(this.settings.getMode().getTranslated(), true);
+			MCUtil.getPlayer().displayClientMessage(this.settings.getMode().getTranslated(), true);
 		}));
 		addRenderableWidget(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
 			MCUtil.getScreen().onClose();

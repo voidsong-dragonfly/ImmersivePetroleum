@@ -1,13 +1,17 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.google.common.collect.Multimap;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -19,7 +23,6 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -28,6 +31,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -160,62 +164,18 @@ public class DebugItem extends IPItemBase{
 								new FluidStack(island.getFluid(), 1).getDisplayName().getString());
 						
 						playerIn.displayClientMessage(new TextComponent(out), true);
+						
+					}else{
+						final Multimap<ResourceKey<Level>, ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList();
+						
+						for(ResourceKey<Level> key:islands.keySet()){
+							Collection<ReservoirIsland> list = islands.get(key);
+							
+							String str = key.location() + " has " + list.size() + " islands.";
+							
+							playerIn.displayClientMessage(new TextComponent(str), false);
+						}
 					}
-					
-//					if(worldIn instanceof ServerWorld){
-//						if(ReservoirHandler.generator == null){
-//							ReservoirHandler.generator = new PerlinNoiseGenerator(new SharedSeedRandom(((ISeedReader) worldIn).getSeed()), IntStream.of(0));
-//						}
-//					}
-//					
-//					BlockPos playerPos = playerIn.getPosition();
-//					ColumnPos playerColumn = new ColumnPos(playerPos);
-//					
-//					ChunkPos cPos = new ChunkPos(playerPos);
-//					int cx = cPos.getXStart();
-//					int cz = cPos.getZStart();
-//					
-//					ColumnPos current = ReservoirIsland.getFirst(cx, cz);
-//					if(current != null){
-//						long timer = System.currentTimeMillis();
-//						
-//						List<ColumnPos> poly = new ArrayList<>();
-//						
-//						ReservoirIsland.next(poly, current.x, current.z);
-//						
-//						poly = edgy(poly);
-//						
-//						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.WHITE_CONCRETE.getDefaultState()));
-//						
-//						poly = direction(poly);
-//						
-//						poly = optimizeLines(poly);
-//						
-//						//poly.forEach(p -> worldIn.setBlockState(new BlockPos(p.x, 128, p.z), Blocks.ORANGE_CONCRETE.getDefaultState()));
-//						
-//						/*
-//						 * After this point the list would be stored inside the
-//						 * Island class and everything below would be there
-//						 * instead
-//						 */
-//						
-//						// Point inside Polygon Test
-//						{
-//							ReservoirIsland island = new ReservoirIsland(poly, Reservoir.map.get(new ResourceLocation(ImmersivePetroleum.MODID, "oil")), 0);
-//							
-//							long t = System.nanoTime();
-//							boolean inside = island.polygonContains(playerColumn);
-//							t = System.nanoTime() - t;
-//							
-//							String out = inside + " (" + (t/1000000F) + "ms)";
-//							playerIn.sendStatusMessage(new StringTextComponent(out), true);
-//						}
-//						
-//						timer = System.currentTimeMillis() - timer;
-//						ImmersivePetroleum.log.info("Time: {}ms, Points: {}", timer, poly.size());
-//					}else{
-//						ImmersivePetroleum.log.info("Nothing here.");
-//					}
 					
 					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
@@ -343,6 +303,7 @@ public class DebugItem extends IPItemBase{
 		return stack.getOrCreateTagElement("settings");
 	}
 	
+	@OnlyIn(Dist.CLIENT)
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
 		static boolean shiftHeld = false;

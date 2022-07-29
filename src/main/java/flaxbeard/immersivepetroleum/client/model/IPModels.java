@@ -10,15 +10,25 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Crusher;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Excavator;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Pumpjack;
+import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
+import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 
-/** A central place for all of ImmersivePetroleums Models that arent OBJ's */
+/** A central place for all of ImmersivePetroleums Models, including some OBJ Models*/
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
 public class IPModels{
+	
+	@SubscribeEvent
+	public static void registerModelLoaders(ModelRegistryEvent event){
+		DerrickRenderer.init();
+		SeismicSurveyBarrelRenderer.init();
+	}
+	
 	@SubscribeEvent
 	public static void init(FMLConstructModEvent event){
 		add(ModelPumpjack.ID, new ModelPumpjack());

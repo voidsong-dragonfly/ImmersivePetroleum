@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import blusunrize.immersiveengineering.common.items.EarmuffsItem;
 import blusunrize.immersiveengineering.common.register.IEItems;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
+import flaxbeard.immersivepetroleum.client.MCUtil;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
@@ -21,7 +21,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class IPEntitySound implements TickableSoundInstance{
 	protected Sound sound;
 	private WeighedSoundEvents soundEvent;

@@ -16,6 +16,10 @@ import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
+import flaxbeard.immersivepetroleum.client.MCUtil;
+import flaxbeard.immersivepetroleum.client.particle.FlareFire;
+import flaxbeard.immersivepetroleum.client.particle.FluidSpill;
+import flaxbeard.immersivepetroleum.client.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.CokerUnitBlock;
@@ -58,11 +62,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblo
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import flaxbeard.immersivepetroleum.common.particle.FlareFire;
-import flaxbeard.immersivepetroleum.common.particle.FluidSpill;
-import flaxbeard.immersivepetroleum.common.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleType;
@@ -155,7 +155,7 @@ public class IPContent{
 	
 	public static class Items{
 		public static final RegistryObject<Item> BITUMEN = IPRegisters.registerItem("bitumen", IPItemBase::new);
-		public static RegistryObject<Item> PROJECTOR = IPRegisters.registerItem("projector", ProjectorItem::new);
+		public static final RegistryObject<Item> PROJECTOR = IPRegisters.registerItem("projector", ProjectorItem::new);
 		public static final RegistryObject<MotorboatItem> SPEEDBOAT = IPRegisters.registerItem("speedboat", MotorboatItem::new);
 		public static final RegistryObject<OilCanItem> OIL_CAN = IPRegisters.registerItem("oil_can", OilCanItem::new);
 		public static final RegistryObject<Item> PETCOKE = IPRegisters.registerItem("petcoke", () -> new IPItemBase(){
@@ -261,6 +261,7 @@ public class IPContent{
 		event.getRegistry().register(IPEffects.ANTI_DISMOUNT_FIRE.get());
 	}
 	
+	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticles(RegistryEvent.Register<ParticleType<?>> event){
 		event.getRegistry().register(IPParticleTypes.FLARE_FIRE);

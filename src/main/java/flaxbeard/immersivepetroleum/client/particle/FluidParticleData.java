@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.particle;
+package flaxbeard.immersivepetroleum.client.particle;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

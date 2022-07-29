@@ -6,8 +6,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.forge.ForgeTypes;

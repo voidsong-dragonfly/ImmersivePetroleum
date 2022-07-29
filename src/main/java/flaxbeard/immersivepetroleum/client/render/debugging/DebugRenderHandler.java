@@ -19,6 +19,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTil
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
@@ -36,7 +37,6 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntit
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

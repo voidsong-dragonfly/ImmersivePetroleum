@@ -6,8 +6,8 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
+import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import mezz.jei.api.constants.VanillaTypes;

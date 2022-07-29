@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
 
 import com.electronwill.nightconfig.core.Config;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,7 +16,6 @@ import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.client.manual.ManualElementMultiblock;
-import blusunrize.immersiveengineering.client.models.ModelCoresample;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IEMultiblocks;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
@@ -41,34 +37,24 @@ import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DerrickScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
-import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
-import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
-import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
-import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
-import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
-import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
-import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
 import flaxbeard.immersivepetroleum.client.render.SeismicResultRenderer;
-import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
-import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
+import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
+import flaxbeard.immersivepetroleum.common.items.ProjectorItem.ClientInputHandler;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -77,56 +63,39 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
 public class ClientProxy extends CommonProxy{
 	@SuppressWarnings("unused")
 	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/ClientProxy");
 	public static final String CAT_IP = "ip";
 	
-	public static final KeyMapping keybind_preview_flip = new KeyMapping("key.immersivepetroleum.projector.flip", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.immersivepetroleum");
-	
 	@Override
 	public void setup(){
-//		RenderingRegistry.registerEntityRenderingHandler(MotorboatEntity.TYPE, MotorboatRenderer::new);
 	}
 	
 	@Override
 	public void registerContainersAndScreens(){
-		super.registerContainersAndScreens();
-
 		MenuScreens.register(IPMenuTypes.DISTILLATION_TOWER.getType(), DistillationTowerScreen::new);
 		MenuScreens.register(IPMenuTypes.COKER.getType(), CokerUnitScreen::new);
 		MenuScreens.register(IPMenuTypes.DERRICK.getType(), DerrickScreen::new);
@@ -151,7 +120,7 @@ public class ClientProxy extends CommonProxy{
 						break;
 					}
 				}
-
+				
 				float averageSize = (oil_min + oil_max) / 2F;
 				float pumpspeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
 				yield Mth.floor((averageSize / pumpspeed) / 24000F);
@@ -187,26 +156,8 @@ public class ClientProxy extends CommonProxy{
 		MinecraftForge.EVENT_BUS.register(new DebugRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new SeismicResultRenderer());
 		
-		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(keybind_preview_flip);
-	}
-
-	/** ImmersivePetroleum's Manual Category */
-	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void onModelBakeEvent(ModelBakeEvent event){
-		ModelResourceLocation mLoc = new ModelResourceLocation(IEBlocks.StoneDecoration.CORESAMPLE.get().getRegistryName(), "inventory");
-		BakedModel model = event.getModelRegistry().get(mLoc);
-		if(model instanceof ModelCoresample){
-			// It'll be a while until that is in working conditions again
-			// event.getModelRegistry().put(mLoc, new ModelCoresampleExtended());
-		}
-	}
-	
-	@SubscribeEvent
-	public static void registerModelLoaders(ModelRegistryEvent event){
-		DerrickRenderer.init();
-		SeismicSurveyBarrelRenderer.init();
+		ProjectorItem.ClientInputHandler.keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
+		ClientRegistry.registerKeyBinding(ClientInputHandler.keybind_preview_flip);
 	}
 	
 	@Override
@@ -256,11 +207,6 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
-	public void openProjectorGui(InteractionHand hand, ItemStack held){
-		Minecraft.getInstance().setScreen(new ProjectorScreen(hand, held));
-	}
-	
-	@Override
 	public Level getClientWorld(){
 		return MCUtil.getLevel();
 	}
@@ -283,6 +229,9 @@ public class ClientProxy extends CommonProxy{
 	private static ManualRecipeRef[][] singleRecipeRef(ItemStack stack){
 		return new ManualRecipeRef[][]{{new ManualRecipeRef(stack)}};
 	}
+	
+	/** ImmersivePetroleum's Manual Category */
+	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
 	
 	public void setupManualPages(){
 		ManualInstance man = ManualHelper.getManual();
@@ -549,25 +498,5 @@ public class ClientProxy extends CommonProxy{
 		String tanslatedSubtext = I18n.get("ie.manual.entry.reservoirs.subtitle");
 		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
 		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent, List.of());
-	}
-
-	@EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
-	public static class ModBusEventHandlers {
-		@SubscribeEvent
-		public static void registerRenders(RegisterRenderers ev){
-			registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
-			registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
-			registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
-			registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
-			
-			registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
-			registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
-
-			ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
-		}
-
-		private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){
-			ev.registerBlockEntityRenderer(type, ctx -> factory.get());
-		}
 	}
 }

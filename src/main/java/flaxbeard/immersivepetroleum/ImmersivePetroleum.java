@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum;
 
+import java.util.function.Supplier;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,6 +44,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 @Mod(ImmersivePetroleum.MODID)
 public class ImmersivePetroleum{
@@ -56,9 +59,22 @@ public class ImmersivePetroleum{
 		}
 	};
 	
-	public static CommonProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+	// Complete hack: DistExecutor::safeRunForDist intentionally tries to access the "wrong" supplier in dev, which
+	// throws an error (rather than an exception) on J16 due to trying to load a client-only class. So we need to
+	// replace the error with an exception in dev.
+	public static <T> Supplier<T> bootstrapErrorToXCPInDev(Supplier<T> in){
+		if(FMLLoader.isProduction())
+			return in;
+		return () -> {
+			try{
+				return in.get();
+			}catch(BootstrapMethodError e){
+				throw new RuntimeException(e);
+			}
+		};
+	}
 	
-	public static ImmersivePetroleum INSTANCE;
+	public static final CommonProxy proxy = DistExecutor.safeRunForDist(bootstrapErrorToXCPInDev(() -> ClientProxy::new), bootstrapErrorToXCPInDev(() -> CommonProxy::new));
 	
 	public ImmersivePetroleum(){
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, IPServerConfig.ALL);

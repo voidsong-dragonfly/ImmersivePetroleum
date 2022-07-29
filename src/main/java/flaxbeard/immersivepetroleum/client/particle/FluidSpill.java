@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.particle;
+package flaxbeard.immersivepetroleum.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -19,6 +19,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 
+@OnlyIn(Dist.CLIENT)
 public class FluidSpill extends TextureSheetParticle{
 	final double ogMotionX, ogMotionY, ogMotionZ;
 	protected FluidSpill(Fluid fluid, ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ){

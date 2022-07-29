@@ -27,7 +27,6 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;

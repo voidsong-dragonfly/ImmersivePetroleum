@@ -21,6 +21,7 @@ import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
+import flaxbeard.immersivepetroleum.client.particle.FluidParticleData;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
@@ -29,7 +30,6 @@ import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
-import flaxbeard.immersivepetroleum.common.particle.FluidParticleData;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;

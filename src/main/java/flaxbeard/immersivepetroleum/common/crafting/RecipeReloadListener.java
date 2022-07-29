@@ -35,7 +35,6 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		if(dataPackRegistries != null){
 			lists(dataPackRegistries.getRecipeManager());
 		}
-		DynamicTextureWrapper.clearCache();
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
@@ -43,6 +42,8 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		if(!Minecraft.getInstance().hasSingleplayerServer()){
 			lists(event.getRecipeManager());
 		}
+		
+		DynamicTextureWrapper.clearCache();
 	}
 	
 	static void lists(RecipeManager recipeManager){
@@ -64,9 +65,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		SulfurRecoveryRecipe.recipes = filterRecipes(recipes, SulfurRecoveryRecipe.class, IPRecipeTypes.SULFUR_RECOVERY);
 	}
 	
-	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(
-			Collection<Recipe<?>> recipes, Class<R> recipeClass, RegistryObject<RecipeType<R>> recipeType
-	){
+	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<Recipe<?>> recipes, Class<R> recipeClass, RegistryObject<RecipeType<R>> recipeType){
 		return recipes.stream()
 				.filter(iRecipe -> iRecipe.getType() == recipeType.get())
 				.map(recipeClass::cast)

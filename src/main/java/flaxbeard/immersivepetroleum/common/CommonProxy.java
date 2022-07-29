@@ -9,7 +9,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,8 +26,9 @@ public class CommonProxy{
 	public void setup(){
 	}
 	
-	public void registerContainersAndScreens(){}
-
+	public void registerContainersAndScreens(){
+	}
+	
 	public void preInit(){
 	}
 	
@@ -64,9 +64,6 @@ public class CommonProxy{
 	}
 	
 	public void drawUpperHalfSlab(PoseStack transform, ItemStack stack){
-	}
-	
-	public void openProjectorGui(InteractionHand hand, ItemStack held){
 	}
 	
 	public Level getClientWorld(){

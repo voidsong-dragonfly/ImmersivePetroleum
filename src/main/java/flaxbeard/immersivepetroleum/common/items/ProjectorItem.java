@@ -13,6 +13,7 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.glfw.GLFW;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,16 +23,17 @@ import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultib
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.ProjectorEvent;
-import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.client.IPShaders;
+import flaxbeard.immersivepetroleum.client.MCUtil;
+import flaxbeard.immersivepetroleum.client.gui.ProjectorScreen;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
-import flaxbeard.immersivepetroleum.common.util.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings.Mode;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -148,7 +150,7 @@ public class ProjectorItem extends IPItemBase{
 			if(isPressing(GLFW.GLFW_KEY_LEFT_CONTROL) || isPressing(GLFW.GLFW_KEY_RIGHT_CONTROL)){
 				Component title = new TranslatableComponent("desc.immersivepetroleum.info.projector.holdctrl.text").withStyle(ChatFormatting.DARK_PURPLE);
 				Component ctrl0 = new TranslatableComponent("desc.immersivepetroleum.info.projector.control1").withStyle(ChatFormatting.DARK_GRAY);
-				Component ctrl1 = new TranslatableComponent("desc.immersivepetroleum.info.projector.control2", ClientProxy.keybind_preview_flip.getTranslatedKeyMessage()).withStyle(ChatFormatting.DARK_GRAY);
+				Component ctrl1 = new TranslatableComponent("desc.immersivepetroleum.info.projector.control2", ClientInputHandler.keybind_preview_flip.getTranslatedKeyMessage()).withStyle(ChatFormatting.DARK_GRAY);
 				Component ctrl2 = new TranslatableComponent("desc.immersivepetroleum.info.projector.control3").withStyle(ChatFormatting.DARK_GRAY);
 				
 				tooltip.add(title);
@@ -206,47 +208,51 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
-		ItemStack held = playerIn.getItemInHand(handIn);
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
+		ItemStack held = player.getItemInHand(hand);
 		
-		boolean changeMode = false;
-		Settings settings = getSettings(held);
-		switch(settings.getMode()){
-			case PROJECTION:{
-				if(worldIn.isClientSide){
-					if(playerIn.isShiftKeyDown()){
+		if(world.isClientSide){
+			boolean changeMode = false;
+			Settings settings = getSettings(held);
+			switch(settings.getMode()){
+				case PROJECTION:{
+					if(player.isShiftKeyDown()){
 						if(settings.getPos() != null){
 							settings.setPos(null);
-							settings.sendPacketToServer(handIn);
+							settings.sendPacketToServer(hand);
 						}else{
 							changeMode = true;
 						}
 					}
+					break;
 				}
-				break;
-			}
-			case MULTIBLOCK_SELECTION:{
-				if(worldIn.isClientSide){
-					if(!playerIn.isShiftKeyDown()){
-						ImmersivePetroleum.proxy.openProjectorGui(handIn, held);
+				case MULTIBLOCK_SELECTION:{
+					if(!player.isShiftKeyDown()){
+						openGUI(hand, held);
 					}else{
 						changeMode = true;
 					}
+					break;
 				}
-				break;
+				default:
+					break;
 			}
-			default:break;
-		}
-		
-		if(worldIn.isClientSide && changeMode){
-			int modeId = settings.getMode().ordinal() + 1;
-			settings.setMode(Mode.values()[modeId >= Mode.values().length ? 0 : modeId]);
-			settings.applyTo(held);
-			settings.sendPacketToServer(handIn);
-			playerIn.displayClientMessage(settings.getMode().getTranslated(), true);
+			
+			if(changeMode){
+				int modeId = settings.getMode().ordinal() + 1;
+				settings.setMode(Mode.values()[modeId >= Mode.values().length ? 0 : modeId]);
+				settings.applyTo(held);
+				settings.sendPacketToServer(hand);
+				player.displayClientMessage(settings.getMode().getTranslated(), true);
+			}
 		}
 		
 		return InteractionResultHolder.success(held);
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	private static void openGUI(InteractionHand hand, ItemStack held){
+		Minecraft.getInstance().setScreen(new ProjectorScreen(hand, held));
 	}
 	
 	@Override
@@ -349,6 +355,7 @@ public class ProjectorItem extends IPItemBase{
 	// STATIC SUPPORT CLASSES
 	
 	/** Client Rendering Stuff */
+	@OnlyIn(Dist.CLIENT)
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientRenderHandler{
 		@SubscribeEvent
@@ -685,15 +692,18 @@ public class ProjectorItem extends IPItemBase{
 	}
 
 	/** Client Input Stuff */
+	@OnlyIn(Dist.CLIENT)
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
+		public static final KeyMapping keybind_preview_flip = new KeyMapping("key.immersivepetroleum.projector.flip", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.immersivepetroleum");
+		
 		static boolean shiftHeld = false;
 		
 		@SubscribeEvent
 		public static void onPlayerTick(TickEvent.PlayerTickEvent event){
 			if(event.side == LogicalSide.CLIENT && event.player != null && event.player == Minecraft.getInstance().getCameraEntity()){
 				if(event.phase == Phase.END){
-					if(!ClientProxy.keybind_preview_flip.isUnbound() && ClientProxy.keybind_preview_flip.consumeClick()){
+					if(!ClientInputHandler.keybind_preview_flip.isUnbound() && ClientInputHandler.keybind_preview_flip.consumeClick()){
 						doAFlip();
 					}
 				}

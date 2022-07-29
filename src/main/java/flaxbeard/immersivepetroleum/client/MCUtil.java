@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util;
+package flaxbeard.immersivepetroleum.client;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -16,6 +16,8 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Central place for Minecraft instance related stuff.<br>
@@ -27,6 +29,7 @@ import net.minecraft.world.phys.HitResult;
  *
  * @author TwistedGate
  */
+@OnlyIn(Dist.CLIENT)
 public class MCUtil{
 	
 	public static void bindTexture(ResourceLocation texture){

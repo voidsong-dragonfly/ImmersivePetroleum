@@ -150,7 +150,7 @@ public class ReservoirHandler{
 			
 			if(ret == null){
 				for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
-					if(island.polygonContains(pos)){
+					if(island.contains(pos)){
 						/*
 						 * There's no such thing as overlapping islands, so just
 						 * return what was found directly (After putting it into
