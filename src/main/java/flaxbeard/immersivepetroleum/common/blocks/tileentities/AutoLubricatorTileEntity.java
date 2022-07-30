@@ -43,7 +43,6 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IReadOnPlacement{
 	public boolean isSlave;
-//	public boolean predictablyDraining = false;
 	public Direction facing = Direction.NORTH;
 	public FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
 	
@@ -51,10 +50,22 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 		super(IPTileTypes.AUTOLUBE.get(), pWorldPosition, pBlockState);
 	}
 	
+	public AutoLubricatorTileEntity master(){
+		if(this.isSlave){
+			BlockEntity te = this.getLevel().getBlockEntity(getBlockPos().below());
+			if(te instanceof AutoLubricatorTileEntity autolube){
+				return autolube;
+			}else{
+				return null;
+			}
+		}else{
+			return this;
+		}
+	}
+	
 	@Override
 	protected void readCustom(CompoundTag compound){
 		this.isSlave = compound.getBoolean("slave");
-//		this.predictablyDraining = compound.getBoolean("predictablyDraining");
 		
 		Direction facing = Direction.byName(compound.getString("facing"));
 		if(facing.get2DDataValue() == -1)
@@ -67,7 +78,6 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	@Override
 	protected void writeCustom(CompoundTag compound){
 		compound.putBoolean("slave", this.isSlave);
-//		compound.putBoolean("predictablyDraining", this.predictablyDraining);
 		compound.putString("facing", this.facing.getName());
 		compound.putInt("count", this.count);
 		
@@ -128,17 +138,20 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && this.isSlave && (side == null || side == Direction.UP)){
-			if(this.outputHandler == null){
-				this.outputHandler = LazyOptional.of(() -> {
-					BlockEntity te = this.level.getBlockEntity(getBlockPos().relative(Direction.DOWN));
-					if(te != null && te instanceof AutoLubricatorTileEntity autolube){
-						return autolube.tank;
-					}
-					return null;
-				});
+		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if(this.isSlave && (side == null || side == Direction.UP)){
+				AutoLubricatorTileEntity master = master();
+				if(master == null){
+					return LazyOptional.empty();
+				}
+				
+				if(this.outputHandler == null){
+					this.outputHandler = LazyOptional.of(() -> {
+						return master.tank;
+					});
+				}
+				return this.outputHandler.cast();
 			}
-			return this.outputHandler.cast();
 		}
 		
 		return super.getCapability(cap, side);
@@ -185,11 +198,11 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	@Override
 	public Component[] getOverlayText(Player player, HitResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
-			BlockEntity master = this.level.getBlockEntity(getBlockPos().offset(0, this.isSlave ? -1 : 0, 0));
-			if(master != null && master instanceof AutoLubricatorTileEntity autolube){
+			AutoLubricatorTileEntity master = master();
+			if(master != null){
 				Component s = null;
-				if(!autolube.tank.isEmpty()){
-					s = ((MutableComponent) autolube.tank.getFluid().getDisplayName()).append(": " + autolube.tank.getFluidAmount() + "mB");
+				if(!master.tank.isEmpty()){
+					s = ((MutableComponent) master.tank.getFluid().getDisplayName()).append(": " + master.tank.getFluidAmount() + "mB");
 				}else{
 					s = new TranslatableComponent(Lib.GUI + "empty");
 				}
@@ -206,9 +219,9 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	
 	@Override
 	public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
-		BlockEntity master = this.isSlave ? this.level.getBlockEntity(getBlockPos().offset(0, -1, 0)) : this;
-		if(master != null && master instanceof AutoLubricatorTileEntity autolube){
-			if(!this.level.isClientSide && FluidUtil.interactWithFluidHandler(player, hand, autolube.tank)){
+		AutoLubricatorTileEntity master = master();
+		if(master != null){
+			if(!this.level.isClientSide && FluidUtil.interactWithFluidHandler(player, hand, master.tank)){
 				setChanged();
 			}
 			return true;
@@ -217,9 +230,8 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	}
 	
 	int count = 0;
-	int lastTank = 0;
-	int lastTankUpdate = 0;
 	int countClient = 0;
+	int lastTank = 0;
 	
 	@Override
 	public void tickClient(){
