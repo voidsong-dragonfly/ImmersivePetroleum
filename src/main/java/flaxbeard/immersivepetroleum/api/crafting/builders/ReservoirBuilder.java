@@ -21,11 +21,13 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	private final JsonArray bioBlacklist = new JsonArray();
 	private ReservoirBuilder(){
 		super(Serializers.RESERVOIR_SERIALIZER.get());
-		addWriter(writer -> writer.addProperty("fluid", this.fluid));
-		addWriter(writer -> writer.addProperty("fluidminimum", this.fluidMinimum));
-		addWriter(writer -> writer.addProperty("fluidcapacity", this.fluidMaximum));
-		addWriter(writer -> writer.addProperty("fluidtrace", this.fluidTrace));
-		addWriter(writer -> writer.addProperty("weight", this.weight));
+		addWriter(writer -> {
+			writer.addProperty("fluid", this.fluid);
+			writer.addProperty("fluidminimum", this.fluidMinimum);
+			writer.addProperty("fluidcapacity", this.fluidMaximum);
+			writer.addProperty("fluidtrace", this.fluidTrace);
+			writer.addProperty("weight", this.weight);
+		});
 		
 		// Writes both even if there is nothing. Helpful for datapack makers.
 		addWriter(writer -> {
