@@ -246,8 +246,10 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			boolean lastSpilling = this.spilling;
 			this.drilling = this.spilling = false;
 			
-			// Check if lower than 64 and stop working, then also display a message as to why in GUI
 			if(this.worldPosition.getY() <= 62){
+				// Refuse to work below this height to avoid cheesing the system.
+				// Also displays in the GUI as to "why"
+				
 				if(this.fluidSpilled == Fluids.EMPTY){
 					this.fluidSpilled = Fluids.WATER;
 				}
@@ -282,8 +284,6 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 											this.energyStorage.extractEnergy(POWER, false);
 											
 											if(advanceTimer()){
-												//restorePhysicalPipeProgress(dPos, realPipeLength);
-												
 												Level world = getLevelNonnull();
 												int y = dPos.getY() - 1;
 												for(;y > wPos.getY();y--){

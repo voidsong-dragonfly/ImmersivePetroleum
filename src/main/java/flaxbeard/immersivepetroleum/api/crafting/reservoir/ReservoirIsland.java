@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 /**
  * Every instance of this class is it's own little ecosystem.
  * <p>
- * How much amount of fluid it has, what kind of fluid, how much residual fluid after it has been drained, etc.
+ * What kind of Fluid it has, how much of it, how much residual (if any) after it's drained, etc.
  * 
  * @author TwistedGate
  */
@@ -77,8 +77,8 @@ public class ReservoirIsland{
 	
 	/**
 	 * 
-	 * @param amount of fluid in this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Capacity Clamped})
-	 * @param capacity of this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Clamped})
+	 * @param amount of fluid in this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Capacity Clamped})
+	 * @param capacity of this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Clamped})
 	 * @return
 	 */
 	public ReservoirIsland setAmountAndCapacity(long amount, long capacity){
@@ -90,7 +90,7 @@ public class ReservoirIsland{
 	/**
 	 * Sets the reservoirs current fluid amount in millibuckets.
 	 * 
-	 * @param amount of fluid in this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Capacity Clamped})
+	 * @param amount of fluid in this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Capacity Clamped})
 	 */
 	public ReservoirIsland setAmount(long amount){
 		this.amount = clamp(amount, 0L, this.capacity);
@@ -100,7 +100,7 @@ public class ReservoirIsland{
 	/**
 	 * Sets the reservoirs current fluid capacity in millibuckets.
 	 * 
-	 * @param capacity of this reservoir. (Range: 0 - {@value ReservoirIsland#MAX_AMOUNT}; Clamped})
+	 * @param capacity of this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Clamped})
 	 */
 	public ReservoirIsland setCapacity(long capacity){
 		this.capacity = clamp(capacity, 0L, MAX_AMOUNT);
@@ -119,12 +119,16 @@ public class ReservoirIsland{
 		return this;
 	}
 	
-	/** While this returns long it only goes up to {@value ReservoirIsland#MAX_AMOUNT} */
+	/**
+	 * @return amount of fluid currently in this Reservoir.
+	 */
 	public long getAmount(){
 		return this.amount;
 	}
 	
-	/** See {@link #getAmount()} */
+	/**
+	 * @return The current capacity of this Reservoir.
+	 */
 	public long getCapacity(){
 		return this.capacity;
 	}
@@ -194,12 +198,20 @@ public class ReservoirIsland{
 	
 	/**
 	 * @param pressure (Clamped: 0.0 - 1.0)
-	 * @return mb
+	 * @return the Flowrate in mB for the given Pressure.
 	 */
 	public int getFlow(float pressure){
 		return MIN_MBPT + (int) Math.floor((MAX_MBPT - MIN_MBPT) * Mth.clamp(pressure, 0.0F, 1.0F));
 	}
 	
+	/**
+	 * <i>Only call on server side!</i>
+	 * 
+	 * @param world
+	 * @param x
+	 * @param z
+	 * @return
+	 */
 	public float getPressure(Level world, int x, int z){
 		// prevents outside use
 		double noise = ReservoirHandler.getValueOf(world, x, z);
@@ -290,6 +302,10 @@ public class ReservoirIsland{
 		return null;
 	}
 	
+	/**
+	 * Convenience method.
+	 * @see {@link #contains(int, int)}
+	 */
 	public boolean contains(ColumnPos pos){
 		return contains(pos.x, pos.z);
 	}
@@ -309,6 +325,10 @@ public class ReservoirIsland{
 		return polygonContains(x, z);
 	}
 	
+	/**
+	 * Convenience method.
+	 * @see {@link #polygonContains(int, int)}
+	 */
 	public boolean polygonContains(ColumnPos pos){
 		return polygonContains(pos.x, pos.z);
 	}
