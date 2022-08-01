@@ -160,7 +160,7 @@ public class DebugItem extends IPItemBase{
 								island.getAmount(),
 								island.getCapacity(),
 								pressure,
-								island.getFlow(pressure),
+								ReservoirIsland.getFlow(pressure),
 								new FluidStack(island.getFluid(), 1).getDisplayName().getString());
 						
 						playerIn.displayClientMessage(new TextComponent(out), true);

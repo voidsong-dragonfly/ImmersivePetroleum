@@ -200,7 +200,7 @@ public class ReservoirIsland{
 	 * @param pressure (Clamped: 0.0 - 1.0)
 	 * @return the Flowrate in mB for the given Pressure.
 	 */
-	public int getFlow(float pressure){
+	public static int getFlow(float pressure){
 		return MIN_MBPT + (int) Math.floor((MAX_MBPT - MIN_MBPT) * Mth.clamp(pressure, 0.0F, 1.0F));
 	}
 	
