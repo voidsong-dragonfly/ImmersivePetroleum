@@ -117,7 +117,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 					.relative(mbte.getIsMirrored() ? mbFacing.getClockWise() : mbFacing.getCounterClockWise(), 2);
 			
 			Direction f = (mbte.getIsMirrored() ? mbte.getFacing().getOpposite() : mbte.getFacing()).getCounterClockWise();
-			return new Tuple<BlockPos, Direction>(pos, f);
+			return new Tuple<>(pos, f);
 		}
 		return null;
 	}
@@ -138,28 +138,24 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
-		switch(rotation){
-			case NORTH:{
+		switch (rotation) {
+			case NORTH -> {
 				matrix.mulPose(new Quaternion(0, 90F, 0, true));
 				matrix.translate(-6, 1, -1);
-				break;
 			}
-			case SOUTH:{
+			case SOUTH -> {
 				matrix.mulPose(new Quaternion(0, 270F, 0, true));
 				matrix.translate(-5, 1, -2);
-				break;
 			}
-			case EAST:{
+			case EAST -> {
 				matrix.translate(-5, 1, -1);
-				break;
 			}
-			case WEST:{
+			case WEST -> {
 				matrix.mulPose(new Quaternion(0, 180F, 0, true));
 				matrix.translate(-6, 1, -2);
-				break;
 			}
-			default:
-				break;
+			default -> {
+			}
 		}
 		
 		IPModel model;

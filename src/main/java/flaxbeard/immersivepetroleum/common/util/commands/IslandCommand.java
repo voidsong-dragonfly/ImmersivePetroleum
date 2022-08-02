@@ -22,13 +22,9 @@ public class IslandCommand{
 	}
 	
 	public static LiteralArgumentBuilder<CommandSourceStack> create(){
-		LiteralArgumentBuilder<CommandSourceStack> main = Commands.literal("reservoir").executes(source -> {
-			return Command.SINGLE_SUCCESS;
-		}).requires(source -> source.hasPermission(4));
+		LiteralArgumentBuilder<CommandSourceStack> main = Commands.literal("reservoir").executes(source -> Command.SINGLE_SUCCESS).requires(source -> source.hasPermission(4));
 		
-		main.then(Commands.literal("findnear").executes(source -> {
-			return Command.SINGLE_SUCCESS;
-		}));
+		main.then(Commands.literal("findnear").executes(source -> Command.SINGLE_SUCCESS));
 		
 		main.then(setters());
 		
@@ -36,15 +32,9 @@ public class IslandCommand{
 	}
 	
 	static LiteralArgumentBuilder<CommandSourceStack> setters(){
-		LiteralArgumentBuilder<CommandSourceStack> set = Commands.literal("set").executes(source -> {
-			return Command.SINGLE_SUCCESS;
-		}).requires(source -> source.hasPermission(4));
+		LiteralArgumentBuilder<CommandSourceStack> set = Commands.literal("set").executes(source -> Command.SINGLE_SUCCESS).requires(source -> source.hasPermission(4));
 		
-		set.then(Commands.literal("amount").executes(source -> {
-			return Command.SINGLE_SUCCESS;
-		}).then(Commands.argument("amount", LongArgumentType.longArg(0, 0xFFFFFFFFL)).executes(source -> {
-			return Command.SINGLE_SUCCESS;
-		})));
+		set.then(Commands.literal("amount").executes(source -> Command.SINGLE_SUCCESS).then(Commands.argument("amount", LongArgumentType.longArg(0, 0xFFFFFFFFL)).executes(source -> Command.SINGLE_SUCCESS)));
 		
 		set.then(Commands.literal("type").executes(source -> Command.SINGLE_SUCCESS).then(typesetter()));
 		

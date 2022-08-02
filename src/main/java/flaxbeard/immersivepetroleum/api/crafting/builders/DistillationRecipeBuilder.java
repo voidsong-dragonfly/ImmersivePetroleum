@@ -69,7 +69,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * @return self for chaining
 	 */
 	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, double chance){
-		this.byproducts.add(new Tuple<ItemStack, Double>(byproduct, Math.max(Math.min(chance, 1.0), 0.0)));
+		this.byproducts.add(new Tuple<>(byproduct, Math.max(Math.min(chance, 1.0), 0.0)));
 		return this;
 	}
 	
@@ -113,7 +113,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 			double chance = jsonObject.get("chance").getAsDouble();
 			jsonObject.remove("chance");
 			ItemStack stack = ShapedRecipe.itemStackFromJson(jsonObject);
-			return new Tuple<ItemStack, Double>(stack, chance);
+			return new Tuple<>(stack, chance);
 		}
 		
 		throw new IllegalArgumentException("Unexpected json object.");

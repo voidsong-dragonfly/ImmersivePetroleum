@@ -204,9 +204,7 @@ public class IPContent{
 	}
 	
 	public static void init(ParallelDispatchEvent event){
-		event.enqueueWork(() -> {
-			IPWorldGen.registerReservoirGen();
-		});
+		event.enqueueWork(IPWorldGen::registerReservoirGen);
 		
 		//blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));
 		//blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));

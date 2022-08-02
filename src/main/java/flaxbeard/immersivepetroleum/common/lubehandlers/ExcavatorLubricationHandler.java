@@ -44,8 +44,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		BlockEntity center = world.getBlockEntity(wheelPos);
 		
-		if(center instanceof BucketWheelBlockEntity){
-			BucketWheelBlockEntity wheel = (BucketWheelBlockEntity) center;
+		if(center instanceof BucketWheelBlockEntity wheel){
 			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
 				// Just to make absolutely sure it's the master
 				wheel = wheel.master();
@@ -80,8 +79,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		BlockEntity center = world.getBlockEntity(wheelPos);
 		
-		if(center instanceof BucketWheelBlockEntity){
-			BucketWheelBlockEntity wheel = (BucketWheelBlockEntity) center;
+		if(center instanceof BucketWheelBlockEntity wheel){
 			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
 				// Just to make absolutely sure it's the master
 				wheel = wheel.master();
@@ -96,8 +94,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		BlockPos wheelPos = mbte.getWheelCenterPos();
 		BlockEntity center = world.getBlockEntity(wheelPos);
 		
-		if(center instanceof BucketWheelBlockEntity){
-			BucketWheelBlockEntity wheel = (BucketWheelBlockEntity) center;
+		if(center instanceof BucketWheelBlockEntity wheel){
 			if(!wheel.offsetToMaster.equals(BlockPos.ZERO)){
 				// Just to make absolutely sure it's the master
 				wheel = wheel.master();
@@ -151,7 +148,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 					.relative(mbte.getFacing(), 4)
 					.relative(mbte.getIsMirrored() ? mbte.getFacing().getCounterClockWise() : mbte.getFacing().getClockWise(), 2);
 			Direction f = mbte.getIsMirrored() ? mbte.getFacing().getClockWise() : mbte.getFacing().getCounterClockWise();
-			return new Tuple<BlockPos, Direction>(pos, f);
+			return new Tuple<>(pos, f);
 		}
 		return null;
 	}
@@ -168,28 +165,24 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
-		switch(rotation){
-			case NORTH:{
+		switch (rotation) {
+			case NORTH -> {
 				matrix.mulPose(new Quaternion(0, 90F, 0, true));
 				matrix.translate(-1, 0, -1);
-				break;
 			}
-			case SOUTH:{
+			case SOUTH -> {
 				matrix.mulPose(new Quaternion(0, 270F, 0, true));
 				matrix.translate(0, 0, -2);
-				break;
 			}
-			case EAST:{
+			case EAST -> {
 				matrix.translate(0, 0, -1);
-				break;
 			}
-			case WEST:{
+			case WEST -> {
 				matrix.mulPose(new Quaternion(0, 180F, 0, true));
 				matrix.translate(-1, 0, -2);
-				break;
 			}
-			default:
-				break;
+			default -> {
+			}
 		}
 		
 		IPModel model = null;

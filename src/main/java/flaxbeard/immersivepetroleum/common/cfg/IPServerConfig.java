@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common.cfg;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 
 import com.electronwill.nightconfig.core.Config;
@@ -60,11 +59,11 @@ public class IPServerConfig{
 			
 			pumpjack_consumption = builder
 					.comment("The Flux the Pumpjack requires each tick to pump", "Default: 1024")
-					.define("pumpjack_consumption", Integer.valueOf(1024));
+					.define("pumpjack_consumption", 1024);
 			
 			pumpjack_speed = builder
 					.comment("The amount of mB of oil a Pumpjack extracts per tick", "Default: 15")
-					.define("pumpjack_speed", Integer.valueOf(15));
+					.define("pumpjack_speed", 15);
 			
 			builder.pop();
 		}
@@ -82,27 +81,27 @@ public class IPServerConfig{
 			
 			distillationTower_energyModifier = builder
 					.comment("A modifier to apply to the energy costs of every Distillation Tower recipe", "Default: 1.0")
-					.define("distillationTower_energyModifier", Double.valueOf(1.0));
+					.define("distillationTower_energyModifier", 1.0);
 			
 			distillationTower_timeModifier = builder
 					.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1", "Default: 1.0")
-					.define("distillationTower_timeModifier", Double.valueOf(1.0));
+					.define("distillationTower_timeModifier", 1.0);
 			
 			cokerUnit_energyModifier = builder
 					.comment("A modifier to apply to the energy costs of every Coker Tower recipe", "Default: 1.0")
-					.define("cokerUnit_energyModifier", Double.valueOf(1.0));
+					.define("cokerUnit_energyModifier", 1.0);
 			
 			cokerUnit_timeModifier = builder
 					.comment("A modifier to apply to the time of every Coker recipe. Can't be lower than 1", "Default: 1.0")
-					.define("cokerUnit_timeModifier", Double.valueOf(1.0));
+					.define("cokerUnit_timeModifier", 1.0);
 			
 			hydrotreater_energyModifier = builder
 					.comment("A modifier to apply to the energy costs of every Sulfur Recovery Unit recipe", "Default: 1.0")
-					.define("hydrotreater_energyModifier", Double.valueOf(1.0));
+					.define("hydrotreater_energyModifier", 1.0);
 			
 			hydrotreater_timeModifier = builder
 					.comment("A modifier to apply to the time of every Sulfur Recovery Unit recipe. Can't be lower than 1", "Default: 1.0")
-					.define("hydrotreater_timeModifier", Double.valueOf(1.0));
+					.define("hydrotreater_timeModifier", 1.0);
 			
 			builder.pop();
 		}
@@ -115,9 +114,7 @@ public class IPServerConfig{
 			
 			fuels = builder
 					.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
-					.defineList("fuels", Arrays.asList(new String[]{
-							"immersivepetroleum:gasoline, 5, 256"
-					}), o -> true);
+					.defineList("fuels", List.of("immersivepetroleum:gasoline, 5, 256"), o -> true);
 			
 			builder.pop();
 		}
@@ -132,9 +129,7 @@ public class IPServerConfig{
 			
 			boat_fuels = builder
 					.comment("List of Motorboat fuels. Format: fluid_name, mb_used_per_tick")
-					.defineList("boat_fuels", Arrays.asList(new String[]{
-							"immersivepetroleum:gasoline, 1"
-					}), o -> true);
+					.defineList("boat_fuels", List.of("immersivepetroleum:gasoline, 1"), o -> true);
 			
 			autounlock_recipes = builder
 					.comment("Automatically unlock IP recipes for new players", "Default: true")

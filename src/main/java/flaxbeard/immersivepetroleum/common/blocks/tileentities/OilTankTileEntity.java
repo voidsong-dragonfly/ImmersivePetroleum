@@ -56,7 +56,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IHammerInteraction, IPressurizedFluidOutput{
 	
-	public static enum PortState implements StringRepresentable{
+	public enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;
 		
 		@Override
@@ -73,7 +73,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		}
 	}
 	
-	public static enum Port implements StringRepresentable{
+	public enum Port implements StringRepresentable{
 		TOP(new BlockPos(2, 2, 3)),
 		BOTTOM(new BlockPos(2, 0, 3)),
 		DYNAMIC_A(new BlockPos(0, 1, 2)),
@@ -84,7 +84,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		public static final Port[] DYNAMIC_PORTS = {DYNAMIC_A, DYNAMIC_B, DYNAMIC_C, DYNAMIC_D};
 		
 		public final BlockPos posInMultiblock;
-		private Port(BlockPos posInMultiblock){
+		Port(BlockPos posInMultiblock){
 			this.posInMultiblock = posInMultiblock;
 		}
 		
@@ -202,10 +202,8 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
 			int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
 			int amount = Math.min(Math.abs(diff) / 2, maxTransfer);
-			
-			if((diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount))){
-				return true;
-			}
+
+			return (diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount));
 		}
 		
 		return false;

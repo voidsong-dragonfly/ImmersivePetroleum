@@ -90,8 +90,7 @@ public class FluidSpill extends TextureSheetParticle{
 	public static class Factory implements ParticleProvider<FluidParticleData>{
 		@Override
 		public Particle createParticle(FluidParticleData type, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
-			FluidSpill fluidSpill = new FluidSpill(type.getFluid(), world, x, y, z, xSpeed, ySpeed, zSpeed);
-			return fluidSpill;
+			return new FluidSpill(type.getFluid(), world, x, y, z, xSpeed, ySpeed, zSpeed);
 		}
 	}
 }

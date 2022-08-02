@@ -87,8 +87,7 @@ public class OilCanItem extends IPItemBase{
 					return InteractionResult.SUCCESS;
 				}else{
 					InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
-						if(handler instanceof FluidHandlerItemStack){
-							FluidHandlerItemStack can = (FluidHandlerItemStack) handler;
+						if(handler instanceof FluidHandlerItemStack can){
 							FluidStack fs = can.getFluid();
 							
 							if(fs != null && LubricantHandler.isValidLube(fs.getFluid())){
@@ -117,19 +116,17 @@ public class OilCanItem extends IPItemBase{
 	
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker){
-		this.interactLivingEntity(stack, (Player) null, target, InteractionHand.MAIN_HAND);
+		this.interactLivingEntity(stack, null, target, InteractionHand.MAIN_HAND);
 		return true;
 	}
 	
 	@Override
 	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand){
-		if(target instanceof IronGolem){
-			IronGolem golem = (IronGolem) target;
-			
+		if(target instanceof IronGolem golem){
+
 			FluidUtil.getFluidHandler(stack).ifPresent(con -> {
-				if(con instanceof FluidHandlerItemStack){
-					FluidHandlerItemStack handler = (FluidHandlerItemStack) con;
-					
+				if(con instanceof FluidHandlerItemStack handler){
+
 					if(handler.getFluid() != null && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
 						int amountNeeded = (LubricantHandler.getLubeAmount(handler.getFluid().getFluid()) * 5 * 20);
 						if(handler.getFluid().getAmount() >= amountNeeded){

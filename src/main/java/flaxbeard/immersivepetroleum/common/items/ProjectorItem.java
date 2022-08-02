@@ -1,9 +1,6 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiPredicate;
 
 import javax.annotation.Nullable;
@@ -188,11 +185,12 @@ public class ProjectorItem extends IPItemBase{
 		if(!nameCache.containsKey(multiblock.getClass())){
 			String name = multiblock.getClass().getSimpleName();
 			name = name.substring(0, name.indexOf("Multiblock"));
-			
-			switch(name){
-				case "LightningRod": name="Lightningrod"; break;
-				case "ImprovedBlastfurnace": name="BlastFurnaceAdvanced"; break;
-			}
+
+			name = switch (name) {
+				case "LightningRod" -> "Lightningrod";
+				case "ImprovedBlastfurnace" -> "BlastFurnaceAdvanced";
+				default -> name;
+			};
 			
 			nameCache.put(multiblock.getClass(), name);
 		}
@@ -214,28 +212,26 @@ public class ProjectorItem extends IPItemBase{
 		if(world.isClientSide){
 			boolean changeMode = false;
 			Settings settings = getSettings(held);
-			switch(settings.getMode()){
-				case PROJECTION:{
-					if(player.isShiftKeyDown()){
-						if(settings.getPos() != null){
+			switch (settings.getMode()) {
+				case PROJECTION -> {
+					if (player.isShiftKeyDown()) {
+						if (settings.getPos() != null) {
 							settings.setPos(null);
 							settings.sendPacketToServer(hand);
-						}else{
+						} else {
 							changeMode = true;
 						}
 					}
-					break;
 				}
-				case MULTIBLOCK_SELECTION:{
-					if(!player.isShiftKeyDown()){
+				case MULTIBLOCK_SELECTION -> {
+					if (!player.isShiftKeyDown()) {
 						openGUI(hand, held);
-					}else{
+					} else {
 						changeMode = true;
 					}
-					break;
 				}
-				default:
-					break;
+				default -> {
+				}
 			}
 			
 			if(changeMode){
@@ -342,13 +338,14 @@ public class ProjectorItem extends IPItemBase{
 		int x = ((rotation.ordinal() % 2 == 0) ? size.getX() : size.getZ()) / 2;
 		int z = ((rotation.ordinal() % 2 == 0) ? size.getZ() : size.getX()) / 2;
 		Direction facing = playerIn.getDirection();
-		
-		switch(facing){
-			case NORTH:	hit.setWithOffset(hit, 0, 0, -z);break;
-			case SOUTH:	hit.setWithOffset(hit, 0, 0, z);break;
-			case EAST:	hit.setWithOffset(hit, x, 0, 0);break;
-			case WEST:	hit.setWithOffset(hit, -x, 0, 0);break;
-			default:break;
+
+		switch (facing) {
+			case NORTH -> hit.setWithOffset(hit, 0, 0, -z);
+			case SOUTH -> hit.setWithOffset(hit, 0, 0, z);
+			case EAST -> hit.setWithOffset(hit, x, 0, 0);
+			case WEST -> hit.setWithOffset(hit, -x, 0, 0);
+			default -> {
+			}
 		}
 	}
 	
@@ -405,7 +402,7 @@ public class ProjectorItem extends IPItemBase{
 			}else if(renderMoving && MCUtil.getHitResult() != null && MCUtil.getHitResult().getType() == Type.BLOCK){
 				BlockHitResult blockRTResult = (BlockHitResult) MCUtil.getHitResult();
 				
-				BlockPos pos = (BlockPos) blockRTResult.getBlockPos();
+				BlockPos pos = blockRTResult.getBlockPos();
 				
 				BlockState state = world.getBlockState(pos);
 				if(state.getMaterial().isReplaceable() || blockRTResult.getDirection() != Direction.UP){
@@ -435,12 +432,12 @@ public class ProjectorItem extends IPItemBase{
 					// Slice handling
 					if(badBlocks.getValue() == 0 && layer > currentLayer.getValue()){
 						currentLayer.setValue(layer);
-					}else if(layer != currentLayer.getValue()){
+					}else if(!Objects.equals(layer, currentLayer.getValue())){
 						return true; // breaks the internal loop
 					}
 					
 					if(isPlaced.booleanValue()){ // Render only slices when placed
-						if(layer == currentLayer.getValue()){
+						if(Objects.equals(layer, currentLayer.getValue())){
 							BlockPos realPos = info.tPos.offset(hit);
 							BlockState toCompare = world.getBlockState(realPos);
 							BlockState tState = info.getModifiedState(world, realPos);
@@ -496,44 +493,41 @@ public class ProjectorItem extends IPItemBase{
 				ItemStack heldStack = player.getMainHandItem();
 				for(Pair<RenderLayer, MultiblockProjection.Info> pair:toRender){
 					MultiblockProjection.Info rInfo = pair.getRight();
-					
-					switch(pair.getLeft()){
-						case ALL:{ // All / Slice
+
+					switch (pair.getLeft()) {
+						case ALL -> { // All / Slice
 							boolean held = heldStack.getItem() == rInfo.getRawState().getBlock().asItem();
 							float alpha = held ? 1.0F : 0.50F;
-							
+
 							matrix.pushPose();
 							{
 								// This can NOT use mainBuffer, otherwise highlighting held blocks does not work at all.
 								// While this may not be the most efficient thing to do, it's the one thing i have yet to find an alternative to
 								// It has it's own Tesselator for that reason.
 								renderPhantom(matrix, world, rInfo, settings.isMirrored(), flicker, alpha, partialTicks);
-								
-								if(held){
+
+								if (held) {
 									renderCenteredOutlineBox(mainBuffer, matrix, 0xAFAFAF, flicker);
 								}
 							}
 							matrix.popPose();
-							break;
 						}
-						case BAD:{ // Bad block
+						case BAD -> { // Bad block
 							matrix.pushPose();
 							{
 								matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
-								
+
 								renderCenteredOutlineBox(mainBuffer, matrix, 0xFF0000, flicker);
 							}
 							matrix.popPose();
-							break;
 						}
-						case PERFECT:{
+						case PERFECT -> {
 							int x = rInfo.tPos.getX();
 							int y = rInfo.tPos.getY();
 							int z = rInfo.tPos.getZ();
-							
+
 							min.set(Math.min(x, min.getX()), Math.min(y, min.getY()), Math.min(z, min.getZ()));
 							max.set(Math.max(x, max.getX()), Math.max(y, max.getY()), Math.max(z, max.getZ()));
-							break;
 						}
 					}
 				}
@@ -620,13 +614,11 @@ public class ProjectorItem extends IPItemBase{
 						VertexConsumer vc = buffer.getBuffer(IPRenderTypes.PROJECTION);
 						//vc = buffer.getBuffer(RenderType.translucent());
 						blockRenderer.renderModel(matrix.last(), vc, state, ibakedmodel, red, green, blue, 0xF000F0, OverlayTexture.NO_OVERLAY, modelData);
-						break;
 					}
 					case ENTITYBLOCK_ANIMATED -> {
 						ItemStack stack = new ItemStack(state.getBlock());
 						
 						MCUtil.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.NONE, 0xF000F0, OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
-						break;
 					}
 					default -> {}
 				}
@@ -749,14 +741,12 @@ public class ProjectorItem extends IPItemBase{
 		@SubscribeEvent
 		public static void handleKey(InputEvent.KeyInputEvent event){
 			if(event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT){
-				switch(event.getAction()){
-					case GLFW.GLFW_PRESS:{
+				switch (event.getAction()) {
+					case GLFW.GLFW_PRESS -> {
 						shiftHeld = true;
-						return;
 					}
-					case GLFW.GLFW_RELEASE:{
+					case GLFW.GLFW_RELEASE -> {
 						shiftHeld = false;
-						return;
 					}
 				}
 			}
@@ -789,7 +779,7 @@ public class ProjectorItem extends IPItemBase{
 		}
 	}
 	
-	public static enum RenderLayer{
-		ALL, BAD, PERFECT;
-	}
+	public enum RenderLayer{
+		ALL, BAD, PERFECT
+    }
 }

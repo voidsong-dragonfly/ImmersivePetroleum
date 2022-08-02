@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -363,7 +362,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	@Override
 	public Collection<ConnectionPoint> getConnectionPoints(){
-		return Arrays.asList(new ConnectionPoint(worldPosition, 0));
+		return List.of(new ConnectionPoint(worldPosition, 0));
 	}
 
 	@Override

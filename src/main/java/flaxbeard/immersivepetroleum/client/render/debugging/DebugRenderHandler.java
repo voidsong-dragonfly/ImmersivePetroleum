@@ -89,128 +89,125 @@ public class DebugRenderHandler{
 			if(isHoldingDebugItem(player)){
 				HitResult rt = mc.hitResult;
 				if(rt != null){
-					switch(rt.getType()){
-						case BLOCK:{
+					switch (rt.getType()) {
+						case BLOCK -> {
 							BlockHitResult result = (BlockHitResult) rt;
 							Level world = player.level;
-							
+
 							List<Component> debugOut = new ArrayList<>();
 							BlockEntity te = world.getBlockEntity(result.getBlockPos());
-							
-							if(te instanceof GasGeneratorTileEntity gas){
+
+							if (te instanceof GasGeneratorTileEntity gas) {
 								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
-								
-							}else if(te instanceof IPTileEntityBase){
+
+							} else if (te instanceof IPTileEntityBase) {
 								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
-								
-								if(te instanceof AutoLubricatorTileEntity autolube){
+
+								if (te instanceof AutoLubricatorTileEntity autolube) {
 									FluidTank tank = autolube.tank;
 									FluidStack fs = tank.getFluid();
-									
+
 									debugOut.add(toText("isSlave").withStyle(autolube.isSlave ? ChatFormatting.GREEN : ChatFormatting.RED));
-									if(!autolube.isSlave){
+									if (!autolube.isSlave) {
 										debugOut.add(toText("Facing: " + autolube.facing.getName()));
 										debugOut.add(toText("Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 									}
-									
-								}else if(te instanceof FlarestackTileEntity flare){
-								}else if(te instanceof WellTileEntity well){
-								}else if(te instanceof WellPipeTileEntity wellPipe){
+
+								} else if (te instanceof FlarestackTileEntity flare) {
+								} else if (te instanceof WellTileEntity well) {
+								} else if (te instanceof WellPipeTileEntity wellPipe) {
 								}
-								
-							}else if(te instanceof MultiblockPartBlockEntity<?>){
+
+							} else if (te instanceof MultiblockPartBlockEntity<?>) {
 								{
 									MultiblockPartBlockEntity<?> generic = (MultiblockPartBlockEntity<?>) te;
 									BlockPos tPos = generic.posInMultiblock;
-									if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
+									if (!generic.offsetToMaster.equals(BlockPos.ZERO)) {
 										generic = generic.master();
 									}
 									Block block = generic.getBlockState().getBlock();
-									
+
 									debugOut.add(toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
-									
+
 									MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
-									
-									try{
+
+									try {
 										name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
-									}catch(UnsupportedOperationException e){
+									} catch (UnsupportedOperationException e) {
 										// Don't care, skip if this is thrown
 									}
-									
-									if(generic instanceof PoweredMultiblockBlockEntity<?,?> poweredGeneric){
+
+									if (generic instanceof PoweredMultiblockBlockEntity<?, ?> poweredGeneric) {
 										name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
 										debugOut.add(toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
 									}
-									
-									synchronized(LubricatedHandler.lubricatedTiles){
-										for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
-											if(info.pos.equals(generic.getBlockPos())){
+
+									synchronized (LubricatedHandler.lubricatedTiles) {
+										for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles) {
+											if (info.pos.equals(generic.getBlockPos())) {
 												name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
 											}
 										}
 									}
-									
+
 									debugOut.add(name);
 								}
-								
-								if(te instanceof DistillationTowerTileEntity tower){
+
+								if (te instanceof DistillationTowerTileEntity tower) {
 									distillationtower(debugOut, tower);
-									
-								}else if(te instanceof CokerUnitTileEntity coker){
+
+								} else if (te instanceof CokerUnitTileEntity coker) {
 									cokerunit(debugOut, coker);
-									
-								}else if(te instanceof HydrotreaterTileEntity treater){
+
+								} else if (te instanceof HydrotreaterTileEntity treater) {
 									hydrotreater(debugOut, treater);
-									
-								}else if(te instanceof OilTankTileEntity oiltank){
+
+								} else if (te instanceof OilTankTileEntity oiltank) {
 									oiltank(debugOut, oiltank);
-									
-								}else if(te instanceof DerrickTileEntity derrick){
+
+								} else if (te instanceof DerrickTileEntity derrick) {
 									derrick(debugOut, derrick);
 								}
 							}
-							
-							if(!debugOut.isEmpty()){
+
+							if (!debugOut.isEmpty()) {
 								BlockPos hit = result.getBlockPos();
 								debugOut.add(0, toText("World XYZ: " + hit.getX() + ", " + hit.getY() + ", " + hit.getZ()));
-								
+
 								renderOverlay(event.getMatrixStack(), debugOut);
 							}
-							break;
 						}
-						case ENTITY:{
+						case ENTITY -> {
 							EntityHitResult result = (EntityHitResult) rt;
-							
-							if(result.getEntity() instanceof MotorboatEntity){
-								MotorboatEntity boat = (MotorboatEntity) result.getEntity();
-								
+
+							if (result.getEntity() instanceof MotorboatEntity boat) {
+
 								List<Component> debugOut = new ArrayList<>();
-								
+
 								debugOut.add(toText("").append(boat.getDisplayName()).withStyle(ChatFormatting.GOLD));
-								
+
 								FluidStack fluid = boat.getContainedFluid();
-								if(fluid == FluidStack.EMPTY){
+								if (fluid == FluidStack.EMPTY) {
 									debugOut.add(toText("Tank: Empty"));
-								}else{
+								} else {
 									debugOut.add(toText("Tank: " + fluid.getAmount() + "/" + boat.getMaxFuel() + "mB of ").append(fluid.getDisplayName()));
 								}
-								
+
 								NonNullList<ItemStack> upgrades = boat.getUpgrades();
 								int i = 0;
-								for(ItemStack upgrade:upgrades){
-									if(upgrade == null || upgrade == ItemStack.EMPTY){
+								for (ItemStack upgrade : upgrades) {
+									if (upgrade == null || upgrade == ItemStack.EMPTY) {
 										debugOut.add(toText("Upgrade " + (++i) + ": Empty"));
-									}else{
+									} else {
 										debugOut.add(toText("Upgrade " + (++i) + ": ").append(upgrade.getHoverName()));
 									}
 								}
-								
+
 								renderOverlay(event.getMatrixStack(), debugOut);
 							}
-							break;
 						}
-						default:
-							break;
+						default -> {
+						}
 					}
 				}
 			}

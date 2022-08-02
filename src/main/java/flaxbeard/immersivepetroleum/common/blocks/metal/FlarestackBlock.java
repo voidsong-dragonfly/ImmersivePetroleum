@@ -97,8 +97,7 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 			
 			if(!worldIn.isClientSide){
 				BlockEntity te = worldIn.getBlockEntity(pos);
-				if(te != null && te instanceof FlarestackTileEntity){
-					FlarestackTileEntity flare = ((FlarestackTileEntity) te);
+				if(te instanceof FlarestackTileEntity flare){
 					flare.invertRedstone();
 					
 					ChatUtils.sendServerNoSpamMessages(player, new TranslatableComponent(Lib.CHAT_INFO + "rsControl." + (flare.isRedstoneInverted() ? "invertedOn" : "invertedOff")));

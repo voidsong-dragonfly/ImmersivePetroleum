@@ -92,9 +92,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 		
 		if(!this.phyiscalPipesList.isEmpty()){
 			final ListTag list = new ListTag();
-			this.phyiscalPipesList.forEach(i -> {
-				list.add(IntTag.valueOf(i.intValue()));
-			});
+			this.phyiscalPipesList.forEach(i -> list.add(IntTag.valueOf(i)));
 			nbt.put("pipeLoc", list);
 		}
 	}
@@ -134,9 +132,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 		if(nbt.contains("pipeLoc", Tag.TAG_LIST)){
 			ListTag list = nbt.getList("pipeLoc", Tag.TAG_INT);
 			final List<Integer> ints = new ArrayList<>(list.size());
-			list.forEach(n -> {
-				ints.add(Integer.valueOf(((IntTag) n).getAsInt()));
-			});
+			list.forEach(n -> ints.add(((IntTag) n).getAsInt()));
 			this.phyiscalPipesList.clear();
 			this.phyiscalPipesList.addAll(ints);
 		}
@@ -220,13 +216,13 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 			if(this.selfDestruct && advanceTimer()){
 				// Sucks to be you if this happens =P
 				if(!this.phyiscalPipesList.isEmpty()){
-					for(int i = 0;i < this.phyiscalPipesList.size();i++){
+					for (Integer integer : this.phyiscalPipesList) {
 						BlockPos pos = getBlockPos();
-						pos = new BlockPos(pos.getX(), this.phyiscalPipesList.get(i).intValue(), pos.getZ());
-						
+						pos = new BlockPos(pos.getX(), integer, pos.getZ());
+
 						BlockState state = getWorldNonnull().getBlockState(pos);
-						
-						if(state.getBlock() instanceof WellPipeBlock){
+
+						if (state.getBlock() instanceof WellPipeBlock) {
 							getWorldNonnull().setBlockAndUpdate(pos, state.setValue(WellPipeBlock.BROKEN, true));
 						}
 					}
@@ -273,10 +269,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 	}
 	
 	public boolean advanceTimer(){
-		if(this.selfDestruct && this.selfDestructTimer-- <= 0){
-			return true;
-		}
-		return false;
+		return this.selfDestruct && this.selfDestructTimer-- <= 0;
 	}
 	
 	@Override

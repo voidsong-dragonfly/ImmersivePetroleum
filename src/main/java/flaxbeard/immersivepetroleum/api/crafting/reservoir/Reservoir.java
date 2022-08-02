@@ -206,7 +206,7 @@ public class Reservoir extends IESerializableRecipe{
 		if(nbtList.size() > 0){
 			for(Tag tag:nbtList){
 				if(tag instanceof StringTag){
-					list.add(new ResourceLocation(((StringTag) tag).getAsString()));
+					list.add(new ResourceLocation(tag.getAsString()));
 				}
 			}
 		}

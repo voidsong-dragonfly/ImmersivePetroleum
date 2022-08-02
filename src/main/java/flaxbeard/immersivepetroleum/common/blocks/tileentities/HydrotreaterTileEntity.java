@@ -237,7 +237,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 								inputAmounts = new int[]{recipe.getInputFluid().getAmount()};
 							}
 							
-							MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<SulfurRecoveryRecipe>(recipe, this::getRecipeForId)
+							MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId)
 									.setInputTanks(inputs)
 									.setInputAmounts(inputAmounts);
 							if(addProcessToQueue(process, true)){
@@ -268,7 +268,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 					int drained = output.fill(FluidHelper.copyFluid(target, Math.min(target.getAmount(), accepted)), FluidAction.EXECUTE);
 					
 					this.tanks[TANK_OUTPUT].drain(new FluidStack(target.getFluid(), drained), FluidAction.EXECUTE);
-					ret |= true;
+					ret = true;
 				}
 				
 				return ret;

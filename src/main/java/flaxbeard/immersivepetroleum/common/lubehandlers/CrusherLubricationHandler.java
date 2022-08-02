@@ -113,7 +113,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 		if(!mbte.isDummy()){
 			BlockPos pos = mbte.getBlockPos().relative(mbte.getFacing(), 2);
 			Direction f = mbte.getFacing().getOpposite();
-			return new Tuple<BlockPos, Direction>(pos, f);
+			return new Tuple<>(pos, f);
 		}
 		return null;
 	}
@@ -129,28 +129,24 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
-		switch(rotation){
-			case NORTH:{
+		switch (rotation) {
+			case NORTH -> {
 				matrix.mulPose(new Quaternion(0, 90F, 0, true));
 				matrix.translate(-1, 0, 0);
-				break;
 			}
-			case SOUTH:{
+			case SOUTH -> {
 				matrix.mulPose(new Quaternion(0, 270F, 0, true));
 				matrix.translate(0, 0, -1);
-				break;
 			}
-			case EAST:{
+			case EAST -> {
 				matrix.translate(0, 0, 0);
-				break;
 			}
-			case WEST:{
+			case WEST -> {
 				matrix.mulPose(new Quaternion(0, 180F, 0, true));
 				matrix.translate(-1, 0, -1);
-				break;
 			}
-			default:
-				break;
+			default -> {
+			}
 		}
 		
 		if(pipes == null)

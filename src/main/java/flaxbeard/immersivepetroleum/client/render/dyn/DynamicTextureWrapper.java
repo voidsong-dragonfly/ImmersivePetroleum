@@ -99,7 +99,7 @@ public class DynamicTextureWrapper{
 		this.uuid = uuid;
 		
 		this.texture = new DynamicTexture(width, height, true);
-		this.rl = ResourceUtils.ip("dyntexture/" + uuid.toString());
+		this.rl = ResourceUtils.ip("dyntexture/" + uuid);
 		
 		MCUtil.getTextureManager().register(this.rl, this.texture);
 		this.renderType = RenderType.text(this.rl);

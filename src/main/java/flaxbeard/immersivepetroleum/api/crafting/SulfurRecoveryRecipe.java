@@ -1,9 +1,6 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -99,7 +96,7 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 		this.inputFluidSecondary = inputFluidSecondary;
 		this.chance = chance;
 		
-		this.fluidOutputList = Arrays.asList(output);
+		this.fluidOutputList = Collections.singletonList(output);
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
 		
 		timeAndEnergy(time, energy);

@@ -108,15 +108,11 @@ public class ReservoirHandler{
 	 * @return The total weight associated with the dimension/biome pair
 	 */
 	public static int getTotalWeight(ResourceLocation dimension, ResourceLocation biome){
-		Map<ResourceLocation, Integer> map = totalWeightMap.get(dimension);
-		if(map == null){
-			map = new HashMap<>();
-			totalWeightMap.put(dimension, map);
-		}
-		
+		Map<ResourceLocation, Integer> map = totalWeightMap.computeIfAbsent(dimension, k -> new HashMap<>());
+
 		Integer totalWeight = map.get(biome);
 		if(totalWeight == null){
-			totalWeight = Integer.valueOf(0);
+			totalWeight = 0;
 			
 			for(Reservoir reservoir:Reservoir.map.values()){
 				if(reservoir.isValidDimension(dimension) && reservoir.isValidBiome(biome)){
@@ -268,27 +264,19 @@ public class ReservoirHandler{
 				for(int x = -1;x <= 1;x++){
 					if(ReservoirHandler.getValueOf(world, pos.x + 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x + 1, pos.z);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x - 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x - 1, pos.z);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x, pos.z + 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z + 1);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x, pos.z - 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z - 1);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 				}
 			}

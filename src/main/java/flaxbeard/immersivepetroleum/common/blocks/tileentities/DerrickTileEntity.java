@@ -188,12 +188,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			if(ExternalModContent.isIEConcrete(tFluidStack) && tFluidStack.getAmount() >= concreteNeeded){
 				return false;
 			}
-			
-			if(concreteNeeded < fs.getAmount()){
-				return false;
-			}
-			
-			return true;
+
+			return concreteNeeded >= fs.getAmount();
 		}
 		
 		return fs.getFluid() == Fluids.WATER && concreteNeeded <= 0;
@@ -296,7 +292,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 														world.destroyBlock(current, false);
 														world.setBlockAndUpdate(current, IPContent.Blocks.WELL_PIPE.get().defaultBlockState());
 														
-														well.phyiscalPipesList.add(Integer.valueOf(y));
+														well.phyiscalPipesList.add(y);
 														
 														this.tank.drain(CONCRETE, FluidAction.EXECUTE);
 														
@@ -561,9 +557,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
 				BlockEntity teLow = world.getBlockEntity(current);
 				
-				if(teLow instanceof WellTileEntity){
-					WellTileEntity well = (WellTileEntity) teLow;
-					
+				if(teLow instanceof WellTileEntity well){
+
 					if(!well.drillingCompleted){
 						if(well.wellPipeLength > 0){
 							well.startSelfDestructSequence();

@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import java.util.Arrays;
 import java.util.List;
 
 import blusunrize.immersiveengineering.api.Lib;
@@ -117,7 +116,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	public List<ItemStack> getBlockEntityDrop(LootContext context){
 		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
 		if(state.getValue(AutoLubricatorBlock.SLAVE)){
-			return Arrays.asList(ItemStack.EMPTY);
+			return List.of(ItemStack.EMPTY);
 		}
 		
 		ItemStack stack = new ItemStack(state.getBlock());
@@ -131,7 +130,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 			}
 		}
 		
-		return Arrays.asList(stack);
+		return List.of(stack);
 	}
 	
 	private LazyOptional<IFluidHandler> outputHandler;
@@ -146,9 +145,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 				}
 				
 				if(this.outputHandler == null){
-					this.outputHandler = LazyOptional.of(() -> {
-						return master.tank;
-					});
+					this.outputHandler = LazyOptional.of(() -> master.tank);
 				}
 				return this.outputHandler.cast();
 			}

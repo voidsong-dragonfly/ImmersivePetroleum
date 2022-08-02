@@ -266,7 +266,7 @@ public class ClientProxy extends CommonProxy{
 		builder.addSpecialElement(new SpecialElementData("flarestack0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.FLARESTACK.get())))));
 		builder.addSpecialElement(new SpecialElementData("flarestack1", 0, () -> {
 			Set<TagKey<Fluid>> fluids = FlarestackHandler.getSet();
-			List<Component[]> list = new ArrayList<Component[]>();
+			List<Component[]> list = new ArrayList<>();
 			for(TagKey<Fluid> tag:fluids){
 				ResourceLocation rl = tag.registry().location();
 				Fluid f = ForgeRegistries.FLUIDS.getValue(rl);
@@ -338,7 +338,7 @@ public class ClientProxy extends CommonProxy{
 		builder.addSpecialElement(new SpecialElementData("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE)));
 		builder.addSpecialElement(new SpecialElementData("distillationtower1", 0, () -> {
 			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
-			List<Component[]> list = new ArrayList<Component[]>();
+			List<Component[]> list = new ArrayList<>();
 			for(DistillationRecipe recipe:recipeList){
 				boolean first = true;
 				for(FluidStack output:recipe.getFluidOutputs()){
@@ -442,36 +442,36 @@ public class ClientProxy extends CommonProxy{
 			
 			String dimBLWL = "";
 			if(reservoir.dimWhitelist != null && reservoir.dimWhitelist.size() > 0){
-				String validDims = "";
+				StringBuilder validDims = new StringBuilder();
 				for(ResourceLocation rl:reservoir.dimWhitelist){
-					validDims += (!validDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
+					validDims.append((validDims.length() > 0) ? ", " : "").append("<dim;").append(rl).append(">");
 				}
-				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.valid", localizedName, validDims, aOrAn);
+				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.valid", localizedName, validDims.toString(), aOrAn);
 			}else if(reservoir.dimBlacklist != null && reservoir.dimBlacklist.size() > 0){
-				String invalidDims = "";
+				StringBuilder invalidDims = new StringBuilder();
 				for(ResourceLocation rl:reservoir.dimBlacklist){
-					invalidDims += (!invalidDims.isEmpty() ? ", " : "") + "<dim;" + rl + ">";
+					invalidDims.append((invalidDims.length() > 0) ? ", " : "").append("<dim;").append(rl).append(">");
 				}
-				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.invalid", localizedName, invalidDims, aOrAn);
+				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.invalid", localizedName, invalidDims.toString(), aOrAn);
 			}else{
 				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.any", localizedName, aOrAn);
 			}
 			
 			String bioBLWL = "";
 			if(reservoir.bioWhitelist != null && reservoir.bioWhitelist.size() > 0){
-				String validBiomes = "";
+				StringBuilder validBiomes = new StringBuilder();
 				for(ResourceLocation rl:reservoir.bioWhitelist){
 					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
-					validBiomes += (!validBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
+					validBiomes.append((validBiomes.length() > 0) ? ", " : "").append(bio != null ? bio.toString() : rl);
 				}
-				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.valid", validBiomes);
+				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.valid", validBiomes.toString());
 			}else if(reservoir.bioBlacklist != null && reservoir.bioBlacklist.size() > 0){
-				String invalidBiomes = "";
+				StringBuilder invalidBiomes = new StringBuilder();
 				for(ResourceLocation rl:reservoir.bioBlacklist){
 					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
-					invalidBiomes += (!invalidBiomes.isEmpty() ? ", " : "") + (bio != null ? bio.toString() : rl);
+					invalidBiomes.append((invalidBiomes.length() > 0) ? ", " : "").append(bio != null ? bio.toString() : rl);
 				}
-				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes);
+				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes.toString());
 			}else{
 				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.any");
 			}

@@ -81,7 +81,7 @@ public class ProjectorScreen extends Screen{
 		super(new TextComponent("projector"));
 		this.settings = new Settings(projector);
 		this.hand = hand;
-		this.multiblocks = Lazy.of(() -> MultiblockHandler.getMultiblocks());
+		this.multiblocks = Lazy.of(MultiblockHandler::getMultiblocks);
 		
 		if(this.settings.getMultiblock() != null){
 			this.move = 20F;
@@ -108,18 +108,10 @@ public class ProjectorScreen extends Screen{
 			
 			MCUtil.getPlayer().displayClientMessage(this.settings.getMode().getTranslated(), true);
 		}));
-		addRenderableWidget(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
-			MCUtil.getScreen().onClose();
-		}));
-		addRenderableWidget(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> {
-			this.settings.flip();
-		}));
-		addRenderableWidget(new RotateLeftButton(this.guiLeft + 115, this.guiTop + 106, but -> {
-			this.settings.rotateCCW();
-		}));
-		addRenderableWidget(new RotateRightButton(this.guiLeft + 115, this.guiTop + 130, but -> {
-			this.settings.rotateCW();
-		}));
+		addRenderableWidget(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> MCUtil.getScreen().onClose()));
+		addRenderableWidget(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> this.settings.flip()));
+		addRenderableWidget(new RotateLeftButton(this.guiLeft + 115, this.guiTop + 106, but -> this.settings.rotateCCW()));
+		addRenderableWidget(new RotateRightButton(this.guiLeft + 115, this.guiTop + 130, but -> this.settings.rotateCW()));
 		
 		updatelist();
 	}
@@ -128,7 +120,7 @@ public class ProjectorScreen extends Screen{
 		GuiReactiveList l = (GuiReactiveList) button;
 		if(l.selectedOption >= 0 && l.selectedOption < listEntries.length){
 			String str = this.listEntries[l.selectedOption];
-			IMultiblock mb = this.multiblocks.get().get(Integer.valueOf(str));
+			IMultiblock mb = this.multiblocks.get().get(Integer.parseInt(str));
 			this.settings.setMultiblock(mb);
 		}
 	}
@@ -159,7 +151,7 @@ public class ProjectorScreen extends Screen{
 		});
 		
 		this.listEntries = list.toArray(new String[0]);
-		GuiReactiveList guilist = new GuiReactiveList(this, this.guiLeft + 15, this.guiTop + 29, 89, 127, button -> listaction(button), this.listEntries);
+		GuiReactiveList guilist = new GuiReactiveList(this, this.guiLeft + 15, this.guiTop + 29, 89, 127, this::listaction, this.listEntries);
 		guilist.setPadding(1, 1, 1, 1);
 		guilist.setTextColor(0);
 		guilist.setTextHoverColor(0x7F7FFF);
@@ -176,7 +168,7 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	private String getMBName(String str){
-		return getMBName(Integer.valueOf(str));
+		return getMBName(Integer.parseInt(str));
 	}
 	private String getMBName(int index){
 		IMultiblock mb = this.multiblocks.get().get(index);
@@ -391,7 +383,7 @@ public class ProjectorScreen extends Screen{
 				
 				return true;
 			}else{
-				return isFocused() && isVisible() && keyCode != 256 ? true : super.keyPressed(keyCode, scanCode, modifiers);
+				return isFocused() && isVisible() && keyCode != 256 || super.keyPressed(keyCode, scanCode, modifiers);
 			}
 		}
 		

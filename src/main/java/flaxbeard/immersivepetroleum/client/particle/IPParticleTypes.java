@@ -22,12 +22,12 @@ public class IPParticleTypes{
 	
 	@SuppressWarnings("deprecation")
 	private static <T extends ParticleOptions> ParticleType<T> createParticleWithData(String name, ParticleOptions.Deserializer<T> deserializer, Codec<T> codec){
-		ParticleType<T> type = new ParticleType<T>(false, deserializer){
-			@Override
-			public Codec<T> codec(){
-				return codec;
-			}
-		};
+		ParticleType<T> type = new ParticleType<>(false, deserializer) {
+            @Override
+            public Codec<T> codec() {
+                return codec;
+            }
+        };
 		type.setRegistryName(ResourceUtils.ip(name));
 		return type;
 	}

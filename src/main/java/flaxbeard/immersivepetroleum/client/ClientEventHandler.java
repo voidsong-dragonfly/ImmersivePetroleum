@@ -90,7 +90,7 @@ public class ClientEventHandler{
 								BlockEntity te = mc.player.level.getBlockEntity(pos);
 								
 								if(te != null){
-									ILubricationHandler<BlockEntity> handler = (ILubricationHandler<BlockEntity>) LubricatedHandler.getHandlerForTile(te);
+									ILubricationHandler<BlockEntity> handler = LubricatedHandler.getHandlerForTile(te);
 									if(handler != null){
 										Tuple<BlockPos, Direction> target = handler.getGhostBlockPosition(mc.player.level, te);
 										if(target != null){
@@ -173,29 +173,24 @@ public class ClientEventHandler{
 				HitResult result = MCUtil.getHitResult();
 				
 				if(result != null){
-					switch(result.getType()){
-						case ENTITY:{
-							if(result instanceof EntityHitResult eHit){
-								if(eHit.getEntity() instanceof MotorboatEntity motorboat){
-									String[] text = motorboat.getOverlayText(player, result);
-									
-									if(text != null && text.length > 0){
-										Font font = ClientUtils.font();
-										int col = 0xffffff;
-										for(int i = 0;i < text.length;i++){
-											if(text[i] != null){
-												int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
-												int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
-												font.drawShadow(event.getMatrixStack(), text[i], fx, fy, col);
-											}
+					if (result.getType() == HitResult.Type.ENTITY) {
+						if (result instanceof EntityHitResult eHit) {
+							if (eHit.getEntity() instanceof MotorboatEntity motorboat) {
+								String[] text = motorboat.getOverlayText(player, result);
+
+								if (text != null && text.length > 0) {
+									Font font = ClientUtils.font();
+									int col = 0xffffff;
+									for (int i = 0; i < text.length; i++) {
+										if (text[i] != null) {
+											int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
+											int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
+											font.drawShadow(event.getMatrixStack(), text[i], fx, fy, col);
 										}
 									}
 								}
 							}
-							break;
 						}
-						default:
-							break;
 					}
 				}
 			}

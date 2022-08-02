@@ -29,26 +29,23 @@ public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackT
 		if(te != null && !te.isDummy()){
 			transform.pushPose();
 			Direction rotation = te.getFacing();
-			switch(rotation){
-				case NORTH:
-					transform.mulPose(new Quaternion(0, 90F, 0, true));
-					transform.translate(-6, 0, -1);
-					break;
-				case EAST:
-					transform.translate(-5, 0, -1);
-					break;
-				case SOUTH:
-					transform.mulPose(new Quaternion(0, 270F, 0, true));
-					transform.translate(-5, 0, -2);
-					break;
-				case WEST:
-					transform.mulPose(new Quaternion(0, 180F, 0, true));
-					transform.translate(-6, 0, -2);
-					break;
-				default:
-					break;
-				
-			}
+            switch (rotation) {
+                case NORTH -> {
+                    transform.mulPose(new Quaternion(0, 90F, 0, true));
+                    transform.translate(-6, 0, -1);
+                }
+                case EAST -> transform.translate(-5, 0, -1);
+                case SOUTH -> {
+                    transform.mulPose(new Quaternion(0, 270F, 0, true));
+                    transform.translate(-5, 0, -2);
+                }
+                case WEST -> {
+                    transform.mulPose(new Quaternion(0, 180F, 0, true));
+                    transform.translate(-6, 0, -2);
+                }
+                default -> {
+                }
+            }
 			
 			ModelPumpjack model;
 			if((model = (ModelPumpjack) pumpjackarm.get()) != null){

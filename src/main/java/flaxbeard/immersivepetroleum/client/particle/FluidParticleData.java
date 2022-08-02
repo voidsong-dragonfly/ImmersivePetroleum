@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client.particle;
 
 import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -15,20 +14,18 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class FluidParticleData implements ParticleOptions{
-	public static final Codec<FluidParticleData> CODEC = RecordCodecBuilder.create(instance -> {
-		return instance.group(Codec.STRING.fieldOf("fluid").forGetter(data -> data.fluid.getRegistryName().toString())).apply(instance, FluidParticleData::new);
-	});
+	public static final Codec<FluidParticleData> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.STRING.fieldOf("fluid").forGetter(data -> data.fluid.getRegistryName().toString())).apply(instance, FluidParticleData::new));
 	
 	@SuppressWarnings("deprecation")
-	public static final ParticleOptions.Deserializer<FluidParticleData> DESERIALIZER = new ParticleOptions.Deserializer<FluidParticleData>(){
+	public static final ParticleOptions.Deserializer<FluidParticleData> DESERIALIZER = new ParticleOptions.Deserializer<>() {
 		@Override
-		public FluidParticleData fromCommand(ParticleType<FluidParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
+		public FluidParticleData fromCommand(ParticleType<FluidParticleData> particleTypeIn, StringReader reader) {
 			String name = reader.getString();
 			return new FluidParticleData(name);
 		}
-		
+
 		@Override
-		public FluidParticleData fromNetwork(ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer){
+		public FluidParticleData fromNetwork(ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer) {
 			String name = buffer.readUtf();
 			return new FluidParticleData(name);
 		}

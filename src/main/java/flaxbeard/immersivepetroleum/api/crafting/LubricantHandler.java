@@ -36,7 +36,7 @@ public class LubricantHandler{
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void register(@Nonnull TagKey<Fluid> fluid, int amount){
-		if(fluid != null && !lubricants.stream().anyMatch(pair -> pair.getLeft() == fluid)){
+		if(fluid != null && lubricants.stream().noneMatch(pair -> pair.getLeft() == fluid)){
 			lubricants.add(Pair.of(fluid, amount));
 		}
 	}

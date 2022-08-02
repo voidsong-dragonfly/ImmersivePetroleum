@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -80,7 +81,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 			.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.inputItem.getMatchingStacks()));
 		
 		builder.addSlot(RecipeIngredientRole.INPUT, 52, 58)
-			.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.outputItem.get()));
+			.addIngredients(VanillaTypes.ITEM_STACK, Collections.singletonList(recipe.outputItem.get()));
 	}
 	
 	@Override

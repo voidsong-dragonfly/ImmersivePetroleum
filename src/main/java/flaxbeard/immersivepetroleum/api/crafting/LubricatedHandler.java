@@ -125,7 +125,7 @@ public class LubricatedHandler{
 		}
 	}
 	
-	public static List<LubricatedTileInfo> lubricatedTiles = new ArrayList<LubricatedTileInfo>();
+	public static List<LubricatedTileInfo> lubricatedTiles = new ArrayList<>();
 	
 	public static boolean lubricateTile(BlockEntity tile, Fluid lubricant, int ticks){
 		return lubricateTile(tile, lubricant, ticks, false, -1);

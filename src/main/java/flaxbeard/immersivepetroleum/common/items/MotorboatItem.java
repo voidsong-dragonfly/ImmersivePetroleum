@@ -133,12 +133,10 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			
 			if(bb != null){
 				List<Entity> list = worldIn.getEntities(playerIn, bb.expandTowards(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).inflate(1.0D));
-				for(int i = 0;i < list.size();++i){
-					Entity entity = (Entity) list.get(i);
-					
-					if(entity.isPickable()){
+				for (Entity entity : list) {
+					if (entity.isPickable()) {
 						AABB axisalignedbb = entity.getBoundingBox();
-						if(axisalignedbb != null && axisalignedbb.inflate((double) entity.getPickRadius()).contains(vec3d)){
+						if (axisalignedbb != null && axisalignedbb.inflate(entity.getPickRadius()).contains(vec3d)) {
 							flag = true;
 						}
 					}
@@ -146,9 +144,9 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			}
 			
 			if(flag){
-				return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, itemstack);
+				return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
 			}else if(raytraceresult.getType() != HitResult.Type.BLOCK){
-				return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, itemstack);
+				return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
 			}else{
 				Vec3 hit = raytraceresult.getLocation();
 				Block block = worldIn.getBlockState(new BlockPos(hit.add(0, .5, 0))).getBlock();
@@ -161,7 +159,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 				}
 				
 				if(worldIn.getBlockCollisions(entityboat, entityboat.getBoundingBox().inflate(-0.1D)).iterator().hasNext()){
-					return new InteractionResultHolder<ItemStack>(InteractionResult.FAIL, itemstack);
+					return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
 				}else{
 					if(!worldIn.isClientSide){
 						worldIn.addFreshEntity(entityboat);
@@ -172,16 +170,16 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 					}
 					
 					// playerIn.addStat(net.minecraft.stats.Stats.CUSTOM.get(getRegistryName()));
-					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, itemstack);
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
 				}
 			}
 		}
 		
-		return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, itemstack);
+		return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
 	}
 	
 	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){
-		IItemHandler handler = (IItemHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
 		
 		if(handler == null){
 			ImmersivePetroleum.log.info("No valid inventory handler found for " + stack);

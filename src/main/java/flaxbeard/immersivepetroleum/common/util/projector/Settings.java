@@ -193,11 +193,11 @@ public class Settings{
 		return "\"Settings\":[" + toNbt().toString() + "]";
 	}
 	
-	public static enum Mode{
+	public enum Mode{
 		MULTIBLOCK_SELECTION, PROJECTION;
 		
 		final String translation;
-		private Mode(){
+		Mode(){
 			this.translation = "desc.immersivepetroleum.info.projector.mode_" + ordinal();
 		}
 		

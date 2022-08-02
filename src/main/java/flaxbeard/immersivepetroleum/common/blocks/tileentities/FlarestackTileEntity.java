@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
@@ -88,7 +87,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 			if(this.inputHandler == null){
 				this.inputHandler = LazyOptional.of(() -> {
 					BlockEntity te = this.level.getBlockEntity(getBlockPos());
-					if(te != null && te instanceof FlarestackTileEntity){
+					if(te instanceof FlarestackTileEntity){
 						return ((FlarestackTileEntity) te).tank;
 					}
 					return null;
@@ -185,7 +184,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 					}
 				});
 				
-				List<Entity> goats = list.stream().filter(e -> e instanceof Goat).collect(Collectors.toList());
+				List<Entity> goats = list.stream().filter(e -> e instanceof Goat).toList();
 				if(!goats.isEmpty()){
 					final List<Player> players = this.getLevel().getEntitiesOfClass(Player.class, new AABB(this.worldPosition).inflate(8));
 					for(Entity g:goats){

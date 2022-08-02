@@ -46,9 +46,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.leftPos = (this.width - this.imageWidth) / 2;
 		this.topPos = (this.height - this.imageHeight) / 2;
 		
-		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, new TextComponent("Config"), button -> {
-			this.minecraft.setScreen(new DerrickSettingsScreen(this));
-		}, (button, matrix, mx, my) -> {
+		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, new TextComponent("Config"), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this)), (button, matrix, mx, my) -> {
 			if(!button.active){
 				renderTooltip(matrix, List.of(new TextComponent("Set in Stone.")), Optional.empty(), mx, my);
 			}

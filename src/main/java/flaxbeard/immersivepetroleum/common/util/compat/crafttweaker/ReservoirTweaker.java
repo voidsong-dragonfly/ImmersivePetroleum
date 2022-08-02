@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.openzen.zencode.java.ZenCodeType.Constructor;
 import org.openzen.zencode.java.ZenCodeType.Method;
@@ -24,8 +23,7 @@ public class ReservoirTweaker{
 	@Method
 	public static boolean remove(String name){
 			List<ResourceLocation> test = Reservoir.map.keySet().stream()
-				.filter(loc -> loc.getPath().contains(name))
-				.collect(Collectors.toList());
+					.filter(loc -> loc.getPath().contains(name)).toList();
 		
 		if(test.size() > 1){
 			//CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
@@ -94,10 +92,10 @@ public class ReservoirTweaker{
 		@Method
 		public ReservoirBuilder addDimensions(boolean blacklist, String[] names){
 			List<ResourceLocation> list = new ArrayList<>();
-			for(int i = 0;i < names.length;i++){
-				try{
-					list.add(new ResourceLocation(names[i]));
-				}catch(ResourceLocationException e){
+			for (String name : names) {
+				try {
+					list.add(new ResourceLocation(name));
+				} catch (ResourceLocationException e) {
 					//CraftTweakerAPI.logError("§caddDimension: %s§r", e.getMessage());
 				}
 			}
@@ -114,10 +112,10 @@ public class ReservoirTweaker{
 		@Method
 		public ReservoirBuilder addBiomes(boolean blacklist, String[] names){
 			List<ResourceLocation> list = new ArrayList<>();
-			for(int i = 0;i < names.length;i++){
-				try{
-					list.add(new ResourceLocation(names[i]));
-				}catch(ResourceLocationException e){
+			for (String name : names) {
+				try {
+					list.add(new ResourceLocation(name));
+				} catch (ResourceLocationException e) {
 					//CraftTweakerAPI.logError("§caddBiome: %s§r", e.getMessage());
 				}
 			}

@@ -50,21 +50,17 @@ public class IPSlot extends Slot{
 			return handlerCap.map(handler -> {
 				if(handler.getTanks() <= 0)
 					return false;
-				
-				switch(filter){
-					case FULL:
-						return !handler.getFluidInTank(0).isEmpty();
-					case EMPTY:
-						return handler.getFluidInTank(0).isEmpty();
-					case ANY:
-					default:
-						return true;
-				}
+
+				return switch (filter) {
+					case FULL -> !handler.getFluidInTank(0).isEmpty();
+					case EMPTY -> handler.getFluidInTank(0).isEmpty();
+					case ANY -> true;
+				};
 			}).orElse(false);
 		}
 		
-		public static enum FluidFilter{
-			ANY, EMPTY, FULL;
+		public enum FluidFilter{
+			ANY, EMPTY, FULL
 		}
 	}
 }

@@ -109,7 +109,6 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		WellPipeTileEntity tile = IPTileTypes.WELL_PIPE.get().create(pPos, pState);
-		return tile;
+		return IPTileTypes.WELL_PIPE.get().create(pPos, pState);
 	}
 }

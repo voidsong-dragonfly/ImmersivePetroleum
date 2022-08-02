@@ -140,7 +140,7 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 		if(pState.hasBlockEntity() && (!pState.is(pNewState.getBlock()) || !pNewState.hasBlockEntity())){
 			if(!pLevel.isClientSide && pLevel.getBlockEntity(pPos) instanceof SeismicSurveyTileEntity survey && !survey.isSlave){
 				if(!survey.stack.isEmpty()){
-					Block.popResource((Level) pLevel, pPos, survey.stack);
+					Block.popResource(pLevel, pPos, survey.stack);
 				}
 			}
 			pLevel.removeBlockEntity(pPos);

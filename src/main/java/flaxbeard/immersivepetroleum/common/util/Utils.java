@@ -69,15 +69,11 @@ public class Utils{
 	}
 	
 	public static void dropItem(Level level, BlockPos pos, ItemStack stack){
-		dropItem(level, pos, stack, e -> {
-			e.setDefaultPickUpDelay();
-		});
+		dropItem(level, pos, stack, ItemEntity::setDefaultPickUpDelay);
 	}
 	
 	public static void dropItemNoDelay(Level level, BlockPos pos, ItemStack stack){
-		dropItem(level, pos, stack, e -> {
-			e.setNoPickUpDelay();
-		});
+		dropItem(level, pos, stack, ItemEntity::setNoPickUpDelay);
 	}
 	
 	public static void dropItem(Level level, BlockPos pos, ItemStack stack, Consumer<ItemEntity> func){

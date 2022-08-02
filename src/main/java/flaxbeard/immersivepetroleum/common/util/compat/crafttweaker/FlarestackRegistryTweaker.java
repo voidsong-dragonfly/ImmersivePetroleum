@@ -23,7 +23,6 @@ public class FlarestackRegistryTweaker{
 	public static void register(KnownTag<Fluid> tag){
 		if(tag == null){
 //			CraftTweakerAPI.logError("§cFlarestackHandler: Expected fluidtag as input fluid!§r");
-			return;
 		}
 		
 		//FlarestackHandler.register((Tag<Fluid>) tag.getInternal().);

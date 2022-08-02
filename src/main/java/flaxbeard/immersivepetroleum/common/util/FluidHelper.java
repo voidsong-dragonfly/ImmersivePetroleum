@@ -19,8 +19,7 @@ public class FluidHelper{
 	
 	/** Convenience Method */
 	public static FluidStack copyFluid(FluidStack fluid, int amount){
-		FluidStack fs = copyFluid(fluid, amount, false);
-		return fs;
+		return copyFluid(fluid, amount, false);
 	}
 	
 	/**

@@ -347,11 +347,11 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 					return list;
 				}
 				if(bY == 3){
-					return Arrays.asList(new AABB(0.9375, 0.0, 0.375, 1.0, 0.125, 0.625));
+					return List.of(new AABB(0.9375, 0.0, 0.375, 1.0, 0.125, 0.625));
 				}
 			}
 			if(bX == 1 && bY == 3){
-				return Arrays.asList(new AABB(0.0, -0.125, 0.375, 1.0, 0.125, 0.625));
+				return List.of(new AABB(0.0, -0.125, 0.375, 1.0, 0.125, 0.625));
 			}
 			if(bX == 2){
 				if(bY == 1){
@@ -367,7 +367,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 					return list;
 				}
 				if(bY == 3){
-					return Arrays.asList(new AABB(0.0, 0.0, 0.375, 0.0625, 0.125, 0.625));
+					return List.of(new AABB(0.0, 0.0, 0.375, 0.0625, 0.125, 0.625));
 				}
 			}
 		}
@@ -382,13 +382,13 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 				);
 			}
 			if(bY == 1){ // Top
-				return Arrays.asList(new AABB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
+				return List.of(new AABB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0));
 			}
 		}
 		
 		// Below the power-in block, base height
 		if(bX == 2 && bY == 0 && bZ == 5){
-			return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+			return List.of(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 		}
 		
 		// Misc
@@ -428,7 +428,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 			
 			// Fluid Outputs
 			if(bZ == 2 && (bX == 0 || bX == 2)){
-				return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+				return List.of(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 			}
 			
 			if(bX == 1){
@@ -453,9 +453,9 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 				}
 			}
 			
-			return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
+			return List.of(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0));
 		}
 		
-		return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+		return List.of(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 	}
 }
