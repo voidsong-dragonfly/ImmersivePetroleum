@@ -60,7 +60,7 @@ public class OilCanItem extends IPItemBase{
 			return;
 		
 		FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
-			if(fluid != null && fluid.getAmount() > 0){
+			if(!fluid.isEmpty() && fluid.getAmount() > 0){
 				Component out = ((MutableComponent) fluid.getDisplayName())
 						.append(new TextComponent(": " + fluid.getAmount() + "/8000mB")).withStyle(ChatFormatting.GRAY);
 				tooltip.add(out);
@@ -89,8 +89,8 @@ public class OilCanItem extends IPItemBase{
 					InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
 						if(handler instanceof FluidHandlerItemStack can){
 							FluidStack fs = can.getFluid();
-							
-							if(fs != null && LubricantHandler.isValidLube(fs.getFluid())){
+
+							if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
 								int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
 								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
 									player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
@@ -102,10 +102,10 @@ public class OilCanItem extends IPItemBase{
 								}
 							}
 						}
-						
+
 						return InteractionResult.PASS;
 					}).orElse(InteractionResult.PASS);
-					
+
 					return ret;
 				}
 			}
@@ -127,7 +127,7 @@ public class OilCanItem extends IPItemBase{
 			FluidUtil.getFluidHandler(stack).ifPresent(con -> {
 				if(con instanceof FluidHandlerItemStack handler){
 
-					if(handler.getFluid() != null && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
+					if(!handler.getFluid().isEmpty() && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
 						int amountNeeded = (LubricantHandler.getLubeAmount(handler.getFluid().getFluid()) * 5 * 20);
 						if(handler.getFluid().getAmount() >= amountNeeded){
 							player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
@@ -161,7 +161,7 @@ public class OilCanItem extends IPItemBase{
 				ItemNBTHelper.remove(ret, "jerrycanDrain");
 			});
 			return ret;
-		}else if(FluidUtil.getFluidContained(stack) != null){
+		}else if(FluidUtil.getFluidContained(stack).isPresent()){
 			ItemStack ret = stack.copy();
 			FluidUtil.getFluidHandler(ret).ifPresent(handler -> handler.drain(1000, FluidAction.EXECUTE));
 			return ret;

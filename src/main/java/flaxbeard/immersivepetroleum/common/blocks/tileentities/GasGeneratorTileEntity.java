@@ -305,7 +305,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	public void tickServer(){
 		boolean lastActive = this.isActive;
 		this.isActive = false;
-		if(!this.level.hasNeighborSignal(this.worldPosition) && this.tank.getFluid() != null){
+		if(!this.level.hasNeighborSignal(this.worldPosition) && !this.tank.getFluid().isEmpty()){
 			Fluid fluid = this.tank.getFluid().getFluid();
 			int amount = FuelHandler.getFuelUsedPerTick(fluid);
 			if(amount > 0 && this.tank.getFluidAmount() >= amount){
