@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlockEntity>{
-	private static Vec3i size = new Vec3i(3, 3, 5);
+	private static final Vec3i size = new Vec3i(3, 3, 5);
 	
 	@Override
 	public Vec3i getStructureDimensions(){

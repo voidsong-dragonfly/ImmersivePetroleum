@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
-	private static Vec3i size = new Vec3i(4, 6, 3);
+	private static final Vec3i size = new Vec3i(4, 6, 3);
 	
 	@Override
 	public Vec3i getStructureDimensions(){

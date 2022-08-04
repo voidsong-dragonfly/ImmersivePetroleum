@@ -44,7 +44,7 @@ public class Reservoir extends IESerializableRecipe{
 	public List<ResourceLocation> bioWhitelist = new ArrayList<>(0);
 	public List<ResourceLocation> bioBlacklist = new ArrayList<>(0);
 	
-	private Fluid fluid;
+	private final Fluid fluid;
 	
 	/**
 	 * Creates a new reservoir.

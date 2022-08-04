@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Multimap;

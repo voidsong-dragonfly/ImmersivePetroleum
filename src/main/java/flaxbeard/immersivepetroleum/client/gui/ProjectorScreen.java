@@ -60,8 +60,8 @@ public class ProjectorScreen extends Screen{
 	static final Component GUI_DOWN = translation("gui.immersivepetroleum.projector.button.down");
 	static final Component GUI_SEARCH = translation("gui.immersivepetroleum.projector.search");
 	
-	private int xSize = 256;
-	private int ySize = 166;
+	private final int xSize = 256;
+	private final int ySize = 166;
 	private int guiLeft;
 	private int guiTop;
 	

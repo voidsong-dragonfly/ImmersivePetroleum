@@ -32,7 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ExcavatorLubricationHandler implements ILubricationHandler<ExcavatorBlockEntity>{
-	private static Vec3i size = new Vec3i(3, 6, 3);
+	private static final Vec3i size = new Vec3i(3, 6, 3);
 	
 	@Override
 	public Vec3i getStructureDimensions(){

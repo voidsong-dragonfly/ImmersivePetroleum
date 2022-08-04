@@ -20,8 +20,8 @@ import net.minecraft.resources.ResourceLocation;
 public class DerrickSettingsScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/derrick_settings.png");
 	
-	private int xSize = 158;
-	private int ySize = 176;
+	private final int xSize = 158;
+	private final int ySize = 176;
 	private int guiLeft;
 	private int guiTop;
 	private PipeConfig pipeConfig;

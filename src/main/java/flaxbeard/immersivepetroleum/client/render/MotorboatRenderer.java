@@ -20,8 +20,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
-	private static ResourceLocation texture = ResourceUtils.ip("textures/models/boat_motor.png");
-	private static ResourceLocation textureArmor = ResourceUtils.ip("textures/models/boat_motor_armor.png");
+	private static final ResourceLocation texture = ResourceUtils.ip("textures/models/boat_motor.png");
+	private static final ResourceLocation textureArmor = ResourceUtils.ip("textures/models/boat_motor_armor.png");
 	
 	/** instance of ModelBoat for rendering */
 	protected final ModelMotorboat modelBoat = new ModelMotorboat();
