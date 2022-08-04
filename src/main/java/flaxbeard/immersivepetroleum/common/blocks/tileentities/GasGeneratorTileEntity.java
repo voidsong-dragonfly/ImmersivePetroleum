@@ -124,7 +124,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 
 	@Override
 	public void onDataPacket(net.minecraft.network.Connection net, ClientboundBlockEntityDataPacket pkt){
-		if (pkt.getTag() != null){
+		if(pkt.getTag() != null){
 			load(pkt.getTag());
 		}
 	}
@@ -205,7 +205,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == Direction.UP)){
 			return this.fluidHandler.cast();
-		} else if (cap == CapabilityEnergy.ENERGY && (side == null || side == this.facing)) {
+		}else if(cap == CapabilityEnergy.ENERGY && (side == null || side == this.facing)){
 			return this.energyHandler.cast();
 		}
 		return super.getCapability(cap, side);

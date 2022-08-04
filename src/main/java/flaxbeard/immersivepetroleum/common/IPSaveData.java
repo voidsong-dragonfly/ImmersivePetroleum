@@ -43,7 +43,7 @@ public class IPSaveData extends SavedData{
 					ListTag islands = dim.getList("islands", Tag.TAG_COMPOUND);
 					
 					ImmersivePetroleum.log.info("[ReservoirIslands]: Read islands for dim {}", dimType.toString());
-					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundTag) inbt)).filter(Objects::nonNull).collect(Collectors.toList());
+					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundTag) inbt)).filter(o -> o != null).collect(Collectors.toList());
 					mainList.putAll(dimType, list);
 				}
 				

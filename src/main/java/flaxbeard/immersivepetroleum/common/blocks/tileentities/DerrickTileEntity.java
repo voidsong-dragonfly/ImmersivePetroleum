@@ -716,12 +716,12 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-			if (posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if(posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
 				return fluidInputHandler.getAndCast();
 			}
-			if (this.posInMultiblock.equals(Fluid_OUT)){
-				if (side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
+			if(this.posInMultiblock.equals(Fluid_OUT)){
+				if(side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
 					return dummyTank.cast();
 				}
 			}

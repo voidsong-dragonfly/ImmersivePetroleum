@@ -609,20 +609,20 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			if(!list.isEmpty()){
 				boolean flag = !(this.getControllingPassenger() instanceof Player);
 
-				for (Entity entity : list) {
-					if (!entity.hasPassenger(this)) {
-						if (flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getBbWidth() < this.getBbWidth() && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)) {
+				for (Entity entity : list){
+					if(!entity.hasPassenger(this)){
+						if(flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getBbWidth() < this.getBbWidth() && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)){
 							entity.startRiding(this);
-						} else {
+						}else{
 							this.push(entity);
 
-							if (this.hasIcebreaker) {
-								if (entity instanceof LivingEntity && !(entity instanceof Player) && this.getControllingPassenger() instanceof Player) {
+							if(this.hasIcebreaker){
+								if(entity instanceof LivingEntity && !(entity instanceof Player) && this.getControllingPassenger() instanceof Player){
 									Vector3f vec2 = new Vector3f((float) (entity.getX() - getX()), (float) (entity.getZ() - getZ()), 0.0F);
 									vec2.normalize();
 
 									float sim = vec2.dot(vec);
-									if (sim > .5f) {
+									if(sim > .5f){
 										Vec3 motion = entity.getDeltaMovement();
 										entity.hurt(DamageSource.playerAttack((Player) this.getControllingPassenger()), 4);
 										entity.setDeltaMovement(new Vec3(motion.x + (vec2.x() * .75F), motion.y, motion.z + (vec2.y() * .75F)));

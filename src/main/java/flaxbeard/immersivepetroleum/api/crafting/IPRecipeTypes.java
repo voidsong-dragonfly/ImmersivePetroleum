@@ -18,14 +18,14 @@ public class IPRecipeTypes{
 	public static final RegistryObject<RecipeType<SulfurRecoveryRecipe>> SULFUR_RECOVERY = makeType("hydrotreater");
 	public static final RegistryObject<RecipeType<Reservoir>> RESERVOIR = makeType("reservoir");
 
-	public static void modConstruction() {
+	public static void modConstruction(){
 		REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 
-	private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeType(String name) {
-		return REGISTER.register(name, () -> new RecipeType<>() {
+	private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeType(String name){
+		return REGISTER.register(name, () -> new RecipeType<>(){
             @Override
-            public String toString() {
+            public String toString(){
                 return ImmersivePetroleum.MODID + ":" + name;
             }
         });

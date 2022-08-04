@@ -185,14 +185,14 @@ public class MultiblockProjection{
 		
 		// Align corners first
 		if(!mirrored){
-			switch (rotation) {
+			switch(rotation){
 				case CLOCKWISE_90 -> this.offset.set(1 - size.getZ(), 0, 0);
 				case CLOCKWISE_180 -> this.offset.set(1 - size.getX(), 0, 1 - size.getZ());
 				case COUNTERCLOCKWISE_90 -> this.offset.set(0, 0, 1 - size.getX());
 				default -> this.offset.set(0, 0, 0);
 			}
 		}else{
-			switch (rotation) {
+			switch(rotation){
 				case NONE -> this.offset.set(1 - size.getX(), 0, 0);
 				case CLOCKWISE_90 -> this.offset.set(1 - size.getZ(), 0, 1 - size.getX());
 				case CLOCKWISE_180 -> this.offset.set(0, 0, 1 - size.getZ());

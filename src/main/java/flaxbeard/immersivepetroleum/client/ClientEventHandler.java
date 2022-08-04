@@ -173,16 +173,16 @@ public class ClientEventHandler{
 				HitResult result = MCUtil.getHitResult();
 				
 				if(result != null){
-					if (result.getType() == HitResult.Type.ENTITY) {
-						if (result instanceof EntityHitResult eHit) {
-							if (eHit.getEntity() instanceof MotorboatEntity motorboat) {
+					if(result.getType() == HitResult.Type.ENTITY){
+						if(result instanceof EntityHitResult eHit){
+							if(eHit.getEntity() instanceof MotorboatEntity motorboat){
 								String[] text = motorboat.getOverlayText(player, result);
 
-								if (text != null && text.length > 0) {
+								if(text != null && text.length > 0){
 									Font font = ClientUtils.font();
 									int col = 0xffffff;
-									for (int i = 0; i < text.length; i++) {
-										if (text[i] != null) {
+									for (int i = 0; i < text.length; i++){
+										if(text[i] != null){
 											int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
 											int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
 											font.drawShadow(event.getMatrixStack(), text[i], fx, fy, col);

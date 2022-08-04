@@ -104,16 +104,16 @@ public class DebugItem extends IPItemBase{
 		if(!worldIn.isClientSide){
 			Modes mode = DebugItem.getMode(playerIn.getItemInHand(handIn));
 
-			switch (mode) {
+			switch(mode){
 				case GENERAL_TEST -> {
 					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				case REFRESH_ALL_IPMODELS -> {
-					try {
+					try{
 						IPModels.getModels().forEach(IPModel::init);
 
 						playerIn.displayClientMessage(new TextComponent("Models refreshed."), true);
-					} catch (Exception e) {
+					} catch (Exception e){
 						e.printStackTrace();
 					}
 
@@ -140,7 +140,7 @@ public class DebugItem extends IPItemBase{
 				case SEEDBASED_RESERVOIR_AREA_TEST -> {
 					BlockPos playerPos = playerIn.blockPosition();
 
-					if (ReservoirHandler.getIsland(worldIn, playerPos) != null) {
+					if(ReservoirHandler.getIsland(worldIn, playerPos) != null){
 						ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
 
 						int x = playerPos.getX();
@@ -148,7 +148,7 @@ public class DebugItem extends IPItemBase{
 
 						float pressure = island.getPressure(worldIn, x, z);
 
-						if (playerIn.isShiftKeyDown()) {
+						if(playerIn.isShiftKeyDown()){
 							island.setAmount(island.getCapacity());
 							IPSaveData.markInstanceAsDirty();
 							playerIn.displayClientMessage(new TextComponent("Island Refilled."), true);
@@ -166,10 +166,10 @@ public class DebugItem extends IPItemBase{
 
 						playerIn.displayClientMessage(new TextComponent(out), true);
 
-					} else {
+					}else{
 						final Multimap<ResourceKey<Level>, ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList();
 
-						for (ResourceKey<Level> key : islands.keySet()) {
+						for (ResourceKey<Level> key : islands.keySet()){
 							Collection<ReservoirIsland> list = islands.get(key);
 
 							String str = key.location() + " has " + list.size() + " islands.";
@@ -200,20 +200,20 @@ public class DebugItem extends IPItemBase{
 		Modes mode = DebugItem.getMode(held);
 		
 		BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
-		switch (mode) {
+		switch(mode){
 			case GENERAL_TEST -> {
 				Level world = context.getLevel();
-				if (world.isClientSide) {
+				if(world.isClientSide){
 					// Client
 
 					player.displayClientMessage(new TextComponent(DynamicTextureWrapper.DYN_TEXTURE_CACHE.size() + ""), false);
 
-				} else {
+				}else{
 					// Server
 
-					if (te instanceof WellTileEntity well) {
+					if(te instanceof WellTileEntity well){
 
-						if (well.tappedIslands.isEmpty()) {
+						if(well.tappedIslands.isEmpty()){
 							well.tappedIslands.add(new ColumnPos(well.getBlockPos()));
 						}
 					}
@@ -222,17 +222,17 @@ public class DebugItem extends IPItemBase{
 				return InteractionResult.SUCCESS;
 			}
 			case UPDATE_SHAPES -> {
-				if (te instanceof CokerUnitTileEntity) {
+				if(te instanceof CokerUnitTileEntity){
 					CokerUnitTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
 
-				if (te instanceof DerrickTileEntity) {
+				if(te instanceof DerrickTileEntity){
 					DerrickTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
 
-				if (te instanceof OilTankTileEntity) {
+				if(te instanceof OilTankTileEntity){
 					OilTankTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
@@ -342,7 +342,7 @@ public class DebugItem extends IPItemBase{
 		@SubscribeEvent
 		public static void handleKey(InputEvent.KeyInputEvent event){
 			if(event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT){
-				switch (event.getAction()) {
+				switch(event.getAction()){
 					case GLFW.GLFW_PRESS -> {
 						shiftHeld = true;
 					}

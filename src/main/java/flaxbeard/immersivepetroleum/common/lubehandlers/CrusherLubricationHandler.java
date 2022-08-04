@@ -129,7 +129,7 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
 		
 		Direction rotation = mbte.getFacing();
-		switch (rotation) {
+		switch(rotation){
 			case NORTH -> {
 				matrix.mulPose(new Quaternion(0, 90F, 0, true));
 				matrix.translate(-1, 0, 0);

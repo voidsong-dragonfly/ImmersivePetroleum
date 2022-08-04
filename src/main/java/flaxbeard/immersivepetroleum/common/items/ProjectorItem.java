@@ -1,6 +1,10 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 
 import javax.annotation.Nullable;
@@ -186,7 +190,7 @@ public class ProjectorItem extends IPItemBase{
 			String name = multiblock.getClass().getSimpleName();
 			name = name.substring(0, name.indexOf("Multiblock"));
 
-			name = switch (name) {
+			name = switch(name){
 				case "LightningRod" -> "Lightningrod";
 				case "ImprovedBlastfurnace" -> "BlastFurnaceAdvanced";
 				default -> name;
@@ -212,21 +216,21 @@ public class ProjectorItem extends IPItemBase{
 		if(world.isClientSide){
 			boolean changeMode = false;
 			Settings settings = getSettings(held);
-			switch (settings.getMode()) {
+			switch(settings.getMode()){
 				case PROJECTION -> {
-					if (player.isShiftKeyDown()) {
-						if (settings.getPos() != null) {
+					if(player.isShiftKeyDown()){
+						if(settings.getPos() != null){
 							settings.setPos(null);
 							settings.sendPacketToServer(hand);
-						} else {
+						}else{
 							changeMode = true;
 						}
 					}
 				}
 				case MULTIBLOCK_SELECTION -> {
-					if (!player.isShiftKeyDown()) {
+					if(!player.isShiftKeyDown()){
 						openGUI(hand, held);
-					} else {
+					}else{
 						changeMode = true;
 					}
 				}
@@ -339,7 +343,7 @@ public class ProjectorItem extends IPItemBase{
 		int z = ((rotation.ordinal() % 2 == 0) ? size.getZ() : size.getX()) / 2;
 		Direction facing = playerIn.getDirection();
 
-		switch (facing) {
+		switch(facing){
 			case NORTH -> hit.setWithOffset(hit, 0, 0, -z);
 			case SOUTH -> hit.setWithOffset(hit, 0, 0, z);
 			case EAST -> hit.setWithOffset(hit, x, 0, 0);
@@ -494,7 +498,7 @@ public class ProjectorItem extends IPItemBase{
 				for(Pair<RenderLayer, MultiblockProjection.Info> pair:toRender){
 					MultiblockProjection.Info rInfo = pair.getRight();
 
-					switch (pair.getLeft()) {
+					switch(pair.getLeft()){
 						case ALL -> { // All / Slice
 							boolean held = heldStack.getItem() == rInfo.getRawState().getBlock().asItem();
 							float alpha = held ? 1.0F : 0.50F;
@@ -506,7 +510,7 @@ public class ProjectorItem extends IPItemBase{
 								// It has it's own Tesselator for that reason.
 								renderPhantom(matrix, world, rInfo, settings.isMirrored(), flicker, alpha, partialTicks);
 
-								if (held) {
+								if(held){
 									renderCenteredOutlineBox(mainBuffer, matrix, 0xAFAFAF, flicker);
 								}
 							}
@@ -658,7 +662,7 @@ public class ProjectorItem extends IPItemBase{
 			renderBox(buffer, matrix, Vec3.ZERO, new Vec3(1, 1, 1), rgb, flicker);
 		}
 
-		private static Vector3f combine(Vec3 start, Vec3 end, int mixBits) {
+		private static Vector3f combine(Vec3 start, Vec3 end, int mixBits){
 			final float eps = 0.01f;
 			return new Vector3f(
 					(float) ((mixBits & 4) != 0 ? end.x + eps : start.x - eps),
@@ -667,7 +671,7 @@ public class ProjectorItem extends IPItemBase{
 			);
 		}
 
-		private static void line(VertexConsumer out, PoseStack mat, Vec3 min, Vec3 max, int startBits, int endBits, int rgba) {
+		private static void line(VertexConsumer out, PoseStack mat, Vec3 min, Vec3 max, int startBits, int endBits, int rgba){
 			Vector3f start = combine(min, max, startBits);
 			Vector3f end = combine(min, max, endBits);
 			Vector3f delta = end.copy();
@@ -741,7 +745,7 @@ public class ProjectorItem extends IPItemBase{
 		@SubscribeEvent
 		public static void handleKey(InputEvent.KeyInputEvent event){
 			if(event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT){
-				switch (event.getAction()) {
+				switch(event.getAction()){
 					case GLFW.GLFW_PRESS -> {
 						shiftHeld = true;
 					}

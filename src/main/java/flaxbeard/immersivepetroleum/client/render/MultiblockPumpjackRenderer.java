@@ -29,7 +29,7 @@ public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackT
 		if(te != null && !te.isDummy()){
 			transform.pushPose();
 			Direction rotation = te.getFacing();
-            switch (rotation) {
+            switch(rotation){
                 case NORTH -> {
                     transform.mulPose(new Quaternion(0, 90F, 0, true));
                     transform.translate(-6, 0, -1);

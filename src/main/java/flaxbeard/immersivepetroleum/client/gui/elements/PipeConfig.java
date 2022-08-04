@@ -115,11 +115,11 @@ public class PipeConfig extends Button{
 			for(int gx = 0;gx < this.grid.getWidth();gx++){
 				int color = 0;
 
-				switch (this.grid.get(gx, gy)) {
+				switch(this.grid.get(gx, gy)){
 					case EMPTY -> {
-						if ((gx >= texCenterX - 2 && gx <= texCenterX + 2) && (gy >= texCenterY - 2 && gy <= texCenterY + 2)) {
+						if((gx >= texCenterX - 2 && gx <= texCenterX + 2) && (gy >= texCenterY - 2 && gy <= texCenterY + 2)){
 							color = 0x000000;
-						} else {
+						}else{
 							int px = gx - (this.grid.getWidth() / 2);
 							int py = gy - (this.grid.getHeight() / 2);
 

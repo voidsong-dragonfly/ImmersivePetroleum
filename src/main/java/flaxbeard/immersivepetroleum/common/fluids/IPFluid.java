@@ -66,13 +66,13 @@ public class IPFluid extends FlowingFluid{
 		this.buildAttributes = buildAttributes;
 	}
 
-	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory) {
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory){
 		return makeFluid(name, factory, IPFluidBlock::new);
 	}
 
 	public static IPFluidEntry makeFluid(
 			String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory
-	) {
+	){
 		Mutable<IPFluidEntry> entry = new MutableObject<>();
 
 		entry.setValue(new IPFluidEntry(
@@ -221,8 +221,8 @@ public class IPFluid extends FlowingFluid{
 			RegistryObject<IPFluid> flowing,
 			RegistryObject<Block> block,
 			RegistryObject<Item> bucket
-	) {
-		public Fluid get() {
+	){
+		public Fluid get(){
 			return still().get();
 		}
 	}

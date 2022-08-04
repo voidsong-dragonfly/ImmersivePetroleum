@@ -17,15 +17,15 @@ public class FluidParticleData implements ParticleOptions{
 	public static final Codec<FluidParticleData> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.STRING.fieldOf("fluid").forGetter(data -> data.fluid.getRegistryName().toString())).apply(instance, FluidParticleData::new));
 	
 	@SuppressWarnings("deprecation")
-	public static final ParticleOptions.Deserializer<FluidParticleData> DESERIALIZER = new ParticleOptions.Deserializer<>() {
+	public static final ParticleOptions.Deserializer<FluidParticleData> DESERIALIZER = new ParticleOptions.Deserializer<>(){
 		@Override
-		public FluidParticleData fromCommand(ParticleType<FluidParticleData> particleTypeIn, StringReader reader) {
+		public FluidParticleData fromCommand(ParticleType<FluidParticleData> particleTypeIn, StringReader reader){
 			String name = reader.getString();
 			return new FluidParticleData(name);
 		}
 
 		@Override
-		public FluidParticleData fromNetwork(ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer) {
+		public FluidParticleData fromNetwork(ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			String name = buffer.readUtf();
 			return new FluidParticleData(name);
 		}

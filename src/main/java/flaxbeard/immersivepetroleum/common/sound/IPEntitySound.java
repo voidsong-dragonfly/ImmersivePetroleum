@@ -131,11 +131,11 @@ public class IPEntitySound implements TickableSoundInstance{
 		if(volumeAjustment > .1f)
 			for(int dx = (int) Math.floor(entity.getX() - 8) >> 4;dx <= (int) Math.floor(entity.getX() + 8) >> 4;dx++){
 				for(int dz = (int) Math.floor(entity.getZ() - 8) >> 4;dz <= (int) Math.floor(entity.getZ() + 8) >> 4;dz++){
-					for (BlockEntity tile : MCUtil.getPlayer().level.getChunk(dx, dz).getBlockEntities().values()) {
-						if (tile != null && tile.getClass().getName().contains("SoundMuffler")) {
+					for (BlockEntity tile : MCUtil.getPlayer().level.getChunk(dx, dz).getBlockEntities().values()){
+						if(tile != null && tile.getClass().getName().contains("SoundMuffler")){
 							BlockPos tPos = tile.getBlockPos();
 							double d = entity.position().distanceTo(new Vec3(tPos.getX() + .5, tPos.getY() + .5, tPos.getZ() + .5));
-							if (d <= 64 && d > 0) {
+							if(d <= 64 && d > 0){
 								volumeAjustment = .1f;
 							}
 						}

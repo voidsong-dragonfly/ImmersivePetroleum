@@ -33,7 +33,7 @@ public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<
 				transform.pushPose();
 				{
 					Direction rotation = te.getFacing();
-                    switch (rotation) {
+                    switch(rotation){
                         case NORTH -> {
                             // transform.rotate(new Quaternion(0, 0, 0, true));
                             transform.translate(3, 0, 4);

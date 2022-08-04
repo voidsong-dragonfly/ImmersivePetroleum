@@ -19,7 +19,7 @@ public class NapalmFluid extends IPFluid{
 		super(entry, 1000, 4000);
 	}
 
-	public static IPFluidEntry makeFluid() {
+	public static IPFluidEntry makeFluid(){
 		return makeFluid("napalm", NapalmFluid::new, e -> new IPFluidBlock(e){
 			@Override
 			public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving){

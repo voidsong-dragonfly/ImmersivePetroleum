@@ -104,7 +104,7 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void completed(ParallelDispatchEvent event){
-		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch (str){
+		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch(str){
 			case "distillationtower_operationcost" -> (int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get());
 			case "coker_operationcost" -> (int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get());
 			case "hydrotreater_operationcost" -> (int) (512 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
@@ -114,7 +114,7 @@ public class ClientProxy extends CommonProxy{
 				int oil_min = 1000000;
 				int oil_max = 5000000;
 				for (Reservoir reservoir : Reservoir.map.values()){
-					if (reservoir.name.equals("oil")){
+					if(reservoir.name.equals("oil")){
 						oil_min = reservoir.minSize;
 						oil_max = reservoir.maxSize;
 						break;

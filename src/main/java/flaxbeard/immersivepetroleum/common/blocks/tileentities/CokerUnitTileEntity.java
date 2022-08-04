@@ -270,19 +270,19 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				CokerUnitRecipe recipe = CokerUnitRecipe.findRecipe(inputStack, inputFluid);
 				
 				if(recipe != null && inputStack.getCount() >= recipe.inputItem.getCount() && inputFluid.getAmount() >= recipe.inputFluid.getAmount()){
-					for (CokingChamber chamber : this.chambers) {
+					for (CokingChamber chamber : this.chambers){
 						boolean skipNext = false;
 
-						switch (chamber.getState()) {
+						switch(chamber.getState()){
 							case STANDBY -> {
-								if (chamber.setRecipe(recipe)) {
+								if(chamber.setRecipe(recipe)){
 									update = true;
 									skipNext = true;
 								}
 							}
 							case PROCESSING -> {
 								int acceptedStack = chamber.addStack(copyStack(inputStack, recipe.inputItem.getCount()), true);
-								if (acceptedStack >= recipe.inputItem.getCount()) {
+								if(acceptedStack >= recipe.inputItem.getCount()){
 									acceptedStack = Math.min(acceptedStack, inputStack.getCount());
 
 									chamber.addStack(copyStack(inputStack, acceptedStack), false);
@@ -296,7 +296,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 							}
 						}
 
-						if (skipNext) {
+						if(skipNext){
 							break;
 						}
 					}
@@ -635,7 +635,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			{
 				if(bY == 17 || bY == 21){
 					if(bX >= 1 && bX <= 7 && bZ >= 1 && bZ <= 3){
-						if(!((bX == 2 || bX == 6 || bX == 7) && bZ == 2)) {
+						if(!((bX == 2 || bX == 6 || bX == 7) && bZ == 2)){
 							main.add(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
 						}
 					}
@@ -1085,26 +1085,26 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				return setStage(CokingState.STANDBY);
 			}
 
-			switch (this.state) {
+			switch(this.state){
 				case STANDBY -> {
-					if (this.recipe != null) {
+					if(this.recipe != null){
 						return setStage(CokingState.PROCESSING);
 					}
 				}
 				case PROCESSING -> {
-					if (this.inputAmount > 0 && !getInputItem().isEmpty() && (this.tank.getCapacity() - this.tank.getFluidAmount()) >= this.recipe.outputFluid.getAmount()) {
-						if (cokerunit.energyStorage.getEnergyStored() >= this.recipe.getTotalProcessEnergy()) {
+					if(this.inputAmount > 0 && !getInputItem().isEmpty() && (this.tank.getCapacity() - this.tank.getFluidAmount()) >= this.recipe.outputFluid.getAmount()){
+						if(cokerunit.energyStorage.getEnergyStored() >= this.recipe.getTotalProcessEnergy()){
 							cokerunit.energyStorage.extractEnergy(this.recipe.getTotalProcessEnergy(), false);
 
 							this.timer++;
-							if (this.timer >= (this.recipe.getTotalProcessTime() * this.recipe.inputItem.getCount())) {
+							if(this.timer >= (this.recipe.getTotalProcessTime() * this.recipe.inputItem.getCount())){
 								this.timer = 0;
 
 								this.tank.fill(Utils.copyFluidStackWithAmount(this.recipe.outputFluid.getMatchingFluidStacks().get(0), this.recipe.outputFluid.getAmount(), false), FluidAction.EXECUTE);
 								this.inputAmount--;
 								this.outputAmount++;
 
-								if (this.inputAmount <= 0) {
+								if(this.inputAmount <= 0){
 									setStage(CokingState.DRAIN_RESIDUE);
 								}
 							}
@@ -1114,12 +1114,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					}
 				}
 				case DRAIN_RESIDUE -> {
-					if (this.tank.getFluidAmount() > 0) {
+					if(this.tank.getFluidAmount() > 0){
 						FluidTank buffer = cokerunit.bufferTanks[TANK_OUTPUT];
 						FluidStack drained = this.tank.drain(25, FluidAction.SIMULATE);
 
 						int accepted = buffer.fill(drained, FluidAction.SIMULATE);
-						if (accepted > 0) {
+						if(accepted > 0){
 							int amount = Math.min(drained.getAmount(), accepted);
 
 							this.tank.drain(amount, FluidAction.EXECUTE);
@@ -1127,23 +1127,23 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 
 							return true;
 						}
-					} else {
+					}else{
 						return setStage(CokingState.FLOODING);
 					}
 				}
 				case FLOODING -> {
 					this.timer++;
-					if (this.timer >= 2) {
+					if(this.timer >= 2){
 						this.timer = 0;
 
 						int max = getTotalAmount() * this.recipe.inputFluid.getAmount();
-						if (this.tank.getFluidAmount() < max) {
+						if(this.tank.getFluidAmount() < max){
 							FluidStack accepted = cokerunit.bufferTanks[TANK_INPUT].drain(this.recipe.inputFluid.getAmount(), FluidAction.SIMULATE);
-							if (accepted.getAmount() >= this.recipe.inputFluid.getAmount()) {
+							if(accepted.getAmount() >= this.recipe.inputFluid.getAmount()){
 								cokerunit.bufferTanks[TANK_INPUT].drain(this.recipe.inputFluid.getAmount(), FluidAction.EXECUTE);
 								this.tank.fill(accepted, FluidAction.EXECUTE);
 							}
-						} else if (this.tank.getFluidAmount() >= max) {
+						}else if(this.tank.getFluidAmount() >= max){
 							return setStage(CokingState.DUMPING);
 						}
 					}
@@ -1152,10 +1152,10 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					boolean update = false;
 
 					this.timer++;
-					if (this.timer >= 5) { // Output speed will always be fixed
+					if(this.timer >= 5){ // Output speed will always be fixed
 						this.timer = 0;
 
-						if (this.outputAmount > 0) {
+						if(this.outputAmount > 0){
 							Level world = cokerunit.getLevelNonnull();
 							int amount = Math.min(this.outputAmount, 1);
 							ItemStack copy = this.recipe.outputItem.get().copy();
@@ -1174,20 +1174,20 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					}
 
 					// Void washing fluid
-					if (this.tank.getFluidAmount() > 0) {
+					if(this.tank.getFluidAmount() > 0){
 						this.tank.drain(25, FluidAction.EXECUTE);
 
 						update = true;
 					}
 
-					if (this.outputAmount <= 0 && this.tank.isEmpty()) {
+					if(this.outputAmount <= 0 && this.tank.isEmpty()){
 						this.recipe = null;
 						setStage(CokingState.STANDBY);
 
 						update = true;
 					}
 
-					if (update) {
+					if(update){
 						return true;
 					}
 				}

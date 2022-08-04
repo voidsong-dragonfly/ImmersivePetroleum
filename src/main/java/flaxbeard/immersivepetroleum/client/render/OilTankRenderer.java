@@ -39,7 +39,7 @@ public class OilTankRenderer implements BlockEntityRenderer<OilTankTileEntity>{
 		
 		matrix.pushPose();
 		{
-            switch (te.getFacing()) {
+            switch(te.getFacing()){
                 case EAST -> {
                     matrix.mulPose(new Quaternion(0, 270F, 0, true));
                     matrix.translate(0, 0, -1);

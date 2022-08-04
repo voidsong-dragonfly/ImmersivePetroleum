@@ -51,7 +51,7 @@ public class IPSlot extends Slot{
 				if(handler.getTanks() <= 0)
 					return false;
 
-				return switch (filter) {
+				return switch(filter){
 					case FULL -> !handler.getFluidInTank(0).isEmpty();
 					case EMPTY -> handler.getFluidInTank(0).isEmpty();
 					case ANY -> true;

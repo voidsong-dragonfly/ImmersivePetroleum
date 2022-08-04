@@ -216,13 +216,13 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 			if(this.selfDestruct && advanceTimer()){
 				// Sucks to be you if this happens =P
 				if(!this.phyiscalPipesList.isEmpty()){
-					for (Integer integer : this.phyiscalPipesList) {
+					for (Integer integer : this.phyiscalPipesList){
 						BlockPos pos = getBlockPos();
 						pos = new BlockPos(pos.getX(), integer, pos.getZ());
 
 						BlockState state = getWorldNonnull().getBlockState(pos);
 
-						if (state.getBlock() instanceof WellPipeBlock) {
+						if(state.getBlock() instanceof WellPipeBlock){
 							getWorldNonnull().setBlockAndUpdate(pos, state.setValue(WellPipeBlock.BROKEN, true));
 						}
 					}

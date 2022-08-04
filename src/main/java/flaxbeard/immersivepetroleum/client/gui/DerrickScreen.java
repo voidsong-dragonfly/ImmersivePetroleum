@@ -67,7 +67,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		
 		List<Component> tooltip = new ArrayList<>();
 
-		for (InfoArea area : areas) {
+		for (InfoArea area : areas){
 			area.fillTooltip(mx, my, tooltip);
 		}
 

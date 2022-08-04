@@ -22,9 +22,9 @@ public class IPParticleTypes{
 	
 	@SuppressWarnings("deprecation")
 	private static <T extends ParticleOptions> ParticleType<T> createParticleWithData(String name, ParticleOptions.Deserializer<T> deserializer, Codec<T> codec){
-		ParticleType<T> type = new ParticleType<>(false, deserializer) {
+		ParticleType<T> type = new ParticleType<>(false, deserializer){
             @Override
-            public Codec<T> codec() {
+            public Codec<T> codec(){
                 return codec;
             }
         };
