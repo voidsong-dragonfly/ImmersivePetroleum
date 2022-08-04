@@ -39,6 +39,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.registries.RegistryObject;
+import javax.annotation.Nonnull;
 
 public class IPFluid extends FlowingFluid{
 	public static final List<IPFluidEntry> FLUIDS = new ArrayList<>();
@@ -87,6 +88,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
+	@Nonnull
 	protected FluidAttributes createAttributes(){
 		FluidAttributes.Builder builder = FluidAttributes.builder(this.stillTexture, this.flowingTexture)
 				.overlay(this.stillTexture)
@@ -99,7 +101,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected void beforeDestroyingBlock(LevelAccessor arg0, BlockPos arg1, BlockState arg2){
+	protected void beforeDestroyingBlock(@Nonnull LevelAccessor arg0, @Nonnull BlockPos arg1, @Nonnull BlockState arg2){
 	}
 	
 	@Override
@@ -108,37 +110,40 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
+	@Nonnull
 	public Fluid getFlowing(){
 		return this.entry.flowing.get();
 	}
 	
 	@Override
+	@Nonnull
 	public Fluid getSource(){
 		return this.entry.still.get();
 	}
 	
 	@Override
+	@Nonnull
 	public Item getBucket(){
 		return this.entry.bucket.get();
 	}
 	
 	@Override
-	protected int getDropOff(LevelReader arg0){
+	protected int getDropOff(@Nonnull LevelReader arg0){
 		return 1;
 	}
 	
 	@Override
-	protected int getSlopeFindDistance(LevelReader arg0){
+	protected int getSlopeFindDistance(@Nonnull LevelReader arg0){
 		return 4;
 	}
 	
 	@Override
-	protected boolean canBeReplacedWith(FluidState p_215665_1_, BlockGetter p_215665_2_, BlockPos p_215665_3_, Fluid p_215665_4_, Direction p_215665_5_){
+	protected boolean canBeReplacedWith(@Nonnull FluidState p_215665_1_, @Nonnull BlockGetter p_215665_2_, @Nonnull BlockPos p_215665_3_, @Nonnull Fluid p_215665_4_, @Nonnull Direction p_215665_5_){
 		return p_215665_5_ == Direction.DOWN && !isSame(p_215665_4_);
 	}
 	
 	@Override
-	public int getTickDelay(LevelReader p_205569_1_){
+	public int getTickDelay(@Nonnull LevelReader p_205569_1_){
 		return 5;
 	}
 	
@@ -148,7 +153,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected BlockState createLegacyBlock(FluidState state){
+	protected @Nonnull BlockState createLegacyBlock(@Nonnull FluidState state){
 		return this.entry.block.get().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
 	}
 	
@@ -158,7 +163,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	public int getAmount(FluidState state){
+	public int getAmount(@Nonnull FluidState state){
 		return isSource(state) ? 8 : state.getValue(LEVEL);
 	}
 	
@@ -197,7 +202,7 @@ public class IPFluid extends FlowingFluid{
 		}
 		
 		@Override
-		public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt){
+		public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable CompoundTag nbt){
 			return new FluidBucketWrapper(stack);
 		}
 	}
@@ -209,7 +214,7 @@ public class IPFluid extends FlowingFluid{
 		}
 		
 		@Override
-		protected void createFluidStateDefinition(Builder<Fluid, FluidState> builder){
+		protected void createFluidStateDefinition(@Nonnull Builder<Fluid, FluidState> builder){
 			super.createFluidStateDefinition(builder);
 			builder.add(LEVEL);
 		}

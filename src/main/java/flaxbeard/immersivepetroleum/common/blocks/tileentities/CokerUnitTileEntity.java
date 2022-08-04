@@ -206,6 +206,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	);
 	
 	@Override
+	@Nonnull
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction facing){
 		if((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return this.insertionHandler.getAndCast();
@@ -489,7 +490,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	}
 	
 	@Override
-	public boolean canUseGui(Player player){
+	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
 	}
 	
@@ -562,6 +563,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(CokerUnitTileEntity::getShape);
 	public static boolean updateShapes = false;
 	@Override
+	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
 		if(updateShapes){
 			updateShapes = false;

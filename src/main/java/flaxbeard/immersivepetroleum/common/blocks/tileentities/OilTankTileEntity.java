@@ -60,6 +60,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		INPUT, OUTPUT;
 		
 		@Override
+		@Nonnull
 		public String getSerializedName(){
 			return this.toString().toLowerCase(Locale.ENGLISH);
 		}
@@ -93,6 +94,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		}
 		
 		@Override
+		@Nonnull
 		public String getSerializedName(){
 			return this.toString().toLowerCase(Locale.ENGLISH);
 		}
@@ -109,8 +111,8 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	/** Template-Location of the Redstone Input Port. (0 0 0)<br>*/
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(2, 2, 5));
 	
-	public FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME, f -> !f.getFluid().getAttributes().isGaseous());
-	public EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
+	public final FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME, f -> !f.getFluid().getAttributes().isGaseous());
+	public final EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
 	public OilTankTileEntity(BlockEntityType<OilTankTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(OilTankMultiblock.INSTANCE, type, true, pWorldPosition, pBlockState);
 		this.redstoneControlInverted = true;
@@ -244,7 +246,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	}
 	
 	@Override
-	public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
+	public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ){
 		OilTankTileEntity master = this.master();
 		if(master != null){
 			if(FluidUtils.interactWithFluidHandler(player, hand, master.tank)){
@@ -256,7 +258,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	}
 	
 	@Override
-	public boolean hammerUseSide(Direction side, Player player, InteractionHand hand, Vec3 hitVec){
+	public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hitVec){
 		Level level = this.getLevelNonnull();
 		if(!level.isClientSide){
 			for(Port port:Port.DYNAMIC_PORTS){
@@ -325,7 +327,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	}
 	
 	@Override
-	public Component[] getOverlayText(Player player, HitResult mop, boolean hammer){
+	public Component[] getOverlayText(Player player, @Nonnull HitResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
 			OilTankTileEntity master = master();
 			FluidStack fs = master != null ? master.tank.getFluid() : this.tank.getFluid();
@@ -335,7 +337,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	}
 	
 	@Override
-	public boolean useNixieFont(Player player, HitResult mop){
+	public boolean useNixieFont(@Nonnull Player player, @Nonnull HitResult mop){
 		return false;
 	}
 	
@@ -349,6 +351,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
 	public static boolean updateShapes = false;
 	@Override
+	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
 		if(updateShapes){
 			updateShapes = false;

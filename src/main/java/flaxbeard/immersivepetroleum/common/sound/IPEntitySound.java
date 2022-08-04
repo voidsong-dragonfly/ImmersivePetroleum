@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.sound;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.common.items.EarmuffsItem;
@@ -53,11 +54,13 @@ public class IPEntitySound implements TickableSoundInstance{
 	}
 	
 	@Override
+	@Nonnull
 	public Attenuation getAttenuation(){
 		return attenuation;
 	}
 	
 	@Override
+	@Nonnull
 	public ResourceLocation getLocation(){
 		return resource;
 	}
@@ -74,11 +77,13 @@ public class IPEntitySound implements TickableSoundInstance{
 	}
 	
 	@Override
+	@Nonnull
 	public Sound getSound(){
 		return sound;
 	}
 	
 	@Override
+	@Nonnull
 	public SoundSource getSource(){
 		return category;
 	}
@@ -120,7 +125,7 @@ public class IPEntitySound implements TickableSoundInstance{
 	
 	public void evaluateVolume(){
 		volumeAjustment = 1f;
-		if(MCUtil.getPlayer() != null && MCUtil.getPlayer().getItemBySlot(EquipmentSlot.HEAD) != null){
+		if(MCUtil.getPlayer() != null && !MCUtil.getPlayer().getItemBySlot(EquipmentSlot.HEAD).isEmpty()){
 			ItemStack stack = MCUtil.getPlayer().getItemBySlot(EquipmentSlot.HEAD);
 			if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs"))
 				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");

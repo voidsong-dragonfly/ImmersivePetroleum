@@ -94,9 +94,9 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
-	public FluidTank tank = new FluidTank(8000, this::acceptsFluid);
+	public final FluidTank tank = new FluidTank(8000, this::acceptsFluid);
 	
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+	public final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 	public boolean drilling, spilling;
 	public int timer = 0;
 	
@@ -595,7 +595,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	}
 
 	@Override
-	public boolean canUseGui(Player player){
+	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
 	}
 	
@@ -750,6 +750,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DerrickTileEntity::getShape);
 	public static boolean updateShapes = false;
 	@Override
+	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
 		if(updateShapes){
 			updateShapes = false;

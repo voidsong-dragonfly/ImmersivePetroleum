@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import javax.annotation.Nonnull;
 
 /**
  * @author TwistedGate
@@ -23,7 +24,8 @@ public class SurveyResultItem extends IPItemBase{
 	}
 	
 	@Override
-	public Component getName(ItemStack stack){
+	@Nonnull
+	public Component getName(@Nonnull ItemStack stack){
 		String selfKey = getDescriptionId(stack);
 		if(stack.hasTag() && stack.getTag() != null){
 			if(stack.getTag().contains("surveyscan") || stack.getTag().contains("islandscan")){
@@ -45,7 +47,7 @@ public class SurveyResultItem extends IPItemBase{
 	}
 	
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(stack.hasTag() && stack.getTag() != null){
 			if(stack.getTag().contains("surveyscan") ){
 				CompoundTag tag = stack.getTagElement("surveyscan");

@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackTileEntity>{
@@ -25,8 +26,8 @@ public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackT
 	}
 	
 	@Override
-	public void render(PumpjackTileEntity te, float partialTicks, PoseStack transform, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn){
-		if(te != null && !te.isDummy()){
+	public void render(@Nonnull PumpjackTileEntity te, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn){
+		if(!te.isDummy()){
 			transform.pushPose();
 			Direction rotation = te.getFacing();
             switch(rotation){

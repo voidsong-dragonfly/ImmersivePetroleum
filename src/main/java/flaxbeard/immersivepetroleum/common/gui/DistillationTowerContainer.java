@@ -16,6 +16,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import javax.annotation.Nonnull;
 
 public class DistillationTowerContainer extends MultiblockAwareGuiContainer<DistillationTowerTileEntity>{
 	public DistillationTowerContainer(MenuType<?> type, int id, Inventory playerInventory, final DistillationTowerTileEntity tile){
@@ -23,7 +24,7 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer<Dist
 
 		addSlot(new IPSlot(this.inv, INV_0, 12, 17){
 			@Override
-			public boolean mayPlace(ItemStack stack){
+			public boolean mayPlace(@Nonnull ItemStack stack){
 				return FluidUtil.getFluidHandler(stack).map(h -> {
 					if(h.getTanks() <= 0){
 						return false;

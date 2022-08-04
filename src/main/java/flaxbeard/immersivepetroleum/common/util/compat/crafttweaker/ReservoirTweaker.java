@@ -53,15 +53,16 @@ public class ReservoirTweaker{
 		
 		private boolean isValid = true;
 		
-		private IFluidStack iFluidStack;
-		private int minSize, maxSize;
-		private int traceAmount;
-		private int weight;
+		private final IFluidStack iFluidStack;
+		private final int minSize;
+		private final int maxSize;
+		private final int traceAmount;
+		private final int weight;
 		
-		private List<ResourceLocation> dimWhitelist = new ArrayList<>();
-		private List<ResourceLocation> dimBlacklist = new ArrayList<>();
-		private List<ResourceLocation> bioWhitelist = new ArrayList<>();
-		private List<ResourceLocation> bioBlacklist = new ArrayList<>();
+		private final List<ResourceLocation> dimWhitelist = new ArrayList<>();
+		private final List<ResourceLocation> dimBlacklist = new ArrayList<>();
+		private final List<ResourceLocation> bioWhitelist = new ArrayList<>();
+		private final List<ResourceLocation> bioBlacklist = new ArrayList<>();
 		
 		@Constructor
 		public ReservoirBuilder(IFluidStack fluid, int minSize, int maxSize, int traceAmount, int weight){

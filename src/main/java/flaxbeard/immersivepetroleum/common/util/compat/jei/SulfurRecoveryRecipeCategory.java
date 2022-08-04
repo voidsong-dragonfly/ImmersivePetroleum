@@ -23,6 +23,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import javax.annotation.Nonnull;
 
 public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecoveryRecipe>{
 	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater");
@@ -38,7 +39,7 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 	}
 	
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, SulfurRecoveryRecipe recipe, IFocusGroup focuses){
+	public void setRecipe(IRecipeLayoutBuilder builder, SulfurRecoveryRecipe recipe, @Nonnull IFocusGroup focuses){
 		builder.addSlot(RecipeIngredientRole.INPUT, 25, 3)
 			.setFluidRenderer(1, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0)
@@ -60,7 +61,7 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 	}
 	
 	@Override
-	public void draw(SulfurRecoveryRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
+	public void draw(SulfurRecoveryRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
 		IDrawable background = getBackground();
 		int bWidth = background.getWidth();
 		int bHeight = background.getHeight();

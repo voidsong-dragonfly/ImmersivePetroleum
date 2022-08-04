@@ -38,6 +38,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import javax.annotation.Nonnull;
 
 public class OilCanItem extends IPItemBase{
 	public OilCanItem(){
@@ -55,7 +56,7 @@ public class OilCanItem extends IPItemBase{
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY == null)
 			return;
 		
@@ -71,6 +72,7 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
+	@Nonnull
 	public InteractionResult useOn(UseOnContext context){
 		ItemStack stack = context.getItemInHand();
 		Player player = context.getPlayer();
@@ -115,13 +117,14 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
-	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker){
+	public boolean hurtEnemy(@Nonnull ItemStack stack, @Nonnull LivingEntity target, @Nonnull LivingEntity attacker){
 		this.interactLivingEntity(stack, null, target, InteractionHand.MAIN_HAND);
 		return true;
 	}
 	
 	@Override
-	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand){
+	@Nonnull
+	public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity target, @Nonnull InteractionHand hand){
 		if(target instanceof IronGolem golem){
 
 			FluidUtil.getFluidHandler(stack).ifPresent(con -> {

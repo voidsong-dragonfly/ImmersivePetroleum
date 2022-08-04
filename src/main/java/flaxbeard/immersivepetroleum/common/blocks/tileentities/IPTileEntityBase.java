@@ -34,6 +34,7 @@ public abstract class IPTileEntityBase extends BlockEntity{
 	}
 	
 	@Override
+	@Nonnull
 	public CompoundTag getUpdateTag(){
 		CompoundTag nbt = new CompoundTag();
 		saveAdditional(nbt);
@@ -47,12 +48,12 @@ public abstract class IPTileEntityBase extends BlockEntity{
 	}
 	
 	@Override
-	public void saveAdditional(CompoundTag compound){
+	public void saveAdditional(@Nonnull CompoundTag compound){
 		writeCustom(compound);
 	}
 	
 	@Override
-	public void load(CompoundTag compound){
+	public void load(@Nonnull CompoundTag compound){
 		super.load(compound);
 		readCustom(compound);
 	}

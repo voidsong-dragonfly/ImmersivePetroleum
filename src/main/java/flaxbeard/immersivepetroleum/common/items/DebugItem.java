@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import flaxbeard.immersivepetroleum.client.model.IPModel;
+import javax.annotation.Nonnull;
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.Multimap;
@@ -76,13 +77,14 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
-	public Component getName(ItemStack stack){
+	@Nonnull
+	public Component getName(@Nonnull ItemStack stack){
 		return new TextComponent("IP Debugging Tool").withStyle(ChatFormatting.LIGHT_PURPLE);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		tooltip.add(new TextComponent("[Shift + Scroll-UP/DOWN] Change mode.").withStyle(ChatFormatting.GRAY));
 		Modes mode = getMode(stack);
 		if(mode == Modes.DISABLED){
@@ -96,11 +98,12 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
-	public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items){
+	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
 	}
 	
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
+	@Nonnull
+	public InteractionResultHolder<ItemStack> use(Level worldIn, @Nonnull Player playerIn, @Nonnull InteractionHand handIn){
 		if(!worldIn.isClientSide){
 			Modes mode = DebugItem.getMode(playerIn.getItemInHand(handIn));
 
@@ -190,6 +193,7 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
+	@Nonnull
 	public InteractionResult useOn(UseOnContext context){
 		Player player = context.getPlayer();
 		if(player == null){

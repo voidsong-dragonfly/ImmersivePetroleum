@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.tuple.Pair;
+import javax.annotation.Nonnull;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -89,7 +90,8 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	@Override
-	public Component getName(ItemStack stack){
+	@Nonnull
+	public Component getName(@Nonnull ItemStack stack){
 		String selfKey = getDescriptionId(stack);
 		if(stack.hasTag()){
 			Settings settings = getSettings(stack);
@@ -103,7 +105,7 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		Settings settings = getSettings(stack);
 		if(settings.getMultiblock() != null){
 			Vec3i size = settings.getMultiblock().getSize(worldIn);
@@ -203,14 +205,15 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	@Override
-	public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items){
+	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
 		if(this.allowdedIn(group)){
 			items.add(new ItemStack(this, 1));
 		}
 	}
 	
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
+	@Nonnull
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, @Nonnull InteractionHand hand){
 		ItemStack held = player.getItemInHand(hand);
 		
 		if(world.isClientSide){
@@ -256,6 +259,7 @@ public class ProjectorItem extends IPItemBase{
 	}
 	
 	@Override
+	@Nonnull
 	public InteractionResult useOn(UseOnContext context){
 		Level world = context.getLevel();
 		Player playerIn = context.getPlayer();

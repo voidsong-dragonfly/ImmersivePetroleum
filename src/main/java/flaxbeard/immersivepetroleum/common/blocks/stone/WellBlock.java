@@ -29,7 +29,7 @@ public class WellBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, @Nonnull BlockState pState){
 		return IPTileTypes.WELL.get().create(pPos, pState);
 	}
 	

@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
+import javax.annotation.Nonnull;
 
 public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 	@Override
@@ -97,7 +98,7 @@ public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 	}
 	
 	@Override
-	public Reservoir fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer){
+	public Reservoir fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
 		return new Reservoir(buffer.readNbt()); // Very convenient having the NBT stuff already.
 	}
 	

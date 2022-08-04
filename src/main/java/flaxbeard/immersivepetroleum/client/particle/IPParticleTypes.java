@@ -9,6 +9,8 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 @OnlyIn(Dist.CLIENT)
 public class IPParticleTypes{
 	public static final SimpleParticleType FLARE_FIRE = createBasicParticle("flare_fire", false);
@@ -24,7 +26,8 @@ public class IPParticleTypes{
 	private static <T extends ParticleOptions> ParticleType<T> createParticleWithData(String name, ParticleOptions.Deserializer<T> deserializer, Codec<T> codec){
 		ParticleType<T> type = new ParticleType<>(false, deserializer){
             @Override
-            public Codec<T> codec(){
+			@Nonnull
+			public Codec<T> codec(){
                 return codec;
             }
         };

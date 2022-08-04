@@ -17,6 +17,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public class DerrickSettingsScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/derrick_settings.png");
 	
@@ -70,7 +72,7 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
-	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
+	public void render(@Nonnull PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
 		background(pPoseStack, pMouseX, pMouseY, pPartialTick);
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 	}
@@ -87,7 +89,7 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
-	public void resize(Minecraft minecraft, int width, int height){
+	public void resize(@Nonnull Minecraft minecraft, int width, int height){
 		PipeConfig oldGrid = this.pipeConfig;
 		super.resize(minecraft, width, height);
 		this.pipeConfig.copyDataFrom(oldGrid);

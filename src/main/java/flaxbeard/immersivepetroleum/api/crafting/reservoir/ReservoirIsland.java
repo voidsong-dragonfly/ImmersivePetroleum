@@ -206,8 +206,8 @@ public class ReservoirIsland{
 	 * <i>Only call on server side!</i>
 	 * 
 	 * @param level {@link Level} to query in
-	 * @param x x-coordinate to extract from
-	 * @param z z-coordinate to extract from
+	 * @param x x-coordinate to query
+	 * @param z z-coordinate to query
 	 * @return Pressure float
 	 */
 	public float getPressure(Level level, int x, int z){

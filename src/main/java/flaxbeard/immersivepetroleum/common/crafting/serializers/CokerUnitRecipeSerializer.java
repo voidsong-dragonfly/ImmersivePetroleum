@@ -13,6 +13,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.util.Lazy;
+import javax.annotation.Nonnull;
 
 public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecipe>{
 	
@@ -31,7 +32,7 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 	}
 	
 	@Override
-	public CokerUnitRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer){
+	public CokerUnitRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer){
 		IngredientWithSize inputItem = IngredientWithSize.read(buffer);
 		ItemStack outputItem = buffer.readItem();
 		
@@ -45,7 +46,7 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 	}
 	
 	@Override
-	public void toNetwork(FriendlyByteBuf buffer, CokerUnitRecipe recipe){
+	public void toNetwork(@Nonnull FriendlyByteBuf buffer, CokerUnitRecipe recipe){
 		recipe.inputItem.write(buffer);
 		buffer.writeItem(recipe.outputItem.get());
 		

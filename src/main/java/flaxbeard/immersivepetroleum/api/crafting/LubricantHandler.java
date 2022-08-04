@@ -33,11 +33,11 @@ public class LubricantHandler{
 	 * Registers a lubricant to be used in the Lubricant Can and Automatic
 	 * Lubricator
 	 *
-	 * @param fluid The {@link TagKey<Fluid>} wrapping the fluid to be used as lubricant
+	 * @param fluid The {@link TagKey}<{@link Fluid}> to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void register(@Nonnull TagKey<Fluid> fluid, int amount){
-		if(fluid != null && lubricants.stream().noneMatch(pair -> pair.getLeft() == fluid)){
+		if(lubricants.stream().noneMatch(pair -> pair.getLeft() == fluid)){
 			lubricants.add(Pair.of(fluid, amount));
 		}
 	}
@@ -63,14 +63,12 @@ public class LubricantHandler{
 	 */
 	@SuppressWarnings("deprecation")
 	public static int getLubeAmount(@Nonnull Fluid toCheck){
-		if(toCheck != null){
-			for(Map.Entry<TagKey<Fluid>, Integer> entry:lubricants){
-				if(toCheck.is(entry.getKey())){
-					return entry.getValue();
-				}
+		for(Map.Entry<TagKey<Fluid>, Integer> entry:lubricants){
+			if(toCheck.is(entry.getKey())){
+				return entry.getValue();
 			}
 		}
-		
+
 		return 0;
 	}
 	
@@ -78,7 +76,7 @@ public class LubricantHandler{
 	 * Convenience method.
 	 * 
 	 * @param toCheck Fluid to check
-	 * @return Whether or not the Fluid is a lubricant
+	 * @return Whether the Fluid is a lubricant
 	 * @see #isValidLube(Fluid)
 	 */
 	public static boolean isValidLube(@Nonnull FluidStack toCheck){
@@ -86,13 +84,13 @@ public class LubricantHandler{
 	}
 	
 	/**
-	 * Whether or not the given Fluid is a valid lubricant
+	 * Whether the given Fluid is a valid lubricant
 	 * 
 	 * @param toCheck Fluid to check
-	 * @return Whether or not the Fluid is a lubricant
+	 * @return Whether the Fluid is a lubricant
 	 */
 	@SuppressWarnings("deprecation")
 	public static boolean isValidLube(@Nonnull Fluid toCheck){
-		return toCheck != null && lubricants.stream().anyMatch(pair -> toCheck.is(pair.getKey()));
+		return lubricants.stream().anyMatch(pair -> toCheck.is(pair.getKey()));
 	}
 }

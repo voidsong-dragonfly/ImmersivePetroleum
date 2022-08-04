@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import javax.annotation.Nonnull;
 
 public class IPSlot extends Slot{
 	
@@ -21,7 +22,7 @@ public class IPSlot extends Slot{
 		}
 		
 		@Override
-		public boolean mayPlace(ItemStack stack){
+		public boolean mayPlace(@Nonnull ItemStack stack){
 			return false;
 		}
 	}
@@ -45,7 +46,7 @@ public class IPSlot extends Slot{
 		}
 		
 		@Override
-		public boolean mayPlace(ItemStack itemStack){
+		public boolean mayPlace(@Nonnull ItemStack itemStack){
 			LazyOptional<IFluidHandlerItem> handlerCap = FluidUtil.getFluidHandler(itemStack);
 			return handlerCap.map(handler -> {
 				if(handler.getTanks() <= 0)

@@ -25,6 +25,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	public static final ResourceLocation ID = ResourceUtils.ip("cokerunit");
@@ -42,7 +43,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	}
 	
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, CokerUnitRecipe recipe, IFocusGroup focuses){
+	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, CokerUnitRecipe recipe, @Nonnull IFocusGroup focuses){
 		{
 			int total = 0;
 			List<FluidStack> list = recipe.inputFluid.getMatchingFluidStacks();
@@ -85,7 +86,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	}
 	
 	@Override
-	public void draw(CokerUnitRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
+	public void draw(CokerUnitRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
 		IDrawable background = getBackground();
 		int bWidth = background.getWidth();
 		int bHeight = background.getHeight();

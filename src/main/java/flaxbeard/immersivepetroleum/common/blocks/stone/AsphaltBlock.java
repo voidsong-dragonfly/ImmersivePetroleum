@@ -16,6 +16,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 
+import javax.annotation.Nonnull;
+
 public class AsphaltBlock extends IPBlockBase{
 	protected static final float SPEED_FACTOR = 1.20F;
 	
@@ -29,7 +31,7 @@ public class AsphaltBlock extends IPBlockBase{
 	}
 	
 	@Override
-	public void appendHoverText(ItemStack stack, BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(@Nonnull ItemStack stack, BlockGetter worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		tooltip(stack, worldIn, tooltip, flagIn);
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}

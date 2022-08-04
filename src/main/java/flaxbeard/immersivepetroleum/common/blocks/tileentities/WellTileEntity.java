@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -39,7 +38,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 	public List<ColumnPos> tappedIslands = new ArrayList<>();
 	
 	/** Only ever contains the Y component of {@link BlockPos} */
-	public List<Integer> phyiscalPipesList = new ArrayList<>();
+	public final List<Integer> phyiscalPipesList = new ArrayList<>();
 	
 	/** Amount of pipe left over from 1 IE Pipe */
 	public int pipes = 0;
@@ -55,7 +54,6 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 	private int selfDestructTimer;
 	
 	private Fluid spillFType = Fluids.EMPTY;
-	@Nullable
 	private int spillHeight = -1;
 	
 	boolean spill = false;

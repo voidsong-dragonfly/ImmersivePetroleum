@@ -47,6 +47,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.util.Lazy;
+import javax.annotation.Nonnull;
 
 public class ProjectorScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/projector.png");
@@ -184,7 +185,7 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		// Over-GUI Text
 		if(this.settings.getMultiblock() != null){
 			IMultiblock mb = this.settings.getMultiblock();
@@ -331,7 +332,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+		public void renderButton(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 			ClientUtils.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
@@ -365,7 +366,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY){
+		public void renderToolTip(@Nonnull PoseStack matrixStack, int mouseX, int mouseY){
 			if(this.hoverText != null){
 				ProjectorScreen.this.renderTooltip(matrixStack, this.hoverText, mouseX, mouseY);
 			}
@@ -437,7 +438,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+		public void renderButton(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 			ClientUtils.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
@@ -459,6 +460,6 @@ public class ProjectorScreen extends Screen{
 		}
 
 		@Override
-		public void updateNarration(NarrationElementOutput output){}
+		public void updateNarration(@Nonnull NarrationElementOutput output){}
 	}
 }

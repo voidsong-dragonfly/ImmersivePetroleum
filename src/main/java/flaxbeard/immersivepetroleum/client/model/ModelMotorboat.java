@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class ModelMotorboat extends ListModel<MotorboatEntity>{
@@ -140,7 +141,7 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	}
 	
 	@Override
-	public void setupAnim(MotorboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+	public void setupAnim(@Nonnull MotorboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
 
 		this.setPaddleRotationAngles(entityIn, 0, limbSwing, entityIn.isEmergency());
 		this.setPaddleRotationAngles(entityIn, 1, limbSwing, entityIn.isEmergency());
@@ -177,6 +178,7 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	 * Only contains the base shape
 	 */
 	@Override
+	@Nonnull
 	public Iterable<ModelPart> parts(){
 		return this.list;
 	}

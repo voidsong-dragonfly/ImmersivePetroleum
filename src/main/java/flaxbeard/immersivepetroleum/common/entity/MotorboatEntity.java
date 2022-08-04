@@ -67,6 +67,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
+import javax.annotation.Nonnull;
 
 public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
@@ -138,7 +139,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	protected void readAdditionalSaveData(CompoundTag compound){
+	protected void readAdditionalSaveData(@Nonnull CompoundTag compound){
 		super.readAdditionalSaveData(compound);
 		
 		String fluid = "";
@@ -171,7 +172,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	protected void addAdditionalSaveData(CompoundTag compound){
+	protected void addAdditionalSaveData(@Nonnull CompoundTag compound){
 		super.addAdditionalSaveData(compound);
 		
 		String fluid = this.entityData.get(TANK_FLUID);
@@ -196,10 +197,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	public void setUpgrades(NonNullList<ItemStack> stacks){
 		if(stacks != null && stacks.size() > 0){
-			ItemStack o0 = stacks.get(0) == null ? ItemStack.EMPTY : stacks.get(0);
-			ItemStack o1 = stacks.get(1) == null ? ItemStack.EMPTY : stacks.get(1);
-			ItemStack o2 = stacks.get(2) == null ? ItemStack.EMPTY : stacks.get(2);
-			ItemStack o3 = stacks.get(3) == null ? ItemStack.EMPTY : stacks.get(3);
+			ItemStack o0 = stacks.get(0);
+			ItemStack o1 = stacks.get(1);
+			ItemStack o2 = stacks.get(2);
+			ItemStack o3 = stacks.get(3);
 			this.entityData.set(UPGRADE_0, o0);
 			this.entityData.set(UPGRADE_1, o1);
 			this.entityData.set(UPGRADE_2, o2);
@@ -224,7 +225,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public void onSyncedDataUpdated(EntityDataAccessor<?> key){
+	public void onSyncedDataUpdated(@Nonnull EntityDataAccessor<?> key){
 		super.onSyncedDataUpdated(key);
 		if(key == UPGRADE_0 || key == UPGRADE_1 || key == UPGRADE_2 || key == UPGRADE_3){
 			NonNullList<ItemStack> upgrades = getUpgrades();
@@ -279,6 +280,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
+	@Nonnull
 	public Vec3 getDismountLocationForPassenger(LivingEntity pLivingEntity){
 		Vec3 vec3 = getCollisionHorizontalEscapeVector(this.getBbWidth() * Mth.SQRT_OF_TWO, pLivingEntity.getBbWidth(), pLivingEntity.getYRot());
 		double d0 = this.getX() + vec3.x;
@@ -311,7 +313,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public boolean hurt(DamageSource source, float amount){
+	public boolean hurt(@Nonnull DamageSource source, float amount){
 		if(isInvulnerableTo(source) || (this.isFireproof && source.isFire())){
 			return false;
 		}else if(!this.level.isClientSide && isAlive()){
@@ -379,7 +381,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public InteractionResult interact(Player player, InteractionHand hand){
+	@Nonnull
+	public InteractionResult interact(Player player, @Nonnull InteractionHand hand){
 		ItemStack stack = player.getItemInHand(hand);
 		
 		if(stack != ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
@@ -738,6 +741,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
+	@Nonnull
 	public Item getDropItem(){
 		return Items.SPEEDBOAT.get();
 	}
@@ -909,6 +913,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
+	@Nonnull
 	public Packet<?> getAddEntityPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}

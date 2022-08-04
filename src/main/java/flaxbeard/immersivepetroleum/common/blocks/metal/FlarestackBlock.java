@@ -73,23 +73,24 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 0;
 	}
 	
 	@Override
-	public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos){
+	public boolean propagatesSkylightDown(@Nonnull BlockState state, @Nonnull BlockGetter reader, @Nonnull BlockPos pos){
 		return true;
 	}
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public float getShadeBrightness(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 1.0F;
 	}
 	
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit){
+	@Nonnull
+	public InteractionResult use(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand handIn, @Nonnull BlockHitResult hit){
 		if(Utils.isScrewdriver(player.getItemInHand(handIn))){
 			if(state.getValue(SLAVE)){
 				pos = pos.relative(Direction.DOWN);
@@ -110,7 +111,7 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player){
+	public void playerWillDestroy(@Nonnull Level worldIn, @Nonnull BlockPos pos, BlockState state, @Nonnull Player player){
 		if(state.getValue(SLAVE)){
 			worldIn.destroyBlock(pos.offset(0, -1, 0), !player.isCreative());
 		}else{
@@ -120,14 +121,14 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack){
 		if(!worldIn.isClientSide){
 			worldIn.setBlockAndUpdate(pos.relative(Direction.UP), state.setValue(SLAVE, true));
 		}
 	}
 	
 	@Override
-	public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn){
+	public void entityInside(BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn){
 		if(state.getValue(SLAVE) && !entityIn.fireImmune()){
 			entityIn.hurt(DamageSource.HOT_FLOOR, 1.0F);
 		}
@@ -135,7 +136,8 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public List<ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootContext.Builder builder){
+	@Nonnull
+	public List<ItemStack> getDrops(BlockState state, @Nonnull net.minecraft.world.level.storage.loot.LootContext.Builder builder){
 		if(state.getValue(SLAVE)){
 			// TODO Don't know how else i would do this yet
 			return Collections.emptyList();
@@ -148,7 +150,8 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	static VoxelShape SHAPE_MASTER;
 	
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
+	@Nonnull
+	public VoxelShape getShape(BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context){
 		if(state.getValue(SLAVE)){
 			if(SHAPE_SLAVE == null){
 				VoxelShape s0 = Shapes.box(0.125, 0.0, 0.125, 0.875, 0.75, 0.875);
@@ -169,7 +172,7 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, BlockState pState){
 		if(pState.getValue(SLAVE)) return null;
 		
 		return IPTileTypes.FLARE.get().create(pPos, pState);
@@ -189,7 +192,7 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 		}
 		
 		@Override
-		protected boolean canPlace(BlockPlaceContext con, BlockState state){
+		protected boolean canPlace(@Nonnull BlockPlaceContext con, @Nonnull BlockState state){
 			if(super.canPlace(con, state)){
 				BlockPos otherPos = con.getClickedPos().relative(Direction.UP);
 				BlockState otherState = con.getLevel().getBlockState(otherPos);

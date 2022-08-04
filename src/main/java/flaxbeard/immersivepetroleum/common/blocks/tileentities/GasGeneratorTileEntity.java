@@ -60,6 +60,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import javax.annotation.Nonnull;
 
 public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IDirectionalBE, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.ISoundBE, EnergyTransferHandler.EnergyConnector{
 	public static final int FUEL_CAPACITY = 8000;
@@ -67,8 +68,8 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	protected WireType wireType;
 	protected boolean isActive = false;
 	protected Direction facing = Direction.NORTH;
-	protected MutableEnergyStorage energyStorage = new MutableEnergyStorage(getMaxStorage(), Integer.MAX_VALUE, getMaxOutput());
-	protected FluidTank tank = new FluidTank(FUEL_CAPACITY, fluid -> (fluid != null && fluid != FluidStack.EMPTY && FuelHandler.isValidFuel(fluid.getFluid())));
+	protected final MutableEnergyStorage energyStorage = new MutableEnergyStorage(getMaxStorage(), Integer.MAX_VALUE, getMaxOutput());
+	protected final FluidTank tank = new FluidTank(FUEL_CAPACITY, fluid -> (fluid != FluidStack.EMPTY && FuelHandler.isValidFuel(fluid.getFluid())));
 	
 	public GasGeneratorTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
 		super(IPTileTypes.GENERATOR.get(), pWorldPosition, pBlockState);
@@ -83,7 +84,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 
 	@Override
-	public void load(CompoundTag nbt){
+	public void load(@Nonnull CompoundTag nbt){
 		super.load(nbt);
 		
 		this.isActive = nbt.getBoolean("isActive");
@@ -116,6 +117,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
+	@Nonnull
 	public CompoundTag getUpdateTag(){
 		CompoundTag nbt = new CompoundTag();
 		saveAdditional(nbt);
@@ -149,6 +151,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 
 	@Override
+	@Nonnull
 	public List<ItemStack> getBlockEntityDrop(@Nullable LootContext context){
 		ItemStack stack;
 		if(context != null){
@@ -195,14 +198,14 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
-	public boolean shouldPlaySound(String sound){
+	public boolean shouldPlaySound(@Nonnull String sound){
 		return this.isActive;
 	}
 	
 	private final LazyOptional<IFluidHandler> fluidHandler = CapabilityUtils.constantOptional(this.tank);
 	private final LazyOptional<IEnergyStorage> energyHandler = CapabilityUtils.constantOptional(this.energyStorage);
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
+	public <T> @Nonnull LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == Direction.UP)){
 			return this.fluidHandler.cast();
 		}else if(cap == CapabilityEnergy.ENERGY && (side == null || side == this.facing)){
@@ -219,7 +222,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
-	public Component[] getOverlayText(Player player, HitResult mop, boolean hammer){
+	public Component[] getOverlayText(Player player, @Nonnull HitResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
 			Component s = null;
 			if(tank.getFluid().getAmount() > 0)
@@ -232,12 +235,12 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
-	public boolean useNixieFont(Player player, HitResult mop){
+	public boolean useNixieFont(@Nonnull Player player, @Nonnull HitResult mop){
 		return false;
 	}
 	
 	@Override
-	public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
+	public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ){
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)){
 			setChanged();
 			flaxbeard.immersivepetroleum.common.util.Utils.unlockIPAdvancement(player, "main/gas_generator");
@@ -260,27 +263,29 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
+	@Nonnull
 	public Direction getFacing(){
 		return this.facing;
 	}
 	
 	@Override
-	public void setFacing(Direction facing){
+	public void setFacing(@Nonnull Direction facing){
 		this.facing = facing;
 	}
 	
 	@Override
+	@Nonnull
 	public PlacementLimitation getFacingLimitation(){
 		return PlacementLimitation.HORIZONTAL;
 	}
 	
 	@Override
-	public boolean mirrorFacingOnPlacement(LivingEntity placer){
+	public boolean mirrorFacingOnPlacement(@Nonnull LivingEntity placer){
 		return false;
 	}
 	
 	@Override
-	public boolean canHammerRotate(Direction side, Vec3 hit, LivingEntity entity){
+	public boolean canHammerRotate(@Nonnull Direction side, @Nonnull Vec3 hit, @Nonnull LivingEntity entity){
 		return true;
 	}
 	

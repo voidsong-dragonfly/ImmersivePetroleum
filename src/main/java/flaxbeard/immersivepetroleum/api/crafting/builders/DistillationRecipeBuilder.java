@@ -26,17 +26,16 @@ import net.minecraftforge.fluids.FluidStack;
 public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationRecipeBuilder>{
 	
 	public static DistillationRecipeBuilder builder(FluidStack... fluidOutput){
-		if(fluidOutput == null || ((fluidOutput != null && fluidOutput.length == 0)))
+		if(fluidOutput == null || fluidOutput.length == 0)
 			throw new IllegalArgumentException("Fluid output missing. It's required.");
 		
 		DistillationRecipeBuilder b = new DistillationRecipeBuilder();
-		if(fluidOutput != null && fluidOutput.length > 0)
-			b.addFluids("results", fluidOutput);
+		b.addFluids("results", fluidOutput);
 		return b;
 	}
 	
 	/** Temporary storage for byproducts */
-	private List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
+	private final List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
 	
 	private DistillationRecipeBuilder(){
 		super(Serializers.DISTILLATION_SERIALIZER.get());

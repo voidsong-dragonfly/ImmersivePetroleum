@@ -31,6 +31,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import javax.annotation.Nonnull;
 
 public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.ISoundBE{
 	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").bypassArmor().setIsFire();
@@ -38,7 +39,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 	protected boolean isRedstoneInverted;
 	protected boolean isActive;
 	protected short drained;
-	protected FluidTank tank = new FluidTank(250, fstack -> (fstack != FluidStack.EMPTY && FlarestackHandler.isBurnable(fstack)));
+	protected final FluidTank tank = new FluidTank(250, fstack -> (fstack != FluidStack.EMPTY && FlarestackHandler.isBurnable(fstack)));
 	
 	public FlarestackTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
 		super(IPTileTypes.FLARE.get(), pWorldPosition, pBlockState);
@@ -82,19 +83,23 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 	private LazyOptional<IFluidHandler> inputHandler;
 	
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == Direction.DOWN)){
-			if(this.inputHandler == null){
-				this.inputHandler = LazyOptional.of(() -> {
-					BlockEntity te = this.level.getBlockEntity(getBlockPos());
-					if(te instanceof FlarestackTileEntity){
-						return ((FlarestackTileEntity) te).tank;
+	@Nonnull
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
+		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if(side == null || side == Direction.DOWN){
+				BlockEntity te = this.level.getBlockEntity(getBlockPos());
+				if(te instanceof FlarestackTileEntity){
+					if(this.inputHandler == null){
+						this.inputHandler = LazyOptional.of(() -> ((FlarestackTileEntity) te).tank);
 					}
-					return null;
-				});
+				}else{
+					return LazyOptional.empty();
+				}
+
+				return this.inputHandler.cast();
 			}
-			return this.inputHandler.cast();
 		}
+
 		return super.getCapability(cap, side);
 	}
 	
@@ -203,7 +208,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 	}
 	
 	@Override
-	public boolean shouldPlaySound(String sound){
+	public boolean shouldPlaySound(@Nonnull String sound){
 		return true;
 	}
 }

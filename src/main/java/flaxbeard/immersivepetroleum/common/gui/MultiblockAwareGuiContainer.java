@@ -8,6 +8,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.phys.AABB;
+import javax.annotation.Nonnull;
 
 /**
  * @author TwistedGate © 2021
@@ -31,7 +32,7 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
 	}
 	
 	@Override
-	public boolean stillValid(Player player){
+	public boolean stillValid(@Nonnull Player player){
 		if(inv != null){
 			BlockPos min = this.tile.getBlockPosForPos(BlockPos.ZERO);
 			BlockPos max = this.tile.getBlockPosForPos(this.templateSize);

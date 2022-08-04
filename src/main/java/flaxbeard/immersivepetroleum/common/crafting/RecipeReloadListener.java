@@ -23,6 +23,7 @@ import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegistryObject;
+import javax.annotation.Nonnull;
 
 public class RecipeReloadListener implements ResourceManagerReloadListener{
 	private final ReloadableServerResources dataPackRegistries;
@@ -31,7 +32,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 	}
 	
 	@Override
-	public void onResourceManagerReload(ResourceManager resourceManager){
+	public void onResourceManagerReload(@Nonnull ResourceManager resourceManager){
 		if(dataPackRegistries != null){
 			lists(dataPackRegistries.getRecipeManager());
 		}

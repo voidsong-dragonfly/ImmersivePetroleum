@@ -199,9 +199,7 @@ public class CommonEventHandler{
 				recipes.forEach(recipe -> {
 					ResourceLocation name = recipe.getId();
 					if(name.getNamespace().equals(ImmersivePetroleum.MODID)){
-						if(recipe.getResultItem().getItem() != null){
-							l.add(recipe);
-						}
+						l.add(recipe);
 					}
 				});
 				
@@ -224,8 +222,8 @@ public class CommonEventHandler{
 		}
 	}
 	
-	public static Map<ResourceLocation, List<BlockPos>> napalmPositions = new HashMap<>();
-	public static Map<ResourceLocation, List<BlockPos>> toRemove = new HashMap<>();
+	public static final Map<ResourceLocation, List<BlockPos>> napalmPositions = new HashMap<>();
+	public static final Map<ResourceLocation, List<BlockPos>> toRemove = new HashMap<>();
 	
 	@SubscribeEvent
 	public void handleNapalm(WorldTickEvent event){

@@ -21,6 +21,8 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 @JeiPlugin
 public class JEIStuff implements IModPlugin{
 	private static final ResourceLocation ID = ResourceUtils.ip("main");
@@ -30,6 +32,7 @@ public class JEIStuff implements IModPlugin{
 	private RecipeType<SulfurRecoveryRecipe> recovery_type;
 	
 	@Override
+	@Nonnull
 	public ResourceLocation getPluginUid(){
 		return ID;
 	}

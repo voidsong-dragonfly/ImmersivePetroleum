@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
@@ -32,7 +33,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	}
 	
 	@Override
-	public void render(MotorboatEntity entity, float entityYaw, float partialTicks, PoseStack matrix, MultiBufferSource bufferIn, int packedLight){
+	public void render(@Nonnull MotorboatEntity entity, float entityYaw, float partialTicks, PoseStack matrix, @Nonnull MultiBufferSource bufferIn, int packedLight){
 		matrix.pushPose();
 		{
 			matrix.translate(0.0D, 0.375D, 0.0D);
@@ -129,7 +130,8 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	}
 	
 	@Override
-	public ResourceLocation getTextureLocation(MotorboatEntity entity){
+	@Nonnull
+	public ResourceLocation getTextureLocation(@Nonnull MotorboatEntity entity){
 		return texture;
 	}
 	

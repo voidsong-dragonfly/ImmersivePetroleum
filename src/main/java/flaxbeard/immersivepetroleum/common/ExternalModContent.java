@@ -15,7 +15,7 @@ public class ExternalModContent{
 	
 	public static RegistryObject<Fluid> IE_FLUID_CONCRETE_FLUID;
 	
-	public static final void init(){
+	public static void init(){
 		IE_ITEM_PIPE = RegistryObject.create(ResourceUtils.ie("fluid_pipe"), ForgeRegistries.ITEMS);
 		IE_ITEM_BUCKSHOT = RegistryObject.create(ResourceUtils.ie("buckshot"), ForgeRegistries.ITEMS);
 		IE_ITEM_EMPTY_SHELL = RegistryObject.create(ResourceUtils.ie("empty_shell"), ForgeRegistries.ITEMS);

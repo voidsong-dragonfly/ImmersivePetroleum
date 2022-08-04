@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
 public class ResourceUtils{
-	public static final ResourceLocation ip(String str){
+	public static ResourceLocation ip(String str){
 		return new ResourceLocation(ImmersivePetroleum.MODID, str);
 	}
 	
@@ -24,7 +24,7 @@ public class ResourceUtils{
 		return new ResourceLocation(ForgeVersion.MOD_ID, str);
 	}
 	
-	public static final ResourceLocation mc(String str){
+	public static ResourceLocation mc(String str){
 		return new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, str);
 	}
 }

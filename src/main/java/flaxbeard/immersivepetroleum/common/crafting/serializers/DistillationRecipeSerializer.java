@@ -19,6 +19,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 public class DistillationRecipeSerializer extends IERecipeSerializer<DistillationRecipe>{
 	@Override
@@ -57,7 +58,7 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 	}
 	
 	@Override
-	public DistillationRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer){
+	public DistillationRecipe fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
 		FluidStack[] fluidOutput = new FluidStack[buffer.readInt()];
 		for(int i = 0;i < fluidOutput.length;i++)
 			fluidOutput[i] = buffer.readFluidStack();

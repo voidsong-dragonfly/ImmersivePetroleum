@@ -15,6 +15,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 public class IPBlockItemBase extends BlockItem{
 	public IPBlockItemBase(Block blockIn, Properties builder){
@@ -22,7 +23,7 @@ public class IPBlockItemBase extends BlockItem{
 	}
 	
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(stack.hasTag()){
 			// Display Stored Tank Information
 			if(stack.getTag().contains("tank")){

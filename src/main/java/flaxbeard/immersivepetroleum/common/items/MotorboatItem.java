@@ -42,6 +42,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import javax.annotation.Nonnull;
 
 public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	public static final String UPGRADE_TYPE = "MOTORBOAT";
@@ -106,13 +107,14 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	}
 	
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
+	@Nonnull
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, @Nonnull InteractionHand handIn){
 		ItemStack itemstack = playerIn.getItemInHand(handIn);
-		float f1 = playerIn.xRotO + (playerIn.getXRot() - playerIn.xRotO) * 1.0F;
-		float f2 = playerIn.yRotO + (playerIn.getYRot() - playerIn.yRotO) * 1.0F;
-		double d0 = playerIn.xo + (playerIn.getX() - playerIn.xo) * 1.0D;
-		double d1 = playerIn.yo + (playerIn.getY() - playerIn.yo) * 1.0D + (double) playerIn.getEyeHeight();
-		double d2 = playerIn.zo + (playerIn.getZ() - playerIn.zo) * 1.0D;
+		float f1 = playerIn.xRotO + (playerIn.getXRot() - playerIn.xRotO);
+		float f2 = playerIn.yRotO + (playerIn.getYRot() - playerIn.yRotO);
+		double d0 = playerIn.xo + (playerIn.getX() - playerIn.xo);
+		double d1 = playerIn.yo + (playerIn.getY() - playerIn.yo) + (double) playerIn.getEyeHeight();
+		double d2 = playerIn.zo + (playerIn.getZ() - playerIn.zo);
 		Vec3 vec3d = new Vec3(d0, d1, d2);
 		float f3 = Mth.cos(-f2 * 0.017453292F - (float) Math.PI);
 		float f4 = Mth.sin(-f2 * 0.017453292F - (float) Math.PI);
@@ -123,59 +125,52 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		
 		Vec3 vec3d1 = vec3d.add((double) f7 * 5.0D, (double) f6 * 5.0D, (double) f8 * 5.0D);
 		HitResult raytraceresult = worldIn.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, playerIn));
-		
-		if(raytraceresult != null){
-			Vec3 vec3d2 = playerIn.getViewVector(1.0F);
-			boolean flag = false;
-			AABB bb = playerIn.getBoundingBox();
-			if(bb == null)
-				bb = playerIn.getBoundingBox();
-			
-			if(bb != null){
-				List<Entity> list = worldIn.getEntities(playerIn, bb.expandTowards(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).inflate(1.0D));
-				for (Entity entity : list){
-					if(entity.isPickable()){
-						AABB axisalignedbb = entity.getBoundingBox();
-						if(axisalignedbb != null && axisalignedbb.inflate(entity.getPickRadius()).contains(vec3d)){
-							flag = true;
-						}
-					}
-				}
-			}
-			
-			if(flag){
-				return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
-			}else if(raytraceresult.getType() != HitResult.Type.BLOCK){
-				return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
-			}else{
-				Vec3 hit = raytraceresult.getLocation();
-				Block block = worldIn.getBlockState(new BlockPos(hit.add(0, .5, 0))).getBlock();
-				boolean flag1 = block == Blocks.WATER;
-				MotorboatEntity entityboat = new MotorboatEntity(worldIn, hit.x, flag1 ? hit.y - 0.12D : hit.y, hit.z);
-				{
-					entityboat.setYRot(playerIn.yRotO);
-					entityboat.setUpgrades(getContainedItems(itemstack));
-					entityboat.readTank(itemstack.getTag());
-				}
-				
-				if(worldIn.getBlockCollisions(entityboat, entityboat.getBoundingBox().inflate(-0.1D)).iterator().hasNext()){
-					return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
-				}else{
-					if(!worldIn.isClientSide){
-						worldIn.addFreshEntity(entityboat);
-					}
-					
-					if(!playerIn.isCreative()){
-						itemstack.shrink(1);
-					}
-					
-					// playerIn.addStat(net.minecraft.stats.Stats.CUSTOM.get(getRegistryName()));
-					return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+
+		Vec3 vec3d2 = playerIn.getViewVector(1.0F);
+		boolean flag = false;
+		AABB bb = playerIn.getBoundingBox();
+
+		List<Entity> list = worldIn.getEntities(playerIn, bb.expandTowards(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).inflate(1.0D));
+		for (Entity entity : list){
+			if(entity.isPickable()){
+				AABB axisalignedbb = entity.getBoundingBox();
+				if(axisalignedbb.inflate(entity.getPickRadius()).contains(vec3d)){
+					flag = true;
 				}
 			}
 		}
-		
-		return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+
+		if(flag){
+			return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+		}else if(raytraceresult.getType() != HitResult.Type.BLOCK){
+			return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+		}else{
+			Vec3 hit = raytraceresult.getLocation();
+			Block block = worldIn.getBlockState(new BlockPos(hit.add(0, .5, 0))).getBlock();
+			boolean flag1 = block == Blocks.WATER;
+			MotorboatEntity entityboat = new MotorboatEntity(worldIn, hit.x, flag1 ? hit.y - 0.12D : hit.y, hit.z);
+			{
+				entityboat.setYRot(playerIn.yRotO);
+				entityboat.setUpgrades(getContainedItems(itemstack));
+				entityboat.readTank(itemstack.getTag());
+			}
+
+			if(worldIn.getBlockCollisions(entityboat, entityboat.getBoundingBox().inflate(-0.1D)).iterator().hasNext()){
+				return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+			}else{
+				if(!worldIn.isClientSide){
+					worldIn.addFreshEntity(entityboat);
+				}
+
+				if(!playerIn.isCreative()){
+					itemstack.shrink(1);
+				}
+
+				// playerIn.addStat(net.minecraft.stats.Stats.CUSTOM.get(getRegistryName()));
+				return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+			}
+		}
+
 	}
 	
 	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){
@@ -217,7 +212,8 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	}
 	
 	@Override
-	public Component getName(ItemStack stack){
+	@Nonnull
+	public Component getName(@Nonnull ItemStack stack){
 		boolean hasUpgrades = getContainedItems(stack).stream().anyMatch(s -> s != ItemStack.EMPTY);
 		
 		Component c = super.getName(stack);
@@ -229,7 +225,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(stack.hasTag()){
 			CompoundTag tag = stack.getTag();
 			

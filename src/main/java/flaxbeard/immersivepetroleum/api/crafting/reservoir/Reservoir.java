@@ -154,11 +154,8 @@ public class Reservoir extends IESerializableRecipe{
 		}
 	}
 	
-	public boolean isValidDimension(@Nonnull Level world){
-		if(world == null)
-			return false;
-		
-		return isValidDimension(world.dimension().location());
+	public boolean isValidDimension(@Nonnull Level level){
+		return isValidDimension(level.dimension().location());
 	}
 	
 	public boolean isValidDimension(@Nonnull ResourceLocation rl){
@@ -188,6 +185,7 @@ public class Reservoir extends IESerializableRecipe{
 	}
 	
 	@Override
+	@Nonnull
 	public ItemStack getResultItem(){
 		return ItemStack.EMPTY;
 	}

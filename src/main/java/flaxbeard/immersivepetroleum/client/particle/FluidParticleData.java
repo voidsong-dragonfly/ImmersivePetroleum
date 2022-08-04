@@ -12,6 +12,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import javax.annotation.Nonnull;
 
 public class FluidParticleData implements ParticleOptions{
 	public static final Codec<FluidParticleData> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.STRING.fieldOf("fluid").forGetter(data -> data.fluid.getRegistryName().toString())).apply(instance, FluidParticleData::new));
@@ -19,13 +20,15 @@ public class FluidParticleData implements ParticleOptions{
 	@SuppressWarnings("deprecation")
 	public static final ParticleOptions.Deserializer<FluidParticleData> DESERIALIZER = new ParticleOptions.Deserializer<>(){
 		@Override
-		public FluidParticleData fromCommand(ParticleType<FluidParticleData> particleTypeIn, StringReader reader){
+		@Nonnull
+		public FluidParticleData fromCommand(@Nonnull ParticleType<FluidParticleData> particleTypeIn, StringReader reader){
 			String name = reader.getString();
 			return new FluidParticleData(name);
 		}
 
 		@Override
-		public FluidParticleData fromNetwork(ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer){
+		@Nonnull
+		public FluidParticleData fromNetwork(@Nonnull ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			String name = buffer.readUtf();
 			return new FluidParticleData(name);
 		}
@@ -41,6 +44,7 @@ public class FluidParticleData implements ParticleOptions{
 	}
 	
 	@Override
+	@Nonnull
 	public ParticleType<FluidParticleData> getType(){
 		return IPParticleTypes.FLUID_SPILL;
 	}
@@ -51,6 +55,7 @@ public class FluidParticleData implements ParticleOptions{
 	}
 	
 	@Override
+	@Nonnull
 	public String writeToString(){
 		return this.fluid.getRegistryName().toString();
 	}

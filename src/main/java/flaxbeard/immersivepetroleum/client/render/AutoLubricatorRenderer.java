@@ -16,23 +16,24 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricatorTileEntity>{
 	
 	@Override
-	public boolean shouldRenderOffScreen(AutoLubricatorTileEntity te){
+	public boolean shouldRenderOffScreen(@Nonnull AutoLubricatorTileEntity te){
 		return false;
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void render(AutoLubricatorTileEntity te, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(te == null || te.isSlave)
+	public void render(@Nonnull AutoLubricatorTileEntity te, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
+		if(te.isSlave)
 			return;
 		
 		FluidStack fs = te.tank.getFluid();
 		float level = 0;
-		if(fs != null && !fs.isEmpty()){
+		if(!fs.isEmpty()){
 			level = fs.getAmount() / (float) te.tank.getCapacity();
 		}
 		

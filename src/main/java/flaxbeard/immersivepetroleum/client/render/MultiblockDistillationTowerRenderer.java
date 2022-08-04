@@ -15,18 +15,19 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<DistillationTowerTileEntity>{
 	@Override
-	public boolean shouldRenderOffScreen(DistillationTowerTileEntity te){
+	public boolean shouldRenderOffScreen(@Nonnull DistillationTowerTileEntity te){
 		return true;
 	}
 	
 	@Override
-	public void render(DistillationTowerTileEntity te, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(te != null && te.formed && !te.isDummy()){
+	public void render(@Nonnull DistillationTowerTileEntity te, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
+		if(te.formed && !te.isDummy()){
 			if(te.shouldRenderAsActive()){
 				combinedOverlayIn = OverlayTexture.NO_OVERLAY;
 				
