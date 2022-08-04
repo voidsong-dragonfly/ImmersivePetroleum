@@ -128,11 +128,11 @@ public class PipeConfig extends Button{
 
 							BlockPos p;
 							BlockState state;
-							do {
+							do{
 								--y;
 								p = new BlockPos(c.x, y, c.z);
 								state = world.getBlockState(p);
-							} while (state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
+							}while(state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
 
 							int tmp = world.getBlockState(p).getMapColor(world, p).col;
 							float f = 0.5F;

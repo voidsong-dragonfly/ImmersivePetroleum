@@ -108,10 +108,18 @@ public class ProjectorScreen extends Screen{
 			
 			MCUtil.getPlayer().displayClientMessage(this.settings.getMode().getTranslated(), true);
 		}));
-		addRenderableWidget(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> MCUtil.getScreen().onClose()));
-		addRenderableWidget(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> this.settings.flip()));
-		addRenderableWidget(new RotateLeftButton(this.guiLeft + 115, this.guiTop + 106, but -> this.settings.rotateCCW()));
-		addRenderableWidget(new RotateRightButton(this.guiLeft + 115, this.guiTop + 130, but -> this.settings.rotateCW()));
+		addRenderableWidget(new CancelButton(this.guiLeft + 115, this.guiTop + 34, but -> {
+			MCUtil.getScreen().onClose();
+		}));
+		addRenderableWidget(new MirrorButton(this.guiLeft + 115, this.guiTop + 58, this.settings, but -> {
+			this.settings.flip();
+		}));
+		addRenderableWidget(new RotateLeftButton(this.guiLeft + 115, this.guiTop + 106, but -> {
+			this.settings.rotateCCW();
+		}));
+		addRenderableWidget(new RotateRightButton(this.guiLeft + 115, this.guiTop + 130, but -> {
+			this.settings.rotateCW();
+		}));
 		
 		updatelist();
 	}

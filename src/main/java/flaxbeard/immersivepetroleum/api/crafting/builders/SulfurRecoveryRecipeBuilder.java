@@ -52,9 +52,11 @@ public class SulfurRecoveryRecipeBuilder extends IEFinishedRecipe<SulfurRecovery
 	public SulfurRecoveryRecipeBuilder addSecondaryInputFluid(TagKey<Fluid> fluid, int amount){
 		return addFluidTag("secondary_input", fluid, amount);
 	}
-	
+
 	public SulfurRecoveryRecipeBuilder addItemWithChance(ItemStack item, double chance){
-		return addWriter(jsonObject -> jsonObject.add("secondary_result", this.serializerItemStackWithChance(item, chance)));
+		return addWriter(jsonObject -> {
+			jsonObject.add("secondary_result", this.serializerItemStackWithChance(item, chance));
+		});
 	}
 	
 	protected SulfurRecoveryRecipeBuilder setTimeAndEnergy(int time, int energy){
