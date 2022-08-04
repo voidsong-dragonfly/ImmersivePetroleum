@@ -20,10 +20,11 @@ public class LubricantHandler{
 	 * Registers a lubricant to be used in the Lubricant Can and Automatic
 	 * Lubricator
 	 *
-	 * @param lube The fluid to be used as lubricant
+	 * @param lube The {@link Fluid} to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
-	 * @deprecated THIS DOES NOTHING! in favour of fluid tags, use {@link #register(net.minecraft.tags.ITag.INamedTag, int)} instead.
+	 * @deprecated THIS DOES NOTHING! in favour of fluid tags, use {@link #register(TagKey, int)} instead.
 	 */
+	@Deprecated
 	public static void registerLubricant(Fluid lube, int amount){
 		ImmersivePetroleum.log.warn("LubricantHandler skipped adding \""+lube.getRegistryName()+"\". Please use the FluidTag registration!");
 	}
@@ -32,7 +33,7 @@ public class LubricantHandler{
 	 * Registers a lubricant to be used in the Lubricant Can and Automatic
 	 * Lubricator
 	 *
-	 * @param fluid The fluid to be used as lubricant
+	 * @param fluid The {@link TagKey<Fluid>} wrapping the fluid to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void register(@Nonnull TagKey<Fluid> fluid, int amount){

@@ -87,9 +87,9 @@ public class DynamicTextureWrapper{
 	private final ResourceLocation rl;
 	
 	/**
-	 * @param width
-	 * @param height
-	 * @param typeName 
+	 * @param width texture width
+	 * @param height texture height
+	 * @param uuid uuid to make the resource location from
 	 */
 	private DynamicTextureWrapper(int width, int height, @Nonnull UUID uuid){
 		Objects.requireNonNull(uuid, "Non-null UUID expected.");

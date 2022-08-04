@@ -166,8 +166,8 @@ public class ReservoirHandler{
 	 * Adds a reservoir type to the pool of valid reservoirs
 	 * 
 	 * @param id The "recipeId" of the reservoir type
-	 * @param reservoir The reservoir type to add
-	 * @return
+	 * @param reservoir The {@link Reservoir} type to add
+	 * @return The {@link Reservoir} passed in
 	 */
 	public static Reservoir addReservoir(ResourceLocation id, Reservoir reservoir){
 		Reservoir.map.put(id, reservoir);
@@ -182,13 +182,13 @@ public class ReservoirHandler{
 	/**
 	 * <i>Only call on server side!</i>
 	 * 
-	 * @param world
+	 * @param Level {@link Level} to run query on
 	 * @param x Block Position
 	 * @param z Block Position
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
-	public static double getValueOf(@Nonnull Level world, int x, int z){
-		if(!world.isClientSide && world instanceof WorldGenLevel worldGen){
+	public static double getValueOf(@Nonnull Level Level, int x, int z){
+		if(!Level.isClientSide && Level instanceof WorldGenLevel worldGen){
 			initGenerator(worldGen);
 		}
 		
@@ -237,7 +237,7 @@ public class ReservoirHandler{
 	/**
 	 * {@link #clearCache()} Must be called after modifying the returned list!
 	 * 
-	 * @return
+	 * @return {@link Multimap} of {@link ResourceKey<Level>}<{@link Level}>s to {@link ReservoirIsland}s
 	 */
 	public static Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
 		return RESERVOIR_ISLAND_LIST;

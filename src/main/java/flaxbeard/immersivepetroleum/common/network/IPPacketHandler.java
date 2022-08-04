@@ -38,9 +38,9 @@ public class IPPacketHandler{
 	
 	/**
 	 * Sends a server message directly to the player. Will not do anything if
-	 * the provided instance is not a {@link ServerPlayerEntity} instance
+	 * the provided instance is not a {@link ServerPlayer} instance
 	 * 
-	 * @param serverPlayer The player to send to
+	 * @param player The {@link Player} to send to
 	 * @param message The message to send
 	 */
 	public static <MSG> void sendToPlayer(Player player, MSG message){

@@ -45,7 +45,7 @@ public class CokerUnitRecipeTweaker implements IRecipeManager<CokerUnitRecipe>{
 	/**
 	 * Removes all recipes that output the given IIngredient.
 	 * 
-	 * @param output
+	 * @param output {@link IIngredient} output to remove
 	 * @docParam output <item:immersivepetroleum:petcoke>
 	 * @docParam output <tag:items:forge:coal_petcoke>
 	 */

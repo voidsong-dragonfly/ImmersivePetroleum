@@ -72,7 +72,7 @@ public class GuiReactiveList extends Button{
 	 * Changes the text color for entries when being hovered over
 	 * 
 	 * @param color RGB value
-	 * @return
+	 * @return {@link GuiReactiveList} self
 	 */
 	public GuiReactiveList setTextHoverColor(int color){
 		this.textHoverColor = color;

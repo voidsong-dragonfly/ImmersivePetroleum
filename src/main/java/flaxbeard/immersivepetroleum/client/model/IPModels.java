@@ -46,7 +46,7 @@ public class IPModels{
 	
 	/**
 	 * @param id The String-ID of the Model.
-	 * @param constructor The model constructor
+	 * @param model The {@link IPModel} model
 	 */
 	public static void add(String id, IPModel model){
 		if(MODELS.containsKey(id)){

@@ -48,7 +48,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * Creates a new ReservoirType builder instance.
 	 * 
 	 * @param name The name of the reservoir
-	 * @return new builder instance
+	 * @return new {@link ReservoirBuilder} instance
 	 */
 	public static ReservoirBuilder builder(String name){
 		return new ReservoirBuilder().addWriter(writer -> writer.addProperty("name", name));
@@ -63,7 +63,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @param max The capacity of the reservoir
 	 * @param trace Trace amount of the fluid after being depleted
 	 * @param weight chance for this reservoir to spawn
-	 * @return
+	 * @return The completed {@link ReservoirBuilder} once all parameters are added
 	 */
 	public static ReservoirBuilder builder(String name, Fluid fluid, double min, double max, double trace, int weight){
 		return builder(name).setFluid(fluid).min(min).max(max).trace(trace).weight(weight);
@@ -73,7 +73,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * Sets the fluid for this Reservoir.
 	 * 
 	 * @param fluid The fluid to set.
-	 * @return self
+	 * @return {@link ReservoirBuilder} Self
 	 */
 	public ReservoirBuilder setFluid(Fluid fluid){
 		this.fluid = fluid.getRegistryName().toString();
@@ -116,7 +116,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * </pre></code>
 	 * 
 	 * @param amount The amount to set.
-	 * @return self
+	 * @return {@link ReservoirBuilder} self
 	 */
 	public ReservoirBuilder trace(double amount){
 		this.fluidTrace = (int) Math.floor(amount * 1000D);
@@ -126,11 +126,11 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	/**
 	 * Reservoir Weight
 	 * 
-	 * @param amount
-	 * @return
+	 * @param weight the weight to provide the reservoir
+	 * @return {@link ReservoirBuilder} Self
 	 */
-	public ReservoirBuilder weight(int amount){
-		this.weight = amount;
+	public ReservoirBuilder weight(int weight){
+		this.weight = weight;
 		return this;
 	}
 	
