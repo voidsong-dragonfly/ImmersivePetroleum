@@ -12,12 +12,12 @@
       "amount": 9
     },
     {
-      "fluid": "immersivepetroleum:diesel_sulfur",
-      "amount": 14
+      "fluid": "immersivepetroleum:gasoline",
+      "amount": 30
     },
     {
-      "fluid": "immersivepetroleum:gasoline",
-      "amount": 39
+      "fluid": "immersivepetroleum:diesel_sulfur",
+      "amount": 36
     }
   ],
   "input": {

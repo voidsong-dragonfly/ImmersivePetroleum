@@ -84,7 +84,7 @@ public class IPRecipes extends RecipeProvider{
 			.addDimensions(false, Level.OVERWORLD.location())
 			.build(this.out, rl("reservoirs/aquifer"));
 		
-		ReservoirBuilder.builder("oil", IPContent.Fluids.CRUDEOIL.still().get(), 2500.000, 15000.000, 0.006, 40)
+		ReservoirBuilder.builder("oil", IPContent.Fluids.CRUDEOIL.still().get(), 2500.000, 32500.000, 0.006, 40)
 			.addDimensions(true, Level.END.location())
 			.build(this.out, rl("reservoirs/oil"));
 		
@@ -98,8 +98,9 @@ public class IPRecipes extends RecipeProvider{
 		
 		DistillationRecipeBuilder.builder(new FluidStack[]{
 				new FluidStack(IPContent.Fluids.LUBRICANT.get(), 9),
-				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 14),
-				new FluidStack(IPContent.Fluids.GASOLINE.get(), 39)})
+				new FluidStack(IPContent.Fluids.GASOLINE.get(), 30),
+				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 36),
+				})
 			.addByproduct(new ItemStack(IPContent.Items.BITUMEN.get()), 0.07)
 			.addInput(IPTags.Fluids.crudeOil, 75)
 			.setTimeAndEnergy(1, 2048)
@@ -163,9 +164,9 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void hydrotreaterRecipes(){
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL.get(), 7), 512, 1)
-			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 7))
-			.addSecondaryInputFluid(FluidTags.WATER, 7)
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL.get(), 5), 256, 5)
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 5))
+			.addSecondaryInputFluid(FluidTags.WATER, 5)
 			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.02)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 	}

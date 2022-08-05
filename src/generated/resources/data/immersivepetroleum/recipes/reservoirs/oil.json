@@ -2,7 +2,7 @@
   "type": "immersivepetroleum:reservoirs",
   "fluid": "immersivepetroleum:crudeoil",
   "fluidminimum": 2500000,
-  "fluidcapacity": 15000000,
+  "fluidcapacity": 32500000,
   "fluidtrace": 6,
   "weight": 40,
   "dimension": {
