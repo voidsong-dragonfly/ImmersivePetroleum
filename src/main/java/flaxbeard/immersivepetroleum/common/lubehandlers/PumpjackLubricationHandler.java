@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackTileEntity>{
-	private static Vec3i size = new Vec3i(4, 6, 3);
+	private static final Vec3i size = new Vec3i(4, 6, 3);
 	
 	@Override
 	public Vec3i getStructureDimensions(){
@@ -117,7 +117,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 					.relative(mbte.getIsMirrored() ? mbFacing.getClockWise() : mbFacing.getCounterClockWise(), 2);
 			
 			Direction f = (mbte.getIsMirrored() ? mbte.getFacing().getOpposite() : mbte.getFacing()).getCounterClockWise();
-			return new Tuple<BlockPos, Direction>(pos, f);
+			return new Tuple<>(pos, f);
 		}
 		return null;
 	}
@@ -139,27 +139,23 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		
 		Direction rotation = mbte.getFacing();
 		switch(rotation){
-			case NORTH:{
+			case NORTH -> {
 				matrix.mulPose(new Quaternion(0, 90F, 0, true));
 				matrix.translate(-6, 1, -1);
-				break;
 			}
-			case SOUTH:{
+			case SOUTH -> {
 				matrix.mulPose(new Quaternion(0, 270F, 0, true));
 				matrix.translate(-5, 1, -2);
-				break;
 			}
-			case EAST:{
+			case EAST -> {
 				matrix.translate(-5, 1, -1);
-				break;
 			}
-			case WEST:{
+			case WEST -> {
 				matrix.mulPose(new Quaternion(0, 180F, 0, true));
 				matrix.translate(-6, 1, -2);
-				break;
 			}
-			default:
-				break;
+			default -> {
+			}
 		}
 		
 		IPModel model;

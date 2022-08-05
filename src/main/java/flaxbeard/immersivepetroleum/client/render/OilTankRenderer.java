@@ -20,18 +20,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class OilTankRenderer implements BlockEntityRenderer<OilTankTileEntity>{
 	@Override
-	public boolean shouldRenderOffScreen(OilTankTileEntity te){
+	public boolean shouldRenderOffScreen(@Nonnull OilTankTileEntity te){
 		return true;
 	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void render(OilTankTileEntity te, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
+	public void render(OilTankTileEntity te, float partialTicks, @Nonnull PoseStack matrix, @Nonnull MultiBufferSource buffer, int combinedLight, int combinedOverlay){
 		if(!te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos()))
 			return;
 		
@@ -40,22 +41,20 @@ public class OilTankRenderer implements BlockEntityRenderer<OilTankTileEntity>{
 		matrix.pushPose();
 		{
 			switch(te.getFacing()){
-				case EAST:{
+				case EAST -> {
 					matrix.mulPose(new Quaternion(0, 270F, 0, true));
 					matrix.translate(0, 0, -1);
-					break;
 				}
-				case SOUTH:{
+				case SOUTH -> {
 					matrix.mulPose(new Quaternion(0F, 180F, 0F, true));
 					matrix.translate(-1, 0, -1);
-					break;
 				}
-				case WEST:{
+				case WEST -> {
 					matrix.mulPose(new Quaternion(0, 90F, 0, true));
 					matrix.translate(-1, 0, 0);
-					break;
 				}
-				default:break;
+				default -> {
+				}
 			}
 			
 			// Tank Display

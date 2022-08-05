@@ -38,6 +38,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import javax.annotation.Nonnull;
 
 public class OilCanItem extends IPItemBase{
 	public OilCanItem(){
@@ -55,12 +56,12 @@ public class OilCanItem extends IPItemBase{
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY == null)
 			return;
 		
 		FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
-			if(fluid != null && fluid.getAmount() > 0){
+			if(!fluid.isEmpty() && fluid.getAmount() > 0){
 				Component out = ((MutableComponent) fluid.getDisplayName())
 						.append(new TextComponent(": " + fluid.getAmount() + "/8000mB")).withStyle(ChatFormatting.GRAY);
 				tooltip.add(out);
@@ -71,6 +72,7 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
+	@Nonnull
 	public InteractionResult useOn(UseOnContext context){
 		ItemStack stack = context.getItemInHand();
 		Player player = context.getPlayer();
@@ -87,11 +89,10 @@ public class OilCanItem extends IPItemBase{
 					return InteractionResult.SUCCESS;
 				}else{
 					InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
-						if(handler instanceof FluidHandlerItemStack){
-							FluidHandlerItemStack can = (FluidHandlerItemStack) handler;
+						if(handler instanceof FluidHandlerItemStack can){
 							FluidStack fs = can.getFluid();
-							
-							if(fs != null && LubricantHandler.isValidLube(fs.getFluid())){
+
+							if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
 								int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
 								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
 									player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
@@ -103,10 +104,10 @@ public class OilCanItem extends IPItemBase{
 								}
 							}
 						}
-						
+
 						return InteractionResult.PASS;
 					}).orElse(InteractionResult.PASS);
-					
+
 					return ret;
 				}
 			}
@@ -116,21 +117,20 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
-	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker){
-		this.interactLivingEntity(stack, (Player) null, target, InteractionHand.MAIN_HAND);
+	public boolean hurtEnemy(@Nonnull ItemStack stack, @Nonnull LivingEntity target, @Nonnull LivingEntity attacker){
+		this.interactLivingEntity(stack, null, target, InteractionHand.MAIN_HAND);
 		return true;
 	}
 	
 	@Override
-	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand){
-		if(target instanceof IronGolem){
-			IronGolem golem = (IronGolem) target;
-			
+	@Nonnull
+	public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity target, @Nonnull InteractionHand hand){
+		if(target instanceof IronGolem golem){
+
 			FluidUtil.getFluidHandler(stack).ifPresent(con -> {
-				if(con instanceof FluidHandlerItemStack){
-					FluidHandlerItemStack handler = (FluidHandlerItemStack) con;
-					
-					if(handler.getFluid() != null && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
+				if(con instanceof FluidHandlerItemStack handler){
+
+					if(!handler.getFluid().isEmpty() && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
 						int amountNeeded = (LubricantHandler.getLubeAmount(handler.getFluid().getFluid()) * 5 * 20);
 						if(handler.getFluid().getAmount() >= amountNeeded){
 							player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
@@ -164,7 +164,7 @@ public class OilCanItem extends IPItemBase{
 				ItemNBTHelper.remove(ret, "jerrycanDrain");
 			});
 			return ret;
-		}else if(FluidUtil.getFluidContained(stack) != null){
+		}else if(FluidUtil.getFluidContained(stack).isPresent()){
 			ItemStack ret = stack.copy();
 			FluidUtil.getFluidHandler(ret).ifPresent(handler -> handler.drain(1000, FluidAction.EXECUTE));
 			return ret;

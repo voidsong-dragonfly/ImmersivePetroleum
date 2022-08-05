@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import flaxbeard.immersivepetroleum.client.model.IPModel;
+import javax.annotation.Nonnull;
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.Multimap;
@@ -52,7 +54,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 
 public class DebugItem extends IPItemBase{
-	public static enum Modes{
+	public enum Modes{
 		DISABLED("Disabled"),
 		INFO_SPEEDBOAT("Info: Speedboat"),
 		
@@ -65,7 +67,7 @@ public class DebugItem extends IPItemBase{
 		;
 		
 		public final String display;
-		private Modes(String display){
+		Modes(String display){
 			this.display = display;
 		}
 	}
@@ -75,13 +77,14 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
-	public Component getName(ItemStack stack){
+	@Nonnull
+	public Component getName(@Nonnull ItemStack stack){
 		return new TextComponent("IP Debugging Tool").withStyle(ChatFormatting.LIGHT_PURPLE);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
+	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		tooltip.add(new TextComponent("[Shift + Scroll-UP/DOWN] Change mode.").withStyle(ChatFormatting.GRAY));
 		Modes mode = getMode(stack);
 		if(mode == Modes.DISABLED){
@@ -95,100 +98,102 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
-	public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items){
+	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
 	}
 	
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
+	@Nonnull
+	public InteractionResultHolder<ItemStack> use(Level worldIn, @Nonnull Player playerIn, @Nonnull InteractionHand handIn){
 		if(!worldIn.isClientSide){
 			Modes mode = DebugItem.getMode(playerIn.getItemInHand(handIn));
-			
+
 			switch(mode){
-				case GENERAL_TEST:{
-					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+				case GENERAL_TEST -> {
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
-				case REFRESH_ALL_IPMODELS:{
+				case REFRESH_ALL_IPMODELS -> {
 					try{
-						IPModels.getModels().forEach(m -> m.init());
-						
+						IPModels.getModels().forEach(IPModel::init);
+
 						playerIn.displayClientMessage(new TextComponent("Models refreshed."), true);
-					}catch(Exception e){
+					} catch (Exception e){
 						e.printStackTrace();
 					}
-					
-					
-					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+
+
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
-				case SEEDBASED_RESERVOIR:{
+				case SEEDBASED_RESERVOIR -> {
 					BlockPos playerPos = playerIn.blockPosition();
-					
+
 					ChunkPos cPos = new ChunkPos(playerPos);
 					int chunkX = cPos.getMinBlockX();
 					int chunkZ = cPos.getMinBlockZ();
-					
+
 					// Does the whole 0-15 local chunk block thing
 					int x = playerPos.getX() - cPos.getMinBlockX();
 					int z = playerPos.getZ() - cPos.getMinBlockZ();
-					
+
 					double noise = ReservoirHandler.getValueOf(worldIn, (chunkX + x), (chunkZ + z));
-					
+
 					playerIn.displayClientMessage(new TextComponent((chunkX + " " + chunkZ) + ": " + noise), true);
-					
-					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
-				case SEEDBASED_RESERVOIR_AREA_TEST:{
+				case SEEDBASED_RESERVOIR_AREA_TEST -> {
 					BlockPos playerPos = playerIn.blockPosition();
-					
+
 					if(ReservoirHandler.getIsland(worldIn, playerPos) != null){
 						ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
-						
+
 						int x = playerPos.getX();
 						int z = playerPos.getZ();
-						
+
 						float pressure = island.getPressure(worldIn, x, z);
-						
+
 						if(playerIn.isShiftKeyDown()){
 							island.setAmount(island.getCapacity());
 							IPSaveData.markInstanceAsDirty();
 							playerIn.displayClientMessage(new TextComponent("Island Refilled."), true);
-							return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+							return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 						}
-						
+
 						String out = String.format(Locale.ENGLISH,
-								"Noise: %.3f, Amount: %d/%d, Pressure: %.3f, Flow: %d, Type: %s", 
+								"Noise: %.3f, Amount: %d/%d, Pressure: %.3f, Flow: %d, Type: %s",
 								ReservoirHandler.getValueOf(worldIn, x, z),
 								island.getAmount(),
 								island.getCapacity(),
 								pressure,
 								ReservoirIsland.getFlow(pressure),
 								new FluidStack(island.getFluid(), 1).getDisplayName().getString());
-						
+
 						playerIn.displayClientMessage(new TextComponent(out), true);
-						
+
 					}else{
 						final Multimap<ResourceKey<Level>, ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList();
-						
-						for(ResourceKey<Level> key:islands.keySet()){
+
+						for (ResourceKey<Level> key : islands.keySet()){
 							Collection<ReservoirIsland> list = islands.get(key);
-							
+
 							String str = key.location() + " has " + list.size() + " islands.";
-							
+
 							playerIn.displayClientMessage(new TextComponent(str), false);
 						}
 					}
-					
-					return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
+
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
-				default:
-					break;
+				default -> {
+				}
 			}
-			return new InteractionResultHolder<ItemStack>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+			return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
 		}
 		
 		return super.use(worldIn, playerIn, handIn);
 	}
 	
 	@Override
+	@Nonnull
 	public InteractionResult useOn(UseOnContext context){
 		Player player = context.getPlayer();
 		if(player == null){
@@ -200,47 +205,46 @@ public class DebugItem extends IPItemBase{
 		
 		BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
 		switch(mode){
-			case GENERAL_TEST:{
+			case GENERAL_TEST -> {
 				Level world = context.getLevel();
 				if(world.isClientSide){
 					// Client
-					
-					player.displayClientMessage(new TextComponent(DynamicTextureWrapper.DYN_TEXTURE_CACHE.size()+""), false);
-					
+
+					player.displayClientMessage(new TextComponent(DynamicTextureWrapper.DYN_TEXTURE_CACHE.size() + ""), false);
+
 				}else{
 					// Server
-					
-					if(te instanceof WellTileEntity){
-						WellTileEntity well = (WellTileEntity) te;
-						
+
+					if(te instanceof WellTileEntity well){
+
 						if(well.tappedIslands.isEmpty()){
 							well.tappedIslands.add(new ColumnPos(well.getBlockPos()));
 						}
 					}
 				}
-				
+
 				return InteractionResult.SUCCESS;
 			}
-			case UPDATE_SHAPES:{
+			case UPDATE_SHAPES -> {
 				if(te instanceof CokerUnitTileEntity){
 					CokerUnitTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
-				
+
 				if(te instanceof DerrickTileEntity){
 					DerrickTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
-				
+
 				if(te instanceof OilTankTileEntity){
 					OilTankTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
-				
+
 				return InteractionResult.PASS;
 			}
-			default:
-				break;
+			default -> {
+			}
 		}
 		
 		return InteractionResult.PASS;
@@ -343,13 +347,11 @@ public class DebugItem extends IPItemBase{
 		public static void handleKey(InputEvent.KeyInputEvent event){
 			if(event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT){
 				switch(event.getAction()){
-					case GLFW.GLFW_PRESS:{
+					case GLFW.GLFW_PRESS -> {
 						shiftHeld = true;
-						return;
 					}
-					case GLFW.GLFW_RELEASE:{
+					case GLFW.GLFW_RELEASE -> {
 						shiftHeld = false;
-						return;
 					}
 				}
 			}

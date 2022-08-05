@@ -46,6 +46,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 
+import javax.annotation.Nonnull;
+
 @Mod(ImmersivePetroleum.MODID)
 public class ImmersivePetroleum{
 	public static final String MODID = "immersivepetroleum";
@@ -54,6 +56,7 @@ public class ImmersivePetroleum{
 	
 	public static final CreativeModeTab creativeTab = new CreativeModeTab(MODID){
 		@Override
+		@Nonnull
 		public ItemStack makeIcon(){
 			return new ItemStack(Fluids.CRUDEOIL.bucket().get());
 		}

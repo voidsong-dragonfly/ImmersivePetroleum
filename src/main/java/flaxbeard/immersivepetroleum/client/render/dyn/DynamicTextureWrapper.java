@@ -87,9 +87,9 @@ public class DynamicTextureWrapper{
 	private final ResourceLocation rl;
 	
 	/**
-	 * @param width
-	 * @param height
-	 * @param typeName 
+	 * @param width texture width
+	 * @param height texture height
+	 * @param uuid uuid to make the resource location from
 	 */
 	private DynamicTextureWrapper(int width, int height, @Nonnull UUID uuid){
 		Objects.requireNonNull(uuid, "Non-null UUID expected.");
@@ -99,7 +99,7 @@ public class DynamicTextureWrapper{
 		this.uuid = uuid;
 		
 		this.texture = new DynamicTexture(width, height, true);
-		this.rl = ResourceUtils.ip("dyntexture/" + uuid.toString());
+		this.rl = ResourceUtils.ip("dyntexture/" + uuid);
 		
 		MCUtil.getTextureManager().register(this.rl, this.texture);
 		this.renderType = RenderType.text(this.rl);

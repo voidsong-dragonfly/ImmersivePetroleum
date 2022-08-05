@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class ModelMotorboat extends ListModel<MotorboatEntity>{
@@ -140,19 +141,18 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	}
 	
 	@Override
-	public void setupAnim(MotorboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		MotorboatEntity boatEntity = (MotorboatEntity) entityIn;
-		
-		this.setPaddleRotationAngles(boatEntity, 0, limbSwing, boatEntity.isEmergency());
-		this.setPaddleRotationAngles(boatEntity, 1, limbSwing, boatEntity.isEmergency());
+	public void setupAnim(@Nonnull MotorboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+
+		this.setPaddleRotationAngles(entityIn, 0, limbSwing, entityIn.isEmergency());
+		this.setPaddleRotationAngles(entityIn, 1, limbSwing, entityIn.isEmergency());
 	}
 	
 	public void setPaddleRotationAngles(Boat boat, int paddle, float limbSwing, boolean isEmergency){
 		if(isEmergency){
 			float f = boat.getRowingTime(paddle, limbSwing);
 			ModelPart model = this.paddles[paddle];
-			model.xRot = (float) Mth.clampedLerp((double) (-(float) Math.PI / 3F), (double) -0.2617994F, (double) ((Mth.sin(-f) + 1.0F) / 2.0F));
-			model.yRot = (float) Mth.clampedLerp((double) (-(float) Math.PI / 4F), (double) ((float) Math.PI / 4F), (double) ((Mth.sin(-f + 1.0F) + 1.0F) / 2.0F));
+			model.xRot = (float) Mth.clampedLerp(-(float) Math.PI / 3F, -0.2617994F, (double) ((Mth.sin(-f) + 1.0F) / 2.0F));
+			model.yRot = (float) Mth.clampedLerp(-(float) Math.PI / 4F, (float) Math.PI / 4F, (double) ((Mth.sin(-f + 1.0F) + 1.0F) / 2.0F));
 			
 			model.setPos(3.0F, -5.0F, 9.0F);
 			
@@ -178,6 +178,7 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	 * Only contains the base shape
 	 */
 	@Override
+	@Nonnull
 	public Iterable<ModelPart> parts(){
 		return this.list;
 	}

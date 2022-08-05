@@ -70,23 +70,23 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 0;
 	}
 	
 	@Override
-	public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos){
+	public boolean propagatesSkylightDown(@Nonnull BlockState state, @Nonnull BlockGetter reader, @Nonnull BlockPos pos){
 		return true;
 	}
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public float getShadeBrightness(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 1.0F;
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, @Nonnull BlockState pState){
 		SeismicSurveyTileEntity te = IPTileTypes.SEISMIC_SURVEY.get().create(pPos, pState);
 		te.isSlave = pState.getValue(SLAVE);
 		return te;
@@ -102,7 +102,7 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player){
+	public void playerWillDestroy(@Nonnull Level world, @Nonnull BlockPos pos, BlockState state, @Nonnull Player player){
 		if(state.getValue(SLAVE)){
 			// Find the master block
 			for(int i = 1;i < 3;i++){
@@ -126,7 +126,8 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder){
+	@Nonnull
+	public List<ItemStack> getDrops(BlockState state, @Nonnull LootContext.Builder builder){
 		if(state.getValue(SLAVE)){
 			// TODO Don't know how else i would do this yet
 			return Collections.emptyList();
@@ -136,11 +137,11 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving){
+	public void onRemove(BlockState pState, @Nonnull Level pLevel, @Nonnull BlockPos pPos, @Nonnull BlockState pNewState, boolean pIsMoving){
 		if(pState.hasBlockEntity() && (!pState.is(pNewState.getBlock()) || !pNewState.hasBlockEntity())){
 			if(!pLevel.isClientSide && pLevel.getBlockEntity(pPos) instanceof SeismicSurveyTileEntity survey && !survey.isSlave){
 				if(!survey.stack.isEmpty()){
-					Block.popResource((Level) pLevel, pPos, survey.stack);
+					Block.popResource(pLevel, pPos, survey.stack);
 				}
 			}
 			pLevel.removeBlockEntity(pPos);
@@ -148,7 +149,8 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
+	@Nonnull
+	public InteractionResult use(@Nonnull BlockState state, Level world, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit){
 		BlockEntity te = world.getBlockEntity(pos);
 		if(te instanceof SeismicSurveyTileEntity survey){
 			survey = survey.master();
@@ -161,7 +163,7 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack){
 		if(!worldIn.isClientSide){
 			worldIn.setBlockAndUpdate(pos.offset(0, 1, 0), state.setValue(SLAVE, true));
 			worldIn.setBlockAndUpdate(pos.offset(0, 2, 0), state.setValue(SLAVE, true));
@@ -171,7 +173,8 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	static final VoxelShape SHAPE_MASTER = Shapes.box(0.001, 0.001, 0.001, 0.999, 0.999, 0.999);
 	
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
+	@Nonnull
+	public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context){
 		return SHAPE_MASTER;
 	}
 	
@@ -181,7 +184,7 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 		}
 		
 		@Override
-		protected boolean canPlace(BlockPlaceContext con, BlockState state){
+		protected boolean canPlace(@Nonnull BlockPlaceContext con, @Nonnull BlockState state){
 			if(super.canPlace(con, state)){
 				BlockPos posA = con.getClickedPos().relative(Direction.UP, 1);
 				BlockState stateA = con.getLevel().getBlockState(posA);

@@ -67,6 +67,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
+import javax.annotation.Nonnull;
 
 public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
@@ -130,7 +131,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	protected void defineSynchedData(){
 		super.defineSynchedData();
 		this.entityData.define(TANK_FLUID, "");
-		this.entityData.define(TANK_AMOUNT, Integer.valueOf(0));
+		this.entityData.define(TANK_AMOUNT, 0);
 		this.entityData.define(UPGRADE_0, ItemStack.EMPTY);
 		this.entityData.define(UPGRADE_1, ItemStack.EMPTY);
 		this.entityData.define(UPGRADE_2, ItemStack.EMPTY);
@@ -138,7 +139,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	protected void readAdditionalSaveData(CompoundTag compound){
+	protected void readAdditionalSaveData(@Nonnull CompoundTag compound){
 		super.readAdditionalSaveData(compound);
 		
 		String fluid = "";
@@ -171,7 +172,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	protected void addAdditionalSaveData(CompoundTag compound){
+	protected void addAdditionalSaveData(@Nonnull CompoundTag compound){
 		super.addAdditionalSaveData(compound);
 		
 		String fluid = this.entityData.get(TANK_FLUID);
@@ -196,10 +197,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	public void setUpgrades(NonNullList<ItemStack> stacks){
 		if(stacks != null && stacks.size() > 0){
-			ItemStack o0 = stacks.get(0) == null ? ItemStack.EMPTY : stacks.get(0);
-			ItemStack o1 = stacks.get(1) == null ? ItemStack.EMPTY : stacks.get(1);
-			ItemStack o2 = stacks.get(2) == null ? ItemStack.EMPTY : stacks.get(2);
-			ItemStack o3 = stacks.get(3) == null ? ItemStack.EMPTY : stacks.get(3);
+			ItemStack o0 = stacks.get(0);
+			ItemStack o1 = stacks.get(1);
+			ItemStack o2 = stacks.get(2);
+			ItemStack o3 = stacks.get(3);
 			this.entityData.set(UPGRADE_0, o0);
 			this.entityData.set(UPGRADE_1, o1);
 			this.entityData.set(UPGRADE_2, o2);
@@ -224,7 +225,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public void onSyncedDataUpdated(EntityDataAccessor<?> key){
+	public void onSyncedDataUpdated(@Nonnull EntityDataAccessor<?> key){
 		super.onSyncedDataUpdated(key);
 		if(key == UPGRADE_0 || key == UPGRADE_1 || key == UPGRADE_2 || key == UPGRADE_3){
 			NonNullList<ItemStack> upgrades = getUpgrades();
@@ -261,7 +262,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	public FluidStack getContainedFluid(){
 		String fluidName = this.entityData.get(TANK_FLUID);
-		int amount = this.entityData.get(TANK_AMOUNT).intValue();
+		int amount = this.entityData.get(TANK_AMOUNT);
 		
 		if(fluidName == null || fluidName.isEmpty() || amount == 0)
 			return FluidStack.EMPTY;
@@ -279,8 +280,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
+	@Nonnull
 	public Vec3 getDismountLocationForPassenger(LivingEntity pLivingEntity){
-		Vec3 vec3 = getCollisionHorizontalEscapeVector((double) (this.getBbWidth() * Mth.SQRT_OF_TWO), (double) pLivingEntity.getBbWidth(), pLivingEntity.getYRot());
+		Vec3 vec3 = getCollisionHorizontalEscapeVector(this.getBbWidth() * Mth.SQRT_OF_TWO, pLivingEntity.getBbWidth(), pLivingEntity.getYRot());
 		double d0 = this.getX() + vec3.x;
 		double d1 = this.getZ() + vec3.z;
 		BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);
@@ -311,7 +313,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public boolean hurt(DamageSource source, float amount){
+	public boolean hurt(@Nonnull DamageSource source, float amount){
 		if(isInvulnerableTo(source) || (this.isFireproof && source.isFire())){
 			return false;
 		}else if(!this.level.isClientSide && isAlive()){
@@ -379,7 +381,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
-	public InteractionResult interact(Player player, InteractionHand hand){
+	@Nonnull
+	public InteractionResult interact(Player player, @Nonnull InteractionHand hand){
 		ItemStack stack = player.getItemInHand(hand);
 		
 		if(stack != ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
@@ -426,7 +429,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	@Override
 	public void setInput(boolean pLeftInputDown, boolean pRightInputDown, boolean pForwardInputDown, boolean pBackInputDown){
 		super.setInput(pLeftInputDown, pRightInputDown, pForwardInputDown, pBackInputDown);
-		this.isBoosting = isEmergency() ? false : (pForwardInputDown && Minecraft.getInstance().options.keyJump.isDown());
+		this.isBoosting = !isEmergency() && (pForwardInputDown && Minecraft.getInstance().options.keyJump.isDown());
 	}
 	
 	/* Only needed and used on Server side */
@@ -453,7 +456,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			}
 			// Fuel
 			{
-				int current = this.entityData.get(TANK_AMOUNT).intValue();
+				int current = this.entityData.get(TANK_AMOUNT);
 				int diff = current - this.oFuelAmount;
 				if(diff != 0 && current == 0){
 					if(this.getFirstPassenger() instanceof Player player && this.hasPaddles){
@@ -526,22 +529,22 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				if(this.inputUp && this.level.random.nextInt(2) == 0){
 					if(isInLava()){
 						if(this.level.random.nextInt(3) == 0){
-							float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
-							float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+							float xO = Mth.sin(-this.getYRot() * 0.017453292F) + (this.level.random.nextFloat() - .5F) * .3F;
+							float zO = Mth.cos(this.getYRot() * 0.017453292F) + (this.level.random.nextFloat() - .5F) * .3F;
 							float yO = .4F + (this.level.random.nextFloat() - .5F) * .3F;
 							Vec3 motion = getDeltaMovement();
 							this.level.addParticle(ParticleTypes.LAVA, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, -2 * motion.x(), 0, -2 * motion.z());
 						}
 					}else{
-						float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
-						float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+						float xO = Mth.sin(-this.getYRot() * 0.017453292F) + (this.level.random.nextFloat() - .5F) * .3F;
+						float zO = Mth.cos(this.getYRot() * 0.017453292F) + (this.level.random.nextFloat() - .5F) * .3F;
 						float yO = .1F + (this.level.random.nextFloat() - .5F) * .3F;
 						this.level.addParticle(ParticleTypes.BUBBLE, getX() - xO * 1.5F, getY() + yO, getZ() - zO * 1.5F, 0, 0, 0);
 					}
 				}
 				if(this.isBoosting && this.level.random.nextInt(2) == 0){
-					float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
-					float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F)) + (this.level.random.nextFloat() - .5F) * .3F;
+					float xO = Mth.sin(-this.getYRot() * 0.017453292F) + (this.level.random.nextFloat() - .5F) * .3F;
+					float zO = Mth.cos(this.getYRot() * 0.017453292F) + (this.level.random.nextFloat() - .5F) * .3F;
 					float yO = .8F + (this.level.random.nextFloat() - .5F) * .3F;
 					this.level.addParticle(ParticleTypes.SMOKE, getX() - xO * 1.3F, getY() + yO, getZ() - zO * 1.3F, 0, 0, 0);
 				}
@@ -564,8 +567,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			}
 		}
 		
-		float xO = (float) (Mth.sin(-this.getYRot() * 0.017453292F));
-		float zO = (float) (Mth.cos(this.getYRot() * 0.017453292F));
+		float xO = Mth.sin(-this.getYRot() * 0.017453292F);
+		float zO = Mth.cos(this.getYRot() * 0.017453292F);
 		Vector3f vec = new Vector3f(xO, zO, 0.0F);
 		vec.normalize();
 		
@@ -605,24 +608,22 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		this.checkInsideBlocks();
 		
 		if(!this.level.isClientSide){
-			List<Entity> list = this.level.getEntities(this, this.getBoundingBox().inflate((double) 0.2F, (double) -0.01F, (double) 0.2F), EntitySelector.pushableBy(this));
+			List<Entity> list = this.level.getEntities(this, this.getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
 			if(!list.isEmpty()){
 				boolean flag = !(this.getControllingPassenger() instanceof Player);
-				
-				for(int j = 0;j < list.size();++j){
-					Entity entity = list.get(j);
-					
+
+				for (Entity entity : list){
 					if(!entity.hasPassenger(this)){
 						if(flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getBbWidth() < this.getBbWidth() && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)){
 							entity.startRiding(this);
 						}else{
 							this.push(entity);
-							
+
 							if(this.hasIcebreaker){
 								if(entity instanceof LivingEntity && !(entity instanceof Player) && this.getControllingPassenger() instanceof Player){
 									Vector3f vec2 = new Vector3f((float) (entity.getX() - getX()), (float) (entity.getZ() - getZ()), 0.0F);
 									vec2.normalize();
-									
+
 									float sim = vec2.dot(vec);
 									if(sim > .5f){
 										Vec3 motion = entity.getDeltaMovement();
@@ -665,8 +666,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					f -= 0.005F;
 				}
 				
-				double xa = (double) (Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * f);
-				double za = (double) (Mth.cos(this.getYRot() * Mth.DEG_TO_RAD) * f);
+				double xa = Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * f;
+				double za = Mth.cos(this.getYRot() * Mth.DEG_TO_RAD) * f;
 				Vec3 motion = this.getDeltaMovement().add(xa, 0.0F, za);
 				this.setDeltaMovement(motion);
 				this.setPaddleState(this.inputRight && !this.inputLeft || this.inputUp, this.inputLeft && !this.inputRight || this.inputUp);
@@ -701,8 +702,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					setPaddleState(false, false);
 				}
 				
-				double xa = (double) (Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * f);
-				double za = (double) (Mth.cos(this.getYRot() * Mth.DEG_TO_RAD) * f);
+				double xa = Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * f;
+				double za = Mth.cos(this.getYRot() * Mth.DEG_TO_RAD) * f;
 				Vec3 motion = this.getDeltaMovement().add(xa, 0.0F, za);
 				this.setDeltaMovement(motion);
 				
@@ -740,6 +741,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
+	@Nonnull
 	public Item getDropItem(){
 		return Items.SPEEDBOAT.get();
 	}
@@ -842,7 +844,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					FluidState fluidstate = this.level.getFluidState(blockpos);
 					if(fluidstate.is(FluidTags.WATER) || (this.isFireproof && fluidstate.is(FluidTags.LAVA))){
 						float f = (float) l1 + fluidstate.getHeight(this.level, blockpos);
-						this.waterLevel = Math.max((double) f, this.waterLevel);
+						this.waterLevel = Math.max(f, this.waterLevel);
 						flag |= aabb.minY < (double) f;
 					}
 				}
@@ -911,6 +913,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	@Override
+	@Nonnull
 	public Packet<?> getAddEntityPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}

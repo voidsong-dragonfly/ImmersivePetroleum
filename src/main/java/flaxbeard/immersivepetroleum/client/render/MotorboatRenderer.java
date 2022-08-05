@@ -16,12 +16,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
-	private static ResourceLocation texture = ResourceUtils.ip("textures/models/boat_motor.png");
-	private static ResourceLocation textureArmor = ResourceUtils.ip("textures/models/boat_motor_armor.png");
+	private static final ResourceLocation texture = ResourceUtils.ip("textures/models/boat_motor.png");
+	private static final ResourceLocation textureArmor = ResourceUtils.ip("textures/models/boat_motor_armor.png");
 	
 	/** instance of ModelBoat for rendering */
 	protected final ModelMotorboat modelBoat = new ModelMotorboat();
@@ -32,7 +33,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	}
 	
 	@Override
-	public void render(MotorboatEntity entity, float entityYaw, float partialTicks, PoseStack matrix, MultiBufferSource bufferIn, int packedLight){
+	public void render(@Nonnull MotorboatEntity entity, float entityYaw, float partialTicks, PoseStack matrix, @Nonnull MultiBufferSource bufferIn, int packedLight){
 		matrix.pushPose();
 		{
 			matrix.translate(0.0D, 0.375D, 0.0D);
@@ -129,7 +130,8 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	}
 	
 	@Override
-	public ResourceLocation getTextureLocation(MotorboatEntity entity){
+	@Nonnull
+	public ResourceLocation getTextureLocation(@Nonnull MotorboatEntity entity){
 		return texture;
 	}
 	

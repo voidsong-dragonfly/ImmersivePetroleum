@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import javax.annotation.Nonnull;
 
 public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	
@@ -52,11 +53,11 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
+	public void onPlace(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving){
 	}
 	
 	@Override
-	public float getDestroyProgress(BlockState state, Player player, BlockGetter worldIn, BlockPos pos){
+	public float getDestroyProgress(BlockState state, @Nonnull Player player, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		float f = state.getDestroySpeed(worldIn, pos);
 		
 		if(state.getValue(BROKEN)){
@@ -72,7 +73,7 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving){
+	public void onRemove(BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving){
 		if(state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())){
 			removed(state, world, pos);
 			world.removeBlockEntity(pos);
@@ -108,8 +109,7 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		WellPipeTileEntity tile = IPTileTypes.WELL_PIPE.get().create(pPos, pState);
-		return tile;
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, @Nonnull BlockState pState){
+		return IPTileTypes.WELL_PIPE.get().create(pPos, pState);
 	}
 }

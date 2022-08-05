@@ -26,17 +26,16 @@ import net.minecraftforge.fluids.FluidStack;
 public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationRecipeBuilder>{
 	
 	public static DistillationRecipeBuilder builder(FluidStack... fluidOutput){
-		if(fluidOutput == null || ((fluidOutput != null && fluidOutput.length == 0)))
+		if(fluidOutput == null || fluidOutput.length == 0)
 			throw new IllegalArgumentException("Fluid output missing. It's required.");
 		
 		DistillationRecipeBuilder b = new DistillationRecipeBuilder();
-		if(fluidOutput != null && fluidOutput.length > 0)
-			b.addFluids("results", fluidOutput);
+		b.addFluids("results", fluidOutput);
 		return b;
 	}
 	
 	/** Temporary storage for byproducts */
-	private List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
+	private final List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
 	
 	private DistillationRecipeBuilder(){
 		super(Serializers.DISTILLATION_SERIALIZER.get());
@@ -53,7 +52,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	/**
 	 * Can be called multiple times to add more byproducts to the recipe
 	 * 
-	 * @param byproduct
+	 * @param byproduct the {@link ItemStack} byproduct to add to the recipe
 	 * @param chance 0 to 100 (clamped)
 	 * @return self for chaining
 	 */
@@ -64,12 +63,12 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	/**
 	 * Can be called multiple times to add more byproducts to the recipe.
 	 * 
-	 * @param byproduct
+	 * @param byproduct {@link ItemStack} to output as byproduct
 	 * @param chance 0.0 to 1.0 (clamped)
-	 * @return self for chaining
+	 * @return {@link DistillationRecipeBuilder} self for chaining
 	 */
 	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, double chance){
-		this.byproducts.add(new Tuple<ItemStack, Double>(byproduct, Math.max(Math.min(chance, 1.0), 0.0)));
+		this.byproducts.add(new Tuple<>(byproduct, Math.max(Math.min(chance, 1.0), 0.0)));
 		return this;
 	}
 	
@@ -113,7 +112,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 			double chance = jsonObject.get("chance").getAsDouble();
 			jsonObject.remove("chance");
 			ItemStack stack = ShapedRecipe.itemStackFromJson(jsonObject);
-			return new Tuple<ItemStack, Double>(stack, chance);
+			return new Tuple<>(stack, chance);
 		}
 		
 		throw new IllegalArgumentException("Unexpected json object.");

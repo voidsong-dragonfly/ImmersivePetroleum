@@ -148,7 +148,7 @@ public class IPContent{
 			registerItemBlock(ASPHALT_STAIR);
 		}
 
-		private static void registerItemBlock(RegistryObject<? extends Block> block) {
+		private static void registerItemBlock(RegistryObject<? extends Block> block){
 			IPRegisters.registerItem(block.getId().getPath(), () -> new IPBlockItemBase(block.get(), new Item.Properties().tab(ImmersivePetroleum.creativeTab)));
 		}
 	}
@@ -204,9 +204,7 @@ public class IPContent{
 	}
 	
 	public static void init(ParallelDispatchEvent event){
-		event.enqueueWork(() -> {
-			IPWorldGen.registerReservoirGen();
-		});
+		event.enqueueWork(IPWorldGen::registerReservoirGen);
 		
 		//blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));
 		//blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));

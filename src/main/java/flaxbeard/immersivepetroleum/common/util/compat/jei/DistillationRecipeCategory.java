@@ -17,6 +17,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRecipe>{
 	public static final ResourceLocation ID = ResourceUtils.ip("distillation");
@@ -31,7 +32,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	}
 	
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, DistillationRecipe recipe, IFocusGroup focuses){
+	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, DistillationRecipe recipe, @Nonnull IFocusGroup focuses){
 		if(recipe.getInputFluid() != null){
 			int total = 0;
 			List<FluidStack> list = recipe.getInputFluid().getMatchingFluidStacks();
@@ -68,7 +69,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	}
 	
 	@Override
-	public void draw(DistillationRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
+	public void draw(@Nonnull DistillationRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull PoseStack matrix, double mouseX, double mouseY){
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import java.util.Arrays;
 import java.util.List;
 
 import blusunrize.immersiveengineering.api.Lib;
@@ -40,6 +39,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import javax.annotation.Nonnull;
 
 public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IReadOnPlacement{
 	public boolean isSlave;
@@ -114,10 +114,11 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	}
 	
 	@Override
+	@Nonnull
 	public List<ItemStack> getBlockEntityDrop(LootContext context){
 		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
 		if(state.getValue(AutoLubricatorBlock.SLAVE)){
-			return Arrays.asList(ItemStack.EMPTY);
+			return List.of(ItemStack.EMPTY);
 		}
 		
 		ItemStack stack = new ItemStack(state.getBlock());
@@ -131,13 +132,14 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 			}
 		}
 		
-		return Arrays.asList(stack);
+		return List.of(stack);
 	}
 	
 	private LazyOptional<IFluidHandler> outputHandler;
 	
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
+	@Nonnull
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
 			if(this.isSlave && (side == null || side == Direction.UP)){
 				AutoLubricatorTileEntity master = master();
@@ -146,9 +148,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 				}
 				
 				if(this.outputHandler == null){
-					this.outputHandler = LazyOptional.of(() -> {
-						return master.tank;
-					});
+					this.outputHandler = LazyOptional.of(() -> master.tank);
 				}
 				return this.outputHandler.cast();
 			}
@@ -196,7 +196,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	}
 	
 	@Override
-	public Component[] getOverlayText(Player player, HitResult mop, boolean hammer){
+	public Component[] getOverlayText(Player player, @Nonnull HitResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
 			AutoLubricatorTileEntity master = master();
 			if(master != null){
@@ -213,12 +213,12 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPServ
 	}
 	
 	@Override
-	public boolean useNixieFont(Player player, HitResult mop){
+	public boolean useNixieFont(@Nonnull Player player, @Nonnull HitResult mop){
 		return false;
 	}
 	
 	@Override
-	public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
+	public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ){
 		AutoLubricatorTileEntity master = master();
 		if(master != null){
 			if(!this.level.isClientSide && FluidUtil.interactWithFluidHandler(player, hand, master.tank)){

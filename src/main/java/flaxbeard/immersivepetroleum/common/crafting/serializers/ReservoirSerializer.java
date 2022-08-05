@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
+import javax.annotation.Nonnull;
 
 public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 	@Override
@@ -53,11 +54,11 @@ public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 			
 			if(whitelist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to dimension-whitelist for {} -", name);
-				whitelist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
+				whitelist.forEach(ImmersivePetroleum.log::debug);
 				reservoir.addDimension(false, whitelist);
 			}else if(blacklist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to dimension-blacklist for {} -", name);
-				blacklist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
+				blacklist.forEach(ImmersivePetroleum.log::debug);
 				reservoir.addDimension(true, blacklist);
 			}
 		}
@@ -84,11 +85,11 @@ public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 			
 			if(whitelist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to biome-whitelist for {} -", name);
-				whitelist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
+				whitelist.forEach(ImmersivePetroleum.log::debug);
 				reservoir.addBiome(false, whitelist);
 			}else if(blacklist.size() > 0){
 				ImmersivePetroleum.log.debug("- Adding these to biome-blacklist for {} -", name);
-				blacklist.forEach(ins -> ImmersivePetroleum.log.debug(ins));
+				blacklist.forEach(ImmersivePetroleum.log::debug);
 				reservoir.addBiome(true, blacklist);
 			}
 		}
@@ -97,7 +98,7 @@ public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 	}
 	
 	@Override
-	public Reservoir fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer){
+	public Reservoir fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
 		return new Reservoir(buffer.readNbt()); // Very convenient having the NBT stuff already.
 	}
 	

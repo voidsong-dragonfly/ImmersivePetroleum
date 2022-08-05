@@ -46,9 +46,7 @@ public class IPRenderTypes extends RenderStateShard{
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 	}, RenderSystem::disableBlend);
-	static final RenderStateShard.TransparencyStateShard NO_TRANSPARENCY = new RenderStateShard.TransparencyStateShard("no_transparency", () -> {
-		RenderSystem.disableBlend();
-	}, () -> {
+	static final RenderStateShard.TransparencyStateShard NO_TRANSPARENCY = new RenderStateShard.TransparencyStateShard("no_transparency", RenderSystem::disableBlend, () -> {
 	});
 	
 	static final RenderStateShard.ShaderStateShard PROJECTION_SHADER = new RenderStateShard.ShaderStateShard(IPShaders::getProjectionStaticShader);
@@ -199,6 +197,7 @@ public class IPRenderTypes extends RenderStateShard{
 	// TODO this is very very broken in 1.17+
 	public static MultiBufferSource disableLighting(MultiBufferSource in){
 		return type -> {
+			//RenderSystem.disableLighting();
 			RenderType rt = new RenderType(
 					ImmersivePetroleum.MODID + ":" + type + "_no_lighting",
 					type.format(),
@@ -206,13 +205,7 @@ public class IPRenderTypes extends RenderStateShard{
 					type.bufferSize(),
 					type.affectsCrumbling(),
 					false,
-					() -> {
-						type.setupRenderState();
-						
-						//RenderSystem.disableLighting();
-					}, () -> {
-						type.clearRenderState();
-					}){};
+					type::setupRenderState, type::clearRenderState){};
 			return in.getBuffer(rt);
 		};
 	}

@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
@@ -30,9 +29,8 @@ public class WellBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		WellTileEntity tile = IPTileTypes.WELL.get().create(pPos, pState);
-		return tile;
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, @Nonnull BlockState pState){
+		return IPTileTypes.WELL.get().create(pPos, pState);
 	}
 	
 	@Nullable

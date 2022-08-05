@@ -19,18 +19,17 @@ public class FluidHelper{
 	
 	/** Convenience Method */
 	public static FluidStack copyFluid(FluidStack fluid, int amount){
-		FluidStack fs = copyFluid(fluid, amount, false);
-		return fs;
+		return copyFluid(fluid, amount, false);
 	}
 	
 	/**
 	 * Makes a copy of a FluidStack (excluding NBT) and optionally adds the
 	 * Pressurized tag
 	 * 
-	 * @param fluid
-	 * @param amount
+	 * @param fluid {@link FluidStack} to use as the fluid type
+	 * @param amount the amount to use in the copied stack
 	 * @param pressurize (optionally)
-	 * @return FluidStack
+	 * @return {@link FluidStack}, pressurized if above IE's transfer threshold
 	 */
 	public static FluidStack copyFluid(FluidStack fluid, int amount, boolean pressurize){
 		FluidStack fs = new FluidStack(fluid.getFluid(), amount);
@@ -42,11 +41,11 @@ public class FluidHelper{
 	
 	/**
 	 * Creates a pressurized FluidStack instance of the given Fluid.<br>
-	 * Only pressurizes the fluid if nessesary. (amount goes above 50)
+	 * Only pressurizes the fluid if necessary. (amount goes above 50)
 	 * 
-	 * @param fluid
-	 * @param amount
-	 * @return FluidStack, with Pressuzired tag as needed.
+	 * @param fluid {@link Fluid} to use as the fluid type
+	 * @param amount the amount to use in the created stack
+	 * @return {@link FluidStack}, with pressurized tag as needed.
 	 */
 	public static FluidStack makePressurizedFluid(Fluid fluid, int amount){
 		FluidStack fs = new FluidStack(fluid, amount);

@@ -12,6 +12,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import javax.annotation.Nonnull;
 
 public class ModelPumpjack extends IPModel{
 	public static final String ID = "pumpjackarm";
@@ -63,7 +64,7 @@ public class ModelPumpjack extends IPModel{
 	}
 	
 	@Override
-	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
+	public void renderToBuffer(@Nonnull PoseStack matrixStackIn, @Nonnull VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
 		this.arm.zRot = (float) Math.toRadians(15 * Math.sin(this.ticks / 25F));
 		this.swingy.zRot = (float) (2 * (Math.PI / 4) + (this.ticks / 25F));
 		

@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.openzen.zencode.java.ZenCodeType.Constructor;
 import org.openzen.zencode.java.ZenCodeType.Method;
@@ -24,8 +23,7 @@ public class ReservoirTweaker{
 	@Method
 	public static boolean remove(String name){
 			List<ResourceLocation> test = Reservoir.map.keySet().stream()
-				.filter(loc -> loc.getPath().contains(name))
-				.collect(Collectors.toList());
+					.filter(loc -> loc.getPath().contains(name)).toList();
 		
 		if(test.size() > 1){
 			//CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
@@ -55,15 +53,16 @@ public class ReservoirTweaker{
 		
 		private boolean isValid = true;
 		
-		private IFluidStack iFluidStack;
-		private int minSize, maxSize;
-		private int traceAmount;
-		private int weight;
+		private final IFluidStack iFluidStack;
+		private final int minSize;
+		private final int maxSize;
+		private final int traceAmount;
+		private final int weight;
 		
-		private List<ResourceLocation> dimWhitelist = new ArrayList<>();
-		private List<ResourceLocation> dimBlacklist = new ArrayList<>();
-		private List<ResourceLocation> bioWhitelist = new ArrayList<>();
-		private List<ResourceLocation> bioBlacklist = new ArrayList<>();
+		private final List<ResourceLocation> dimWhitelist = new ArrayList<>();
+		private final List<ResourceLocation> dimBlacklist = new ArrayList<>();
+		private final List<ResourceLocation> bioWhitelist = new ArrayList<>();
+		private final List<ResourceLocation> bioBlacklist = new ArrayList<>();
 		
 		@Constructor
 		public ReservoirBuilder(IFluidStack fluid, int minSize, int maxSize, int traceAmount, int weight){
@@ -94,10 +93,10 @@ public class ReservoirTweaker{
 		@Method
 		public ReservoirBuilder addDimensions(boolean blacklist, String[] names){
 			List<ResourceLocation> list = new ArrayList<>();
-			for(int i = 0;i < names.length;i++){
+			for (String name : names){
 				try{
-					list.add(new ResourceLocation(names[i]));
-				}catch(ResourceLocationException e){
+					list.add(new ResourceLocation(name));
+				} catch (ResourceLocationException e){
 					//CraftTweakerAPI.logError("§caddDimension: %s§r", e.getMessage());
 				}
 			}
@@ -114,10 +113,10 @@ public class ReservoirTweaker{
 		@Method
 		public ReservoirBuilder addBiomes(boolean blacklist, String[] names){
 			List<ResourceLocation> list = new ArrayList<>();
-			for(int i = 0;i < names.length;i++){
+			for (String name : names){
 				try{
-					list.add(new ResourceLocation(names[i]));
-				}catch(ResourceLocationException e){
+					list.add(new ResourceLocation(name));
+				} catch (ResourceLocationException e){
 					//CraftTweakerAPI.logError("§caddBiome: %s§r", e.getMessage());
 				}
 			}

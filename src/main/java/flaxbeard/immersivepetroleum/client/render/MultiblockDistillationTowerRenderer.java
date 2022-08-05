@@ -15,18 +15,19 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<DistillationTowerTileEntity>{
 	@Override
-	public boolean shouldRenderOffScreen(DistillationTowerTileEntity te){
+	public boolean shouldRenderOffScreen(@Nonnull DistillationTowerTileEntity te){
 		return true;
 	}
 	
 	@Override
-	public void render(DistillationTowerTileEntity te, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(te != null && te.formed && !te.isDummy()){
+	public void render(@Nonnull DistillationTowerTileEntity te, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
+		if(te.formed && !te.isDummy()){
 			if(te.shouldRenderAsActive()){
 				combinedOverlayIn = OverlayTexture.NO_OVERLAY;
 				
@@ -34,28 +35,24 @@ public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<
 				{
 					Direction rotation = te.getFacing();
 					switch(rotation){
-						case NORTH:{
+						case NORTH -> {
 							// transform.rotate(new Quaternion(0, 0, 0, true));
 							transform.translate(3, 0, 4);
-							break;
 						}
-						case SOUTH:{
+						case SOUTH -> {
 							transform.mulPose(new Quaternion(0F, 180F, 0F, true));
 							transform.translate(2, 0, 3);
-							break;
 						}
-						case EAST:{
+						case EAST -> {
 							transform.mulPose(new Quaternion(0, 270F, 0, true));
 							transform.translate(3, 0, 3);
-							break;
 						}
-						case WEST:{
+						case WEST -> {
 							transform.mulPose(new Quaternion(0, 90F, 0, true));
 							transform.translate(2, 0, 4);
-							break;
 						}
-						default:
-							break;
+						default -> {
+						}
 					}
 					
 					float br = 0.75F; // "Brightness"

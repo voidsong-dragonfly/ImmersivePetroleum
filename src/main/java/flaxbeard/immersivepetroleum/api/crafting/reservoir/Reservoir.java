@@ -44,7 +44,7 @@ public class Reservoir extends IESerializableRecipe{
 	public List<ResourceLocation> bioWhitelist = new ArrayList<>(0);
 	public List<ResourceLocation> bioBlacklist = new ArrayList<>(0);
 	
-	private Fluid fluid;
+	private final Fluid fluid;
 	
 	/**
 	 * Creates a new reservoir.
@@ -52,7 +52,7 @@ public class Reservoir extends IESerializableRecipe{
 	 * @param name The name of this reservoir type
 	 * @param id The "recipeId" of this reservoir
 	 * @param fluidLocation The registry name of the fluid this reservoir is
-	 *        containing
+	 *		containing
 	 * @param minSize Minimum amount of fluid in this reservoir
 	 * @param maxSize Maximum amount of fluid in this reservoir
 	 * @param residual Leftover fluid amount after depletion
@@ -154,11 +154,8 @@ public class Reservoir extends IESerializableRecipe{
 		}
 	}
 	
-	public boolean isValidDimension(@Nonnull Level world){
-		if(world == null)
-			return false;
-		
-		return isValidDimension(world.dimension().location());
+	public boolean isValidDimension(@Nonnull Level level){
+		return isValidDimension(level.dimension().location());
 	}
 	
 	public boolean isValidDimension(@Nonnull ResourceLocation rl){
@@ -188,6 +185,7 @@ public class Reservoir extends IESerializableRecipe{
 	}
 	
 	@Override
+	@Nonnull
 	public ItemStack getResultItem(){
 		return ItemStack.EMPTY;
 	}
@@ -206,7 +204,7 @@ public class Reservoir extends IESerializableRecipe{
 		if(nbtList.size() > 0){
 			for(Tag tag:nbtList){
 				if(tag instanceof StringTag){
-					list.add(new ResourceLocation(((StringTag) tag).getAsString()));
+					list.add(new ResourceLocation(tag.getAsString()));
 				}
 			}
 		}

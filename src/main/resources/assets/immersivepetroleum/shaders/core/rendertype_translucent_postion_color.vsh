@@ -12,7 +12,7 @@ uniform vec3 ChunkOffset;
 out float vertexDistance;
 out vec4 vertexColor;
 
-void main() {
+void main(){
     vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 

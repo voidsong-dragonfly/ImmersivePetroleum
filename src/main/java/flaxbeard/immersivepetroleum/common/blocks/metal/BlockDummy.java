@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
+import javax.annotation.Nonnull;
 
 public class BlockDummy extends IPBlockBase{
 	private static final Material Material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
@@ -26,6 +27,6 @@ public class BlockDummy extends IPBlockBase{
 	}
 	
 	@Override
-	public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items){
+	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
 	}
 }

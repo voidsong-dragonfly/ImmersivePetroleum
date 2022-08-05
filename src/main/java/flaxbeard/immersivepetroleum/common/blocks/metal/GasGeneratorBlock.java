@@ -53,17 +53,17 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 0;
 	}
 	
 	@Override
-	public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public float getShadeBrightness(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 1.0F;
 	}
 	
 	@Override
-	public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos){
+	public boolean propagatesSkylightDown(@Nonnull BlockState state, @Nonnull BlockGetter reader, @Nonnull BlockPos pos){
 		return true;
 	}
 	
@@ -72,17 +72,20 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	static final VoxelShape SHAPE = Shapes.box(0.0001, 0.0001, 0.0001, 0.9999, 0.9999, 0.9999);
 	
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
+	@Nonnull
+	public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context){
 		return SHAPE;
 	}
 	
 	@Override
-	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
+	@Nonnull
+	public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context){
 		return SHAPE;
 	}
 	
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit){
+	@Nonnull
+	public InteractionResult use(@Nonnull BlockState state, Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand handIn, @Nonnull BlockHitResult hit){
 		BlockEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof IPlayerInteraction){
 			if(((IPlayerInteraction) te).interact(hit.getDirection(), player, handIn, player.getItemInHand(handIn), (float) hit.getLocation().x, (float) hit.getLocation().y, (float) hit.getLocation().z)){
@@ -93,7 +96,7 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack){
 		if(!worldIn.isClientSide){
 			BlockEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof IReadOnPlacement){
@@ -108,7 +111,7 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, @Nonnull BlockState pState){
 		GasGeneratorTileEntity te = IPTileTypes.GENERATOR.get().create(pPos, pState);
 		te.setFacing(pState.getValue(FACING));
 		return te;

@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,6 +25,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	public static final ResourceLocation ID = ResourceUtils.ip("cokerunit");
@@ -41,7 +43,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	}
 	
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, CokerUnitRecipe recipe, IFocusGroup focuses){
+	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, CokerUnitRecipe recipe, @Nonnull IFocusGroup focuses){
 		{
 			int total = 0;
 			List<FluidStack> list = recipe.inputFluid.getMatchingFluidStacks();
@@ -80,11 +82,11 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 			.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.inputItem.getMatchingStacks()));
 		
 		builder.addSlot(RecipeIngredientRole.INPUT, 52, 58)
-			.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.outputItem.get()));
+			.addIngredients(VanillaTypes.ITEM_STACK, Collections.singletonList(recipe.outputItem.get()));
 	}
 	
 	@Override
-	public void draw(CokerUnitRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
+	public void draw(CokerUnitRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
 		IDrawable background = getBackground();
 		int bWidth = background.getWidth();
 		int bHeight = background.getHeight();

@@ -17,11 +17,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public class DerrickSettingsScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/derrick_settings.png");
 	
-	private int xSize = 158;
-	private int ySize = 176;
+	private final int xSize = 158;
+	private final int ySize = 176;
 	private int guiLeft;
 	private int guiTop;
 	private PipeConfig pipeConfig;
@@ -42,7 +44,8 @@ public class DerrickSettingsScreen extends Screen{
 		
 		this.pipeConfig = new PipeConfig(this.derrickScreen.tile, this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
 		addRenderableWidget(this.pipeConfig);
-		
+
+		//IDEA Users: these lambdas are like this for readability: Don't Change Them!
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Set"), b -> {
 			MessageDerrick.sendToServer(this.derrickScreen.tile.getBlockPos(), this.pipeConfig.getGrid());
 		}, (button, matrix, mx, my) -> {
@@ -50,7 +53,7 @@ public class DerrickSettingsScreen extends Screen{
 			list.add(new TextComponent("Applies the Path to Derrick"));
 			renderTooltip(matrix, list, Optional.empty(), mx, my);
 		}));
-		
+
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Reload"), b -> {
 			this.pipeConfig.reset(this.derrickScreen.tile);
 		}, (button, matrix, mx, my) -> {
@@ -58,7 +61,7 @@ public class DerrickSettingsScreen extends Screen{
 			list.add(new TextComponent("Loads the already saved config again."));
 			renderTooltip(matrix, list, Optional.empty(), mx, my);
 		}));
-		
+
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Close"), b -> {
 			DerrickSettingsScreen.this.onClose();
 		}, (button, matrix, mx, my) -> {
@@ -69,7 +72,7 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
-	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
+	public void render(@Nonnull PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
 		background(pPoseStack, pMouseX, pMouseY, pPartialTick);
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 	}
@@ -86,7 +89,7 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	@Override
-	public void resize(Minecraft minecraft, int width, int height){
+	public void resize(@Nonnull Minecraft minecraft, int width, int height){
 		PipeConfig oldGrid = this.pipeConfig;
 		super.resize(minecraft, width, height);
 		this.pipeConfig.copyDataFrom(oldGrid);

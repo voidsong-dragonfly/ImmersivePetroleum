@@ -21,6 +21,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public class GuiReactiveList extends Button{
@@ -72,7 +73,7 @@ public class GuiReactiveList extends Button{
 	 * Changes the text color for entries when being hovered over
 	 * 
 	 * @param color RGB value
-	 * @return
+	 * @return {@link GuiReactiveList} self
 	 */
 	public GuiReactiveList setTextHoverColor(int color){
 		this.textHoverColor = color;
@@ -124,7 +125,7 @@ public class GuiReactiveList extends Button{
 	static final ResourceLocation TEXTURE = ResourceUtils.ie("textures/gui/hud_elements.png");
 	
 	@Override
-	public void render(PoseStack transform, int mx, int my, float partialTicks){
+	public void render(@Nonnull PoseStack transform, int mx, int my, float partialTicks){
 		Font fr = MCUtil.getFont();
 		
 		int mmY = my - this.y;

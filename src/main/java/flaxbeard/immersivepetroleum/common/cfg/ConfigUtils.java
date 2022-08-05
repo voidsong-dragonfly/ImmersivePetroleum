@@ -24,7 +24,7 @@ public class ConfigUtils{
 			
 			int index = 0;
 			
-			while(remain.indexOf(",") != -1){
+			while(remain.contains(",")){
 				int endPos = remain.indexOf(",");
 				
 				String current = remain.substring(0, endPos).trim();
@@ -79,7 +79,7 @@ public class ConfigUtils{
 			
 			String remain = str;
 			int index = 0;
-			while(remain.indexOf(",") != -1){
+			while(remain.contains(",")){
 				int endPos = remain.indexOf(",");
 				
 				String current = remain.substring(0, endPos).trim();

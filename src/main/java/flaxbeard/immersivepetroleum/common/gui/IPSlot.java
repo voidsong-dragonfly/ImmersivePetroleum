@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import javax.annotation.Nonnull;
 
 public class IPSlot extends Slot{
 	
@@ -21,7 +22,7 @@ public class IPSlot extends Slot{
 		}
 		
 		@Override
-		public boolean mayPlace(ItemStack stack){
+		public boolean mayPlace(@Nonnull ItemStack stack){
 			return false;
 		}
 	}
@@ -45,26 +46,22 @@ public class IPSlot extends Slot{
 		}
 		
 		@Override
-		public boolean mayPlace(ItemStack itemStack){
+		public boolean mayPlace(@Nonnull ItemStack itemStack){
 			LazyOptional<IFluidHandlerItem> handlerCap = FluidUtil.getFluidHandler(itemStack);
 			return handlerCap.map(handler -> {
 				if(handler.getTanks() <= 0)
 					return false;
-				
-				switch(filter){
-					case FULL:
-						return !handler.getFluidInTank(0).isEmpty();
-					case EMPTY:
-						return handler.getFluidInTank(0).isEmpty();
-					case ANY:
-					default:
-						return true;
-				}
+
+				return switch(filter){
+					case FULL -> !handler.getFluidInTank(0).isEmpty();
+					case EMPTY -> handler.getFluidInTank(0).isEmpty();
+					case ANY -> true;
+				};
 			}).orElse(false);
 		}
 		
-		public static enum FluidFilter{
-			ANY, EMPTY, FULL;
+		public enum FluidFilter{
+			ANY, EMPTY, FULL
 		}
 	}
 }

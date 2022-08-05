@@ -22,7 +22,7 @@ const mat4 VIEW_SCALE = mat4(
 	0.0, 0.0, 0.0, 1.0
 );
 
-void main() {
+void main(){
 	vec4 linePosStart = ProjMat * VIEW_SCALE * ModelViewMat * vec4(Position, 1.0);
     vec4 linePosEnd = ProjMat * VIEW_SCALE * ModelViewMat * vec4(Position + Normal, 1.0);
 	
@@ -32,13 +32,13 @@ void main() {
 	vec2 lineScreenDirection = normalize((ndc2.xy - ndc1.xy) * ScreenSize);
 	vec2 lineOffset = vec2(-lineScreenDirection.y, lineScreenDirection.x) * LineWidth / ScreenSize;
 	
-	if (lineOffset.x < 0.0) {
+	if(lineOffset.x < 0.0){
 		lineOffset *= -1.0;
 	}
 	
-	if (gl_VertexID % 2 == 0) {
+	if(gl_VertexID % 2 == 0){
 		gl_Position = vec4((ndc1 + vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
-	} else {
+	}else{
 		gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
 	}
 	

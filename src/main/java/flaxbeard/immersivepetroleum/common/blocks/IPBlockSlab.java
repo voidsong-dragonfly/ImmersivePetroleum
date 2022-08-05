@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
+import javax.annotation.Nonnull;
 
 public class IPBlockSlab<B extends IPBlockBase> extends SlabBlock{
 	private final B base;
@@ -19,12 +20,12 @@ public class IPBlockSlab<B extends IPBlockBase> extends SlabBlock{
 	
 	@Override
 	@SuppressWarnings("deprecation")
-	public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return Math.min(base.getLightBlock(state, worldIn, pos), super.getLightBlock(state, worldIn, pos));
 	}
 	
 	@Override
-	public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos){
+	public boolean propagatesSkylightDown(@Nonnull BlockState state, @Nonnull BlockGetter reader, @Nonnull BlockPos pos){
 		return super.propagatesSkylightDown(state, reader, pos) || base.propagatesSkylightDown(state, reader, pos);
 	}
 	

@@ -20,6 +20,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import javax.annotation.Nonnull;
 
 public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	
@@ -27,18 +28,18 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
 	
 	/* Called from ClientProxy during ModelRegistryEvent */
-	public static final void init(){
+	public static void init(){
 		ForgeModelBakery.addSpecialModel(DERRICK_PIPE_RL);
 	}
 	
 	@Override
-	public boolean shouldRenderOffScreen(DerrickTileEntity te){
+	public boolean shouldRenderOffScreen(@Nonnull DerrickTileEntity te){
 		return true;
 	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void render(DerrickTileEntity te, float partialTicks, PoseStack matrix, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
+	public void render(DerrickTileEntity te, float partialTicks, @Nonnull PoseStack matrix, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
 		if(!te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos())){
 			return;
 		}
@@ -54,7 +55,7 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 			
 			matrix.translate(0.5, 0.0, 0.5);
 			matrix.mulPose(new Quaternion(Y_AXIS, rot, true));
-			List<BakedQuad> quads = f.apply(DERRICK_PIPE_RL).getQuads(null, null, null, EmptyModelData.INSTANCE);
+			List<BakedQuad> quads = f.apply(DERRICK_PIPE_RL).getQuads(null, null, null, EmptyModelData.INSTANCE); //Why's this passing null as the rand? It shouldn't be
 			Pose last = matrix.last();
 			VertexConsumer solid = buffer.getBuffer(RenderType.solid());
 			for(BakedQuad quad:quads){

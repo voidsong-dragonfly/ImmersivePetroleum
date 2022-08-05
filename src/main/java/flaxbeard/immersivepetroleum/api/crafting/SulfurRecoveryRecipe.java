@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -82,14 +83,14 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	
 	/**
 	 * 
-	 * @param id
-	 * @param output
-	 * @param outputItem
-	 * @param inputFluid
-	 * @param inputFluidSecondary
-	 * @param chance
-	 * @param energy
-	 * @param time
+	 * @param id {@link ResourceLocation} ID to create the recipe with
+	 * @param output {@link FluidStack} to output
+	 * @param outputItem {@link ItemStack} to output
+	 * @param inputFluid {@link FluidStack} to input
+	 * @param inputFluidSecondary {@link FluidStack} for secondary input
+	 * @param chance double chance of the {@link ItemStack} output
+	 * @param energy amount of FE to consume
+	 * @param time duration of the recipe
 	 */
 	public SulfurRecoveryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
 		super(ItemStack.EMPTY, IPRecipeTypes.SULFUR_RECOVERY, id);
@@ -99,7 +100,7 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 		this.inputFluidSecondary = inputFluidSecondary;
 		this.chance = chance;
 		
-		this.fluidOutputList = Arrays.asList(output);
+		this.fluidOutputList = Collections.singletonList(output);
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
 		
 		timeAndEnergy(time, energy);

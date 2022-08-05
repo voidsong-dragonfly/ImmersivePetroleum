@@ -20,7 +20,7 @@ out vec4 vertexColor;
 out vec2 texCoord0;
 out vec4 normal;
 
-void main() {
+void main(){
     vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 

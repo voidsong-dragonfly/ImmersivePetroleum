@@ -79,7 +79,7 @@ public class ReservoirIsland{
 	 * 
 	 * @param amount of fluid in this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Capacity Clamped})
 	 * @param capacity of this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Clamped})
-	 * @return
+	 * @return {@link ReservoirIsland} self
 	 */
 	public ReservoirIsland setAmountAndCapacity(long amount, long capacity){
 		setCapacity(capacity);
@@ -156,10 +156,8 @@ public class ReservoirIsland{
 	
 	/**
 	 * Used by Pumpjack
-	 * 
-	 * @param x
-	 * @param z
 	 * @param amount to extract
+	 * @param fluidAction the {@link FluidAction} to extract with
 	 * @return how much has been extracted or residual if drained
 	 */
 	public int extract(int amount, FluidAction fluidAction){
@@ -178,8 +176,8 @@ public class ReservoirIsland{
 	}
 	
 	/**
-	 * @param x
-	 * @param z
+	 * @param x x-coordinate to extract from
+	 * @param z z-coordinate to extract from
 	 * @return How much was extracted
 	 */
 	public int extractWithPressure(Level world, int x, int z){
@@ -207,14 +205,14 @@ public class ReservoirIsland{
 	/**
 	 * <i>Only call on server side!</i>
 	 * 
-	 * @param world
-	 * @param x
-	 * @param z
-	 * @return
+	 * @param level {@link Level} to query in
+	 * @param x x-coordinate to query
+	 * @param z z-coordinate to query
+	 * @return Pressure float
 	 */
-	public float getPressure(Level world, int x, int z){
+	public float getPressure(Level level, int x, int z){
 		// prevents outside use
-		double noise = ReservoirHandler.getValueOf(world, x, z);
+		double noise = ReservoirHandler.getValueOf(level, x, z);
 		
 		if(noise > 0.0D){
 			// Pressure should drop from 100% to 0%
@@ -313,9 +311,9 @@ public class ReservoirIsland{
 	/**
 	 * Same as {@link #polygonContains(int, int)} but with the Bounds as the first check.
 	 * 
-	 * @param x
-	 * @param z
-	 * @return
+	 * @param x x-coordinate to query for
+	 * @param z z-coordinate to query for
+	 * @return whether the reservoir contains this position
 	 */
 	public boolean contains(int x, int z){
 		if(!this.islandAABB.contains(x, z)){
@@ -336,8 +334,8 @@ public class ReservoirIsland{
 	/**
 	 * Test wether or not the given XZ coordinates are within the islands polygon.
 	 * 
-	 * @param x
-	 * @param z
+	 * @param x x-coordinate to test
+	 * @param z y-coordinate to test
 	 * @return true if the coordinates are inside, false otherwise
 	 */
 	public boolean polygonContains(int x, int z){

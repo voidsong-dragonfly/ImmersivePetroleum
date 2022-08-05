@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import javax.annotation.Nonnull;
 
 public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/derrick.png");
@@ -46,9 +47,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.leftPos = (this.width - this.imageWidth) / 2;
 		this.topPos = (this.height - this.imageHeight) / 2;
 		
-		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, new TextComponent("Config"), button -> {
-			this.minecraft.setScreen(new DerrickSettingsScreen(this));
-		}, (button, matrix, mx, my) -> {
+		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, new TextComponent("Config"), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this)), (button, matrix, mx, my) -> {
 			if(!button.active){
 				renderTooltip(matrix, List.of(new TextComponent("Set in Stone.")), Optional.empty(), mx, my);
 			}
@@ -61,7 +60,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	}
 
 	@Override
-	public void render(PoseStack matrix, int mx, int my, float partialTicks){
+	public void render(@Nonnull PoseStack matrix, int mx, int my, float partialTicks){
 		this.inventoryLabelY = this.imageHeight - 40;
 		this.renderBackground(matrix);
 		super.render(matrix, mx, my, partialTicks);
@@ -69,7 +68,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		
 		List<Component> tooltip = new ArrayList<>();
 
-		for (InfoArea area : areas) {
+		for (InfoArea area : areas){
 			area.fillTooltip(mx, my, tooltip);
 		}
 
@@ -79,7 +78,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	}
 	
 	@Override
-	protected void renderLabels(PoseStack matrix, int x, int y){
+	protected void renderLabels(@Nonnull PoseStack matrix, int x, int y){
 		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 		
 		if(this.tile.getBlockPos().getY() <= 62){
@@ -138,7 +137,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	}
 	
 	@Override
-	protected void renderBg(PoseStack matrix, float partialTicks, int mx, int my){
+	protected void renderBg(@Nonnull PoseStack matrix, float partialTicks, int mx, int my){
 		MCUtil.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		for (InfoArea area : areas){

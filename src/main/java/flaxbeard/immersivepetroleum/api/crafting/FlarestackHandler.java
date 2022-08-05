@@ -23,9 +23,7 @@ public class FlarestackHandler{
 	 * @param fluidTag that should be burned
 	 */
 	public static void register(@Nonnull TagKey<Fluid> fluidTag){
-		if(fluidTag != null && !burnables.contains(fluidTag)){
-			burnables.add(fluidTag);
-		}
+		burnables.add(fluidTag);
 	}
 	
 	/**
@@ -35,8 +33,7 @@ public class FlarestackHandler{
 	 * @return true if the given fluid is infact burnable, false otherwise
 	 */
 	public static boolean isBurnable(@Nonnull Fluid fluid){
-		boolean bool = fluid != null && burnables.stream().anyMatch(tag -> FlarestackHandler.match(tag, fluid));
-		return bool;
+		return burnables.stream().anyMatch(tag -> FlarestackHandler.match(tag, fluid));
 	}
 	
 	@SuppressWarnings("deprecation")

@@ -68,18 +68,18 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public int getLightBlock(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 0;
 	}
 	
 	@Override
-	public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos){
+	public boolean propagatesSkylightDown(@Nonnull BlockState state, @Nonnull BlockGetter reader, @Nonnull BlockPos pos){
 		return true;
 	}
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos){
+	public float getShadeBrightness(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos){
 		return 1.0F;
 	}
 	
@@ -89,7 +89,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, @Nonnull BlockState pState){
 		AutoLubricatorTileEntity te = IPTileTypes.AUTOLUBE.get().create(pPos, pState);
 		te.isSlave = pState.getValue(SLAVE);
 		te.facing = pState.getValue(FACING);
@@ -103,7 +103,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player){
+	public void playerWillDestroy(@Nonnull Level worldIn, @Nonnull BlockPos pos, BlockState state, @Nonnull Player player){
 		if(state.getValue(SLAVE)){
 			worldIn.destroyBlock(pos.offset(0, -1, 0), !player.isCreative());
 		}else{
@@ -114,7 +114,8 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit){
+	@Nonnull
+	public InteractionResult use(@Nonnull BlockState state, Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand handIn, @Nonnull BlockHitResult hit){
 		BlockEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof AutoLubricatorTileEntity autolube && (autolube = autolube.master()) != null){
 			if(autolube.interact(hit.getDirection(), player, handIn, player.getItemInHand(handIn), (float) hit.getLocation().x, (float) hit.getLocation().y, (float) hit.getLocation().z)){
@@ -125,7 +126,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack){
 		if(!worldIn.isClientSide){
 			worldIn.setBlockAndUpdate(pos.offset(0, 1, 0), state.setValue(SLAVE, true));
 			BlockEntity te = worldIn.getBlockEntity(pos);
@@ -139,7 +140,8 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	static final VoxelShape SHAPE_MASTER = Shapes.box(.0625f, 0, .0625f, .9375f, 1, .9375f);
 	
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
+	@Nonnull
+	public VoxelShape getShape(BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context){
 		return state.getValue(SLAVE) ? SHAPE_SLAVE : SHAPE_MASTER;
 	}
 	
@@ -149,7 +151,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		}
 		
 		@Override
-		protected boolean canPlace(BlockPlaceContext con, BlockState state){
+		protected boolean canPlace(@Nonnull BlockPlaceContext con, @Nonnull BlockState state){
 			if(super.canPlace(con, state)){
 				BlockPos otherPos = con.getClickedPos().relative(Direction.UP);
 				BlockState otherState = con.getLevel().getBlockState(otherPos);

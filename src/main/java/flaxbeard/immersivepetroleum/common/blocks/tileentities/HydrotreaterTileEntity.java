@@ -237,7 +237,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 								inputAmounts = new int[]{recipe.getInputFluid().getAmount()};
 							}
 							
-							MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<SulfurRecoveryRecipe>(recipe, this::getRecipeForId)
+							MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId)
 									.setInputTanks(inputs)
 									.setInputAmounts(inputAmounts);
 							if(addProcessToQueue(process, true)){
@@ -268,7 +268,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 					int drained = output.fill(FluidHelper.copyFluid(target, Math.min(target.getAmount(), accepted)), FluidAction.EXECUTE);
 					
 					this.tanks[TANK_OUTPUT].drain(new FluidStack(target.getFluid(), drained), FluidAction.EXECUTE);
-					ret |= true;
+					ret = true;
 				}
 				
 				return ret;
@@ -337,13 +337,14 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public boolean canUseGui(Player player){
+	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
 	}
 	
-	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(HydrotreaterTileEntity::getShape);
+	private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(HydrotreaterTileEntity::getShape);
 	
 	@Override
+	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}

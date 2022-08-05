@@ -27,7 +27,7 @@ public class IPTileDropLootEntry extends LootPoolSingletonContainer{
 	}
 	
 	@Override
-	protected void createItemStack(Consumer<ItemStack> stackConsumer, LootContext context){
+	protected void createItemStack(@Nonnull Consumer<ItemStack> stackConsumer, LootContext context){
 		if(context.hasParam(LootContextParams.BLOCK_ENTITY)){
 			BlockEntity te = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
 			if(te instanceof IEBlockInterfaces.IBlockEntityDrop){
@@ -37,6 +37,7 @@ public class IPTileDropLootEntry extends LootPoolSingletonContainer{
 	}
 	
 	@Override
+	@Nonnull
 	public LootPoolEntryType getType(){
 		return IPLootFunctions.TILE_DROP.get();
 	}

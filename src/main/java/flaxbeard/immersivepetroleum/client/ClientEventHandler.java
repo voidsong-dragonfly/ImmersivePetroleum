@@ -71,8 +71,8 @@ public class ClientEventHandler{
 				ItemStack mainItem = mc.player.getMainHandItem();
 				ItemStack secondItem = mc.player.getOffhandItem();
 				
-				boolean main = (mainItem != null && !mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
-				boolean off = (secondItem != null && !secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
+				boolean main = (!mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
+				boolean off = (!secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
 				
 				if(main || off){
 					BlockRenderDispatcher blockDispatcher = Minecraft.getInstance().getBlockRenderer();
@@ -90,7 +90,7 @@ public class ClientEventHandler{
 								BlockEntity te = mc.player.level.getBlockEntity(pos);
 								
 								if(te != null){
-									ILubricationHandler<BlockEntity> handler = (ILubricationHandler<BlockEntity>) LubricatedHandler.getHandlerForTile(te);
+									ILubricationHandler<BlockEntity> handler = LubricatedHandler.getHandlerForTile(te);
 									if(handler != null){
 										Tuple<BlockPos, Direction> target = handler.getGhostBlockPosition(mc.player.level, te);
 										if(target != null){
@@ -137,7 +137,7 @@ public class ClientEventHandler{
 		ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
 		
 		if((main != ItemStack.EMPTY && main.getItem() == IPContent.DEBUGITEM.get()) || (off != ItemStack.EMPTY && off.getItem() == IPContent.DEBUGITEM.get())){
-			if(!((main != null && DebugItem.getMode(main) == DebugItem.Modes.SEEDBASED_RESERVOIR) || (off != null && DebugItem.getMode(off) == DebugItem.Modes.SEEDBASED_RESERVOIR))){
+			if(!((DebugItem.getMode(main) == DebugItem.Modes.SEEDBASED_RESERVOIR) || (DebugItem.getMode(off) == DebugItem.Modes.SEEDBASED_RESERVOIR))){
 				return;
 			}
 			
@@ -171,31 +171,24 @@ public class ClientEventHandler{
 			
 			if(MCUtil.getHitResult() != null){
 				HitResult result = MCUtil.getHitResult();
-				
-				if(result != null){
-					switch(result.getType()){
-						case ENTITY:{
-							if(result instanceof EntityHitResult eHit){
-								if(eHit.getEntity() instanceof MotorboatEntity motorboat){
-									String[] text = motorboat.getOverlayText(player, result);
-									
-									if(text != null && text.length > 0){
-										Font font = ClientUtils.font();
-										int col = 0xffffff;
-										for(int i = 0;i < text.length;i++){
-											if(text[i] != null){
-												int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
-												int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
-												font.drawShadow(event.getMatrixStack(), text[i], fx, fy, col);
-											}
-										}
+
+				if(result.getType() == HitResult.Type.ENTITY){
+					if(result instanceof EntityHitResult eHit){
+						if(eHit.getEntity() instanceof MotorboatEntity motorboat){
+							String[] text = motorboat.getOverlayText(player, result);
+
+							if(text != null && text.length > 0){
+								Font font = ClientUtils.font();
+								int col = 0xffffff;
+								for(int i = 0; i < text.length; i++){
+									if(text[i] != null) {
+										int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
+										int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
+										font.drawShadow(event.getMatrixStack(), text[i], fx, fy, col);
 									}
 								}
 							}
-							break;
 						}
-						default:
-							break;
 					}
 				}
 			}

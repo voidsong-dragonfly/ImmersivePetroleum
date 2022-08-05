@@ -18,6 +18,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import javax.annotation.Nonnull;
 
 public class SeismicSurveyBarrelRenderer implements BlockEntityRenderer<SeismicSurveyTileEntity>{
 	
@@ -25,18 +26,18 @@ public class SeismicSurveyBarrelRenderer implements BlockEntityRenderer<SeismicS
 	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
 	
 	/* Called from ClientProxy during ModelRegistryEvent */
-	public static final void init(){
+	public static void init(){
 		ForgeModelBakery.addSpecialModel(BARREL);
 	}
 	
 	@Override
-	public boolean shouldRenderOffScreen(SeismicSurveyTileEntity pBlockEntity){
+	public boolean shouldRenderOffScreen(@Nonnull SeismicSurveyTileEntity pBlockEntity){
 		return true;
 	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void render(SeismicSurveyTileEntity te, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int light, int overlay){
+	public void render(SeismicSurveyTileEntity te, float partialTicks, @Nonnull PoseStack matrix, @Nonnull MultiBufferSource buffer, int light, int overlay){
 		if(te.isSlave || !te.getLevel().hasChunkAt(te.getBlockPos())){
 			return;
 		}

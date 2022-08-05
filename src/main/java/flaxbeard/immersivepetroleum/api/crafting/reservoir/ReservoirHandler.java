@@ -108,15 +108,11 @@ public class ReservoirHandler{
 	 * @return The total weight associated with the dimension/biome pair
 	 */
 	public static int getTotalWeight(ResourceLocation dimension, ResourceLocation biome){
-		Map<ResourceLocation, Integer> map = totalWeightMap.get(dimension);
-		if(map == null){
-			map = new HashMap<>();
-			totalWeightMap.put(dimension, map);
-		}
-		
+		Map<ResourceLocation, Integer> map = totalWeightMap.computeIfAbsent(dimension, k -> new HashMap<>());
+
 		Integer totalWeight = map.get(biome);
 		if(totalWeight == null){
-			totalWeight = Integer.valueOf(0);
+			totalWeight = 0;
 			
 			for(Reservoir reservoir:Reservoir.map.values()){
 				if(reservoir.isValidDimension(dimension) && reservoir.isValidBiome(biome)){
@@ -170,8 +166,8 @@ public class ReservoirHandler{
 	 * Adds a reservoir type to the pool of valid reservoirs
 	 * 
 	 * @param id The "recipeId" of the reservoir type
-	 * @param reservoir The reservoir type to add
-	 * @return
+	 * @param reservoir The {@link Reservoir} type to add
+	 * @return The {@link Reservoir} passed in
 	 */
 	public static Reservoir addReservoir(ResourceLocation id, Reservoir reservoir){
 		Reservoir.map.put(id, reservoir);
@@ -186,13 +182,13 @@ public class ReservoirHandler{
 	/**
 	 * <i>Only call on server side!</i>
 	 * 
-	 * @param world
+	 * @param level {@link Level} to run query on
 	 * @param x Block Position
 	 * @param z Block Position
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
-	public static double getValueOf(@Nonnull Level world, int x, int z){
-		if(!world.isClientSide && world instanceof WorldGenLevel worldGen){
+	public static double getValueOf(@Nonnull Level level, int x, int z){
+		if(!level.isClientSide && level instanceof WorldGenLevel worldGen){
 			initGenerator(worldGen);
 		}
 		
@@ -241,7 +237,7 @@ public class ReservoirHandler{
 	/**
 	 * {@link #clearCache()} Must be called after modifying the returned list!
 	 * 
-	 * @return
+	 * @return {@link Multimap} of {@link ResourceKey<Level>}<{@link Level}>s to {@link ReservoirIsland}s
 	 */
 	public static Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
 		return RESERVOIR_ISLAND_LIST;
@@ -268,27 +264,19 @@ public class ReservoirHandler{
 				for(int x = -1;x <= 1;x++){
 					if(ReservoirHandler.getValueOf(world, pos.x + 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x + 1, pos.z);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x - 1, pos.z) == -1){
 						ColumnPos p = new ColumnPos(pos.x - 1, pos.z);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x, pos.z + 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z + 1);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 					if(ReservoirHandler.getValueOf(world, pos.x, pos.z - 1) == -1){
 						ColumnPos p = new ColumnPos(pos.x, pos.z - 1);
-						if(!set.contains(p)){
-							set.add(p);
-						}
+						set.add(p);
 					}
 				}
 			}

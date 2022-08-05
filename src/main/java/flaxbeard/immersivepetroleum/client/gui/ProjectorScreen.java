@@ -47,6 +47,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.util.Lazy;
+import javax.annotation.Nonnull;
 
 public class ProjectorScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/projector.png");
@@ -60,8 +61,8 @@ public class ProjectorScreen extends Screen{
 	static final Component GUI_DOWN = translation("gui.immersivepetroleum.projector.button.down");
 	static final Component GUI_SEARCH = translation("gui.immersivepetroleum.projector.search");
 	
-	private int xSize = 256;
-	private int ySize = 166;
+	private final int xSize = 256;
+	private final int ySize = 166;
 	private int guiLeft;
 	private int guiTop;
 	
@@ -81,7 +82,7 @@ public class ProjectorScreen extends Screen{
 		super(new TextComponent("projector"));
 		this.settings = new Settings(projector);
 		this.hand = hand;
-		this.multiblocks = Lazy.of(() -> MultiblockHandler.getMultiblocks());
+		this.multiblocks = Lazy.of(MultiblockHandler::getMultiblocks);
 		
 		if(this.settings.getMultiblock() != null){
 			this.move = 20F;
@@ -128,7 +129,7 @@ public class ProjectorScreen extends Screen{
 		GuiReactiveList l = (GuiReactiveList) button;
 		if(l.selectedOption >= 0 && l.selectedOption < listEntries.length){
 			String str = this.listEntries[l.selectedOption];
-			IMultiblock mb = this.multiblocks.get().get(Integer.valueOf(str));
+			IMultiblock mb = this.multiblocks.get().get(Integer.parseInt(str));
 			this.settings.setMultiblock(mb);
 		}
 	}
@@ -159,7 +160,7 @@ public class ProjectorScreen extends Screen{
 		});
 		
 		this.listEntries = list.toArray(new String[0]);
-		GuiReactiveList guilist = new GuiReactiveList(this, this.guiLeft + 15, this.guiTop + 29, 89, 127, button -> listaction(button), this.listEntries);
+		GuiReactiveList guilist = new GuiReactiveList(this, this.guiLeft + 15, this.guiTop + 29, 89, 127, this::listaction, this.listEntries);
 		guilist.setPadding(1, 1, 1, 1);
 		guilist.setTextColor(0);
 		guilist.setTextHoverColor(0x7F7FFF);
@@ -176,7 +177,7 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	private String getMBName(String str){
-		return getMBName(Integer.valueOf(str));
+		return getMBName(Integer.parseInt(str));
 	}
 	private String getMBName(int index){
 		IMultiblock mb = this.multiblocks.get().get(index);
@@ -184,7 +185,7 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		// Over-GUI Text
 		if(this.settings.getMultiblock() != null){
 			IMultiblock mb = this.settings.getMultiblock();
@@ -331,7 +332,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+		public void renderButton(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 			ClientUtils.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
@@ -365,7 +366,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY){
+		public void renderToolTip(@Nonnull PoseStack matrixStack, int mouseX, int mouseY){
 			if(this.hoverText != null){
 				ProjectorScreen.this.renderTooltip(matrixStack, this.hoverText, mouseX, mouseY);
 			}
@@ -391,7 +392,7 @@ public class ProjectorScreen extends Screen{
 				
 				return true;
 			}else{
-				return isFocused() && isVisible() && keyCode != 256 ? true : super.keyPressed(keyCode, scanCode, modifiers);
+				return isFocused() && isVisible() && keyCode != 256 || super.keyPressed(keyCode, scanCode, modifiers);
 			}
 		}
 		
@@ -437,7 +438,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void renderButton(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+		public void renderButton(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 			ClientUtils.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
@@ -459,6 +460,6 @@ public class ProjectorScreen extends Screen{
 		}
 
 		@Override
-		public void updateNarration(NarrationElementOutput output){}
+		public void updateNarration(@Nonnull NarrationElementOutput output){}
 	}
 }

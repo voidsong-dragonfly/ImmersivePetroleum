@@ -70,8 +70,7 @@ public class CommonEventHandler{
 	public void handleBoatImmunity(LivingAttackEvent event){
 		if(event.getSource() == DamageSource.LAVA || event.getSource() == DamageSource.ON_FIRE || event.getSource() == DamageSource.IN_FIRE){
 			LivingEntity entity = event.getEntityLiving();
-			if(entity.getVehicle() instanceof MotorboatEntity){
-				MotorboatEntity boat = (MotorboatEntity) entity.getVehicle();
+			if(entity.getVehicle() instanceof MotorboatEntity boat){
 				if(boat.isFireproof){
 					event.setCanceled(true);
 					return;
@@ -89,8 +88,7 @@ public class CommonEventHandler{
 	@SubscribeEvent
 	public void handleBoatImmunity(PlayerTickEvent event){
 		Player entity = event.player;
-		if(entity.isOnFire() && entity.getVehicle() instanceof MotorboatEntity){
-			MotorboatEntity boat = (MotorboatEntity) entity.getVehicle();
+		if(entity.isOnFire() && entity.getVehicle() instanceof MotorboatEntity boat){
 			if(boat.isFireproof){
 				entity.clearFire();
 				boat.setSharedFlag(0, false);
@@ -118,7 +116,6 @@ public class CommonEventHandler{
 						LivingEntity living = (LivingEntity) event.getEntityMounting();
 						
 						living.addEffect(new MobEffectInstance(IPEffects.ANTI_DISMOUNT_FIRE.get(), 1, 0, false, false));
-						return;
 					}
 				}
 			}
@@ -135,7 +132,7 @@ public class CommonEventHandler{
 	static final Random random = new Random();
 	@SuppressWarnings({"rawtypes", "unchecked", "deprecation"})
 	public static void handleLubricatingMachines(Level world){
-		Set<LubricatedTileInfo> toRemove = new HashSet<LubricatedTileInfo>();
+		Set<LubricatedTileInfo> toRemove = new HashSet<>();
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
 			if(info.world == world.dimension() && world.isAreaLoaded(info.pos, 0)){
 				BlockEntity te = world.getBlockEntity(info.pos);
@@ -150,9 +147,8 @@ public class CommonEventHandler{
 					}
 					
 					if(world.isClientSide){
-						if(te instanceof MultiblockPartBlockEntity){
-							MultiblockPartBlockEntity<?> part = (MultiblockPartBlockEntity<?>) te;
-							
+						if(te instanceof MultiblockPartBlockEntity<?> part){
+
 							Vec3i size = lubeHandler.getStructureDimensions();
 							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
 							for(int i = 0;i < numBlocks;i++){
@@ -161,7 +157,7 @@ public class CommonEventHandler{
 									continue;
 								
 								BlockEntity te2 = world.getBlockEntity(pos);
-								if(te2 != null && te2 instanceof MultiblockPartBlockEntity){
+								if(te2 instanceof MultiblockPartBlockEntity){
 									if(((MultiblockPartBlockEntity<?>) te2).master() == part.master()){
 										for(Direction facing:Direction.Plane.HORIZONTAL){
 											if(world.random.nextInt(30) == 0){
@@ -198,14 +194,12 @@ public class CommonEventHandler{
 			}
 			
 			if(IPServerConfig.MISCELLANEOUS.autounlock_recipes.get()){
-				List<Recipe<?>> l = new ArrayList<Recipe<?>>();
+				List<Recipe<?>> l = new ArrayList<>();
 				Collection<Recipe<?>> recipes = event.getWorld().getRecipeManager().getRecipes();
 				recipes.forEach(recipe -> {
 					ResourceLocation name = recipe.getId();
-					if(name.getNamespace() == ImmersivePetroleum.MODID){
-						if(recipe.getResultItem().getItem() != null){
-							l.add(recipe);
-						}
+					if(name.getNamespace().equals(ImmersivePetroleum.MODID)){
+						l.add(recipe);
 					}
 				});
 				
@@ -228,8 +222,8 @@ public class CommonEventHandler{
 		}
 	}
 	
-	public static Map<ResourceLocation, List<BlockPos>> napalmPositions = new HashMap<>();
-	public static Map<ResourceLocation, List<BlockPos>> toRemove = new HashMap<>();
+	public static final Map<ResourceLocation, List<BlockPos>> napalmPositions = new HashMap<>();
+	public static final Map<ResourceLocation, List<BlockPos>> toRemove = new HashMap<>();
 	
 	@SubscribeEvent
 	public void handleNapalm(WorldTickEvent event){

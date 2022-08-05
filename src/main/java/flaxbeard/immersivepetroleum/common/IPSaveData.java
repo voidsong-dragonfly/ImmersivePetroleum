@@ -19,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 
+import javax.annotation.Nonnull;
+
 public class IPSaveData extends SavedData{
 	public static final String dataName = "ImmersivePetroleum-SaveData";
 	
@@ -61,7 +63,8 @@ public class IPSaveData extends SavedData{
 	}
 	
 	@Override
-	public CompoundTag save(CompoundTag nbt){
+	@Nonnull
+	public CompoundTag save(@Nonnull CompoundTag nbt){
 		ListTag reservoirs = new ListTag();
 		synchronized(ReservoirHandler.getReservoirIslandList()){
 			for(ResourceKey<Level> dimension:ReservoirHandler.getReservoirIslandList().keySet()){

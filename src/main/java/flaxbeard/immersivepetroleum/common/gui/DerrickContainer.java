@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import javax.annotation.Nonnull;
 
 public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEntity>{
 	public DerrickContainer(MenuType<?> type, int id, Inventory playerInventory, DerrickTileEntity tile){
@@ -14,7 +15,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
-			public boolean mayPlace(ItemStack stack){
+			public boolean mayPlace(@Nonnull ItemStack stack){
 				return ExternalModContent.isIEPipeItem(stack);
 			}
 		});

@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common.sound;
 
-import java.util.Iterator;
-
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.common.items.EarmuffsItem;
@@ -55,11 +54,13 @@ public class IPEntitySound implements TickableSoundInstance{
 	}
 	
 	@Override
+	@Nonnull
 	public Attenuation getAttenuation(){
 		return attenuation;
 	}
 	
 	@Override
+	@Nonnull
 	public ResourceLocation getLocation(){
 		return resource;
 	}
@@ -76,11 +77,13 @@ public class IPEntitySound implements TickableSoundInstance{
 	}
 	
 	@Override
+	@Nonnull
 	public Sound getSound(){
 		return sound;
 	}
 	
 	@Override
+	@Nonnull
 	public SoundSource getSource(){
 		return category;
 	}
@@ -122,7 +125,7 @@ public class IPEntitySound implements TickableSoundInstance{
 	
 	public void evaluateVolume(){
 		volumeAjustment = 1f;
-		if(MCUtil.getPlayer() != null && MCUtil.getPlayer().getItemBySlot(EquipmentSlot.HEAD) != null){
+		if(MCUtil.getPlayer() != null && !MCUtil.getPlayer().getItemBySlot(EquipmentSlot.HEAD).isEmpty()){
 			ItemStack stack = MCUtil.getPlayer().getItemBySlot(EquipmentSlot.HEAD);
 			if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs"))
 				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
@@ -133,9 +136,7 @@ public class IPEntitySound implements TickableSoundInstance{
 		if(volumeAjustment > .1f)
 			for(int dx = (int) Math.floor(entity.getX() - 8) >> 4;dx <= (int) Math.floor(entity.getX() + 8) >> 4;dx++){
 				for(int dz = (int) Math.floor(entity.getZ() - 8) >> 4;dz <= (int) Math.floor(entity.getZ() + 8) >> 4;dz++){
-					Iterator<BlockEntity> it = MCUtil.getPlayer().level.getChunk(dx, dz).getBlockEntities().values().iterator();
-					while(it.hasNext()){
-						BlockEntity tile = it.next();
+					for (BlockEntity tile : MCUtil.getPlayer().level.getChunk(dx, dz).getBlockEntities().values()){
 						if(tile != null && tile.getClass().getName().contains("SoundMuffler")){
 							BlockPos tPos = tile.getBlockPos();
 							double d = entity.position().distanceTo(new Vec3(tPos.getX() + .5, tPos.getY() + .5, tPos.getZ() + .5));

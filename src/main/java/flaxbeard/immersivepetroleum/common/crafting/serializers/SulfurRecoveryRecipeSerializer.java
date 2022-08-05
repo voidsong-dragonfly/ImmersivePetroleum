@@ -15,6 +15,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRecoveryRecipe>{
 	
@@ -37,7 +38,7 @@ public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRec
 	}
 	
 	@Override
-	public SulfurRecoveryRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer){
+	public SulfurRecoveryRecipe fromNetwork(@Nonnull ResourceLocation id, FriendlyByteBuf buffer){
 		ItemStack outputItem = buffer.readItem();
 		double chance = buffer.readDouble();
 		

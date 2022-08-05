@@ -13,16 +13,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
+import javax.annotation.Nonnull;
 
 public class NapalmFluid extends IPFluid{
 	public NapalmFluid(IPFluidEntry entry){
 		super(entry, 1000, 4000);
 	}
 
-	public static IPFluidEntry makeFluid() {
+	public static IPFluidEntry makeFluid(){
 		return makeFluid("napalm", NapalmFluid::new, e -> new IPFluidBlock(e){
 			@Override
-			public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
+			public void onPlace(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving){
 				for(Direction facing:Direction.values()){
 					BlockPos notifyPos = pos.relative(facing);
 					if(worldIn.getBlockState(notifyPos).getBlock() instanceof FireBlock || worldIn.getBlockState(notifyPos).getMaterial() == Material.FIRE){
@@ -34,7 +35,7 @@ public class NapalmFluid extends IPFluid{
 			}
 
 			@Override
-			public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+			public void neighborChanged(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving){
 				if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
 					ResourceLocation d = worldIn.dimension().location();
 					if(!CommonEventHandler.napalmPositions.containsKey(d) || !CommonEventHandler.napalmPositions.get(d).contains(fromPos)){
@@ -48,7 +49,7 @@ public class NapalmFluid extends IPFluid{
 	}
 	
 	@Override
-	public int getTickDelay(LevelReader p_205569_1_){
+	public int getTickDelay(@Nonnull LevelReader p_205569_1_){
 		return 10;
 	}
 	

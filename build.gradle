@@ -122,7 +122,7 @@ dependencies {
 }
 
 def customGradle = rootProject.file('custom.gradle');
-if (customGradle.exists()) {
+if(customGradle.exists()){
     apply from: customGradle;
 }
 
@@ -141,9 +141,9 @@ jar {
 }
 
 def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) { type 'jar'; builtBy 'reobfJar'; }
+def reobfArtifact = artifacts.add('default', reobfFile){ type 'jar'; builtBy 'reobfJar'; }
 
 publishing {
-	publications { mavenJava(MavenPublication) { artifact reobfArtifact } }
+	publications { mavenJava(MavenPublication){ artifact reobfArtifact } }
 	repositories { maven { url "file:///${project.projectDir}/mcmodsrepo" } }
 }

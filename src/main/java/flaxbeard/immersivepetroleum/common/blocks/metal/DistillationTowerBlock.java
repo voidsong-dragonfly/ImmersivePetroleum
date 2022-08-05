@@ -13,6 +13,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import javax.annotation.Nonnull;
 
 public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerTileEntity>{
 	public DistillationTowerBlock(){
@@ -20,7 +21,8 @@ public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerT
 	}
 	
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
+	@Nonnull
+	public InteractionResult use(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit){
 		if(!player.getItemInHand(hand).isEmpty()){
 			BlockEntity te = world.getBlockEntity(pos);
 			if(te instanceof DistillationTowerTileEntity tower && tower.skipGui(hit)){

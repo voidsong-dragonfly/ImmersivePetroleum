@@ -91,7 +91,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 3));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
-	public MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000), new MultiFluidTank(24000)};
+	public final MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000), new MultiFluidTank(24000)};
 	private int cooldownTicks = 0;
 	private boolean wasActive = false;
 	
@@ -165,7 +165,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 				if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
 					DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
 					if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
-						MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<DistillationRecipe>(recipe, this::getRecipeForId).setInputTanks(TANK_INPUT);
+						MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId).setInputTanks(TANK_INPUT);
 						if(addProcessToQueue(process, true)){
 							addProcessToQueue(process, false);
 							update = true;
@@ -253,7 +253,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 							int drained = output.fill(FluidHelper.copyFluid(outStack, Math.min(outStack.getAmount(), accepted), true), FluidAction.EXECUTE);
 							
 							toDrain.add(new FluidStack(target.getFluid(), drained));
-							ret |= true;
+							ret = true;
 						}
 					}
 					
@@ -302,7 +302,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 
 	@Override
-	public boolean canUseGui(Player player){
+	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
 	}
 	
@@ -456,9 +456,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
 			if(this.posInMultiblock.equals(Fluid_IN)){
-				if (side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
+				if(side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
 					return inputHandler.getAndCast();
 				}
 			}
@@ -473,9 +473,10 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		return this.posInMultiblock.getY() > 0 && (this.posInMultiblock.getX() == 2 && this.posInMultiblock.getZ() == 0);
 	}
 	
-	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DistillationTowerTileEntity::getShape);
+	private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DistillationTowerTileEntity::getShape);
 	
 	@Override
+	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
@@ -489,7 +490,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		if(bY < 2){
 			if(bX == 0 && bZ == 3){
 				if(bY == 1){ // Actual Input
-					return Arrays.asList(new AABB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0));
+					return List.of(new AABB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0));
 				}else{ // Input Legs
 					return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), new AABB(0.125, 0.0, 0.75, 0.375, 1.0, 0.875), new AABB(0.125, 0.0, 0.125, 0.375, 1.0, 0.25));
 				}
@@ -511,7 +512,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 				}
 				return list;
 			}else{ // Pipe Top Bend
-				return Arrays.asList(new AABB(0.1875, 0.0, -0.0625, 0.8125, 0.625, 0.8125));
+				return List.of(new AABB(0.1875, 0.0, -0.0625, 0.8125, 0.625, 0.8125));
 			}
 		}
 		
@@ -538,7 +539,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 					if(bX == 1) bb = new AABB(0.0625, 0.0, 0.0, 1.0, 1.0, 0.9375);
 					if(bX == 2) bb = new AABB(0.0, 0.0, 0.0, 0.9375, 1.0, 0.9375);
 				}
-				return Arrays.asList(bb);
+				return List.of(bb);
 			}else{
 				// Below Boiler
 				return Arrays.asList(
@@ -550,7 +551,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		
 		// Platforms
 		if(bY > 0 && bY % 4 == 0){
-			return Arrays.asList(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
+			return List.of(new AABB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0));
 		}
 		
 		// Base
@@ -564,6 +565,6 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 			return list;
 		}
 		
-		return Arrays.asList(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+		return List.of(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
 	}
 }

@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import javax.annotation.Nonnull;
 
 public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTileEntity>{
 	public CokerUnitContainer(MenuType<?> type, int id, Inventory playerInventory, final CokerUnitTileEntity tile){
@@ -20,7 +21,7 @@ public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTil
 		addSlot(new IPSlot.CokerInput(this, this.inv, CokerUnitTileEntity.Inventory.INPUT.id(), 20, 71));
 		addSlot(new IPSlot(this.inv, CokerUnitTileEntity.Inventory.INPUT_FILLED.id(), 9, 14){
 			@Override
-			public boolean mayPlace(ItemStack stack){
+			public boolean mayPlace(@Nonnull ItemStack stack){
 				return FluidUtil.getFluidHandler(stack).map(h -> {
 					if(h.getTanks() <= 0 || h.getFluidInTank(0).isEmpty()){
 						return false;

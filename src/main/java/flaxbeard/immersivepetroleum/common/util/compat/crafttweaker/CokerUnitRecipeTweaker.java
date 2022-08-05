@@ -45,7 +45,7 @@ public class CokerUnitRecipeTweaker implements IRecipeManager<CokerUnitRecipe>{
 	/**
 	 * Removes all recipes that output the given IIngredient.
 	 * 
-	 * @param output
+	 * @param output {@link IIngredient} output to remove
 	 * @docParam output <item:immersivepetroleum:petcoke>
 	 * @docParam output <tag:items:forge:coal_petcoke>
 	 */
@@ -90,7 +90,7 @@ public class CokerUnitRecipeTweaker implements IRecipeManager<CokerUnitRecipe>{
 		FluidTagInput inFluid = new FluidTagInput(inputFluid.getData().getTagKey(), inputFluid.getAmount());
 		
 		IngredientWithSize inStack = new IngredientWithSize(Ingredient.of(inputItem.getInternal()), inputItem.getAmount());
-		Lazy<ItemStack> outStack = Lazy.of(() -> outputItem.getInternal());
+		Lazy<ItemStack> outStack = Lazy.of(outputItem::getInternal);
 		
 		CokerUnitRecipe recipe = new CokerUnitRecipe(id, outStack, outFluid, inStack, inFluid, energy, 30);
 		

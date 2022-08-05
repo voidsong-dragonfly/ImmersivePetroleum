@@ -94,9 +94,9 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	/** Template-Location of the Redstone Input Port. (0 1 1)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 1));
 	
-	public FluidTank tank = new FluidTank(8000, this::acceptsFluid);
+	public final FluidTank tank = new FluidTank(8000, this::acceptsFluid);
 	
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+	public final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 	public boolean drilling, spilling;
 	public int timer = 0;
 	
@@ -188,12 +188,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			if(ExternalModContent.isIEConcrete(tFluidStack) && tFluidStack.getAmount() >= concreteNeeded){
 				return false;
 			}
-			
-			if(concreteNeeded < fs.getAmount()){
-				return false;
-			}
-			
-			return true;
+
+			return concreteNeeded >= fs.getAmount();
 		}
 		
 		return fs.getFluid() == Fluids.WATER && concreteNeeded <= 0;
@@ -296,7 +292,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 														world.destroyBlock(current, false);
 														world.setBlockAndUpdate(current, IPContent.Blocks.WELL_PIPE.get().defaultBlockState());
 														
-														well.phyiscalPipesList.add(Integer.valueOf(y));
+														well.phyiscalPipesList.add(y);
 														
 														this.tank.drain(CONCRETE, FluidAction.EXECUTE);
 														
@@ -426,7 +422,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	 * Create or Get the {@link WellTileEntity}.
 	 * 
 	 * @param popList Set to true, to try and populate the
-	 *        {@link WellTileEntity#tappedIslands} list.
+	 *		{@link WellTileEntity#tappedIslands} list.
 	 * @return WellTileEntity or possibly null
 	 */
 	public WellTileEntity getOrCreateWell(boolean popList){
@@ -561,9 +557,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				BlockPos current = new BlockPos(dPos.getX(), y, dPos.getZ());
 				BlockEntity teLow = world.getBlockEntity(current);
 				
-				if(teLow instanceof WellTileEntity){
-					WellTileEntity well = (WellTileEntity) teLow;
-					
+				if(teLow instanceof WellTileEntity well){
+
 					if(!well.drillingCompleted){
 						if(well.wellPipeLength > 0){
 							well.startSelfDestructSequence();
@@ -600,7 +595,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	}
 
 	@Override
-	public boolean canUseGui(Player player){
+	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
 	}
 	
@@ -721,12 +716,12 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-			if (posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if(posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
 				return fluidInputHandler.getAndCast();
 			}
-			if (this.posInMultiblock.equals(Fluid_OUT)){
-				if (side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
+			if(this.posInMultiblock.equals(Fluid_OUT)){
+				if(side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
 					return dummyTank.cast();
 				}
 			}
@@ -755,6 +750,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DerrickTileEntity::getShape);
 	public static boolean updateShapes = false;
 	@Override
+	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
 		if(updateShapes){
 			updateShapes = false;

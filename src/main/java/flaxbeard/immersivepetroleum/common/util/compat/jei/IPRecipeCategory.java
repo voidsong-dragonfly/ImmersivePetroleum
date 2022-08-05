@@ -12,6 +12,8 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public abstract class IPRecipeCategory<T> implements IRecipeCategory<T>{
 	public String localizedName;
 	protected final IGuiHelper guiHelper;
@@ -40,21 +42,25 @@ public abstract class IPRecipeCategory<T> implements IRecipeCategory<T>{
 	}
 	
 	@Override
+	@Nonnull
 	public Component getTitle(){
 		return new TranslatableComponent(this.localizedName);
 	}
 	
 	@Override
+	@Nonnull
 	public IDrawable getBackground(){
 		return this.background;
 	}
 	
 	@Override
+	@Nonnull
 	public IDrawable getIcon(){
 		return this.icon;
 	}
 	
 	@Override
+	@Nonnull
 	public RecipeType<T> getRecipeType(){
 		return this.type;
 	}

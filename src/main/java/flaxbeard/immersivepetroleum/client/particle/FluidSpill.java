@@ -18,6 +18,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class FluidSpill extends TextureSheetParticle{
@@ -40,9 +41,6 @@ public class FluidSpill extends TextureSheetParticle{
 		
 		ResourceLocation location = fluid.getAttributes().getStillTexture(fs);
 		TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(location);
-		if(sprite == null){
-			sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(MissingTextureAtlasSprite.getLocation());
-		}
 		setSprite(sprite);
 		
 		int argb = fluid.getAttributes().getColor(fs);
@@ -77,11 +75,12 @@ public class FluidSpill extends TextureSheetParticle{
 	}
 	
 	@Override
-	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
+	public void render(@Nonnull VertexConsumer buffer, @Nonnull Camera renderInfo, float partialTicks){
 		super.render(buffer, renderInfo, partialTicks);
 	}
 	
 	@Override
+	@Nonnull
 	public ParticleRenderType getRenderType(){
 		return ParticleRenderType.TERRAIN_SHEET;
 	}
@@ -89,9 +88,8 @@ public class FluidSpill extends TextureSheetParticle{
 	@OnlyIn(Dist.CLIENT)
 	public static class Factory implements ParticleProvider<FluidParticleData>{
 		@Override
-		public Particle createParticle(FluidParticleData type, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
-			FluidSpill fluidSpill = new FluidSpill(type.getFluid(), world, x, y, z, xSpeed, ySpeed, zSpeed);
-			return fluidSpill;
+		public Particle createParticle(FluidParticleData type, @Nonnull ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+			return new FluidSpill(type.getFluid(), world, x, y, z, xSpeed, ySpeed, zSpeed);
 		}
 	}
 }

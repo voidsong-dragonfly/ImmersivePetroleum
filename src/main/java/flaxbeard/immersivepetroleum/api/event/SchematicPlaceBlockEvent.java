@@ -11,7 +11,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 /**
  * @deprecated Use
- *             {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.PlaceBlock}
+ *			 {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.PlaceBlock}
  */
 @Deprecated
 @Cancelable

@@ -32,8 +32,7 @@ public class IPClientConfig{
 			builder.push("GridColors");
 			
 			Predicate<Object> hexValidator = obj -> {
-				if(obj != null && obj instanceof String){
-					String str = (String) obj;
+				if(obj instanceof String str){
 					if(str.length() == 6){
 						try{
 							Integer.valueOf(str, 16);
