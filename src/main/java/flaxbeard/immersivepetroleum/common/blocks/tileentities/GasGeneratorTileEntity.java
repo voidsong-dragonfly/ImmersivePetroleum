@@ -82,7 +82,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	private int getMaxStorage(){
 		return IEServerConfig.MACHINES.lvCapConfig.storage.getAsInt();
 	}
-
+	
 	@Override
 	public void load(@Nonnull CompoundTag nbt){
 		super.load(nbt);
@@ -110,7 +110,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	public ClientboundBlockEntityDataPacket getUpdatePacket(){
 		return ClientboundBlockEntityDataPacket.create(this, b -> getUpdateTag());
 	}
-
+	
 	@Override
 	public void handleUpdateTag(CompoundTag tag){
 		load(tag);
@@ -123,7 +123,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		saveAdditional(nbt);
 		return nbt;
 	}
-
+	
 	@Override
 	public void onDataPacket(net.minecraft.network.Connection net, ClientboundBlockEntityDataPacket pkt){
 		if(pkt.getTag() != null){
@@ -149,7 +149,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		level.sendBlockUpdated(worldPosition, state, state, 3);
 		level.updateNeighborsAt(worldPosition, state.getBlock());
 	}
-
+	
 	@Override
 	@Nonnull
 	public List<ItemStack> getBlockEntityDrop(@Nullable LootContext context){

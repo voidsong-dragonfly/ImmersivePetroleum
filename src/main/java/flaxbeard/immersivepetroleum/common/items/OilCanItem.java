@@ -92,7 +92,7 @@ public class OilCanItem extends IPItemBase{
 					InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
 						if(handler instanceof FluidHandlerItemStack can){
 							FluidStack fs = can.getFluid();
-
+							
 							if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
 								int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
 								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
@@ -105,10 +105,10 @@ public class OilCanItem extends IPItemBase{
 								}
 							}
 						}
-
+						
 						return InteractionResult.PASS;
 					}).orElse(InteractionResult.PASS);
-
+					
 					return ret;
 				}
 			}
@@ -127,10 +127,10 @@ public class OilCanItem extends IPItemBase{
 	@Nonnull
 	public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity target, @Nonnull InteractionHand hand){
 		if(target instanceof IronGolem golem){
-
+			
 			FluidUtil.getFluidHandler(stack).ifPresent(con -> {
 				if(con instanceof FluidHandlerItemStack handler){
-
+					
 					if(!handler.getFluid().isEmpty() && LubricantHandler.isValidLube(handler.getFluid().getFluid())){
 						int amountNeeded = (LubricantHandler.getLubeAmount(handler.getFluid().getFluid()) * 5 * 20);
 						if(handler.getFluid().getAmount() >= amountNeeded){

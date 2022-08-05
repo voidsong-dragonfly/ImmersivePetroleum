@@ -26,21 +26,21 @@ public class IPClientMultiblockProperties implements ClientMultiblocks.Multibloc
 	private final ItemStack renderStack;
 	@Nullable
 	private final Vec3 renderOffset;
-
+	
 	private IPClientMultiblockProperties(IPTemplateMultiblock multiblock, @Nullable Vec3 renderOffset){
 		this.multiblock = multiblock;
 		this.renderStack = new ItemStack(multiblock.getBaseBlock());
 		this.renderOffset = renderOffset;
 	}
-
+	
 	public IPClientMultiblockProperties(IPTemplateMultiblock multiblock, double offX, double offY, double offZ){
 		this(multiblock, new Vec3(offX, offY, offZ));
 	}
-
+	
 	public IPClientMultiblockProperties(IPTemplateMultiblock multiblock){
 		this(multiblock, null);
 	}
-
+	
 	@Override
 	public NonNullList<ItemStack> getTotalMaterials(){
 		// TODO (malte): Add helper for this to IE API
@@ -65,12 +65,12 @@ public class IPClientMultiblockProperties implements ClientMultiblocks.Multibloc
 		}
 		return materials;
 	}
-
+	
 	@Override
 	public boolean canRenderFormedStructure(){
 		return renderOffset != null;
 	}
-
+	
 	@Override
 	public void renderFormedStructure(PoseStack transform, MultiBufferSource buffer){
 		Objects.requireNonNull(renderOffset);

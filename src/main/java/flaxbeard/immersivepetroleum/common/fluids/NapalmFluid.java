@@ -20,7 +20,7 @@ public class NapalmFluid extends IPFluid{
 	public NapalmFluid(IPFluidEntry entry){
 		super(entry, 1000, 4000);
 	}
-
+	
 	public static IPFluidEntry makeFluid(){
 		return makeFluid("napalm", NapalmFluid::new, e -> new IPFluidBlock(e){
 			@Override
@@ -34,7 +34,7 @@ public class NapalmFluid extends IPFluid{
 				}
 				super.onPlace(state, worldIn, pos, oldState, isMoving);
 			}
-
+			
 			@Override
 			public void neighborChanged(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving){
 				if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
@@ -43,7 +43,7 @@ public class NapalmFluid extends IPFluid{
 						processFire(e, worldIn, pos);
 					}
 				}
-
+				
 				super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 			}
 		});

@@ -44,7 +44,7 @@ public class DerrickSettingsScreen extends Screen{
 		
 		this.pipeConfig = new PipeConfig(this.derrickScreen.tile, this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
 		addRenderableWidget(this.pipeConfig);
-
+		
 		//IDEA Users: these lambdas are like this for readability: Don't Change Them!
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Set"), b -> {
 			MessageDerrick.sendToServer(this.derrickScreen.tile.getBlockPos(), this.pipeConfig.getGrid());
@@ -53,7 +53,7 @@ public class DerrickSettingsScreen extends Screen{
 			list.add(new TextComponent("Applies the Path to Derrick"));
 			renderTooltip(matrix, list, Optional.empty(), mx, my);
 		}));
-
+		
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Reload"), b -> {
 			this.pipeConfig.reset(this.derrickScreen.tile);
 		}, (button, matrix, mx, my) -> {
@@ -61,7 +61,7 @@ public class DerrickSettingsScreen extends Screen{
 			list.add(new TextComponent("Loads the already saved config again."));
 			renderTooltip(matrix, list, Optional.empty(), mx, my);
 		}));
-
+		
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Close"), b -> {
 			DerrickSettingsScreen.this.onClose();
 		}, (button, matrix, mx, my) -> {
@@ -81,7 +81,7 @@ public class DerrickSettingsScreen extends Screen{
 	public boolean isPauseScreen(){
 		return false;
 	}
-
+	
 	@Override
 	public void onClose(){
 		this.minecraft.setScreen(this.derrickScreen);

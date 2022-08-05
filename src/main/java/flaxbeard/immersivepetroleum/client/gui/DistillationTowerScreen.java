@@ -26,7 +26,7 @@ public class DistillationTowerScreen extends IEContainerScreen<DistillationTower
 		super(container, playerInventory, title, GUI_TEXTURE);
 		this.tile = container.tile;
 	}
-
+	
 	@Nonnull
 	@Override
 	protected List<InfoArea> makeInfoAreas(){

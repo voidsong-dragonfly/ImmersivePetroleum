@@ -148,7 +148,7 @@ public class CommonEventHandler{
 					
 					if(world.isClientSide){
 						if(te instanceof MultiblockPartBlockEntity<?> part){
-
+							
 							Vec3i size = lubeHandler.getStructureDimensions();
 							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
 							for(int i = 0;i < numBlocks;i++){

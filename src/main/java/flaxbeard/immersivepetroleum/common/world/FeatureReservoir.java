@@ -19,7 +19,7 @@ public class FeatureReservoir extends Feature<NoneFeatureConfiguration>{
 	public FeatureReservoir(){
 		super(NoneFeatureConfiguration.CODEC);
 	}
-
+	
 	@Override
 	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> pContext){
 		WorldGenLevel reader = pContext.level();

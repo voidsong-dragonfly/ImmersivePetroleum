@@ -204,7 +204,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
 			int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
 			int amount = Math.min(Math.abs(diff) / 2, maxTransfer);
-
+			
 			return (diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount));
 		}
 		
@@ -298,7 +298,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
 			this, be -> be.outputHandler, OilTankTileEntity::master, registerFluidOutput(tank)
 	);
-
+	
 	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side){
@@ -318,7 +318,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		}
 		return super.getCapability(cap, side);
 	}
-
+	
 	public boolean isLadder(){
 		int x = posInMultiblock.getX();
 		int z = posInMultiblock.getZ();

@@ -39,7 +39,7 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(BROKEN);
 	}
-
+	
 	@Override
 	public Supplier<BlockItem> blockItemSupplier(){
 		// Nobody is supposed to have this in their inventory

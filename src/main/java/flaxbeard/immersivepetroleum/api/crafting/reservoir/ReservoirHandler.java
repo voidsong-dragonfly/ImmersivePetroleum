@@ -109,7 +109,7 @@ public class ReservoirHandler{
 	 */
 	public static int getTotalWeight(ResourceLocation dimension, ResourceLocation biome){
 		Map<ResourceLocation, Integer> map = totalWeightMap.computeIfAbsent(dimension, k -> new HashMap<>());
-
+		
 		Integer totalWeight = map.get(biome);
 		if(totalWeight == null){
 			totalWeight = 0;

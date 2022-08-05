@@ -88,7 +88,7 @@ public class FuelHandler{
 		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
 		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
 	}
-
+	
 	private record Values(int fluxPerTick, int mbPerTick){
 	}
 }

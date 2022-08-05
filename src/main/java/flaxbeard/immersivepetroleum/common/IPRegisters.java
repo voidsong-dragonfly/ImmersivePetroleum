@@ -68,28 +68,28 @@ public class IPRegisters{
 	
 	public static <T extends IPBlockBase> RegistryObject<T> registerIPBlock(String name, Supplier<T> blockConstructor){
 		RegistryObject<T> block = BLOCK_REGISTER.register(name, blockConstructor);
-
+		
 		registerItem(name, () -> block.get().blockItemSupplier().get());
-
+		
 		return block;
 	}
 	
 	public static <T extends Item> RegistryObject<T> registerItem(String name, Supplier<T> itemConstructor){
 		return ITEM_REGISTER.register(name, itemConstructor);
 	}
-
+	
 	public static <T extends Fluid> RegistryObject<T> registerFluid(String name, Supplier<T> fluidConstructor){
 		return FLUID_REGISTER.register(name, fluidConstructor);
 	}
-
+	
 	public static <T extends Fluid> RegistryObject<T> registerFlowingFluid(String name, Supplier<T> fluidConstructor){
 		return FLUID_REGISTER.register(name, fluidConstructor);
 	}
-
+	
 	public static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerTE(String name, BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> valid){
 		return TE_REGISTER.register(name, () -> new BlockEntityType<>(factory, ImmutableSet.of(valid.get()), null));
 	}
-
+	
 	public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock>
 	MultiblockBEType<T> registerMultiblockTE(String name, MultiblockBEType.BEWithTypeConstructor<T> factory, Supplier<? extends Block> valid){
 		return new MultiblockBEType<>(name, TE_REGISTER, factory, valid, state -> state.hasProperty(IEProperties.MULTIBLOCKSLAVE) && !state.getValue(IEProperties.MULTIBLOCKSLAVE));

@@ -171,12 +171,12 @@ public class ClientEventHandler{
 			
 			if(MCUtil.getHitResult() != null){
 				HitResult result = MCUtil.getHitResult();
-
+				
 				if(result.getType() == HitResult.Type.ENTITY){
 					if(result instanceof EntityHitResult eHit){
 						if(eHit.getEntity() instanceof MotorboatEntity motorboat){
 							String[] text = motorboat.getOverlayText(player, result);
-
+							
 							if(text != null && text.length > 0){
 								Font font = ClientUtils.font();
 								int col = 0xffffff;

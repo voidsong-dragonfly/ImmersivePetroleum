@@ -27,7 +27,7 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 		this.imageWidth = 140;
 		this.imageHeight = 69;
 	}
-
+	
 	@Nonnull
 	@Override
 	protected List<InfoArea> makeInfoAreas(){

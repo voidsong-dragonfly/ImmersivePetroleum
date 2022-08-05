@@ -107,7 +107,7 @@ public class DebugItem extends IPItemBase{
 	public InteractionResultHolder<ItemStack> use(Level worldIn, @Nonnull Player playerIn, @Nonnull InteractionHand handIn){
 		if(!worldIn.isClientSide){
 			Modes mode = DebugItem.getMode(playerIn.getItemInHand(handIn));
-
+			
 			switch(mode){
 				case GENERAL_TEST -> {
 					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
@@ -115,50 +115,49 @@ public class DebugItem extends IPItemBase{
 				case REFRESH_ALL_IPMODELS -> {
 					try{
 						IPModels.getModels().forEach(IPModel::init);
-
+						
 						playerIn.displayClientMessage(new TextComponent("Models refreshed."), true);
 					} catch (Exception e){
 						e.printStackTrace();
 					}
-
-
+					
 					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				case SEEDBASED_RESERVOIR -> {
 					BlockPos playerPos = playerIn.blockPosition();
-
+					
 					ChunkPos cPos = new ChunkPos(playerPos);
 					int chunkX = cPos.getMinBlockX();
 					int chunkZ = cPos.getMinBlockZ();
-
+					
 					// Does the whole 0-15 local chunk block thing
 					int x = playerPos.getX() - cPos.getMinBlockX();
 					int z = playerPos.getZ() - cPos.getMinBlockZ();
-
+					
 					double noise = ReservoirHandler.getValueOf(worldIn, (chunkX + x), (chunkZ + z));
-
+					
 					playerIn.displayClientMessage(new TextComponent((chunkX + " " + chunkZ) + ": " + noise), true);
-
+					
 					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				case SEEDBASED_RESERVOIR_AREA_TEST -> {
 					BlockPos playerPos = playerIn.blockPosition();
-
+					
 					if(ReservoirHandler.getIsland(worldIn, playerPos) != null){
 						ReservoirIsland island = ReservoirHandler.getIsland(worldIn, playerPos);
-
+						
 						int x = playerPos.getX();
 						int z = playerPos.getZ();
-
+						
 						float pressure = island.getPressure(worldIn, x, z);
-
+						
 						if(playerIn.isShiftKeyDown()){
 							island.setAmount(island.getCapacity());
 							IPSaveData.markInstanceAsDirty();
 							playerIn.displayClientMessage(new TextComponent("Island Refilled."), true);
 							return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 						}
-
+						
 						String out = String.format(Locale.ENGLISH,
 								"Noise: %.3f, Amount: %d/%d, Pressure: %.3f, Flow: %d, Type: %s",
 								ReservoirHandler.getValueOf(worldIn, x, z),
@@ -167,21 +166,21 @@ public class DebugItem extends IPItemBase{
 								pressure,
 								ReservoirIsland.getFlow(pressure),
 								new FluidStack(island.getFluid(), 1).getDisplayName().getString());
-
+						
 						playerIn.displayClientMessage(new TextComponent(out), true);
-
+						
 					}else{
 						final Multimap<ResourceKey<Level>, ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList();
-
+						
 						for (ResourceKey<Level> key : islands.keySet()){
 							Collection<ReservoirIsland> list = islands.get(key);
-
+							
 							String str = key.location() + " has " + list.size() + " islands.";
-
+							
 							playerIn.displayClientMessage(new TextComponent(str), false);
 						}
 					}
-
+					
 					return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 				}
 				default -> {
@@ -210,20 +209,20 @@ public class DebugItem extends IPItemBase{
 				Level world = context.getLevel();
 				if(world.isClientSide){
 					// Client
-
+					
 					player.displayClientMessage(new TextComponent(DynamicTextureWrapper.DYN_TEXTURE_CACHE.size() + ""), false);
-
+					
 				}else{
 					// Server
-
+					
 					if(te instanceof WellTileEntity well){
-
+						
 						if(well.tappedIslands.isEmpty()){
 							well.tappedIslands.add(new ColumnPos(well.getBlockPos()));
 						}
 					}
 				}
-
+				
 				return InteractionResult.SUCCESS;
 			}
 			case UPDATE_SHAPES -> {
@@ -231,17 +230,17 @@ public class DebugItem extends IPItemBase{
 					CokerUnitTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
-
+				
 				if(te instanceof DerrickTileEntity){
 					DerrickTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
-
+				
 				if(te instanceof OilTankTileEntity){
 					OilTankTileEntity.updateShapes = true;
 					return InteractionResult.SUCCESS;
 				}
-
+				
 				return InteractionResult.PASS;
 			}
 			default -> {

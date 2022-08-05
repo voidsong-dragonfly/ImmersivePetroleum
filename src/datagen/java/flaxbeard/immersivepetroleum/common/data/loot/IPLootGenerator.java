@@ -21,7 +21,7 @@ public class IPLootGenerator extends LootTableProvider{
 	public IPLootGenerator(DataGenerator pGenerator){
 		super(pGenerator);
 	}
-
+	
 	@Override
 	protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables(){
 		return List.of(
@@ -29,7 +29,7 @@ public class IPLootGenerator extends LootTableProvider{
 				Pair.of(IPBlockLoot::new, LootContextParamSets.BLOCK)
 			);
 	}
-
+	
 	@Override
 	protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker){
 		map.forEach((p_218436_2_, p_218436_3_) -> {

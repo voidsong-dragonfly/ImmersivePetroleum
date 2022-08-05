@@ -59,7 +59,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 				new EnergyInfoArea(leftPos + 185, topPos + 19, tile.energyStorage)
 		);
 	}
-
+	
 	@Override
 	public void render(@Nonnull PoseStack matrix, int mx, int my, float partialTicks){
 		this.inventoryLabelY = this.imageHeight - 40;
@@ -68,11 +68,11 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.renderTooltip(matrix, mx, my);
 		
 		List<Component> tooltip = new ArrayList<>();
-
+		
 		for (InfoArea area : areas){
 			area.fillTooltip(mx, my, tooltip);
 		}
-
+		
 		if(!tooltip.isEmpty()){
 			renderTooltip(matrix, tooltip, Optional.empty(), mx, my);
 		}

@@ -17,7 +17,7 @@ public class PetcokeBlock extends IPBlockBase{
 	public PetcokeBlock(){
 		super(Block.Properties.of(Material.STONE).sound(SoundType.STONE).strength(2, 10).requiresCorrectToolForDrops());
 	}
-
+	
 	@Override
 	public Supplier<BlockItem> blockItemSupplier(){
 		return () -> new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab)){

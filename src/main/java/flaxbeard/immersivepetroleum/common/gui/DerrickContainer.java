@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEntity>{
 	public DerrickContainer(MenuType<?> type, int id, Inventory playerInventory, DerrickTileEntity tile){
 		super(type, tile, id, DerrickMultiblock.INSTANCE);
-
+		
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
 			public boolean mayPlace(@Nonnull ItemStack stack){

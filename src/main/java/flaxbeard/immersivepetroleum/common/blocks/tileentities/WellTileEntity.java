@@ -217,9 +217,9 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 					for (Integer integer : this.phyiscalPipesList){
 						BlockPos pos = getBlockPos();
 						pos = new BlockPos(pos.getX(), integer, pos.getZ());
-
+						
 						BlockState state = getWorldNonnull().getBlockState(pos);
-
+						
 						if(state.getBlock() instanceof WellPipeBlock){
 							getWorldNonnull().setBlockAndUpdate(pos, state.setValue(WellPipeBlock.BROKEN, true));
 						}

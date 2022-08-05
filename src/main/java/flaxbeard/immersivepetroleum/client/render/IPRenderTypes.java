@@ -176,12 +176,12 @@ public class IPRenderTypes extends RenderStateShard{
 	private static String typeName(String str){
 		return ImmersivePetroleum.MODID + ":" + str;
 	}
-
+	
 	private IPRenderTypes(String pName, Runnable pSetupState, Runnable pClearState){
 		super(pName, pSetupState, pClearState);
 		throw new UnsupportedOperationException();
 	}
-
+	
 	/** Same as vanilla, just without an overlay */
 	public static RenderType getEntitySolid(ResourceLocation locationIn){
 		RenderType.CompositeState renderState = RenderType.CompositeState.builder()
@@ -193,7 +193,7 @@ public class IPRenderTypes extends RenderStateShard{
 				.createCompositeState(true);
 		return RenderType.create("entity_solid", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, renderState);
 	}
-
+	
 	// TODO this is very very broken in 1.17+
 	public static MultiBufferSource disableLighting(MultiBufferSource in){
 		return type -> {

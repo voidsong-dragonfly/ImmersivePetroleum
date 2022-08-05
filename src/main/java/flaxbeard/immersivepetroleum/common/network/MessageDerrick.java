@@ -50,7 +50,7 @@ public class MessageDerrick implements INetMessage{
 				if(world.isAreaLoaded(this.derrickPos, 2)){
 					BlockEntity te = world.getBlockEntity(this.derrickPos);
 					if(te instanceof DerrickTileEntity derrick){
-
+						
 						derrick.gridStorage = PipeConfig.Grid.fromCompound(this.nbt);
 						derrick.updateMasterBlock(null, true);
 						

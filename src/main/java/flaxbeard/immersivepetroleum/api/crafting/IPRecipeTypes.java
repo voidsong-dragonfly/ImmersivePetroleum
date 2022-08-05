@@ -21,7 +21,7 @@ public class IPRecipeTypes{
 	public static void modConstruction(){
 		REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
-
+	
 	private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeType(String name){
 		return REGISTER.register(name, () -> new RecipeType<T>(){
 			@Override

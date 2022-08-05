@@ -45,20 +45,20 @@ public class BlockRenderLayers{
 		setRenderLayer(IPContent.Fluids.LUBRICANT, RenderType.translucent());
 		setRenderLayer(IPContent.Fluids.NAPALM, RenderType.translucent());
 	}
-
+	
 	private static void setRenderLayer(RegistryObject<? extends Block> block, RenderType types){
 		ItemBlockRenderTypes.setRenderLayer(block.get(), types);
 	}
-
+	
 	private static void setRenderLayer(IPFluid.IPFluidEntry entry, RenderType types){
 		ItemBlockRenderTypes.setRenderLayer(entry.still().get(), types);
 		ItemBlockRenderTypes.setRenderLayer(entry.flowing().get(), types);
 	}
-
+	
 	private static void setRenderLayer(RegistryObject<? extends Block> block, Predicate<RenderType> types){
 		ItemBlockRenderTypes.setRenderLayer(block.get(), types);
 	}
-
+	
 	public static boolean solidCutout(RenderType t){
 		return t == RenderType.solid() || t == RenderType.cutout();
 	}

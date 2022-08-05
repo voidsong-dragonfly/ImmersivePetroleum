@@ -33,7 +33,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		this.imageWidth = 200;
 		this.imageHeight = 187;
 	}
-
+	
 	@Nonnull
 	@Override
 	protected List<InfoArea> makeInfoAreas(){

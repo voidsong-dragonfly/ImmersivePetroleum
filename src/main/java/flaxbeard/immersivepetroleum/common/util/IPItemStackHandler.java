@@ -39,14 +39,14 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 	}
 	
 	LazyOptional<IItemHandler> handler = CapabilityUtils.constantOptional(this);
-
+	
 	@Override
 	@Nonnull
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return this.handler.cast();
 		}
-
+		
 		return LazyOptional.empty();
 	}
 	

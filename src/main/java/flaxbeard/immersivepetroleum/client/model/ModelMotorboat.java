@@ -143,7 +143,6 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	
 	@Override
 	public void setupAnim(@Nonnull MotorboatEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-
 		this.setPaddleRotationAngles(entityIn, 0, limbSwing, entityIn.isEmergency());
 		this.setPaddleRotationAngles(entityIn, 1, limbSwing, entityIn.isEmergency());
 	}

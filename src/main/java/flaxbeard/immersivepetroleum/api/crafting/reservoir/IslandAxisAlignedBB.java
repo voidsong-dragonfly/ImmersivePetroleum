@@ -62,7 +62,7 @@ public class IslandAxisAlignedBB{
 	public String toString(){
 		return String.format("IslandAxisAlignedBB [minX = %d, minZ = %d, maxX = %d, maxZ = %d]", this.minX, this.minZ, this.maxX, this.maxZ);
 	}
-
+	
 	public static IslandAxisAlignedBB readFromNBT(CompoundTag nbt){
 		int minX = nbt.getInt("minX");
 		int minZ = nbt.getInt("minZ");

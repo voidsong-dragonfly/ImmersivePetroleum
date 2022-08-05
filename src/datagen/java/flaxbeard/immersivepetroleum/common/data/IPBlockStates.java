@@ -52,7 +52,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class IPBlockStates extends BlockStateProvider{
 	/** ResourceLocation("forge","obj") */
 //	private static final ResourceLocation FORGE_LOADER = new ResourceLocation("forge", "obj");
-
+	
 	final ExistingFileHelper exFileHelper;
 	private final NongeneratedModels nongeneratedModels;
 	public IPBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper){
@@ -122,11 +122,11 @@ public class IPBlockStates extends BlockStateProvider{
 			ModelFile wellPipeModel_cracked_mirrored = models()
 				.withExistingParent(wellPipe.getRegistryName().toString() + "_cracked_mirrored", "block/cube_mirrored")
 				.texture("down", wellPipeTexture)
-                .texture("up", wellPipeTexture)
-                .texture("north", concrete_cracked)
-                .texture("south", concrete_cracked)
-                .texture("east", concrete_cracked)
-                .texture("west", concrete_cracked);
+				.texture("up", wellPipeTexture)
+				.texture("north", concrete_cracked)
+				.texture("south", concrete_cracked)
+				.texture("east", concrete_cracked)
+				.texture("west", concrete_cracked);
 			
 			VariantBlockStateBuilder builder = getVariantBuilder(wellPipe);
 			builder.partialState()

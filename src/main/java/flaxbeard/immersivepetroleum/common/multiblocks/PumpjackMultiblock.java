@@ -19,7 +19,7 @@ public class PumpjackMultiblock extends IPTemplateMultiblock{
 	public float getManualScale(){
 		return 12;
 	}
-
+	
 	@Override
 	public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer){
 		consumer.accept(new PumpjackClientData());

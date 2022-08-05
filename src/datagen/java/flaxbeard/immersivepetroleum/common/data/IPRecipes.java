@@ -54,7 +54,7 @@ public class IPRecipes extends RecipeProvider{
 	public IPRecipes(DataGenerator generatorIn){
 		super(generatorIn);
 	}
-
+	
 	@Override
 	protected void buildCraftingRecipes(Consumer<FinishedRecipe> out){
 		this.out = out;

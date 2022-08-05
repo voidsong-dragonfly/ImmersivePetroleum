@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
-
+	
 	public static Map<ResourceLocation, SulfurRecoveryRecipe> recipes = new HashMap<>();
 	
 	public static SulfurRecoveryRecipe findRecipe(@Nonnull FluidStack input, @Nonnull FluidStack secondary){

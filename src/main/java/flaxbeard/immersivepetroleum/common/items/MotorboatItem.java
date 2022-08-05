@@ -126,11 +126,11 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		
 		Vec3 vec3d1 = vec3d.add((double) f7 * 5.0D, (double) f6 * 5.0D, (double) f8 * 5.0D);
 		HitResult raytraceresult = worldIn.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, playerIn));
-
+		
 		Vec3 vec3d2 = playerIn.getViewVector(1.0F);
 		boolean flag = false;
 		AABB bb = playerIn.getBoundingBox();
-
+		
 		List<Entity> list = worldIn.getEntities(playerIn, bb.expandTowards(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).inflate(1.0D));
 		for (Entity entity : list){
 			if(entity.isPickable()){
@@ -140,7 +140,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 				}
 			}
 		}
-
+		
 		if(flag){
 			return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
 		}else if(raytraceresult.getType() != HitResult.Type.BLOCK){
@@ -155,23 +155,22 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 				entityboat.setUpgrades(getContainedItems(itemstack));
 				entityboat.readTank(itemstack.getTag());
 			}
-
+			
 			if(worldIn.getBlockCollisions(entityboat, entityboat.getBoundingBox().inflate(-0.1D)).iterator().hasNext()){
 				return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
 			}else{
 				if(!worldIn.isClientSide){
 					worldIn.addFreshEntity(entityboat);
 				}
-
+				
 				if(!playerIn.isCreative()){
 					itemstack.shrink(1);
 				}
-
+				
 				// playerIn.addStat(net.minecraft.stats.Stats.CUSTOM.get(getRegistryName()));
 				return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
 			}
 		}
-
 	}
 	
 	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){

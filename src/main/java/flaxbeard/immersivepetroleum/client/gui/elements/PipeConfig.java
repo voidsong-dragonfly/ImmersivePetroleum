@@ -114,7 +114,7 @@ public class PipeConfig extends Button{
 		for(int gy = 0;gy < this.grid.getHeight();gy++){
 			for(int gx = 0;gx < this.grid.getWidth();gx++){
 				int color = 0;
-
+				
 				switch(this.grid.get(gx, gy)){
 					case EMPTY -> {
 						if((gx >= texCenterX - 2 && gx <= texCenterX + 2) && (gy >= texCenterY - 2 && gy <= texCenterY + 2)){
@@ -122,10 +122,10 @@ public class PipeConfig extends Button{
 						}else{
 							int px = gx - (this.grid.getWidth() / 2);
 							int py = gy - (this.grid.getHeight() / 2);
-
+							
 							ColumnPos c = new ColumnPos(this.tilePos.x + px, this.tilePos.z + py);
 							int y = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(c.x, 0, c.z)).getY();
-
+							
 							BlockPos p;
 							BlockState state;
 							do{
@@ -133,13 +133,13 @@ public class PipeConfig extends Button{
 								p = new BlockPos(c.x, y, c.z);
 								state = world.getBlockState(p);
 							}while(state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
-
+							
 							int tmp = world.getBlockState(p).getMapColor(world, p).col;
 							float f = 0.5F;
 							int r = (int) (((tmp >> 16) & 0xFF) * f);
 							int g = (int) (((tmp >> 8) & 0xFF) * f);
 							int b = (int) (((tmp >> 0) & 0xFF) * f);
-
+							
 							color = (r << 16 | g << 8 | b);
 						}
 					}
@@ -252,7 +252,7 @@ public class PipeConfig extends Button{
 				if(sw > width)
 					width = sw;
 			}
-
+			
 			mx += 12;
 			my -= height;
 			

@@ -157,7 +157,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		}
 		
 		super.tickServer();
-
+		
 		boolean update = false;
 		
 		if(!isRSDisabled()){
@@ -294,13 +294,13 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	public DistillationTowerTileEntity getGuiMaster(){
 		return master();
 	}
-
+	
 	@Nonnull
 	@Override
 	public BEContainerIP<? super DistillationTowerTileEntity, ?> getContainerTypeIP(){
 		return IPMenuTypes.DISTILLATION_TOWER;
 	}
-
+	
 	@Override
 	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
@@ -375,7 +375,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		for (FluidStack outputFluid : process.getRecipe(this.level).getFluidOutputs()){
 			outputAmount += outputFluid.getAmount();
 		}
-
+		
 		return this.tanks[TANK_OUTPUT].getCapacity() >= (this.tanks[TANK_OUTPUT].getFluidAmount() + outputAmount);
 	}
 	
@@ -443,7 +443,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	public boolean shouldRenderAsActiveImpl(){
 		return this.cooldownTicks > 0 || super.shouldRenderAsActiveImpl();
 	}
-
+	
 	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
 			this, be -> be.outputHandler, DistillationTowerTileEntity::master,
 			registerFluidOutput(tanks[TANK_OUTPUT])
@@ -452,7 +452,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 			this, be -> be.inputHandler, DistillationTowerTileEntity::master,
 			registerFluidInput(tanks[TANK_INPUT])
 	);
-
+	
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
@@ -468,7 +468,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		}
 		return super.getCapability(capability, side);
 	}
-
+	
 	public boolean isLadder(){
 		return this.posInMultiblock.getY() > 0 && (this.posInMultiblock.getX() == 2 && this.posInMultiblock.getZ() == 0);
 	}

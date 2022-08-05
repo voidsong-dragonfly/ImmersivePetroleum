@@ -26,7 +26,7 @@ public class FluidParticleData implements ParticleOptions{
 			String name = reader.getString();
 			return new FluidParticleData(name);
 		}
-
+		
 		@Override
 		@Nonnull
 		public FluidParticleData fromNetwork(@Nonnull ParticleType<FluidParticleData> particleTypeIn, FriendlyByteBuf buffer){

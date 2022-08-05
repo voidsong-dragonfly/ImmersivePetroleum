@@ -17,12 +17,12 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 // See ShaderUtil
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPShaders{
-
+	
 	private static ShaderInstance shader_line;
 	private static ShaderInstance shader_projection;
 	private static ShaderInstance shader_translucent_full;
 	private static ShaderInstance shader_translucent_postion_color;
-
+	
 	private static AbstractUniform projection_alpha;
 	private static AbstractUniform projection_time;
 	public static void projNoise(float alpha, float time){

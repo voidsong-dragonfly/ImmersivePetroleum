@@ -32,10 +32,10 @@ public class ClientModBusEventHandlers {
 		
 		registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
 		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
-
+		
 		ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
 	}
-
+	
 	private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){
 		ev.registerBlockEntityRenderer(type, ctx -> factory.get());
 	}

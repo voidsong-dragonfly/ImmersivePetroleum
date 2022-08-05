@@ -20,7 +20,7 @@ public class CokerUnitMultiblock extends IPTemplateMultiblock{
 	public float getManualScale(){
 		return 4.0F;
 	}
-
+	
 	@Override
 	public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer){
 		consumer.accept(new IPClientMultiblockProperties(this, 4.5, 0.5, 2.5));

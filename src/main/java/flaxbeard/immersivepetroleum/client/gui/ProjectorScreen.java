@@ -171,7 +171,7 @@ public class ProjectorScreen extends Screen{
 			this.list = addRenderableWidget(guilist);
 			return;
 		}
-
+		
 		removeWidget(this.list);
 		this.list = guilist;
 		addRenderableWidget(this.list);
@@ -248,7 +248,7 @@ public class ProjectorScreen extends Screen{
 					matrix.mulPose(new Quaternion(25, 0, 0, true));
 					matrix.mulPose(new Quaternion(0, (int) (45 - this.rotation), 0, true));
 					matrix.translate(size.getX() / -2F, size.getY() / -2F, size.getZ() / -2F);
-
+					
 					var mbClientData = ClientMultiblocks.get(mb);
 					boolean tempDisable = true;
 					if(tempDisable && mbClientData.canRenderFormedStructure()){
@@ -459,7 +459,7 @@ public class ProjectorScreen extends Screen{
 		public void setSelected(boolean isSelected){
 			this.selected = isSelected;
 		}
-
+		
 		@Override
 		public void updateNarration(@Nonnull NarrationElementOutput output){}
 	}

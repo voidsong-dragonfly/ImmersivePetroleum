@@ -96,11 +96,11 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 				}else{
 					return LazyOptional.empty();
 				}
-
+				
 				return this.inputHandler.cast();
 			}
 		}
-
+		
 		return super.getCapability(cap, side);
 	}
 	

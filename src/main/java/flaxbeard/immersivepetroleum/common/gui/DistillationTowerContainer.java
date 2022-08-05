@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.FluidUtil;
 public class DistillationTowerContainer extends MultiblockAwareGuiContainer<DistillationTowerTileEntity>{
 	public DistillationTowerContainer(MenuType<?> type, int id, Inventory playerInventory, final DistillationTowerTileEntity tile){
 		super(type, tile, id, DistillationTowerMultiblock.INSTANCE);
-
+		
 		addSlot(new IPSlot(this.inv, INV_0, 12, 17){
 			@Override
 			public boolean mayPlace(@Nonnull ItemStack stack){

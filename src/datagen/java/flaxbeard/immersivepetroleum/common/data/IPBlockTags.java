@@ -12,7 +12,7 @@ public class IPBlockTags extends BlockTagsProvider{
 	public IPBlockTags(DataGenerator dataGen, ExistingFileHelper exFileHelper){
 		super(dataGen, ImmersivePetroleum.MODID, exFileHelper);
 	}
-
+	
 	@Override
 	protected void addTags(){
 		// IP Tags
@@ -21,7 +21,7 @@ public class IPBlockTags extends BlockTagsProvider{
 		tag(IPTags.Blocks.petcoke).add(IPContent.Blocks.PETCOKE.get());
 		
 		// Minecraft Tags
-
+		
 		tag(BlockTags.STAIRS).add(IPContent.Blocks.ASPHALT_STAIR.get());
 		tag(BlockTags.SLABS).add(IPContent.Blocks.ASPHALT_SLAB.get());
 		

@@ -90,7 +90,7 @@ public class MCUtil{
 		Minecraft mc = Minecraft.getInstance();
 		return mc.getWindow();
 	}
-
+	
 	public static ItemRenderer getItemRenderer(){
 		Minecraft mc = Minecraft.getInstance();
 		return mc.getItemRenderer();

@@ -113,7 +113,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			new MultiblockFace(6, 1, 4, RelativeBlockFace.FRONT),
 			new MultiblockFace(7, 1, 4, RelativeBlockFace.FRONT)
 	);
-
+	
 	/** Template-Location of the Redstone Input Port. (6 1 4)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(1, 1, 4));
 	
@@ -191,7 +191,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	public void doProcessOutput(ItemStack output){
 	}
-
+	
 	private final MultiblockCapability<IItemHandler> insertionHandler = MultiblockCapability.make(
 			this, be -> be.insertionHandler, CokerUnitTileEntity::master,
 			new ResettableCapability<>(new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[8]))
@@ -273,7 +273,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				if(recipe != null && inputStack.getCount() >= recipe.inputItem.getCount() && inputFluid.getAmount() >= recipe.inputFluid.getAmount()){
 					for (CokingChamber chamber : this.chambers){
 						boolean skipNext = false;
-
+						
 						switch(chamber.getState()){
 							case STANDBY -> {
 								if(chamber.setRecipe(recipe)){
@@ -285,10 +285,10 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 								int acceptedStack = chamber.addStack(copyStack(inputStack, recipe.inputItem.getCount()), true);
 								if(acceptedStack >= recipe.inputItem.getCount()){
 									acceptedStack = Math.min(acceptedStack, inputStack.getCount());
-
+									
 									chamber.addStack(copyStack(inputStack, acceptedStack), false);
 									inputStack.shrink(acceptedStack);
-
+									
 									skipNext = true;
 									update = true;
 								}
@@ -296,7 +296,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 							default -> {
 							}
 						}
-
+						
 						if(skipNext){
 							break;
 						}
@@ -525,13 +525,13 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		
 		return false;
 	}
-
+	
 	@Nonnull
 	@Override
 	public BEContainerIP<? super CokerUnitTileEntity, ?> getContainerTypeIP(){
 		return IPMenuTypes.COKER;
 	}
-
+	
 	@Override
 	public boolean isInWorldProcessingMachine(){
 		return false;
@@ -1086,7 +1086,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			if(this.recipe == null){
 				return setStage(CokingState.STANDBY);
 			}
-
+			
 			switch(this.state){
 				case STANDBY -> {
 					if(this.recipe != null){
@@ -1097,20 +1097,20 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					if(this.inputAmount > 0 && !getInputItem().isEmpty() && (this.tank.getCapacity() - this.tank.getFluidAmount()) >= this.recipe.outputFluid.getAmount()){
 						if(cokerunit.energyStorage.getEnergyStored() >= this.recipe.getTotalProcessEnergy()){
 							cokerunit.energyStorage.extractEnergy(this.recipe.getTotalProcessEnergy(), false);
-
+							
 							this.timer++;
 							if(this.timer >= (this.recipe.getTotalProcessTime() * this.recipe.inputItem.getCount())){
 								this.timer = 0;
-
+								
 								this.tank.fill(Utils.copyFluidStackWithAmount(this.recipe.outputFluid.getMatchingFluidStacks().get(0), this.recipe.outputFluid.getAmount(), false), FluidAction.EXECUTE);
 								this.inputAmount--;
 								this.outputAmount++;
-
+								
 								if(this.inputAmount <= 0){
 									setStage(CokingState.DRAIN_RESIDUE);
 								}
 							}
-
+							
 							return true;
 						}
 					}
@@ -1119,14 +1119,14 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					if(this.tank.getFluidAmount() > 0){
 						FluidTank buffer = cokerunit.bufferTanks[TANK_OUTPUT];
 						FluidStack drained = this.tank.drain(25, FluidAction.SIMULATE);
-
+						
 						int accepted = buffer.fill(drained, FluidAction.SIMULATE);
 						if(accepted > 0){
 							int amount = Math.min(drained.getAmount(), accepted);
-
+							
 							this.tank.drain(amount, FluidAction.EXECUTE);
 							buffer.fill(Utils.copyFluidStackWithAmount(drained, amount, false), FluidAction.EXECUTE);
-
+							
 							return true;
 						}
 					}else{
@@ -1137,7 +1137,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					this.timer++;
 					if(this.timer >= 2){
 						this.timer = 0;
-
+						
 						int max = getTotalAmount() * this.recipe.inputFluid.getAmount();
 						if(this.tank.getFluidAmount() < max){
 							FluidStack accepted = cokerunit.bufferTanks[TANK_INPUT].drain(this.recipe.inputFluid.getAmount(), FluidAction.SIMULATE);
@@ -1152,17 +1152,17 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				}
 				case DUMPING -> {
 					boolean update = false;
-
+					
 					this.timer++;
 					if(this.timer >= 5){ // Output speed will always be fixed
 						this.timer = 0;
-
+						
 						if(this.outputAmount > 0){
 							Level world = cokerunit.getLevelNonnull();
 							int amount = Math.min(this.outputAmount, 1);
 							ItemStack copy = this.recipe.outputItem.get().copy();
 							copy.setCount(amount);
-
+							
 							// Drop item(s) at the designated chamber output location
 							BlockPos itemOutPos = cokerunit.getBlockPosForPos(chamberId == 0 ? Chamber_A_OUT : Chamber_B_OUT);
 							Vec3 center = new Vec3(itemOutPos.getX() + 0.5, itemOutPos.getY() - 0.5, itemOutPos.getZ() + 0.5);
@@ -1170,25 +1170,25 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 							ent.setDeltaMovement(0.0, 0.0, 0.0); // Any movement has the potential to end with the stack bouncing all over the place
 							world.addFreshEntity(ent);
 							this.outputAmount -= amount;
-
+							
 							update = true;
 						}
 					}
-
+					
 					// Void washing fluid
 					if(this.tank.getFluidAmount() > 0){
 						this.tank.drain(25, FluidAction.EXECUTE);
-
+						
 						update = true;
 					}
-
+					
 					if(this.outputAmount <= 0 && this.tank.isEmpty()){
 						this.recipe = null;
 						setStage(CokingState.STANDBY);
-
+						
 						update = true;
 					}
-
+					
 					if(update){
 						return true;
 					}

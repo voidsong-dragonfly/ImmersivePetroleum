@@ -107,7 +107,7 @@ public class IPContent{
 		public static final RegistryObject<OilTankBlock> OILTANK = IPRegisters.registerMultiblockBlock(
 				"oiltank", OilTankBlock::new
 		);
-
+		
 		private static void forceClassLoad(){
 		}
 	}
@@ -147,7 +147,7 @@ public class IPContent{
 			registerItemBlock(ASPHALT_SLAB);
 			registerItemBlock(ASPHALT_STAIR);
 		}
-
+		
 		private static void registerItemBlock(RegistryObject<? extends Block> block){
 			IPRegisters.registerItem(block.getId().getPath(), () -> new IPBlockItemBase(block.get(), new Item.Properties().tab(ImmersivePetroleum.creativeTab)));
 		}
@@ -270,7 +270,7 @@ public class IPContent{
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event){
 		ParticleEngine manager = MCUtil.getParticleEngine();
-
+		
 		manager.register(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
 		manager.register(IPParticleTypes.FLUID_SPILL, new FluidSpill.Factory());
 	}

@@ -191,7 +191,7 @@ public class ProjectorItem extends IPItemBase{
 		if(!nameCache.containsKey(multiblock.getClass())){
 			String name = multiblock.getClass().getSimpleName();
 			name = name.substring(0, name.indexOf("Multiblock"));
-
+			
 			name = switch(name){
 				case "LightningRod" -> "Lightningrod";
 				case "ImprovedBlastfurnace" -> "BlastFurnaceAdvanced";
@@ -346,7 +346,7 @@ public class ProjectorItem extends IPItemBase{
 		int x = ((rotation.ordinal() % 2 == 0) ? size.getX() : size.getZ()) / 2;
 		int z = ((rotation.ordinal() % 2 == 0) ? size.getZ() : size.getX()) / 2;
 		Direction facing = playerIn.getDirection();
-
+		
 		switch(facing){
 			case NORTH -> hit.setWithOffset(hit, 0, 0, -z);
 			case SOUTH -> hit.setWithOffset(hit, 0, 0, z);
@@ -501,19 +501,19 @@ public class ProjectorItem extends IPItemBase{
 				ItemStack heldStack = player.getMainHandItem();
 				for(Pair<RenderLayer, MultiblockProjection.Info> pair:toRender){
 					MultiblockProjection.Info rInfo = pair.getRight();
-
+					
 					switch(pair.getLeft()){
 						case ALL -> { // All / Slice
 							boolean held = heldStack.getItem() == rInfo.getRawState().getBlock().asItem();
 							float alpha = held ? 1.0F : 0.50F;
-
+							
 							matrix.pushPose();
 							{
 								// This can NOT use mainBuffer, otherwise highlighting held blocks does not work at all.
 								// While this may not be the most efficient thing to do, it's the one thing i have yet to find an alternative to
 								// It has it's own Tesselator for that reason.
 								renderPhantom(matrix, world, rInfo, settings.isMirrored(), flicker, alpha, partialTicks);
-
+								
 								if(held){
 									renderCenteredOutlineBox(mainBuffer, matrix, 0xAFAFAF, flicker);
 								}
@@ -524,7 +524,7 @@ public class ProjectorItem extends IPItemBase{
 							matrix.pushPose();
 							{
 								matrix.translate(rInfo.tPos.getX(), rInfo.tPos.getY(), rInfo.tPos.getZ());
-
+								
 								renderCenteredOutlineBox(mainBuffer, matrix, 0xFF0000, flicker);
 							}
 							matrix.popPose();
@@ -533,7 +533,7 @@ public class ProjectorItem extends IPItemBase{
 							int x = rInfo.tPos.getX();
 							int y = rInfo.tPos.getY();
 							int z = rInfo.tPos.getZ();
-
+							
 							min.set(Math.min(x, min.getX()), Math.min(y, min.getY()), Math.min(z, min.getZ()));
 							max.set(Math.max(x, max.getX()), Math.max(y, max.getY()), Math.max(z, max.getZ()));
 						}
@@ -634,28 +634,28 @@ public class ProjectorItem extends IPItemBase{
 			
 			buffer.endBatch();
 		}
-
+		
 		private static void renderOutlineBox(MultiBufferSource buffer, PoseStack matrix, Vec3i min, Vec3i max, int rgb, float flicker){
 			renderBox(buffer, matrix, Vec3.atLowerCornerOf(min), Vec3.atLowerCornerOf(max).add(1, 1, 1), rgb, flicker);
 		}
-
+		
 		private static void renderBox(MultiBufferSource buffer, PoseStack matrix, Vec3 min, Vec3 max, int rgb, float flicker){
 			VertexConsumer builder = buffer.getBuffer(IPRenderTypes.TRANSLUCENT_LINE);
 			
 			float alpha = 0.25F + (0.5F * flicker);
 			
 			int rgba = rgb | (((int)(alpha * 255)) << 24);
-
+			
 			line(builder, matrix, min, max, 0b010, 0b110, rgba);
 			line(builder, matrix, min, max, 0b110, 0b111, rgba);
 			line(builder, matrix, min, max, 0b111, 0b011, rgba);
 			line(builder, matrix, min, max, 0b011, 0b010, rgba);
-
+			
 			line(builder, matrix, min, max, 0b010, 0b000, rgba);
 			line(builder, matrix, min, max, 0b110, 0b100, rgba);
 			line(builder, matrix, min, max, 0b011, 0b001, rgba);
 			line(builder, matrix, min, max, 0b111, 0b101, rgba);
-
+			
 			line(builder, matrix, min, max, 0b000, 0b100, rgba);
 			line(builder, matrix, min, max, 0b100, 0b101, rgba);
 			line(builder, matrix, min, max, 0b101, 0b001, rgba);
@@ -665,7 +665,7 @@ public class ProjectorItem extends IPItemBase{
 		private static void renderCenteredOutlineBox(MultiBufferSource buffer, PoseStack matrix, int rgb, float flicker){
 			renderBox(buffer, matrix, Vec3.ZERO, new Vec3(1, 1, 1), rgb, flicker);
 		}
-
+		
 		private static Vector3f combine(Vec3 start, Vec3 end, int mixBits){
 			final float eps = 0.01f;
 			return new Vector3f(
@@ -674,7 +674,7 @@ public class ProjectorItem extends IPItemBase{
 					(float) ((mixBits & 1) != 0 ? end.z + eps : start.z - eps)
 			);
 		}
-
+		
 		private static void line(VertexConsumer out, PoseStack mat, Vec3 min, Vec3 max, int startBits, int endBits, int rgba){
 			Vector3f start = combine(min, max, startBits);
 			Vector3f end = combine(min, max, endBits);
@@ -690,7 +690,7 @@ public class ProjectorItem extends IPItemBase{
 					.endVertex();
 		}
 	}
-
+	
 	/** Client Input Stuff */
 	@OnlyIn(Dist.CLIENT)
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)

@@ -66,16 +66,16 @@ public class IPFluid extends FlowingFluid{
 		this.flowingTexture = flowingTexture;
 		this.buildAttributes = buildAttributes;
 	}
-
+	
 	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory){
 		return makeFluid(name, factory, IPFluidBlock::new);
 	}
-
+	
 	public static IPFluidEntry makeFluid(
 			String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory
 	){
 		Mutable<IPFluidEntry> entry = new MutableObject<>();
-
+		
 		entry.setValue(new IPFluidEntry(
 				name,
 				IPRegisters.registerFluid(name, () -> factory.apply(entry.getValue())),
@@ -219,7 +219,7 @@ public class IPFluid extends FlowingFluid{
 			builder.add(LEVEL);
 		}
 	}
-
+	
 	public record IPFluidEntry(
 			String name,
 			RegistryObject<IPFluid> still,

@@ -188,7 +188,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			if(ExternalModContent.isIEConcrete(tFluidStack) && tFluidStack.getAmount() >= concreteNeeded){
 				return false;
 			}
-
+			
 			return concreteNeeded >= fs.getAmount();
 		}
 		
@@ -558,7 +558,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				BlockEntity teLow = world.getBlockEntity(current);
 				
 				if(teLow instanceof WellTileEntity well){
-
+					
 					if(!well.drillingCompleted){
 						if(well.wellPipeLength > 0){
 							well.startSelfDestructSequence();
@@ -587,13 +587,13 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	public DerrickTileEntity getGuiMaster(){
 		return master();
 	}
-
+	
 	@Nonnull
 	@Override
 	public BEContainerIP<? super DerrickTileEntity, ?> getContainerTypeIP(){
 		return IPMenuTypes.DERRICK;
 	}
-
+	
 	@Override
 	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
@@ -707,12 +707,12 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	public boolean isInWorldProcessingMachine(){
 		return false;
 	}
-
+	
 	private final MultiblockCapability<IFluidHandler> fluidInputHandler = MultiblockCapability.make(
 			this, be -> be.fluidInputHandler, DerrickTileEntity::master, registerFluidInput(tank)
 	);
 	private final ResettableCapability<IFluidHandler> dummyTank = registerFluidOutput(DUMMY_TANK);
-
+	
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
@@ -728,7 +728,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		}
 		return super.getCapability(capability, side);
 	}
-
+	
 	public boolean isLadder(){
 		int x = posInMultiblock.getX();
 		int y = posInMultiblock.getY();

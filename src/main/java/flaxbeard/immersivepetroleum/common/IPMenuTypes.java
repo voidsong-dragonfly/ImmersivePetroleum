@@ -31,9 +31,9 @@ public class IPMenuTypes{
 			register("coker", CokerUnitContainer::new);
 	public static final BEContainerIP<HydrotreaterTileEntity, HydrotreaterContainer> HYDROTREATER =
 			register("hydrotreater", HydrotreaterContainer::new);
-
+	
 	public static void forceClassLoad(){}
-
+	
 	@SuppressWarnings("unchecked")
 	public static <T extends BlockEntity, C extends IEBaseContainer<? super T>> BEContainerIP<T, C> register(String name, IEContainerTypes.BEContainerConstructor<T, C> container){
 		RegistryObject<MenuType<C>> typeRef = IPRegisters.registerMenu(name, () -> {

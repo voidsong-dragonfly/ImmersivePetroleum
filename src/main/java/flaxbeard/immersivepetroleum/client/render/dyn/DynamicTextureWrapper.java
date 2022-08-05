@@ -33,7 +33,7 @@ public class DynamicTextureWrapper{
 			.expireAfterAccess(5, TimeUnit.MINUTES)
 			.maximumSize(50)
 			.build();
-	
+
 	/** Returns null if no valid UUID is provided */
 	public static DynamicTextureWrapper getOrCreate(int width, int height, CompoundTag dataTag){
 		UUID uuid = dataTag.hasUUID("uuid") ? dataTag.getUUID("uuid") : null;
