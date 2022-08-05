@@ -23,7 +23,7 @@ public class IPRecipeTypes{
 	}
 
 	private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeType(String name){
-		return REGISTER.register(name, () -> new RecipeType<>(){
+		return REGISTER.register(name, () -> new RecipeType<T>(){
 			@Override
 			public String toString(){
 				return ImmersivePetroleum.MODID + ":" + name;

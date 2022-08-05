@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.client.particle;
 
+import javax.annotation.Nonnull;
+
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.Camera;
@@ -9,7 +11,6 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -18,7 +19,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
-import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class FluidSpill extends TextureSheetParticle{
