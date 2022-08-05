@@ -789,5 +789,5 @@ public class ProjectorItem extends IPItemBase{
 	
 	public enum RenderLayer{
 		ALL, BAD, PERFECT
-    }
+	}
 }

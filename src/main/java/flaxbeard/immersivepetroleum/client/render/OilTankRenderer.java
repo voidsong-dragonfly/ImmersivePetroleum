@@ -40,22 +40,22 @@ public class OilTankRenderer implements BlockEntityRenderer<OilTankTileEntity>{
 		
 		matrix.pushPose();
 		{
-            switch(te.getFacing()){
-                case EAST -> {
-                    matrix.mulPose(new Quaternion(0, 270F, 0, true));
-                    matrix.translate(0, 0, -1);
-                }
-                case SOUTH -> {
-                    matrix.mulPose(new Quaternion(0F, 180F, 0F, true));
-                    matrix.translate(-1, 0, -1);
-                }
-                case WEST -> {
-                    matrix.mulPose(new Quaternion(0, 90F, 0, true));
-                    matrix.translate(-1, 0, 0);
-                }
-                default -> {
-                }
-            }
+			switch(te.getFacing()){
+				case EAST -> {
+					matrix.mulPose(new Quaternion(0, 270F, 0, true));
+					matrix.translate(0, 0, -1);
+				}
+				case SOUTH -> {
+					matrix.mulPose(new Quaternion(0F, 180F, 0F, true));
+					matrix.translate(-1, 0, -1);
+				}
+				case WEST -> {
+					matrix.mulPose(new Quaternion(0, 90F, 0, true));
+					matrix.translate(-1, 0, 0);
+				}
+				default -> {
+				}
+			}
 			
 			// Tank Display
 			matrix.pushPose();

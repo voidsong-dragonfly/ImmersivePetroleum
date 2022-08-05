@@ -52,7 +52,7 @@ public class Reservoir extends IESerializableRecipe{
 	 * @param name The name of this reservoir type
 	 * @param id The "recipeId" of this reservoir
 	 * @param fluidLocation The registry name of the fluid this reservoir is
-	 *        containing
+	 *		containing
 	 * @param minSize Minimum amount of fluid in this reservoir
 	 * @param maxSize Maximum amount of fluid in this reservoir
 	 * @param residual Leftover fluid amount after depletion

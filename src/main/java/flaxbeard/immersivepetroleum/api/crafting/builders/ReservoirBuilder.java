@@ -139,11 +139,11 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * but not both.
 	 * 
 	 * @param isBlacklist Marks this as a blacklist when true. Whilelist
-	 *        otherwise.
+	 *		otherwise.
 	 * @param dimensions Dimensions to blacklist/whitelist
 	 * @return self
 	 * @throws IllegalArgumentException when attempting to add a blacklist and
-	 *         whitelist in the same instance.
+	 *		 whitelist in the same instance.
 	 */
 	public ReservoirBuilder addDimensions(boolean isBlacklist, ResourceLocation... dimensions){
 		if(isBlacklist){
@@ -179,11 +179,11 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * not both.
 	 * 
 	 * @param isBlacklist Marks this as a blacklist when true. Whilelist
-	 *        otherwise.
+	 *		otherwise.
 	 * @param biomes Biome to blacklist/whitelist
 	 * @return self
 	 * @throws IllegalArgumentException when attempting to add a blacklist and
-	 *         whitelist in the same instance.
+	 *		 whitelist in the same instance.
 	 */
 	public ReservoirBuilder addBiomes(boolean isBlacklist, ResourceLocation... biomes){
 		if(isBlacklist){

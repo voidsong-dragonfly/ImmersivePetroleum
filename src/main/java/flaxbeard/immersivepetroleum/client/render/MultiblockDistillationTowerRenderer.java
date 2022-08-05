@@ -34,26 +34,26 @@ public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<
 				transform.pushPose();
 				{
 					Direction rotation = te.getFacing();
-                    switch(rotation){
-                        case NORTH -> {
-                            // transform.rotate(new Quaternion(0, 0, 0, true));
-                            transform.translate(3, 0, 4);
-                        }
-                        case SOUTH -> {
-                            transform.mulPose(new Quaternion(0F, 180F, 0F, true));
-                            transform.translate(2, 0, 3);
-                        }
-                        case EAST -> {
-                            transform.mulPose(new Quaternion(0, 270F, 0, true));
-                            transform.translate(3, 0, 3);
-                        }
-                        case WEST -> {
-                            transform.mulPose(new Quaternion(0, 90F, 0, true));
-                            transform.translate(2, 0, 4);
-                        }
-                        default -> {
-                        }
-                    }
+					switch(rotation){
+						case NORTH -> {
+							// transform.rotate(new Quaternion(0, 0, 0, true));
+							transform.translate(3, 0, 4);
+						}
+						case SOUTH -> {
+							transform.mulPose(new Quaternion(0F, 180F, 0F, true));
+							transform.translate(2, 0, 3);
+						}
+						case EAST -> {
+							transform.mulPose(new Quaternion(0, 270F, 0, true));
+							transform.translate(3, 0, 3);
+						}
+						case WEST -> {
+							transform.mulPose(new Quaternion(0, 90F, 0, true));
+							transform.translate(2, 0, 4);
+						}
+						default -> {
+						}
+					}
 					
 					float br = 0.75F; // "Brightness"
 					
