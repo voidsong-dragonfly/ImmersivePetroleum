@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -23,7 +25,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import javax.annotation.Nonnull;
 
 public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecoveryRecipe>{
 	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater");

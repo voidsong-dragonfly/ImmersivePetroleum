@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common.entity;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.mojang.math.Vector3f;
 
@@ -67,7 +69,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
-import javax.annotation.Nonnull;
 
 public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	

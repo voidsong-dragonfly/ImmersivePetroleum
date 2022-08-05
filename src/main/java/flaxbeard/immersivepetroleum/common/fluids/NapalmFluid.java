@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common.fluids;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,7 +15,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-import javax.annotation.Nonnull;
 
 public class NapalmFluid extends IPFluid{
 	public NapalmFluid(IPFluidEntry entry){

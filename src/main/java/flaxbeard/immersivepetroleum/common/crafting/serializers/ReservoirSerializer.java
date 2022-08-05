@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.common.crafting.serializers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
-import javax.annotation.Nonnull;
 
 public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 	@Override

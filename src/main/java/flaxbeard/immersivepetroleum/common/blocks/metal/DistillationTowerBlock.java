@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
@@ -13,7 +15,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import javax.annotation.Nonnull;
 
 public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerTileEntity>{
 	public DistillationTowerBlock(){

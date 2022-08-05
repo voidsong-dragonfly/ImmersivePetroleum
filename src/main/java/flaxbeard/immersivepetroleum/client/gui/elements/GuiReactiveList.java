@@ -10,6 +10,8 @@ package flaxbeard.immersivepetroleum.client.gui.elements;
 
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.Lib;
@@ -21,7 +23,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public class GuiReactiveList extends Button{

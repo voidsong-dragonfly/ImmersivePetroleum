@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,8 +47,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-
-import javax.annotation.Nonnull;
 
 @Mod(ImmersivePetroleum.MODID)
 public class ImmersivePetroleum{

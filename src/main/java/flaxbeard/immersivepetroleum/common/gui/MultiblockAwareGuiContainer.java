@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
+import javax.annotation.Nonnull;
+
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
@@ -8,7 +10,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.phys.AABB;
-import javax.annotation.Nonnull;
 
 /**
  * @author TwistedGate © 2021

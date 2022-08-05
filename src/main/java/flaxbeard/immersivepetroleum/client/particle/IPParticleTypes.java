@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.client.particle;
 
+import javax.annotation.Nonnull;
+
 import com.mojang.serialization.Codec;
 
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
@@ -8,8 +10,6 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class IPParticleTypes{

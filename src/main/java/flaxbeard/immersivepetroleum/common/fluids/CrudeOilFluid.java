@@ -1,8 +1,8 @@
 package flaxbeard.immersivepetroleum.common.fluids;
 
-import net.minecraft.world.level.LevelReader;
-
 import javax.annotation.Nonnull;
+
+import net.minecraft.world.level.LevelReader;
 
 public class CrudeOilFluid extends IPFluid{
 	public CrudeOilFluid(IPFluidEntry entry){

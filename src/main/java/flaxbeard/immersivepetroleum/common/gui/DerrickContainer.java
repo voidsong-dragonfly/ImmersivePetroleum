@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
@@ -7,7 +9,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import javax.annotation.Nonnull;
 
 public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEntity>{
 	public DerrickContainer(MenuType<?> type, int id, Inventory playerInventory, DerrickTileEntity tile){

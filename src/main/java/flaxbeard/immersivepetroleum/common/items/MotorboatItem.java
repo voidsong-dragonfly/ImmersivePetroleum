@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.common.items;
 import java.util.List;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
 import blusunrize.immersiveengineering.api.utils.ItemUtils;
@@ -42,7 +44,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import javax.annotation.Nonnull;
 
 public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	public static final String UPGRADE_TYPE = "MOTORBOAT";

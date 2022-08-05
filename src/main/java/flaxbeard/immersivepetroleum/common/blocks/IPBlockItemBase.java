@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common.blocks;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import blusunrize.immersiveengineering.api.Lib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +17,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
-import javax.annotation.Nonnull;
 
 public class IPBlockItemBase extends BlockItem{
 	public IPBlockItemBase(Block blockIn, Properties builder){

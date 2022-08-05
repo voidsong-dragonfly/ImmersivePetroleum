@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.BlockItem;
@@ -12,7 +14,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
-import javax.annotation.Nonnull;
 
 public class BlockDummy extends IPBlockBase{
 	private static final Material Material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);

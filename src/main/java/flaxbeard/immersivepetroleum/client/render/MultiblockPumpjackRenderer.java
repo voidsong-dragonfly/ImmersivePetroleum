@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.client.render;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 
@@ -14,7 +16,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackTileEntity>{

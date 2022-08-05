@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -8,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import javax.annotation.Nonnull;
 
 public class IPSlot extends Slot{
 	

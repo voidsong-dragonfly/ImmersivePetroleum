@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.crafting.serializers;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
@@ -13,7 +15,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.util.Lazy;
-import javax.annotation.Nonnull;
 
 public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecipe>{
 	

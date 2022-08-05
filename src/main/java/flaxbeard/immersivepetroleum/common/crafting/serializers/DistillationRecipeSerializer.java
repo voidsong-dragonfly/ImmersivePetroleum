@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.common.crafting.serializers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -19,7 +21,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.fluids.FluidStack;
-import javax.annotation.Nonnull;
 
 public class DistillationRecipeSerializer extends IERecipeSerializer<DistillationRecipe>{
 	@Override

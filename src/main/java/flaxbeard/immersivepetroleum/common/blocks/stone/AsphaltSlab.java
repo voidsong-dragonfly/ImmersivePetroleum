@@ -2,12 +2,13 @@ package flaxbeard.immersivepetroleum.common.blocks.stone;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockSlab;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
-import javax.annotation.Nonnull;
 
 public class AsphaltSlab extends IPBlockSlab<AsphaltBlock>{
 	public AsphaltSlab(AsphaltBlock base){

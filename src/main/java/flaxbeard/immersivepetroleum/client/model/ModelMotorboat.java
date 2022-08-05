@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.client.model;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableList;
 
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
@@ -17,7 +19,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class ModelMotorboat extends ListModel<MotorboatEntity>{

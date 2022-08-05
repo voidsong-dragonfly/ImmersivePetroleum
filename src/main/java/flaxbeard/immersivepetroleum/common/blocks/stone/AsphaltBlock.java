@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.common.blocks.stone;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import net.minecraft.ChatFormatting;
@@ -15,8 +17,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
-
-import javax.annotation.Nonnull;
 
 public class AsphaltBlock extends IPBlockBase{
 	protected static final float SPEED_FACTOR = 1.20F;

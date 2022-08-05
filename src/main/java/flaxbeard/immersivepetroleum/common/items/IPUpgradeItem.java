@@ -3,6 +3,8 @@ package flaxbeard.immersivepetroleum.common.items;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableSet;
 
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
@@ -16,7 +18,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import javax.annotation.Nonnull;
 
 public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	private Set<String> set;

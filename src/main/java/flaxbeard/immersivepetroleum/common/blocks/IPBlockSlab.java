@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -7,7 +9,6 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import javax.annotation.Nonnull;
 
 public class IPBlockSlab<B extends IPBlockBase> extends SlabBlock{
 	private final B base;
