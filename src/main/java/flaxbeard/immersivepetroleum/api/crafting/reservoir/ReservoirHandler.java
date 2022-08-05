@@ -182,13 +182,13 @@ public class ReservoirHandler{
 	/**
 	 * <i>Only call on server side!</i>
 	 * 
-	 * @param Level {@link Level} to run query on
+	 * @param level {@link Level} to run query on
 	 * @param x Block Position
 	 * @param z Block Position
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
-	public static double getValueOf(@Nonnull Level Level, int x, int z){
-		if(!Level.isClientSide && Level instanceof WorldGenLevel worldGen){
+	public static double getValueOf(@Nonnull Level level, int x, int z){
+		if(!level.isClientSide && level instanceof WorldGenLevel worldGen){
 			initGenerator(worldGen);
 		}
 		
