@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 /**
  * Simple handler for the Flarestack
+ * 
  * @author TwistedGate
  */
 public class FlarestackHandler{

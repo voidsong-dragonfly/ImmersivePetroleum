@@ -53,7 +53,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * Can be called multiple times to add more byproducts to the recipe
 	 * 
 	 * @param byproduct the {@link ItemStack} byproduct to add to the recipe
-	 * @param chance 0 to 100 (clamped)
+	 * @param chance    0 to 100 (clamped)
 	 * @return self for chaining
 	 */
 	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, int chance){
@@ -64,7 +64,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * Can be called multiple times to add more byproducts to the recipe.
 	 * 
 	 * @param byproduct {@link ItemStack} to output as byproduct
-	 * @param chance 0.0 to 1.0 (clamped)
+	 * @param chance    0.0 to 1.0 (clamped)
 	 * @return {@link DistillationRecipeBuilder} self for chaining
 	 */
 	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, double chance){

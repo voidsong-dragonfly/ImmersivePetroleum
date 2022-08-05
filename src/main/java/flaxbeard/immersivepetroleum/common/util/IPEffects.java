@@ -19,8 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class IPEffects{
 	
 	/**
-	 * This is only as a burn prevention for when someone dismounts the
-	 * {@link MotorboatEntity} while that is in lava<br>
+	 * This is only as a burn prevention for when someone dismounts the {@link MotorboatEntity} while that is in lava<br>
 	 */
 	public static final RegistryObject<IPEffect> ANTI_DISMOUNT_FIRE = IPRegisters.registerMobEffect("anti_fire", AntiFireEffect::new);
 	
@@ -52,9 +51,12 @@ public class IPEffects{
 				}
 				
 				@Override
-				public void renderInventoryEffect(MobEffectInstance effectInstance, EffectRenderingInventoryScreen<?> gui, PoseStack poseStack, int x, int y, float z){}
+				public void renderInventoryEffect(MobEffectInstance effectInstance, EffectRenderingInventoryScreen<?> gui, PoseStack poseStack, int x, int y, float z){
+				}
+				
 				@Override
-				public void renderHUDEffect(MobEffectInstance effectInstance, GuiComponent gui, PoseStack poseStack, int x, int y, float z, float alpha){}
+				public void renderHUDEffect(MobEffectInstance effectInstance, GuiComponent gui, PoseStack poseStack, int x, int y, float z, float alpha){
+				}
 			});
 		}
 		

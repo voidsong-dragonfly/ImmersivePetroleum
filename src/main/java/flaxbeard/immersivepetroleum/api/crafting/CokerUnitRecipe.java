@@ -76,9 +76,9 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	}
 	
 	// just a "Reference"
-	// Water Input   -> FluidIn
+	// Water Input -> FluidIn
 	// Bitumen Input -> Item In
-	// Coke Output   -> Item Out
+	// Coke Output -> Item Out
 	// Diesel Output -> Fluid Out
 	
 	public final Lazy<ItemStack> outputItem;

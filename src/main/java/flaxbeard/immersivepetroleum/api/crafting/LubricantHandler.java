@@ -17,23 +17,21 @@ public class LubricantHandler{
 	static final Set<Pair<TagKey<Fluid>, Integer>> lubricants = new HashSet<>();
 	
 	/**
-	 * Registers a lubricant to be used in the Lubricant Can and Automatic
-	 * Lubricator
+	 * Registers a lubricant to be used in the Lubricant Can and Automatic Lubricator
 	 *
-	 * @param lube The {@link Fluid} to be used as lubricant
+	 * @param lube   The {@link Fluid} to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 * @deprecated THIS DOES NOTHING! in favour of fluid tags, use {@link #register(TagKey, int)} instead.
 	 */
 	@Deprecated
 	public static void registerLubricant(Fluid lube, int amount){
-		ImmersivePetroleum.log.warn("LubricantHandler skipped adding \""+lube.getRegistryName()+"\". Please use the FluidTag registration!");
+		ImmersivePetroleum.log.warn("LubricantHandler skipped adding \"" + lube.getRegistryName() + "\". Please use the FluidTag registration!");
 	}
 	
 	/**
-	 * Registers a lubricant to be used in the Lubricant Can and Automatic
-	 * Lubricator
+	 * Registers a lubricant to be used in the Lubricant Can and Automatic Lubricator
 	 *
-	 * @param fluid The {@link TagKey}<{@link Fluid}> to be used as lubricant
+	 * @param fluid  The {@link TagKey}<{@link Fluid}> to be used as lubricant
 	 * @param amount mB of lubricant to spend every 4 ticks
 	 */
 	public static void register(@Nonnull TagKey<Fluid> fluid, int amount){
@@ -54,8 +52,7 @@ public class LubricantHandler{
 	}
 	
 	/**
-	 * Gets amount of this Fluid that is used every four ticks for the Automatic
-	 * Lubricator. 0 if not valid lube. 100 * this result is used for the
+	 * Gets amount of this Fluid that is used every four ticks for the Automatic Lubricator. 0 if not valid lube. 100 * this result is used for the
 	 * Lubricant Can
 	 * 
 	 * @param toCheck Fluid to check

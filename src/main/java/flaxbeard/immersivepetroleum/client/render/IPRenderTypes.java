@@ -33,8 +33,8 @@ public class IPRenderTypes extends RenderStateShard{
 	 */
 	public static final RenderType PROJECTION;
 	
-	///** There is no right or wrong here! Just, play around.. NO PRESSURE!!!! You have aaaaall the time in the world! */
-	//public static final RenderType EXPERIMENTAL_RENDER_TYPE;
+	/// ** There is no right or wrong here! Just, play around.. NO PRESSURE!!!! You have aaaaall the time in the world! */
+	// public static final RenderType EXPERIMENTAL_RENDER_TYPE;
 	
 	static final RenderStateShard.TextureStateShard TEXTURE_ACTIVE_TOWER = new RenderStateShard.TextureStateShard(activeTexture, false, false);
 	static final RenderStateShard.TextureStateShard TEXTURE_OIL_TANK = new RenderStateShard.TextureStateShard(oilTankTexture, false, false);
@@ -73,6 +73,7 @@ public class IPRenderTypes extends RenderStateShard{
 					.createCompositeState(false)
 		);
 		*/
+		
 		PROJECTION = RenderType.create(
 				typeName("rendertype_projection"),
 				DefaultVertexFormat.BLOCK,

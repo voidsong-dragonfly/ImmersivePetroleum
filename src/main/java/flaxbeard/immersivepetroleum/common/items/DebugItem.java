@@ -117,7 +117,7 @@ public class DebugItem extends IPItemBase{
 						IPModels.getModels().forEach(IPModel::init);
 						
 						playerIn.displayClientMessage(new TextComponent("Models refreshed."), true);
-					} catch (Exception e){
+					}catch(Exception e){
 						e.printStackTrace();
 					}
 					
@@ -172,7 +172,7 @@ public class DebugItem extends IPItemBase{
 					}else{
 						final Multimap<ResourceKey<Level>, ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList();
 						
-						for (ResourceKey<Level> key : islands.keySet()){
+						for(ResourceKey<Level> key:islands.keySet()){
 							Collection<ReservoirIsland> list = islands.get(key);
 							
 							String str = key.location() + " has " + list.size() + " islands.";

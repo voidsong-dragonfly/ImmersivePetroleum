@@ -369,12 +369,12 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	public Collection<ConnectionPoint> getConnectionPoints(){
 		return List.of(new ConnectionPoint(worldPosition, 0));
 	}
-
+	
 	@Override
 	public BlockPos getPosition(){
 		return worldPosition;
 	}
-
+	
 	@Override
 	public Vec3 getConnectionOffset(ConnectionPoint here, ConnectionPoint other, WireType type){
 		float xo = facing.getNormal().getX() * .5f + .5f;

@@ -214,7 +214,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 			if(this.selfDestruct && advanceTimer()){
 				// Sucks to be you if this happens =P
 				if(!this.phyiscalPipesList.isEmpty()){
-					for (Integer integer : this.phyiscalPipesList){
+					for(Integer integer:this.phyiscalPipesList){
 						BlockPos pos = getBlockPos();
 						pos = new BlockPos(pos.getX(), integer, pos.getZ());
 						
@@ -257,7 +257,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 		
 		this.selfDestruct = true;
 		this.selfDestructTimer = 100;
-//		this.selfDestructTimer = 6000; // 5 Minutes
+		//this.selfDestructTimer = 6000; // 5 Minutes
 	}
 	
 	public void abortSelfDestructSequence(){

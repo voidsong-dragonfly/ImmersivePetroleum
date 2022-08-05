@@ -43,8 +43,7 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	public GasGeneratorBlock(){
 		super(Block.Properties.of(material).strength(5.0F, 6.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
 		
-		registerDefaultState(getStateDefinition().any()
-				.setValue(FACING, Direction.NORTH));
+		registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
 	}
 	
 	@Override

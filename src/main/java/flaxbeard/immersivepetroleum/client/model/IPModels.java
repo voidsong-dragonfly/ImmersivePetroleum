@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 
-/** A central place for all of ImmersivePetroleums Models, including some OBJ Models*/
+/** A central place for all of ImmersivePetroleums Models, including some OBJ Models */
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
 public class IPModels{
 	
@@ -45,7 +45,7 @@ public class IPModels{
 	private static final Map<String, IPModel> MODELS = new HashMap<>();
 	
 	/**
-	 * @param id The String-ID of the Model.
+	 * @param id    The String-ID of the Model.
 	 * @param model The {@link IPModel} model
 	 */
 	public static void add(String id, IPModel model){

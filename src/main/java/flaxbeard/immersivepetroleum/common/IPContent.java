@@ -180,7 +180,7 @@ public class IPContent{
 		
 		private static void forceClassLoad(){
 		}
-
+		
 		private static <T extends Item> RegistryObject<IPUpgradeItem> createBoatUpgrade(String name){
 			return IPRegisters.registerItem("upgrade_" + name, () -> new IPUpgradeItem(MotorboatItem.UPGRADE_TYPE));
 		}
@@ -199,7 +199,7 @@ public class IPContent{
 		Serializers.forceClassLoad();
 		IPEffects.forceClassLoad();
 	}
-
+	
 	public static void preInit(){
 	}
 	

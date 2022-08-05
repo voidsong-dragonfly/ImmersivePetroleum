@@ -44,17 +44,14 @@ public class IPClientMultiblockProperties implements ClientMultiblocks.Multibloc
 	@Override
 	public NonNullList<ItemStack> getTotalMaterials(){
 		// TODO (malte): Add helper for this to IE API
-		if(materials==null)
-		{
+		if(materials == null){
 			List<StructureTemplate.StructureBlockInfo> structure = multiblock.getStructure(null);
 			materials = NonNullList.create();
-			for(StructureTemplate.StructureBlockInfo info : structure)
-			{
+			for(StructureTemplate.StructureBlockInfo info:structure){
 				ItemStack picked = Utils.getPickBlock(info.state);
 				boolean added = false;
-				for(ItemStack existing : materials)
-					if(ItemStack.isSame(existing, picked))
-					{
+				for(ItemStack existing:materials)
+					if(ItemStack.isSame(existing, picked)){
 						existing.grow(1);
 						added = true;
 						break;

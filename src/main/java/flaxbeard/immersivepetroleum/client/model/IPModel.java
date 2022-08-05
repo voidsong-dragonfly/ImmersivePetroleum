@@ -13,8 +13,7 @@ public abstract class IPModel extends Model{
 	}
 	
 	/**
-	 * This is where the model parts should be created, to keep things seperate.
-	 * (And for easier refreshing)
+	 * This is where the model parts should be created, to keep things seperate. (And for easier refreshing)
 	 */
 	public abstract void init();
 	
@@ -28,7 +27,7 @@ public abstract class IPModel extends Model{
 		return CubeListBuilder.create().texOffs(pXTexOffs, pYTexOffs).addBox(pOriginX, pOriginY, pOriginZ, pDimensionX, pDimensionY, pDimensionZ);
 	}
 	
-	/** Creates an empty CubeListBuilder. Same as doing <code>CubeListBuilder.create();</code>*/
+	/** Creates an empty CubeListBuilder. Same as doing <code>CubeListBuilder.create();</code> */
 	protected final CubeListBuilder empty(){
 		return CubeListBuilder.create();
 	}

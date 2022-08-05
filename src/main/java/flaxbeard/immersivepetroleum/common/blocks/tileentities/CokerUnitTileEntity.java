@@ -271,7 +271,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				CokerUnitRecipe recipe = CokerUnitRecipe.findRecipe(inputStack, inputFluid);
 				
 				if(recipe != null && inputStack.getCount() >= recipe.inputItem.getCount() && inputFluid.getAmount() >= recipe.inputFluid.getAmount()){
-					for (CokingChamber chamber : this.chambers){
+					for(CokingChamber chamber:this.chambers){
 						boolean skipNext = false;
 						
 						switch(chamber.getState()){

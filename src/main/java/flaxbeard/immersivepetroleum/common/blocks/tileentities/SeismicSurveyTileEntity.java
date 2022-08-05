@@ -173,7 +173,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 					final double bZ = (pos.getZ() + 0.5);
 					
 					double dst = Math.sqrt(player.distanceToSqr(bX, bY, bZ));
-					float volume = (float)(1.0 - Mth.clamp(dst / 3D, 0.0, 0.85));
+					float volume = (float) (1.0 - Mth.clamp(dst / 3D, 0.0, 0.85));
 					
 					world.playSound(null, bX, bY, bZ, sound, SoundSource.BLOCKS, volume, 0.5F);
 				}
@@ -204,8 +204,10 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						
 						double sqrt2048 = Math.sqrt(SCAN_RADIUS_SQR * 2);
 						byte[] mapData = new byte[SCAN_SIZE * SCAN_SIZE];
-						for(int j = -SCAN_RADIUS, a = 0;j <= SCAN_RADIUS;j++,a++){
-							for(int i = -SCAN_RADIUS, b = 0;i <= SCAN_RADIUS;i++,b++){
+						for(int j = -SCAN_RADIUS,
+								a = 0;j <= SCAN_RADIUS;j++,a++){
+							for(int i = -SCAN_RADIUS,
+									b = 0;i <= SCAN_RADIUS;i++,b++){
 								int x = pos.getX() - i;
 								int z = pos.getZ() - j;
 								
@@ -220,8 +222,8 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 								int noise = 31 + (int) (127 * Math.random());
 								
 								double blend = Math.sqrt(i * i + j * j) / sqrt2048;
-								int lerped = (int)(Mth.clampedLerp(data, noise, blend));
-								mapData[(a * SCAN_SIZE) + b] = (byte)(lerped & 0xFF);
+								int lerped = (int) (Mth.clampedLerp(data, noise, blend));
+								mapData[(a * SCAN_SIZE) + b] = (byte) (lerped & 0xFF);
 							}
 						}
 						

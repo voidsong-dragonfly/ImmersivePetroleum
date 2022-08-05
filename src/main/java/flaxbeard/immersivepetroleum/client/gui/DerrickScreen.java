@@ -69,7 +69,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		
 		List<Component> tooltip = new ArrayList<>();
 		
-		for (InfoArea area : areas){
+		for(InfoArea area:areas){
 			area.fillTooltip(mx, my, tooltip);
 		}
 		
@@ -141,7 +141,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	protected void renderBg(@Nonnull PoseStack matrix, float partialTicks, int mx, int my){
 		MCUtil.bindTexture(GUI_TEXTURE);
 		this.blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-		for (InfoArea area : areas){
+		for(InfoArea area:areas){
 			area.draw(matrix);
 		}
 	}

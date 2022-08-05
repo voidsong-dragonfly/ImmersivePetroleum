@@ -14,7 +14,8 @@ import net.minecraft.world.level.material.Fluid;
 public class CokerUnitRecipeBuilder extends IEFinishedRecipe<CokerUnitRecipeBuilder>{
 	public static CokerUnitRecipeBuilder builder(ItemStack output, TagKey<Fluid> outputFluid, int fluidOutAmount){
 		Objects.requireNonNull(output);
-		if(output.isEmpty()) throw new IllegalArgumentException("Input stack cannot be empty.");
+		if(output.isEmpty())
+			throw new IllegalArgumentException("Input stack cannot be empty.");
 		
 		return new CokerUnitRecipeBuilder()
 				.addResult(output)

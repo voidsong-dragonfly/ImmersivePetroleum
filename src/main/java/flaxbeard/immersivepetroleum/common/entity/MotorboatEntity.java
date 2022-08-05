@@ -88,8 +88,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	/**
-	 * Storage for {@link ResourceLocation} using
-	 * {@link ResourceLocation#toString()}
+	 * Storage for {@link ResourceLocation} using {@link ResourceLocation#toString()}
 	 */
 	static final EntityDataAccessor<String> TANK_FLUID = SynchedEntityData.defineId(MotorboatEntity.class, EntityDataSerializers.STRING);
 	static final EntityDataAccessor<Integer> TANK_AMOUNT = SynchedEntityData.defineId(MotorboatEntity.class, EntityDataSerializers.INT);
@@ -613,7 +612,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			if(!list.isEmpty()){
 				boolean flag = !(this.getControllingPassenger() instanceof Player);
 				
-				for (Entity entity : list){
+				for(Entity entity:list){
 					if(!entity.hasPassenger(this)){
 						if(flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getBbWidth() < this.getBbWidth() && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)){
 							entity.startRiding(this);

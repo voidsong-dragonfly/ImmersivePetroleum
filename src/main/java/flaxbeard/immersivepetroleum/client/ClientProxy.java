@@ -113,7 +113,7 @@ public class ClientProxy extends CommonProxy{
 			case "pumpjack_days" -> {
 				int oil_min = 1000000;
 				int oil_max = 5000000;
-				for (Reservoir reservoir : Reservoir.map.values()){
+				for(Reservoir reservoir:Reservoir.map.values()){
 					if(reservoir.name.equals("oil")){
 						oil_min = reservoir.minSize;
 						oil_max = reservoir.maxSize;
@@ -165,7 +165,8 @@ public class ClientProxy extends CommonProxy{
 		BlockEntityRenderer<BlockEntity> tesr = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(te);
 		
 		// Crash prevention
-		if(tesr == null) return;
+		if(tesr == null)
+			return;
 		
 		if(te instanceof PumpjackTileEntity pumpjack){
 			transform.pushPose();

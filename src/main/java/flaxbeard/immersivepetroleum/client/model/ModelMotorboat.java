@@ -25,8 +25,7 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 	private final List<ModelPart> list;
 	
 	/**
-	 * Part of the model rendered to make it seem like there's no water in the
-	 * boat
+	 * Part of the model rendered to make it seem like there's no water in the boat
 	 */
 	public ModelPart noWater;
 	
@@ -197,12 +196,18 @@ public class ModelMotorboat extends ListModel<MotorboatEntity>{
 		return CubeListBuilder.create().texOffs(pXTexOffs, pYTexOffs).addBox(pOriginX, pOriginY, pOriginZ, pDimensionX, pDimensionY, pDimensionZ);
 	}
 	
-	/** Creates an empty CubeListBuilder with Texture Offset.<br>Same as doing <code>CubeListBuilder.create().texOffs(x, y);</code>*/
+	/**
+	 * Creates an empty CubeListBuilder with Texture Offset.<br>
+	 * Same as doing <code>CubeListBuilder.create().texOffs(x, y);</code>
+	 */
 	protected final CubeListBuilder empty(int pXTexOffs, int pYTexOffs){
 		return empty().texOffs(pXTexOffs, pYTexOffs);
 	}
 	
-	/** Creates an empty CubeListBuilder.<br>Same as doing <code>CubeListBuilder.create();</code>*/
+	/**
+	 * Creates an empty CubeListBuilder.<br>
+	 * Same as doing <code>CubeListBuilder.create();</code>
+	 */
 	protected final CubeListBuilder empty(){
 		return CubeListBuilder.create();
 	}

@@ -45,7 +45,7 @@ public class DerrickSettingsScreen extends Screen{
 		this.pipeConfig = new PipeConfig(this.derrickScreen.tile, this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
 		addRenderableWidget(this.pipeConfig);
 		
-		//IDEA Users: these lambdas are like this for readability: Don't Change Them!
+		// IDEA Users: these lambdas are like this for readability: Don't Change Them!
 		addRenderableWidget(new Button(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20, new TextComponent("Set"), b -> {
 			MessageDerrick.sendToServer(this.derrickScreen.tile.getBlockPos(), this.pipeConfig.getGrid());
 		}, (button, matrix, mx, my) -> {

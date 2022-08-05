@@ -23,11 +23,10 @@ public class FluidHelper{
 	}
 	
 	/**
-	 * Makes a copy of a FluidStack (excluding NBT) and optionally adds the
-	 * Pressurized tag
+	 * Makes a copy of a FluidStack (excluding NBT) and optionally adds the Pressurized tag
 	 * 
-	 * @param fluid {@link FluidStack} to use as the fluid type
-	 * @param amount the amount to use in the copied stack
+	 * @param fluid      {@link FluidStack} to use as the fluid type
+	 * @param amount     the amount to use in the copied stack
 	 * @param pressurize (optionally)
 	 * @return {@link FluidStack}, pressurized if above IE's transfer threshold
 	 */
@@ -43,7 +42,7 @@ public class FluidHelper{
 	 * Creates a pressurized FluidStack instance of the given Fluid.<br>
 	 * Only pressurizes the fluid if necessary. (amount goes above 50)
 	 * 
-	 * @param fluid {@link Fluid} to use as the fluid type
+	 * @param fluid  {@link Fluid} to use as the fluid type
 	 * @param amount the amount to use in the created stack
 	 * @return {@link FluidStack}, with pressurized tag as needed.
 	 */
@@ -56,8 +55,7 @@ public class FluidHelper{
 	}
 	
 	/**
-	 * Originally in IE as
-	 * {@link blusunrize.immersiveengineering.common.util.Utils#isFluidContainerFull(ItemStack)}
+	 * Originally in IE as {@link blusunrize.immersiveengineering.common.util.Utils#isFluidContainerFull(ItemStack)}
 	 */
 	public static boolean isFluidContainerFull(ItemStack stack){
 		return FluidUtil.getFluidHandler(stack).map(handler -> {
@@ -93,8 +91,8 @@ public class FluidHelper{
 	
 	/**
 	 * FluidStack based version of
-	 * {@link blusunrize.immersiveengineering.common.util.Utils#fillFluidContainer(IFluidHandler, ItemStack, ItemStack, PlayerEntity)}
-	 * minus the useless bits :D
+	 * {@link blusunrize.immersiveengineering.common.util.Utils#fillFluidContainer(IFluidHandler, ItemStack, ItemStack, PlayerEntity)} minus the
+	 * useless bits :D
 	 */
 	public static ItemStack fillFluidContainer(IFluidTank tank, FluidStack fluid, ItemStack containerIn, ItemStack containerOut){
 		if(containerIn == null || containerIn.isEmpty())
@@ -119,8 +117,7 @@ public class FluidHelper{
 	}
 	
 	/**
-	 * FluidStack based version of
-	 * {@link net.minecraftforge.fluids.FluidUtil#tryFillContainer(ItemStack, IFluidHandler, int, PlayerEntity, boolean)}
+	 * FluidStack based version of {@link net.minecraftforge.fluids.FluidUtil#tryFillContainer(ItemStack, IFluidHandler, int, PlayerEntity, boolean)}
 	 * minus the useless bits :D
 	 */
 	static FluidActionResult tryFillContainer(IFluidTank tank, FluidStack fluidSource, @Nonnull ItemStack container, boolean doFill){

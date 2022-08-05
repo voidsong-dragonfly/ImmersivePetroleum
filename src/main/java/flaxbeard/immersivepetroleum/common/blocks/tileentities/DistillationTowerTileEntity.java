@@ -372,7 +372,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Override
 	public boolean additionalCanProcessCheck(MultiblockProcess<DistillationRecipe> process){
 		int outputAmount = 0;
-		for (FluidStack outputFluid : process.getRecipe(this.level).getFluidOutputs()){
+		for(FluidStack outputFluid:process.getRecipe(this.level).getFluidOutputs()){
 			outputAmount += outputFluid.getAmount();
 		}
 		
@@ -385,9 +385,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		BlockPos outputpos = getBlockPosForPos(Item_OUT).relative(outputdir);
 		
 		BlockEntity te = level.getBlockEntity(outputpos);
-		if(te!=null){
+		if(te != null){
 			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputdir.getOpposite()).orElse(null);
-			if(handler!=null){
+			if(handler != null){
 				output = ItemHandlerHelper.insertItem(handler, output, false);
 			}
 		}

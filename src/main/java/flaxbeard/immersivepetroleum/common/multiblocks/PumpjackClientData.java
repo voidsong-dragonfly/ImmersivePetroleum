@@ -70,6 +70,6 @@ public class PumpjackClientData extends IPClientMultiblockProperties{
 			}
 		}
 	}
-
+	
 	final Quaternion rot = new Quaternion(new Vector3f(0F, 1F, 0F), 90, true);
 }

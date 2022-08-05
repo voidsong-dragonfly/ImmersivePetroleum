@@ -67,13 +67,12 @@ public class CokerUnitRecipeTweaker implements IRecipeManager<CokerUnitRecipe>{
 	/**
 	 * Adds a recipe to the Coker
 	 * 
-	 * @param name The recipe name, without the resource location
-	 * @param inputItem The input ingredient
-	 * @param outputItem The output ingredient
-	 * @param inputFluid The input fluid
+	 * @param name        The recipe name, without the resource location
+	 * @param inputItem   The input ingredient
+	 * @param outputItem  The output ingredient
+	 * @param inputFluid  The input fluid
 	 * @param outputFluid The output fluid
-	 * @param energy energy required per tick
-	 * 
+	 * @param energy      energy required per tick
 	 * @docParam name "clay_from_sand"
 	 * @docParam inputItem <item:minecraft:sand>
 	 * @docParam outputItem <item:minecraft:clay_ball>

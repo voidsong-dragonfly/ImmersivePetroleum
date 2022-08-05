@@ -97,8 +97,8 @@ public class GuiReactiveList extends Button{
 	
 	/**
 	 * @param mode 0: No scrolling<br>
-	 * 		1: Scroll when hovered<br>
-	 * 		2: Scroll all
+	 *             1: Scroll when hovered<br>
+	 *             2: Scroll all
 	 */
 	public GuiReactiveList setScrollMode(int mode){
 		this.scrollMode = mode;

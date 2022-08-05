@@ -25,8 +25,7 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
 	}
 	
 	/**
-	 * Returns the maximum distance in blocks to the multiblock befor the GUI
-	 * get's closed automaticly
+	 * Returns the maximum distance in blocks to the multiblock befor the GUI get's closed automaticly
 	 */
 	public int getMaxDistance(){
 		return 5;

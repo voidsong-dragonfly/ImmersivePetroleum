@@ -52,8 +52,7 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 	}
 	
 	/**
-	 * Returns true if a Derrick or Pumpjack are "connected" to the Well and
-	 * Where.
+	 * Returns true if a Derrick or Pumpjack are "connected" to the Well and Where.
 	 */
 	public Pair<Boolean, BlockPos> hasValidConnection(){
 		BlockPos pos = null;

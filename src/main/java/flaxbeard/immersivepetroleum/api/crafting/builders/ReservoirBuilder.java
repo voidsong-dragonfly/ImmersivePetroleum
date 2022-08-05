@@ -57,11 +57,11 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	/**
 	 * Creates a new ReservoirType builder instance. This is a shorthand.
 	 * 
-	 * @param name The name of the reservoir
-	 * @param fluid The type of fluid it holds
-	 * @param min The minimum amount of fluid the reservoir can hold
-	 * @param max The capacity of the reservoir
-	 * @param trace Trace amount of the fluid after being depleted
+	 * @param name   The name of the reservoir
+	 * @param fluid  The type of fluid it holds
+	 * @param min    The minimum amount of fluid the reservoir can hold
+	 * @param max    The capacity of the reservoir
+	 * @param trace  Trace amount of the fluid after being depleted
 	 * @param weight chance for this reservoir to spawn
 	 * @return The completed {@link ReservoirBuilder} once all parameters are added
 	 */
@@ -95,8 +95,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	}
 	
 	/**
-	 * Sets maximum/capacity <code>amount</code> of fluid for this Reservoir.
-	 * <code><pre>
+	 * Sets maximum/capacity <code>amount</code> of fluid for this Reservoir. <code><pre>
 	 * 1.000 = 1 Bucket
 	 * 0.001 = 1 Millibucket
 	 * </pre></code>
@@ -135,15 +134,12 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	}
 	
 	/**
-	 * Dimension check for this Reservior. Only one may be added per instance,
-	 * but not both.
+	 * Dimension check for this Reservior. Only one may be added per instance, but not both.
 	 * 
-	 * @param isBlacklist Marks this as a blacklist when true. Whilelist
-	 *		otherwise.
-	 * @param dimensions Dimensions to blacklist/whitelist
+	 * @param isBlacklist Marks this as a blacklist when true. Whilelist otherwise.
+	 * @param dimensions  Dimensions to blacklist/whitelist
 	 * @return self
-	 * @throws IllegalArgumentException when attempting to add a blacklist and
-	 *		 whitelist in the same instance.
+	 * @throws IllegalArgumentException when attempting to add a blacklist and whitelist in the same instance.
 	 */
 	public ReservoirBuilder addDimensions(boolean isBlacklist, ResourceLocation... dimensions){
 		if(isBlacklist){
@@ -175,15 +171,12 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	}
 	
 	/**
-	 * Biome check for this Reservior. Only one may be added per instance, but
-	 * not both.
+	 * Biome check for this Reservior. Only one may be added per instance, but not both.
 	 * 
-	 * @param isBlacklist Marks this as a blacklist when true. Whilelist
-	 *		otherwise.
-	 * @param biomes Biome to blacklist/whitelist
+	 * @param isBlacklist Marks this as a blacklist when true. Whilelist otherwise.
+	 * @param biomes      Biome to blacklist/whitelist
 	 * @return self
-	 * @throws IllegalArgumentException when attempting to add a blacklist and
-	 *		 whitelist in the same instance.
+	 * @throws IllegalArgumentException when attempting to add a blacklist and whitelist in the same instance.
 	 */
 	public ReservoirBuilder addBiomes(boolean isBlacklist, ResourceLocation... biomes){
 		if(isBlacklist){

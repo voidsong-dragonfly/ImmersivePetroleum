@@ -133,7 +133,7 @@ public class DebugRenderHandler{
 									
 									try{
 										name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
-									} catch (UnsupportedOperationException e){
+									}catch(UnsupportedOperationException e){
 										// Don't care, skip if this is thrown
 									}
 									
@@ -143,7 +143,7 @@ public class DebugRenderHandler{
 									}
 									
 									synchronized(LubricatedHandler.lubricatedTiles){
-										for (LubricatedTileInfo info : LubricatedHandler.lubricatedTiles){
+										for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
 											if(info.pos.equals(generic.getBlockPos())){
 												name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
 											}
@@ -195,7 +195,7 @@ public class DebugRenderHandler{
 								
 								NonNullList<ItemStack> upgrades = boat.getUpgrades();
 								int i = 0;
-								for (ItemStack upgrade : upgrades){
+								for(ItemStack upgrade:upgrades){
 									if(upgrade == null || upgrade == ItemStack.EMPTY){
 										debugOut.add(toText("Upgrade " + (++i) + ": Empty"));
 									}else{
@@ -252,7 +252,7 @@ public class DebugRenderHandler{
 						int radius = 12;
 						for(int i = -radius;i <= radius;i++){
 							for(int j = -radius;j <= radius;j++){
-								ChunkPos cPos = new ChunkPos(playerPos.offset(16*i, 0, 16*j));
+								ChunkPos cPos = new ChunkPos(playerPos.offset(16 * i, 0, 16 * j));
 								int chunkX = cPos.getMinBlockX();
 								int chunkZ = cPos.getMinBlockZ();
 								
@@ -402,7 +402,7 @@ public class DebugRenderHandler{
 			}
 		}
 	}
-		
+	
 	private static void renderOverlay(PoseStack matrix, List<Component> debugOut){
 		Minecraft mc = Minecraft.getInstance();
 		

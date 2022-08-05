@@ -97,8 +97,7 @@ public class CommonEventHandler{
 	}
 	
 	/**
-	 * Handles dismounting the Speedboat while in lava to trying avoid getting
-	 * burned
+	 * Handles dismounting the Speedboat while in lava to trying avoid getting burned
 	 */
 	@SubscribeEvent
 	public void handleDismountingBoat(EntityMountEvent event){

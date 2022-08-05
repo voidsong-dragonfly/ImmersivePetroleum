@@ -76,8 +76,7 @@ public class ReservoirIsland{
 	}
 	
 	/**
-	 * 
-	 * @param amount of fluid in this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Capacity Clamped})
+	 * @param amount   of fluid in this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Capacity Clamped})
 	 * @param capacity of this reservoir. (Range: 0 - {@link #MAX_AMOUNT}; Clamped})
 	 * @return {@link ReservoirIsland} self
 	 */
@@ -156,7 +155,8 @@ public class ReservoirIsland{
 	
 	/**
 	 * Used by Pumpjack
-	 * @param amount to extract
+	 * 
+	 * @param amount      to extract
 	 * @param fluidAction the {@link FluidAction} to extract with
 	 * @return how much has been extracted or residual if drained
 	 */
@@ -206,8 +206,8 @@ public class ReservoirIsland{
 	 * <i>Only call on server side!</i>
 	 * 
 	 * @param level {@link Level} to query in
-	 * @param x x-coordinate to query
-	 * @param z z-coordinate to query
+	 * @param x     x-coordinate to query
+	 * @param z     z-coordinate to query
 	 * @return Pressure float
 	 */
 	public float getPressure(Level level, int x, int z){
@@ -247,8 +247,8 @@ public class ReservoirIsland{
 	public CompoundTag writeToNBT(){
 		CompoundTag nbt = new CompoundTag();
 		nbt.putString("reservoir", this.reservoir.getId().toString());
-		nbt.putInt("amount", (int)(this.getAmount() & MAX_AMOUNT));
-		nbt.putInt("capacity", (int)(this.getCapacity() & MAX_AMOUNT));
+		nbt.putInt("amount", (int) (this.getAmount() & MAX_AMOUNT));
+		nbt.putInt("capacity", (int) (this.getCapacity() & MAX_AMOUNT));
 		nbt.put("bounds", this.getBoundingBox().writeToNBT());
 		
 		final IslandAxisAlignedBB bounds = this.getBoundingBox();
@@ -272,8 +272,8 @@ public class ReservoirIsland{
 		try{
 			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
-				long amount = ((long)nbt.getInt("amount")) & MAX_AMOUNT;
-				long capacity = ((long)nbt.getInt("capacity")) & MAX_AMOUNT;
+				long amount = ((long) nbt.getInt("amount")) & MAX_AMOUNT;
+				long capacity = ((long) nbt.getInt("capacity")) & MAX_AMOUNT;
 				IslandAxisAlignedBB bounds = IslandAxisAlignedBB.readFromNBT(nbt.getCompound("bounds"));
 				
 				final List<ColumnPos> points = new ArrayList<>();
@@ -302,6 +302,7 @@ public class ReservoirIsland{
 	
 	/**
 	 * Convenience method.
+	 * 
 	 * @see {@link #contains(int, int)}
 	 */
 	public boolean contains(ColumnPos pos){
@@ -325,6 +326,7 @@ public class ReservoirIsland{
 	
 	/**
 	 * Convenience method.
+	 * 
 	 * @see {@link #polygonContains(int, int)}
 	 */
 	public boolean polygonContains(ColumnPos pos){

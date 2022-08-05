@@ -482,7 +482,7 @@ public class ProjectorItem extends IPItemBase{
 				MutableBlockPos min = new MutableBlockPos(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 				MutableBlockPos max = new MutableBlockPos(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 				float flicker = world.random.nextFloat() / 2F + 0.25F;
-//				float flicker = (world.random.nextInt(10) == 0) ? 0.75F : (world.random.nextInt(20) == 0 ? 0.5F : 1F);
+				//float flicker = (world.random.nextInt(10) == 0) ? 0.75F : (world.random.nextInt(20) == 0 ? 0.5F : 1F);
 				matrix.translate(hit.getX(), hit.getY(), hit.getZ());
 				
 				toRender.sort((a, b) -> {
@@ -644,7 +644,7 @@ public class ProjectorItem extends IPItemBase{
 			
 			float alpha = 0.25F + (0.5F * flicker);
 			
-			int rgba = rgb | (((int)(alpha * 255)) << 24);
+			int rgba = rgb | (((int) (alpha * 255)) << 24);
 			
 			line(builder, matrix, min, max, 0b010, 0b110, rgba);
 			line(builder, matrix, min, max, 0b110, 0b111, rgba);

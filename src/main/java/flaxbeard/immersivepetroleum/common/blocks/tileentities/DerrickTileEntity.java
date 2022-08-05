@@ -234,7 +234,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@SuppressWarnings("deprecation")
 	@Override
 	public void tickServer(){
-		if(isDummy()) return;
+		if(isDummy())
+			return;
 		
 		if(this.level.isAreaLoaded(this.getBlockPos(), 2)){
 			boolean forceUpdate = false;
@@ -416,13 +417,11 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		}
 	}
 	
-	
 	private WellTileEntity wellCache = null;
 	/**
 	 * Create or Get the {@link WellTileEntity}.
 	 * 
-	 * @param popList Set to true, to try and populate the
-	 *		{@link WellTileEntity#tappedIslands} list.
+	 * @param popList Set to true, to try and populate the {@link WellTileEntity#tappedIslands} list.
 	 * @return WellTileEntity or possibly null
 	 */
 	public WellTileEntity getOrCreateWell(boolean popList){

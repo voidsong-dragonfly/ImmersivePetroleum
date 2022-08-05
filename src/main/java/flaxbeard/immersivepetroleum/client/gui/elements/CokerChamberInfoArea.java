@@ -40,7 +40,7 @@ public class CokerChamberInfoArea extends InfoArea{
 		this.blit(transform, area.getX(), area.getY() + scale - off, 200, 51, 6, off);
 		
 		// Vertical Overlay to visualize progress
-		off = (int)(chamber.getTotalAmount() > 0 ? scale * (chamber.getOutputAmount() / (float)chamber.getCapacity()) : 0);
+		off = (int) (chamber.getTotalAmount() > 0 ? scale * (chamber.getOutputAmount() / (float) chamber.getCapacity()) : 0);
 		this.blit(transform, area.getX(), area.getY() + scale - off, 206, 51 + (scale - off), 6, off);
 		fluidDisplay.draw(transform);
 	}

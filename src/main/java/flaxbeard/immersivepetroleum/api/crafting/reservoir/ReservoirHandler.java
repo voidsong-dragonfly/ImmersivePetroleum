@@ -100,11 +100,10 @@ public class ReservoirHandler{
 	}
 	
 	/**
-	 * Gets the total weight of reservoir types for the given dimension ID and
-	 * biome type
+	 * Gets the total weight of reservoir types for the given dimension ID and biome type
 	 *
 	 * @param dimension The dimension to check
-	 * @param biome The biome to check
+	 * @param biome     The biome to check
 	 * @return The total weight associated with the dimension/biome pair
 	 */
 	public static int getTotalWeight(ResourceLocation dimension, ResourceLocation biome){
@@ -148,9 +147,7 @@ public class ReservoirHandler{
 				for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
 					if(island.contains(pos)){
 						/*
-						 * There's no such thing as overlapping islands, so just
-						 * return what was found directly (After putting it into
-						 * the cache)
+						 * There's no such thing as overlapping islands, so just return what was found directly (After putting it into the cache)
 						 */
 						CACHE.put(cacheKey, island);
 						return island;
@@ -165,7 +162,7 @@ public class ReservoirHandler{
 	/**
 	 * Adds a reservoir type to the pool of valid reservoirs
 	 * 
-	 * @param id The "recipeId" of the reservoir type
+	 * @param id        The "recipeId" of the reservoir type
 	 * @param reservoir The {@link Reservoir} type to add
 	 * @return The {@link Reservoir} passed in
 	 */
@@ -173,7 +170,6 @@ public class ReservoirHandler{
 		Reservoir.map.put(id, reservoir);
 		return reservoir;
 	}
-	
 	
 	static final double scale = 0.015625D;
 	static final double d0 = 2 / 3D;
@@ -183,8 +179,8 @@ public class ReservoirHandler{
 	 * <i>Only call on server side!</i>
 	 * 
 	 * @param level {@link Level} to run query on
-	 * @param x Block Position
-	 * @param z Block Position
+	 * @param x     Block Position
+	 * @param z     Block Position
 	 * @return -1 (Nothing/Empty), >=0.0 means there's <i>something</i>
 	 */
 	public static double getValueOf(@Nonnull Level level, int x, int z){
@@ -204,7 +200,7 @@ public class ReservoirHandler{
 		if(generator == null || world.getSeed() != lastSeed){
 			lastSeed = world.getSeed();
 			generator = new PerlinSimplexNoise(new WorldgenRandom(new SingleThreadedRandomSource(lastSeed)), ImmutableList.of(0));
-//			generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(lastSeed)), ImmutableList.of(0));
+			//generator = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(lastSeed)), ImmutableList.of(0));
 		}
 	}
 	
@@ -286,8 +282,7 @@ public class ReservoirHandler{
 	}
 	
 	/**
-	 * Give this some direction. Result can end up being either clockwise or
-	 * counter-clockwise!
+	 * Give this some direction. Result can end up being either clockwise or counter-clockwise!
 	 */
 	private static List<ColumnPos> makeDirectional(List<ColumnPos> poly){
 		List<ColumnPos> list = new ArrayList<>();

@@ -59,7 +59,7 @@ public class FlareFire extends SimpleAnimatedParticle{
 			remove();
 		}
 		if(this.age == this.lifetime - 36){
-			this.rCol = this.gCol = this.bCol = (float)(0.4F * Math.random());
+			this.rCol = this.gCol = this.bCol = (float) (0.4F * Math.random());
 		}
 		setSpriteFromAge(this.sprites);
 		

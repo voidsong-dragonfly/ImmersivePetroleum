@@ -49,14 +49,13 @@ public class Reservoir extends IESerializableRecipe{
 	/**
 	 * Creates a new reservoir.
 	 * 
-	 * @param name The name of this reservoir type
-	 * @param id The "recipeId" of this reservoir
-	 * @param fluidLocation The registry name of the fluid this reservoir is
-	 *		containing
-	 * @param minSize Minimum amount of fluid in this reservoir
-	 * @param maxSize Maximum amount of fluid in this reservoir
-	 * @param residual Leftover fluid amount after depletion
-	 * @param weight The weight for this reservoir
+	 * @param name          The name of this reservoir type
+	 * @param id            The "recipeId" of this reservoir
+	 * @param fluidLocation The registry name of the fluid this reservoir is containing
+	 * @param minSize       Minimum amount of fluid in this reservoir
+	 * @param maxSize       Maximum amount of fluid in this reservoir
+	 * @param residual      Leftover fluid amount after depletion
+	 * @param weight        The weight for this reservoir
 	 */
 	public Reservoir(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int weight){
 		this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, residual, weight);
@@ -65,13 +64,13 @@ public class Reservoir extends IESerializableRecipe{
 	/**
 	 * Creates a new reservoir.
 	 * 
-	 * @param name The name of this reservoir type
-	 * @param id The "recipeId" of this reservoir
-	 * @param fluid The fluid this reservoir is containing
-	 * @param minSize Minimum amount of fluid in this reservoir
-	 * @param maxSize Maximum amount of fluid in this reservoir
+	 * @param name     The name of this reservoir type
+	 * @param id       The "recipeId" of this reservoir
+	 * @param fluid    The fluid this reservoir is containing
+	 * @param minSize  Minimum amount of fluid in this reservoir
+	 * @param maxSize  Maximum amount of fluid in this reservoir
 	 * @param residual Leftover fluid amount after depletion
-	 * @param weight The weight for this reservoir
+	 * @param weight   The weight for this reservoir
 	 */
 	public Reservoir(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int weight){
 		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR.get(), id);

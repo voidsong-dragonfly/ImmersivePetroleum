@@ -23,17 +23,13 @@ import net.minecraft.resources.ResourceLocation;
  * @author TwistedGate
  */
 public class DynamicTextureWrapper{
-	public static final Cache<UUID, DynamicTextureWrapper> DYN_TEXTURE_CACHE = CacheBuilder.newBuilder()
-			.removalListener((s) -> {
-				DynamicTextureWrapper wrapper = ((DynamicTextureWrapper) s.getValue());
-				wrapper.dispose();
-				
-				ImmersivePetroleum.log.info("Disposed survey result texture {}", wrapper.rl);
-			})
-			.expireAfterAccess(5, TimeUnit.MINUTES)
-			.maximumSize(50)
-			.build();
-
+	public static final Cache<UUID, DynamicTextureWrapper> DYN_TEXTURE_CACHE = CacheBuilder.newBuilder().removalListener((s) -> {
+		DynamicTextureWrapper wrapper = ((DynamicTextureWrapper) s.getValue());
+		wrapper.dispose();
+		
+		ImmersivePetroleum.log.info("Disposed survey result texture {}", wrapper.rl);
+	}).expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(50).build();
+	
 	/** Returns null if no valid UUID is provided */
 	public static DynamicTextureWrapper getOrCreate(int width, int height, CompoundTag dataTag){
 		UUID uuid = dataTag.hasUUID("uuid") ? dataTag.getUUID("uuid") : null;
@@ -80,16 +76,16 @@ public class DynamicTextureWrapper{
 	
 	public final int width;
 	public final int height;
-	@Nonnull 
+	@Nonnull
 	public final UUID uuid;
 	public final DynamicTexture texture;
 	public final RenderType renderType;
 	private final ResourceLocation rl;
 	
 	/**
-	 * @param width texture width
+	 * @param width  texture width
 	 * @param height texture height
-	 * @param uuid uuid to make the resource location from
+	 * @param uuid   uuid to make the resource location from
 	 */
 	private DynamicTextureWrapper(int width, int height, @Nonnull UUID uuid){
 		Objects.requireNonNull(uuid, "Non-null UUID expected.");

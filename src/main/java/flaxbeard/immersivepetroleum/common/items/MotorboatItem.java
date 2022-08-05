@@ -132,7 +132,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		AABB bb = playerIn.getBoundingBox();
 		
 		List<Entity> list = worldIn.getEntities(playerIn, bb.expandTowards(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).inflate(1.0D));
-		for (Entity entity : list){
+		for(Entity entity:list){
 			if(entity.isPickable()){
 				AABB axisalignedbb = entity.getBoundingBox();
 				if(axisalignedbb.inflate(entity.getPickRadius()).contains(vec3d)){

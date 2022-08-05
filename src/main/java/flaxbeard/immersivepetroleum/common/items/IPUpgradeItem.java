@@ -23,7 +23,6 @@ public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	private Set<String> set;
 	public IPUpgradeItem(String type){
 		super(new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
-//		super("upgrade_" + name, new Item.Properties().stacksTo(1));
 		this.set = ImmutableSet.of(type);
 	}
 	

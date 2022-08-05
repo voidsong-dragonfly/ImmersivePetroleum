@@ -80,7 +80,6 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	/** Template-Location of the Redstone Input Port. (0 1 3)<br> */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 3));
 	
-	
 	public final FluidTank[] tanks = new FluidTank[]{new FluidTank(12000), new FluidTank(12000), new FluidTank(12000)};
 	public HydrotreaterTileEntity(BlockEntityType<HydrotreaterTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(HydroTreaterMultiblock.INSTANCE, 8000, true, type, pWorldPosition, pBlockState);

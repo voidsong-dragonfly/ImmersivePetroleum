@@ -63,8 +63,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	public static final BlockPos West_Port = new BlockPos(0, 0, 2);
 	
 	/**
-	 * Template-Location of the Bottom Fluid Output Port. (1, 0, 0) <b>(Also
-	 * Master Block)</b>
+	 * Template-Location of the Bottom Fluid Output Port. (1, 0, 0) <b>(Also Master Block)</b>
 	 */
 	public static final BlockPos Down_Port = new BlockPos(1, 0, 0);
 	

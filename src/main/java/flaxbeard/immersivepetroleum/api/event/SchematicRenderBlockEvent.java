@@ -12,8 +12,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * @deprecated Use
- *			 {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.RenderBlock}
+ * @deprecated Use {@link flaxbeard.immersivepetroleum.api.event.ProjectorEvent.RenderBlock}
  */
 @Deprecated
 @Cancelable

@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
-public class ClientModBusEventHandlers {
+public class ClientModBusEventHandlers{
 	@SubscribeEvent
 	public static void registerRenders(RegisterRenderers ev){
 		registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);

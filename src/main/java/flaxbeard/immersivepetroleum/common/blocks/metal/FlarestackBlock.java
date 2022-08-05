@@ -58,10 +58,9 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	public FlarestackBlock(){
 		super(Block.Properties.of(material).strength(3.0F, 15.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
 		
-		registerDefaultState(getStateDefinition().any()
-				.setValue(SLAVE, false));
+		registerDefaultState(getStateDefinition().any().setValue(SLAVE, false));
 	}
-
+	
 	@Override
 	public Supplier<BlockItem> blockItemSupplier(){
 		return () -> new FlarestackBlockItem(this);
@@ -173,7 +172,8 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	
 	@Override
 	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, BlockState pState){
-		if(pState.getValue(SLAVE)) return null;
+		if(pState.getValue(SLAVE))
+			return null;
 		
 		return IPTileTypes.FLARE.get().create(pPos, pState);
 	}
@@ -181,7 +181,8 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
-		if(state.getValue(SLAVE)) return null;
+		if(state.getValue(SLAVE))
+			return null;
 		
 		return createTickerHelper(level.isClientSide, type, IPTileTypes.FLARE);
 	}

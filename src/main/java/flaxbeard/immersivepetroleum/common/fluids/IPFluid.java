@@ -71,9 +71,7 @@ public class IPFluid extends FlowingFluid{
 		return makeFluid(name, factory, IPFluidBlock::new);
 	}
 	
-	public static IPFluidEntry makeFluid(
-			String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory
-	){
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory){
 		Mutable<IPFluidEntry> entry = new MutableObject<>();
 		
 		entry.setValue(new IPFluidEntry(
@@ -220,13 +218,7 @@ public class IPFluid extends FlowingFluid{
 		}
 	}
 	
-	public record IPFluidEntry(
-			String name,
-			RegistryObject<IPFluid> still,
-			RegistryObject<IPFluid> flowing,
-			RegistryObject<Block> block,
-			RegistryObject<Item> bucket
-	){
+	public record IPFluidEntry(String name, RegistryObject<IPFluid> still, RegistryObject<IPFluid> flowing, RegistryObject<Block> block, RegistryObject<Item> bucket){
 		public Fluid get(){
 			return still().get();
 		}

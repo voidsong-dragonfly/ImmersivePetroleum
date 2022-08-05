@@ -17,7 +17,7 @@ public class IPRecipeTypes{
 	public static final RegistryObject<RecipeType<DistillationRecipe>> DISTILLATION = makeType("distillationtower");
 	public static final RegistryObject<RecipeType<SulfurRecoveryRecipe>> SULFUR_RECOVERY = makeType("hydrotreater");
 	public static final RegistryObject<RecipeType<Reservoir>> RESERVOIR = makeType("reservoir");
-
+	
 	public static void modConstruction(){
 		REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}

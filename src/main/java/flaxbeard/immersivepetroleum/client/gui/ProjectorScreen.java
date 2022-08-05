@@ -147,7 +147,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		// Sorting in alphabetical order
-		list.sort((a, b) ->{
+		list.sort((a, b) -> {
 			String nameA = getMBName(a);
 			String nameB = getMBName(b);
 			
@@ -461,6 +461,7 @@ public class ProjectorScreen extends Screen{
 		}
 		
 		@Override
-		public void updateNarration(@Nonnull NarrationElementOutput output){}
+		public void updateNarration(@Nonnull NarrationElementOutput output){
+		}
 	}
 }

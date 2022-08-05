@@ -50,7 +50,7 @@ public class SurveyResultItem extends IPItemBase{
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(stack.hasTag() && stack.getTag() != null){
-			if(stack.getTag().contains("surveyscan") ){
+			if(stack.getTag().contains("surveyscan")){
 				CompoundTag tag = stack.getTagElement("surveyscan");
 				
 				tooltip.add(new TextComponent("Hold in Hand."));

@@ -93,10 +93,10 @@ public class ReservoirTweaker{
 		@Method
 		public ReservoirBuilder addDimensions(boolean blacklist, String[] names){
 			List<ResourceLocation> list = new ArrayList<>();
-			for (String name : names){
+			for(String name:names){
 				try{
 					list.add(new ResourceLocation(name));
-				} catch (ResourceLocationException e){
+				}catch(ResourceLocationException e){
 					//CraftTweakerAPI.logError("§caddDimension: %s§r", e.getMessage());
 				}
 			}
@@ -113,10 +113,10 @@ public class ReservoirTweaker{
 		@Method
 		public ReservoirBuilder addBiomes(boolean blacklist, String[] names){
 			List<ResourceLocation> list = new ArrayList<>();
-			for (String name : names){
+			for(String name:names){
 				try{
 					list.add(new ResourceLocation(name));
-				} catch (ResourceLocationException e){
+				}catch(ResourceLocationException e){
 					//CraftTweakerAPI.logError("§caddBiome: %s§r", e.getMessage());
 				}
 			}

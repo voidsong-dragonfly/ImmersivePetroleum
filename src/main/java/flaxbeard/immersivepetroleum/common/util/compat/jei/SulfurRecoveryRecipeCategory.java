@@ -70,7 +70,7 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 		
 		int time = recipe.getTotalProcessTime();
 		int energy = recipe.getTotalProcessEnergy();
-		int chance = (int)(100 * recipe.chance);
+		int chance = (int) (100 * recipe.chance);
 		
 		matrix.pushPose();
 		String text0 = I18n.get("desc.immersiveengineering.info.ift", Utils.fDecimal(energy));
@@ -80,7 +80,7 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 		font.draw(matrix, text1, bWidth / 2 - font.width(text1) / 2, bHeight - font.lineHeight, 0);
 		
 		String text2 = String.format(Locale.US, "%d%%", chance);
-		font.draw(matrix, text2, bWidth+3 - font.width(text2), bHeight / 2 + 4, 0);
+		font.draw(matrix, text2, bWidth + 3 - font.width(text2), bHeight / 2 + 4, 0);
 		matrix.popPose();
 	}
 	

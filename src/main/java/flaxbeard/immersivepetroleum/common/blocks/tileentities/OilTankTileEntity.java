@@ -108,7 +108,9 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		}
 	}
 	
-	/** Template-Location of the Redstone Input Port. (0 0 0)<br>*/
+	/**
+	 * Template-Location of the Redstone Input Port. (0 0 0)<br>
+	 */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(2, 2, 5));
 	
 	public final FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME, f -> !f.getFluid().getAttributes().isGaseous());
