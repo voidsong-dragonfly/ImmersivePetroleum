@@ -153,16 +153,24 @@ public class ReservoirIsland{
 		return Collections.unmodifiableList(this.poly);
 	}
 	
+	private Long lastExtract;
+	
 	/**
 	 * Used by Pumpjack
 	 * 
+	 * @param level       used to get the game time
 	 * @param amount      to extract
 	 * @param fluidAction the {@link FluidAction} to extract with
 	 * @return how much has been extracted or residual if drained
 	 */
-	public int extract(int amount, FluidAction fluidAction){
+	public int extract(@Nonnull Level level, int amount, FluidAction fluidAction){
 		if(isEmpty()){
-			return this.reservoir.residual;
+			if(this.lastExtract != level.getGameTime()){
+				this.lastExtract = level.getGameTime();
+				return this.reservoir.residual;
+			}
+			
+			return 0;
 		}
 		
 		int extracted = (int) Math.min(amount, this.amount);

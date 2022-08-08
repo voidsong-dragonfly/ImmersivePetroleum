@@ -112,8 +112,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 			if(teLow instanceof WellPipeTileEntity){
 				WellTileEntity well = ((WellPipeTileEntity) teLow).getWell();
 				
-				boolean debug = true;
-				if(well != null && debug){
+				if(well != null){
 					int consumption = IPServerConfig.EXTRACTION.pumpjack_consumption.get();
 					int extracted = this.energyStorage.extractEnergy(consumption, true);
 					
@@ -129,6 +128,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 							}
 						}
 						
+						// Skip if there is (Simulates pumpjack not being able to handle high pressures)
 						if(!foundPressurizedIsland){
 							int extractSpeed = IPServerConfig.EXTRACTION.pumpjack_speed.get();
 							
@@ -144,13 +144,13 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 							for(ColumnPos cPos:well.tappedIslands){
 								ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 								if(island != null){
-									FluidStack fluid = new FluidStack(island.getFluid(), island.extract(extractSpeed, FluidAction.SIMULATE));
+									FluidStack fluid = new FluidStack(island.getFluid(), island.extract(getLevelNonnull(), extractSpeed, FluidAction.SIMULATE));
 									
 									if(portEast_output != null){
 										int accepted = portEast_output.fill(fluid, FluidAction.SIMULATE);
 										if(accepted > 0){
 											int drained = portEast_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
-											island.extract(drained, FluidAction.EXECUTE);
+											island.extract(getLevelNonnull(), drained, FluidAction.EXECUTE);
 											fluid = FluidHelper.copyFluid(fluid, fluid.getAmount() - drained);
 											active = true;
 										}
@@ -160,7 +160,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 										int accepted = portWest_output.fill(fluid, FluidAction.SIMULATE);
 										if(accepted > 0){
 											int drained = portWest_output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted)), FluidAction.EXECUTE);
-											island.extract(drained, FluidAction.EXECUTE);
+											island.extract(getLevelNonnull(), drained, FluidAction.EXECUTE);
 											active = true;
 										}
 									}
