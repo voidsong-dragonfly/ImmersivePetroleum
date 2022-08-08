@@ -14,6 +14,10 @@ public class CommandUtils{
 		source.sendSuccess(new TextComponent(str), true);
 	}
 	
+	static void sendStringError(CommandSourceStack source, String str){
+		source.sendSuccess(new TextComponent(str).withStyle(ChatFormatting.RED), true);
+	}
+	
 	static void sendTranslated(CommandSourceStack source, String translationKey, Object... args){
 		source.sendSuccess(new TranslatableComponent(translationKey, args), true);
 	}
