@@ -153,7 +153,7 @@ public class ReservoirIsland{
 		return Collections.unmodifiableList(this.poly);
 	}
 	
-	private Long lastExtract;
+	private long lastExtract = -1L;
 	
 	/**
 	 * Used by Pumpjack
