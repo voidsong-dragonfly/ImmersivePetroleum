@@ -71,6 +71,12 @@ import net.minecraftforge.registries.ForgeRegistries;
  * @author TwistedGate
  */
 public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
+	
+	// TODO Make these configurable
+	public static final int POWER = 512;
+	public static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
+	public static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
+	
 	public enum Inventory{
 		/** Item Pipe Input */
 		INPUT;
@@ -207,10 +213,6 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		
 		return false;
 	}
-	
-	static final int POWER = 512;
-	static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
-	static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
 	
 	public int rotation = 0;
 	
