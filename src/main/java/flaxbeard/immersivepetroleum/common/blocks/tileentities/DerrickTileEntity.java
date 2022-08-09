@@ -176,12 +176,14 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	
 	private boolean acceptsFluid(FluidStack fs){
 		WellTileEntity well = getOrCreateWell(false);
-		if(well == null)
+		if(well == null){
 			return false;
+		}
 		
 		int realPipeLength = (getBlockPos().getY() - 1) - well.getBlockPos().getY();
 		int concreteNeeded = (CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength));
 		
+		// Only accept as much Concrete and Water as needed
 		if(ExternalModContent.isIEConcrete(fs) && concreteNeeded > 0){
 			FluidStack tFluidStack = this.tank.getFluid();
 			
@@ -192,7 +194,18 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			return concreteNeeded >= fs.getAmount();
 		}
 		
-		return fs.getFluid() == Fluids.WATER && concreteNeeded <= 0;
+		int waterNeeded = WATER.getAmount() * (well.getMaxPipeLength() - well.wellPipeLength);
+		if(fs.getFluid() == WATER.getFluid() && waterNeeded > 0){
+			FluidStack tFluidStack = this.tank.getFluid();
+			
+			if(tFluidStack.getFluid() == WATER.getFluid() && tFluidStack.getAmount() >= waterNeeded){
+				return false;
+			}
+			
+			return waterNeeded >= fs.getAmount();
+		}
+		
+		return false;
 	}
 	
 	static final int POWER = 512;
