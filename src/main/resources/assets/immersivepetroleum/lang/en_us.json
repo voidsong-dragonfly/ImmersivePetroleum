@@ -60,6 +60,7 @@
 	"_comment": "################## Descriptions ##################",
 	
 	"desc.immersivepetroleum.info.survey_result.amount": "Amount: %1$s Buckets. (%2$s%%)",
+	"desc.immersivepetroleum.info.survey_result.expected": "Expected pressure of %1$s mB/t.",
 	
 	"desc.immersivepetroleum.info.oiltank.input": "Input",
 	"desc.immersivepetroleum.info.oiltank.output": "Output",

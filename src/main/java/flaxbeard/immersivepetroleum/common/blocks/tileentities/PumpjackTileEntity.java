@@ -109,8 +109,8 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 		if(!isRSDisabled()){
 			BlockEntity teLow = this.getLevelNonnull().getBlockEntity(this.worldPosition.below());
 			
-			if(teLow instanceof WellPipeTileEntity){
-				WellTileEntity well = ((WellPipeTileEntity) teLow).getWell();
+			if(teLow instanceof WellPipeTileEntity pipe){
+				WellTileEntity well = pipe.getWell();
 				
 				if(well != null){
 					int consumption = IPServerConfig.EXTRACTION.pumpjack_consumption.get();

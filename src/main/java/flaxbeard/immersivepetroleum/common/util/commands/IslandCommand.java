@@ -17,7 +17,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
@@ -43,14 +42,10 @@ public class IslandCommand{
 	}
 	
 	public static LiteralArgumentBuilder<CommandSourceStack> create(){
-		ImmersivePetroleum.log.info("Creating Command.");
-		
 		LiteralArgumentBuilder<CommandSourceStack> main = Commands.literal("reservoir").requires(source -> source.hasPermission(4));
 		
 		main.then(Commands.literal("locate").executes(IslandCommand::locate));
-		
 		main.then(setters());
-		
 		main.then(positional(Commands.literal("get"), IslandCommand::get));
 		
 		return main;

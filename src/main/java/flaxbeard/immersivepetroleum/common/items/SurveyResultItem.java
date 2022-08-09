@@ -66,12 +66,14 @@ public class SurveyResultItem extends IPItemBase{
 			
 			if(stack.getTag().contains("islandscan")){
 				CompoundTag tag = stack.getTagElement("islandscan");
+				int expected = tag.getInt("expected");
 				long amount = tag.getLong("amount");
 				byte percentage = tag.getByte("status");
 				String fluidTranslation = tag.getString("fluid");
 				
 				tooltip.add(new TranslatableComponent(fluidTranslation).withStyle(ChatFormatting.DARK_GRAY));
 				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.survey_result.amount", String.format(Locale.ENGLISH, "%,.3f", amount / 1000D), percentage).withStyle(ChatFormatting.DARK_GRAY));
+				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.survey_result.expected", expected).withStyle(ChatFormatting.DARK_GRAY));
 			}
 		}
 	}

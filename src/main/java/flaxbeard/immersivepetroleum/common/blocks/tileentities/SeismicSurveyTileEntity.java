@@ -194,6 +194,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						result.putByte("status", (byte) (island.getAmount() / (float) island.getCapacity() * 100));
 						result.putLong("amount", island.getAmount());
 						result.putString("fluid", fs.getTranslationKey());
+						result.putInt("expected", ReservoirIsland.getFlow(island.getPressure(world, pos.getX(), pos.getZ())));
 						
 						if(fs.getFluid().equals(IPContent.Fluids.CRUDEOIL.get())){
 							Utils.unlockIPAdvancement(player, "main/root");
