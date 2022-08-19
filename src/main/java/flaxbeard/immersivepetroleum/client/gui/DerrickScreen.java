@@ -23,6 +23,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -50,9 +51,9 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.leftPos = (this.width - this.imageWidth) / 2;
 		this.topPos = (this.height - this.imageHeight) / 2;
 		
-		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, new TextComponent("Config"), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this)), (button, matrix, mx, my) -> {
+		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.config")), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this)), (button, matrix, mx, my) -> {
 			if(!button.active){
-				renderTooltip(matrix, List.of(new TextComponent("Set in Stone.")), Optional.empty(), mx, my);
+				renderTooltip(matrix, List.of(new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.set_in_stone"))), Optional.empty(), mx, my);
 			}
 		});
 		addRenderableWidget(this.cfgButton);
@@ -86,20 +87,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
 		
 		if(this.tile.getBlockPos().getY() <= 62){
-			// TODO Split with "<br>" using the translation?
-			/*
-			 * Basicly get the translation, look for "<br>" and split it into an array.
-			 * Go through the array one by one and do what is already been done below, just not hardcoded.
-			 * Also limit it to 4 lines, every thing that uses more than 4 lines is cut off.
-			 * 
-			 * (Maybe even cut off at a certain length, to avoid overly loooong text breaching the boundaries?)
-			 * 
-			 * This should make multi-line stuff like the one below far easier to translate
-			 * and cuts down the number of language file entries
-			 */
-			drawInfoTextCentered(matrix, new TextComponent("! WARNING !"), 0, 0xEF0000);
-			drawInfoTextCentered(matrix, new TextComponent("Derrick is being flooded"), 2, 0xEF0000);
-			drawInfoTextCentered(matrix, new TextComponent("below the water table"), 3, 0xEF0000);
+			drawInfoTextCenteredMultiLine(matrix, I18n.get("gui.immersivepetroleum.derrick.msg.water_table"), 0xEF0000);
 			return;
 		}
 		
@@ -120,17 +108,17 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			// Possible display prototypes
 			
 			if(this.tile.isRSDisabled()){
-				drawInfoTextCentered(matrix, new TextComponent("Disabled via Controller"), 0, 0xEF0000);
+				drawInfoTextCentered(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.disabled")), 0, 0xEF0000);
 				return;
 			}
 			
 			if(well.wellPipeLength < well.getMaxPipeLength()){
 				if(this.tile.drilling){
 					String str = String.format(Locale.ROOT, "(%d%%)", (int) (100 * well.wellPipeLength / (float) well.getMaxPipeLength()));
-					drawInfoText(matrix, new TextComponent("Drilling... " + str), 0);
+					drawInfoText(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.drilling") + str), 0);
 					return;
 				}else if(well.pipes <= 0 && !this.menu.getSlot(0).hasItem()){
-					drawInfoTextCentered(matrix, new TextComponent("Ran out of Pipes."), 3, 0xEF0000);
+					drawInfoTextCentered(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.out_of_pipes")), 3, 0xEF0000);
 					return;
 				}
 				
@@ -138,26 +126,23 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 					int realPipeLength = (this.tile.getBlockPos().getY() - 1) - well.getBlockPos().getY();
 					int concreteNeeded = (DerrickTileEntity.CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength));
 					if(concreteNeeded > 0){
-						drawInfoText(matrix, new TextComponent("Missing " + Utils.fDecimal(concreteNeeded) + "mB of"), 0, 0xEF0000);
+						drawInfoText(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.missing") + Utils.fDecimal(concreteNeeded) + "mB"), 0, 0xEF0000);
 						drawInfoText(matrix, DerrickTileEntity.CONCRETE.getDisplayName(), 1, 0xEF0000);
 						return;
 					}
 					
 					int waterNeeded = DerrickTileEntity.WATER.getAmount() * (well.getMaxPipeLength() - well.wellPipeLength);
 					if(waterNeeded > 0){
-						drawInfoText(matrix, new TextComponent("Missing " + Utils.fDecimal(waterNeeded) + "mB of"), 0, 0xEF0000);
+						drawInfoText(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.missing") + Utils.fDecimal(waterNeeded) + "mB"), 0, 0xEF0000);
 						drawInfoText(matrix, DerrickTileEntity.WATER.getDisplayName(), 1, 0xEF0000);
 						return;
 					}
 				}
 			}else{
 				if(this.tile.spilling){
-					drawInfoTextCentered(matrix, new TextComponent("! WARNING !"), 0, 0xEF0000);
-					drawInfoTextCentered(matrix, new TextComponent("SAFETYVALVE OPEN"), 2, 0xEF0000);
-					drawInfoTextCentered(matrix, new TextComponent("PRESSURE TOO HIGH"), 3, 0xEF0000);
+					drawInfoTextCenteredMultiLine(matrix, I18n.get("gui.immersivepetroleum.derrick.msg.safety_valve"), 0xEF0000);
 				}else{
-					drawInfoTextCentered(matrix, new TextComponent("Drilling Completed"), 0);
-					drawInfoTextCentered(matrix, new TextComponent("Have a nice day :3"), 3);
+					drawInfoTextCenteredMultiLine(matrix, I18n.get("gui.immersivepetroleum.derrick.msg.completed"), Lib.colour_nixieTubeText);
 				}
 			}
 		}
@@ -178,6 +163,13 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	private void drawInfoTextCentered(PoseStack matrix, Component text, int line, int color){
 		int strWidth = this.font.width(text.getString());
 		this.font.draw(matrix, text, 118.5F - (strWidth / 2F), 10 + (9 * line), color);
+	}
+
+	private void drawInfoTextCenteredMultiLine(PoseStack matrix, String text, int color) {
+		String[] lines = text.split("<br>");
+		for (int i = 0; i < Math.min(lines.length, 4); i++) {
+			drawInfoTextCentered(matrix, new TextComponent(lines[i].length() > 25 ? lines[i].substring(0, 25) : lines[i]), i, color);
+		}
 	}
 	
 	@Override

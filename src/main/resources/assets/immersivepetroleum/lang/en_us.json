@@ -116,6 +116,16 @@
 	"gui.immersivepetroleum.projector.button.mirror": "Mirror",
 	"gui.immersivepetroleum.projector.button.rcw": "Rotate Clockwise",
 	"gui.immersivepetroleum.projector.button.rccw": "Rotate Counter-Clockwise",
+
+	"gui.immersivepetroleum.derrick.msg.disabled": "Disabled via Controller",
+	"gui.immersivepetroleum.derrick.msg.drilling": "Drilling... ",
+	"gui.immersivepetroleum.derrick.msg.out_of_pipes": "Out Of Pipes",
+	"gui.immersivepetroleum.derrick.msg.missing": "Missing ",
+	"gui.immersivepetroleum.derrick.msg.completed": "Drilling Completed!<br>Have a nice day :3",
+	"gui.immersivepetroleum.derrick.msg.safety_valve": "! WARNING !<br>SAFETY VALVE OPEN<br>PRESSURE TOO HIGH",
+	"gui.immersivepetroleum.derrick.msg.water_table": "! WARNING !<br>Well below water table!<br>Well flooded with water!",
+	"gui.immersivepetroleum.derrick.msg.set_in_stone": "Set In Stone",
+	"gui.immersivepetroleum.derrick.msg.config": "Config",
 	
 	"_comment": "################## Effects ##################",
 	
