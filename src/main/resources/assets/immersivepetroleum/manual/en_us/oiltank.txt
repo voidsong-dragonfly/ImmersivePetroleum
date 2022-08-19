@@ -1,3 +1,11 @@
 Oil Tank
 Bathtub for Gentlemen
-<&oiltank0>Sample Text
+<&oiltank0>
+The Oil Tank is a self-levelling multiblock tank bigger than the normal <link;tank;§o§nFluid Tank§r>, with both side, top, and bottom fluid ports. It can store 1024B of any non-gaseous fluid.<np>
+The Oil Tank will self-level with any non-configured Oil Tanks next to it within a line, so a line of them will all level to the same percentage full.
+
+The side fluid ports can be configured with the hammer, while the top and bottom ports cannot. Both the top and bottom port can input, but only the bottom fluid port can output.
+
+Because of its generous capacity, the tank is a good fit for use with the <link;immersivepetroleum:derrick;§o§nDerrick§r>, to handle the high production.
+
+Redstone behavior is as of yet indeterminate. //TODO UPDATE
