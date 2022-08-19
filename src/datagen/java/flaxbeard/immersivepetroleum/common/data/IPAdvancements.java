@@ -5,12 +5,14 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockAdvancementTrigger;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.register.IEBlocks;
+import blusunrize.immersiveengineering.common.register.IEFluids;
+import blusunrize.immersiveengineering.common.register.IEItems;
 import blusunrize.immersiveengineering.common.register.IEItems.Tools;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.FrameType;
+import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.ImpossibleTrigger;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -68,7 +70,7 @@ public class IPAdvancements extends AdvancementProvider{
 			.addCriterion("petcoke", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Items.PETCOKE.get()))
 			.save(consumer, ResourceUtils.ip("main/petcoke"), this.fileHelper);
 		
-		advancement(tower, IPContent.Multiblock.HYDROTREATER.get(), "mb_hydrotreater", FrameType.GOAL, true, true, false)
+		Advancement hydrotreater = advancement(tower, IPContent.Multiblock.HYDROTREATER.get(), "mb_hydrotreater", FrameType.GOAL, true, true, false)
 			.addCriterion("hydrotreater", createMultiblockTrigger("hydrotreater"))
 			.save(consumer, ResourceUtils.ip("main/mb_hydrotreater"), this.fileHelper);
 		
@@ -97,6 +99,23 @@ public class IPAdvancements extends AdvancementProvider{
 		advancement(tower, IPContent.Fluids.NAPALM.bucket().get(), "napalm", FrameType.TASK, true, true, false)
 			.addCriterion("code_trigger", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.NAPALM.bucket().get()))
 			.save(consumer, ResourceUtils.ip("main/napalm"), this.fileHelper);
+
+		Advancement cracking = advancement(hydrotreater, IPContent.Fluids.NAPHTHA_CRACKED.bucket().get(), "cracking", FrameType.TASK, true, true, false)
+			.addCriterion("code_trigger", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.NAPHTHA_CRACKED.bucket().get()))
+			.save(consumer, ResourceUtils.ip("main/cracking"), this.fileHelper);
+
+		Advancement naphtha_distillates = advancement(cracking, IPContent.Fluids.BENZENE.bucket().get(), "naphtha_distillates", FrameType.GOAL, true, true, false)
+			.addCriterion("benzene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.BENZENE.bucket().get()))
+			.addCriterion("propylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.PROPYLENE.bucket().get()))
+			.addCriterion("ethylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.ETHYLENE.bucket().get()))
+			.save(consumer, ResourceUtils.ip("main/naphtha_distillates"), this.fileHelper);
+
+		advancement(naphtha_distillates, IEBlocks.StoneDecoration.DUROPLAST.get().asItem(), "duroplast", FrameType.CHALLENGE, true, true, false)
+			.addCriterion("benzene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.BENZENE.bucket().get()))
+			.addCriterion("propylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.PROPYLENE.bucket().get()))    //These are here to make sure the player made their duroplast from naphtha
+			.addCriterion("ethylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.ETHYLENE.bucket().get()))
+			.addCriterion("duroplast_block", InventoryChangeTrigger.TriggerInstance.hasItems(IEBlocks.StoneDecoration.DUROPLAST.get().asItem()))
+			.save(consumer, ResourceUtils.ip("main/duroplast"), this.fileHelper);
 	}
 	
 	private void motorboat(Consumer<Advancement> consumer, Advancement start){

@@ -10,7 +10,7 @@ It is built as shown and formed by using the Engineering's Hammer on the Heavy E
 
 Applying a redstone signal to the control panel will halt the machine, this behavior can be inverted with the Screwdriver.
 
-§2Sulfurized Diesel§r or §2Naphtha§r is pumped into frontal port.
+§2Sulfurized Diesel§r or §2Naphtha§r is pumped into the frontal port.
 
 §2Water§r is pumped into the top.
 
