@@ -104,7 +104,8 @@ public class ClientProxy extends CommonProxy{
 		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch(str){
 			case "distillationtower_operationcost" -> (int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get());
 			case "coker_operationcost" -> (int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get());
-			case "hydrotreater_operationcost" -> (int) (512 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
+			case "hydrotreater_operationcost_lower" -> (int) (256 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
+			case "hydrotreater_operationcost_upper" -> (int) (1024 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
 			case "pumpjack_consumption" -> IPServerConfig.EXTRACTION.pumpjack_consumption.get();
 			case "pumpjack_speed" -> IPServerConfig.EXTRACTION.pumpjack_speed.get();
 			case "pumpjack_days" -> {

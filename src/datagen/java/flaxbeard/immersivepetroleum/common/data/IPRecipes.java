@@ -184,10 +184,10 @@ public class IPRecipes extends RecipeProvider{
 			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.02)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 10), 256, 40)
-				.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 10))
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 1024, 5)
+				.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 20))
 				.addSecondaryInputFluid(FluidTags.WATER, 5)
-				.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.01)
+				.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.02)
 				.build(out, rl("hydrotreater/naphtha_cracking"));
 	}
 	

@@ -22,7 +22,7 @@
 	"block.immersivepetroleum.pumpjack": "Pumpjack",
 	"block.immersivepetroleum.distillation_tower": "Distillation Tower",
 	"block.immersivepetroleum.coker_unit": "Coker",
-	"block.immersivepetroleum.hydrotreater": "Sulfur Recovery Unit",
+	"block.immersivepetroleum.hydrotreater": "High-Pressure Refinery Unit",
 	"block.immersivepetroleum.derrick": "Derrick",
 	"block.immersivepetroleum.oiltank": "Oil Tank",
 	
@@ -200,7 +200,7 @@
 	"advancement.immersivepetroleum.petcoke": "Can we keep it, please?",
 	"advancement.immersivepetroleum.petcoke.desc": "Pick up some Petcoke",
 	"advancement.immersivepetroleum.mb_hydrotreater": "Clean™ Diesel",
-	"advancement.immersivepetroleum.mb_hydrotreater.desc": "Form the Sulfur Recovery Unit",
+	"advancement.immersivepetroleum.mb_hydrotreater.desc": "Form the High-Temperature Refinery Unit",
 	"advancement.immersivepetroleum.gas_generator": "Power 2 Go",
 	"advancement.immersivepetroleum.gas_generator.desc": "Insert some Gasoline into the Portable Generator",
 	"advancement.immersivepetroleum.motorboat": "Relaxing Adventure",
