@@ -85,7 +85,7 @@ public class SeismicResultRenderer{
 							matrix.pushPose();
 							{
 								final int w = 85;
-								final int h = 85;
+								final int h = 85; //TODO: SCALE BY mc#options#guiScale
 								
 								matrix.translate(-w / 2F, -h / 2F, 1);
 								
