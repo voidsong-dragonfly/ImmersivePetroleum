@@ -73,7 +73,7 @@ public class JEIStuff implements IModPlugin{
 		registration.addRecipeClickArea(CokerUnitScreen.class, 59, 21, 15, 67, this.coker_type);
 		registration.addRecipeClickArea(CokerUnitScreen.class, 64, 63, 73, 25, this.coker_type);
 		registration.addRecipeClickArea(CokerUnitScreen.class, 127, 21, 15, 67, this.coker_type);
-		registration.addRecipeClickArea(CokerUnitScreen.class, 80, 21, 40, 42, this.coker_type);
+		registration.addRecipeClickArea(CokerUnitScreen.class, 81, 21, 39, 42, this.coker_type);
 		registration.addRecipeClickArea(HydrotreaterScreen.class, 55, 9, 32, 51, this.recovery_type);
 	}
 }

@@ -25,7 +25,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	
 	private final IDrawableStatic tankOverlay;
 	public DistillationRecipeCategory(IGuiHelper guiHelper){
-		super(DistillationRecipe.class, guiHelper, ID, "block.immersivepetroleum.distillationtower");
+		super(DistillationRecipe.class, guiHelper, ID, "block.immersivepetroleum.distillation_tower");
 		ResourceLocation background = ResourceUtils.ip("textures/gui/distillation.png");
 		setBackground(guiHelper.createDrawable(background, 51, 0, 81, 77));
 		setIcon(new ItemStack(IPContent.Multiblock.DISTILLATIONTOWER.get()));
