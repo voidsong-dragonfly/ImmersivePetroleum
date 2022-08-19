@@ -32,6 +32,11 @@
 	"fluid.immersivepetroleum.lubricant": "Lubricant",
 	"fluid.immersivepetroleum.gasoline": "Gasoline",
 	"fluid.immersivepetroleum.napalm": "Napalm",
+	"fluid.immersivepetroleum.naphtha": "Naphtha",
+	"fluid.immersivepetroleum.naphtha_cracked": "Cracked Naphtha",
+	"fluid.immersivepetroleum.benzene": "Benzene",
+	"fluid.immersivepetroleum.propylene": "Propylene",
+	"fluid.immersivepetroleum.ethylene": "Ethylene",
 	
 	"_comment": "################## Items ##################",
 	
@@ -50,6 +55,11 @@
 	"item.immersivepetroleum.lubricant_bucket": "Bucket of Lubricant",
 	"item.immersivepetroleum.gasoline_bucket": "Bucket of Gasoline",
 	"item.immersivepetroleum.napalm_bucket": "Bucket of Napalm",
+	"item.immersivepetroleum.naphtha_bucket": "Bucket of Naphtha",
+	"item.immersivepetroleum.naphtha_cracked_bucket": "Bucket of Cracked Naphtha",
+	"item.immersivepetroleum.benzene_bucket": "Bucket of Benzene",
+	"item.immersivepetroleum.propylene_bucket": "Bucket of Propylene",
+	"item.immersivepetroleum.ethylene_bucket": "Bucket of Ethylene",
 	
 	"item.immersivepetroleum.upgrade_reinforced_hull": "Reinforced Hull",
 	"item.immersivepetroleum.upgrade_icebreaker": "Icebreaker Bow",

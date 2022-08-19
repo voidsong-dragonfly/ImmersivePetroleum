@@ -8,16 +8,20 @@
   ],
   "results": [
     {
-      "fluid": "immersivepetroleum:lubricant",
-      "amount": 9
+      "fluid": "immersivepetroleum:naphtha",
+      "amount": 10
     },
     {
       "fluid": "immersivepetroleum:gasoline",
-      "amount": 30
+      "amount": 20
     },
     {
       "fluid": "immersivepetroleum:diesel_sulfur",
       "amount": 36
+    },
+    {
+      "fluid": "immersivepetroleum:lubricant",
+      "amount": 9
     }
   ],
   "input": {

@@ -8,16 +8,12 @@ import blusunrize.immersiveengineering.api.EnumMetals;
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.builders.ArcFurnaceRecipeBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.BlastFurnaceFuelBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.CrusherRecipeBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.GeneratorFuelBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.SqueezerRecipeBuilder;
+import blusunrize.immersiveengineering.api.crafting.builders.*;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.register.IEBlocks.MetalDecoration;
+import blusunrize.immersiveengineering.common.register.IEFluids;
 import blusunrize.immersiveengineering.common.register.IEItems;
 import blusunrize.immersiveengineering.data.recipebuilder.FluidAwareShapedRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.IPTags;
@@ -66,6 +62,7 @@ public class IPRecipes extends RecipeProvider{
 		cokerRecipes();
 		hydrotreaterRecipes();
 		reservoirs();
+		refineryRecipes();
 		
 		MixerRecipeBuilder.builder(IPContent.Fluids.NAPALM.still().get(), 500)
 			.addFluidTag(IPTags.Fluids.gasoline, 500)
@@ -97,14 +94,25 @@ public class IPRecipes extends RecipeProvider{
 		// setEnergy and setTime are 2048 and 1 by default. But still allows to be customized.
 		
 		DistillationRecipeBuilder.builder(new FluidStack[]{
-				new FluidStack(IPContent.Fluids.LUBRICANT.get(), 9),
-				new FluidStack(IPContent.Fluids.GASOLINE.get(), 30),
+				new FluidStack(IPContent.Fluids.NAPHTHA.get(), 10),
+				new FluidStack(IPContent.Fluids.GASOLINE.get(), 20),
 				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 36),
+				new FluidStack(IPContent.Fluids.LUBRICANT.get(), 9),
 				})
 			.addByproduct(new ItemStack(IPContent.Items.BITUMEN.get()), 0.07)
 			.addInput(IPTags.Fluids.crudeOil, 75)
 			.setTimeAndEnergy(1, 2048)
 			.build(this.out, rl("distillationtower/oilcracking"));
+
+		DistillationRecipeBuilder.builder(new FluidStack[]{
+						new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
+						new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
+						new FluidStack(IPContent.Fluids.BENZENE.get(), 2),
+				})
+			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
+			.addInput(IPTags.Fluids.naphtha_cracked, 10)
+			.setTimeAndEnergy(1, 2048)
+			.build(this.out, rl("distillationtower/naphthacracking"));
 	}
 	
 	/** Contains everything related to Petcoke */
@@ -169,6 +177,12 @@ public class IPRecipes extends RecipeProvider{
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
 			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.02)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
+
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 10), 256, 40)
+				.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 10))
+				.addSecondaryInputFluid(FluidTags.WATER, 5)
+				.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.01)
+				.build(out, rl("hydrotreater/naphtha_cracking"));
 	}
 	
 	private void speedboatUpgradeRecipes(){
@@ -359,6 +373,20 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_treated_planks", has(IETags.getItemTag(IETags.treatedWood)))
 			.unlockedBy("has_"+toPath(MetalDecoration.ENGINEERING_LIGHT), has(MetalDecoration.ENGINEERING_LIGHT))
 			.save(this.out);
+	}
+
+	private void refineryRecipes(){
+		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.CREOSOTE.getStill(), 16))
+				.addInput(new FluidTagInput(IPTags.Fluids.benzene, 8))
+				.addInput(new FluidTagInput(IPTags.Fluids.propylene, 8))
+				.setEnergy(240)
+				.build(out, rl("refinery/phenol"));
+
+		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.ACETALDEHYDE.getStill(), 8))
+				.addCatalyst(IETags.getTagsFor(EnumMetals.COPPER).plate)
+				.addInput(new FluidTagInput(IPTags.Fluids.ethylene, 8))
+				.setEnergy(120)
+				.build(out, rl("refinery/acetaldehyde"));
 	}
 	
 	private ResourceLocation rl(String str){

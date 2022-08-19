@@ -1,0 +1,20 @@
+{
+    "crude":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:crudeoil_bucket"}]},
+    "lubricant":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:lubricant_bucket"}]},
+    "diesel":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:diesel_sulfur_bucket"}, {"item":"immersivepetroleum:diesel_bucket"}]},
+    "gasoline":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:gasoline_bucket"}]},
+    "naphtha":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:naphtha_bucket"}, {"item":"immersivepetroleum:benzene_bucket"}, {"item":"immersivepetroleum:propylene_bucket"}, {"item":"immersivepetroleum:ethylene_bucket"}]},
+    "napalm":{"type":"item_display",
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:napalm_bucket"}]}
+}

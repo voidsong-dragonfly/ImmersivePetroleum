@@ -1,0 +1,14 @@
+Petroleum Products
+At Least It's Not GT5u
+<&crude>
+Crude Oil is a sticky, black substance that seeps from reservoirs in the world. It is the base resource that all other petroleum-based resources take their feedstock from, and is essential to any petrochemical engineer's journey.
+<&lubricant>
+Lubricant is the heaviest fraction immediately distillable from <link;immersivepetroleum:fluids;§n§oCrude Oil§r;crude>, and is best used to lubricate machines to high efficiency. It can be burned in the flare stack if such activities are not useful.
+<&diesel>
+Diesel and Sulfurized Diesel are the heavyweight fuels of the petrochemical engineer, being able to be used in the <link;immersiveengineering:diesel_generator;§n§oDiesel Generator§r> for bulk power production. Sulfurized Diesel can be used for an easy source of sulfur.
+<&gasoline>
+Gasoline is a light fuel suitable for the portable generator or motorboat, and can also be used in <link;immersivepetroleum:fluids;§n§oNapalm§r;napalm>. Unlike its lighter sister <link;immersivepetroleum:fluids;§n§oNaphtha§r;naphtha>, gasoline is unusable as a chemical feedstock.
+<&naphtha>
+Naphtha is a light fuel suitable for the portable generator or motorboat. Naphtha is the perfect chemical feedstock for producing plastics, and is most often used to produce <link;immersiveengineering:plastic;§n§oPhenolic Resin§r> from its derivates: Benzene, Propylene, and Ethylene.
+<&napalm>
+Napalm is an extremely flammable substance that can be created in the <link;mixer;§n§oMixer§r> using <link;immersivepetroleum:fluids;§n§oGasoline§r;gasoline> and three measures of Aluminium Grit. It has little use other than wanton destruction; when Napalm is lit, fire will spread almost immediately over its surface, allowing for rapid deforestation. In addition, it can serve as a very effective fuel for the <link;chemthrower;§n§oChemthrower§r>.
