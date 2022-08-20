@@ -96,11 +96,11 @@ public class IPServerConfig{
 					.define("cokerUnit_timeModifier", 1.0);
 			
 			hydrotreater_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every Sulfur Recovery Unit recipe", "Default: 1.0")
+					.comment("A modifier to apply to the energy costs of every High-Pressure Refinery Unit recipe", "Default: 1.0")
 					.define("hydrotreater_energyModifier", 1.0);
 			
 			hydrotreater_timeModifier = builder
-					.comment("A modifier to apply to the time of every Sulfur Recovery Unit recipe. Can't be lower than 1", "Default: 1.0")
+					.comment("A modifier to apply to the time of every High-Pressure Refinery Unit recipe. Can't be lower than 1", "Default: 1.0")
 					.define("hydrotreater_timeModifier", 1.0);
 			
 			builder.pop();
