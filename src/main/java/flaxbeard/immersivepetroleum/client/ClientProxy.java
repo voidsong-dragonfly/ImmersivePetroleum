@@ -61,6 +61,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
@@ -179,14 +180,14 @@ public class ClientProxy extends CommonProxy{
 				pt = Minecraft.getInstance().getFrameTime();
 			}
 			
-			tesr.render(pumpjack, pt, transform, buffer, 0xF000F0, 0);
+			tesr.render(pumpjack, pt, transform, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY);
 			transform.popPose();
 		}else{
 			transform.pushPose();
 			transform.mulPose(new Quaternion(0, -90, 0, true));
 			transform.translate(0, 1, -4);
 			
-			tesr.render(te, 0, transform, buffer, 0xF000F0, 0);
+			tesr.render(te, 0, transform, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY);
 			transform.popPose();
 		}
 	}

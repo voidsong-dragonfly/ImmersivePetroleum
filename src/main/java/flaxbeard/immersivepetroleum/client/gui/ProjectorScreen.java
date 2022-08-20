@@ -270,13 +270,12 @@ public class ProjectorScreen extends Screen{
 								matrix.pushPose();
 								{
 									matrix.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
-									int overlay = OverlayTexture.NO_OVERLAY;
 									IModelData modelData = EmptyModelData.INSTANCE;
 									BlockEntity te = this.templateWorld.getBlockEntity(info.pos);
 									if(te != null){
 										modelData = te.getModelData();
 									}
-									blockRender.renderSingleBlock(info.state, matrix, IPRenderTypes.disableLighting(buffer), 0xF000F0, overlay, modelData);
+									blockRender.renderSingleBlock(info.state, matrix, IPRenderTypes.disableLighting(buffer), 0xF000F0, OverlayTexture.NO_OVERLAY, modelData);
 								}
 								matrix.popPose();
 							}
