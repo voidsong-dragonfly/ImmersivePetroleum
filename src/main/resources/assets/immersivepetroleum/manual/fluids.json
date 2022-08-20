@@ -13,7 +13,10 @@
         "items":[{"item":"immersivepetroleum:gasoline_bucket"}]},
     "naphtha":{
         "type":"item_display",
-        "items":[{"item":"immersivepetroleum:naphtha_bucket"}, {"item":"immersivepetroleum:benzene_bucket"}, {"item":"immersivepetroleum:propylene_bucket"}, {"item":"immersivepetroleum:ethylene_bucket"}]},
+        "items":[{"item":"immersivepetroleum:naphtha_bucket"}]},
+    "naphtha_derivates":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:benzene_bucket"}, {"item":"immersivepetroleum:propylene_bucket"}, {"item":"immersivepetroleum:ethylene_bucket"}]},
     "napalm":{"type":"item_display",
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:napalm_bucket"}]}

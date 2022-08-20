@@ -1,5 +1,5 @@
 High-Pressure Refinery Unit
-Smell of Fireworks
+What's A Palladium Catalyst?
 <&hydrotreater0>
 The High-Pressure Refinery Unit (HPRU) is a multiblock machine that heats two fluids before combining them together for a fast reaction inside its high-pressure tank.
 

@@ -243,14 +243,14 @@ public class ClientProxy extends CommonProxy{
 
 		//Basic Resources
 		handleReservoirManual(ResourceUtils.ip("reservoir"), priority++);
+		fluids(ResourceUtils.ip("fluids"), priority++);
 		man.addEntry(IP_CATEGORY, ResourceUtils.ip("asphalt"), priority++);
 		lubricant(ResourceUtils.ip("lubricant"), priority++);
-		fluids(ResourceUtils.ip("fluids"), priority++);
 		plastics(ResourceUtils.ip("plastics"), priority++);
 
 		//Oil Extraction & Storage
-		pumpjack(ResourceUtils.ip("pumpjack"), priority++);
 		derrick(ResourceUtils.ip("derrick"), priority++);
+		pumpjack(ResourceUtils.ip("pumpjack"), priority++);
 		oiltank(ResourceUtils.ip("oiltank"), priority++);
 		//Oil Processing
 		distillation(ResourceUtils.ip("distillationtower"), priority++);
@@ -353,11 +353,11 @@ public class ClientProxy extends CommonProxy{
 		builder.addSpecialElement(new SpecialElementData("lubricant", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.LUBRICANT.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("diesel", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.DIESEL_SULFUR.bucket().get()), new ItemStack(IPContent.Fluids.DIESEL.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("gasoline", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.GASOLINE.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("naphtha", 0, new ManualElementItem(man,
-				new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()),
-				new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
-				new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
-				new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
+		builder.addSpecialElement(new SpecialElementData("naphtha", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("naphtha_derivates", 0, new ManualElementItem(man,
+			new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
+			new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
+			new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
 		);
 		builder.addSpecialElement(new SpecialElementData("napalm", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPALM.bucket().get()))));
 		builder.readFromFile(location);
