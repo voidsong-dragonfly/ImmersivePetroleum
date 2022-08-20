@@ -21,7 +21,6 @@ public class ExternalModContent{
 		IE_ITEM_EMPTY_SHELL = RegistryObject.create(ResourceUtils.ie("empty_shell"), ForgeRegistries.ITEMS);
 		
 		IE_FLUID_CONCRETE_FLUID = RegistryObject.create(ResourceUtils.ie("concrete"), ForgeRegistries.FLUIDS);
-		// TODO IEBlocks.MetalDevices.sampleDrill for CommonEventHandler.handlePickupItem??
 	}
 	
 	public static boolean isIEConcrete(FluidStack stack){

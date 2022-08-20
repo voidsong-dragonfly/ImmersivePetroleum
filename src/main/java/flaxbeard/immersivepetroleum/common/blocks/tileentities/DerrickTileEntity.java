@@ -28,6 +28,7 @@ import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -65,17 +66,16 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * @author TwistedGate
  */
 public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
-	
-	// TODO Make these configurable
-	public static final int POWER = 512;
-	public static final FluidStack WATER = new FluidStack(Fluids.WATER, 125);
-	public static final FluidStack CONCRETE = ExternalModContent.ieConcreteFluidStack(125);
+
+	public static FluidStack WATER = FluidStack.EMPTY;
+	public static FluidStack CONCRETE = FluidStack.EMPTY;
 	
 	public enum Inventory{
 		/** Item Pipe Input */
@@ -268,7 +268,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				this.spilling = true;
 			}else{
 				if(!isRSDisabled()){
-					if(this.energyStorage.extractEnergy(POWER, true) >= POWER){
+					if(this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.derrick_consumption.get(), true) >= IPServerConfig.EXTRACTION.derrick_consumption.get()){
 						WellTileEntity well = getOrCreateWell(getInventory(Inventory.INPUT) != ItemStack.EMPTY);
 						
 						if(well != null){
@@ -293,7 +293,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 									
 									if(well.phyiscalPipesList.size() < realPipeLength && well.wellPipeLength < realPipeLength){
 										if(this.tank.drain(CONCRETE, FluidAction.SIMULATE).getAmount() >= CONCRETE.getAmount()){
-											this.energyStorage.extractEnergy(POWER, false);
+											this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.derrick_consumption.get(), false);
 											
 											if(advanceTimer()){
 												Level world = getLevelNonnull();
@@ -329,7 +329,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 									}else{
 										if(this.tank.drain(WATER, FluidAction.SIMULATE).getAmount() >= WATER.getAmount()){
 											this.tank.drain(WATER, FluidAction.EXECUTE);
-											this.energyStorage.extractEnergy(POWER, false);
+											this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.derrick_consumption.get(), false);
 											
 											if(advanceTimer()){
 												restorePhysicalPipeProgress(dPos, realPipeLength);
@@ -1052,5 +1052,17 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	/** Makes a box using texture pixel space (Assuming 16x16 p texture) */
 	private static AABB box(double x0, double y0, double z0, double x1, double y1, double z1){
 		return new AABB(x0 / 16D, y0 / 16D, z0 / 16D, x1 / 16D, y1 / 16D, z1 / 16D);
+	}
+
+	public static void onConfigReload(ModConfigEvent ev){
+		if(ev.getConfig().getSpec() != IPServerConfig.ALL){
+			return;
+		}
+
+		//Load from config on reload
+		Fluid temporary = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(IPServerConfig.EXTRACTION.derrick_drilling.get()));
+		if(temporary != null) WATER = new FluidStack(temporary, 125);
+		temporary = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(IPServerConfig.EXTRACTION.derrick_concrete.get()));
+		if(temporary != null) CONCRETE = new FluidStack(temporary, 125);
 	}
 }

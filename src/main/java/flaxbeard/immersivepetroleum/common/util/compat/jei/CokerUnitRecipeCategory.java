@@ -33,7 +33,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	
 	private final IDrawableStatic tankOverlay;
 	public CokerUnitRecipeCategory(IGuiHelper guiHelper){
-		super(CokerUnitRecipe.class, guiHelper, ID, "block.immersivepetroleum.cokerunit");
+		super(CokerUnitRecipe.class, guiHelper, ID, "block.immersivepetroleum.coker_unit");
 		ResourceLocation background = ResourceUtils.ip("textures/gui/jei/coker.png");
 		ResourceLocation coker = ResourceUtils.ip("textures/gui/coker.png");
 		
@@ -82,7 +82,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 		builder.addSlot(RecipeIngredientRole.INPUT, 4, 58)
 			.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.inputItem.getMatchingStacks()));
 		
-		builder.addSlot(RecipeIngredientRole.INPUT, 52, 58)
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 52, 58)
 			.addIngredients(VanillaTypes.ITEM_STACK, Collections.singletonList(recipe.outputItem.get()));
 	}
 	

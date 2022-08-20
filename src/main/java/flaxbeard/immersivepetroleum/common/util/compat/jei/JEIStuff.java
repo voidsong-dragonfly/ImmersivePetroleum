@@ -69,7 +69,11 @@ public class JEIStuff implements IModPlugin{
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration){
 		registration.addRecipeClickArea(DistillationTowerScreen.class, 85, 19, 18, 51, this.distillation_type);
-		registration.addRecipeClickArea(CokerUnitScreen.class, 59, 21, 82, 67, this.coker_type);
+		//Have to use four of these so that  they don't overlap
+		registration.addRecipeClickArea(CokerUnitScreen.class, 59, 21, 15, 67, this.coker_type);
+		registration.addRecipeClickArea(CokerUnitScreen.class, 64, 63, 73, 25, this.coker_type);
+		registration.addRecipeClickArea(CokerUnitScreen.class, 127, 21, 15, 67, this.coker_type);
+		registration.addRecipeClickArea(CokerUnitScreen.class, 81, 21, 39, 42, this.coker_type);
 		registration.addRecipeClickArea(HydrotreaterScreen.class, 55, 9, 32, 51, this.recovery_type);
 	}
 }
