@@ -46,6 +46,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -189,6 +190,19 @@ public class IPRecipes extends RecipeProvider{
 				.addSecondaryInputFluid(FluidTags.WATER, 5)
 				.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.02)
 				.build(out, rl("hydrotreater/naphtha_cracking"));
+
+		/* TODO: Figure Out PNC Maven & Add Compat Recipes, or Remove Compat
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack([PNC PLASTIC]), 1000), 1024, 60)
+				.addCondition(new ModLoadedCondition("pneumaticcraft"))
+				.addInputFluid(new FluidTagInput(IPTags.Fluids.ethylene, 100))
+				.addSecondaryInputFluid(FluidTags.WATER, 5)
+				.build(out, rl("hydrotreater/ethylene_plastic"));
+
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack([PNC PLASTIC], 2000), 1024, 60)
+				.addCondition(new ModLoadedCondition("pneumaticcraft"))
+				.addInputFluid(new FluidTagInput(IPTags.Fluids.propylene, 100))
+				.addSecondaryInputFluid(FluidTags.WATER, 5)
+				.build(out, rl("hydrotreater/propylene_plastic"));*/
 	}
 	
 	private void speedboatUpgradeRecipes(){
