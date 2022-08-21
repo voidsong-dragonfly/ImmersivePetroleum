@@ -31,6 +31,11 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import me.desht.pneumaticcraft.common.PneumaticCraftAPIHandler;
+import me.desht.pneumaticcraft.common.core.ModFluids;
+import me.desht.pneumaticcraft.common.core.ModItems;
+import me.desht.pneumaticcraft.common.fluid.FluidPlastic;
+import me.desht.pneumaticcraft.common.item.PneumaticCraftBucketItem;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -186,23 +191,22 @@ public class IPRecipes extends RecipeProvider{
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 
 		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 1024, 5)
-				.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 20))
-				.addSecondaryInputFluid(FluidTags.WATER, 5)
-				.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.02)
-				.build(out, rl("hydrotreater/naphtha_cracking"));
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 20))
+			.addSecondaryInputFluid(FluidTags.WATER, 5)
+			.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.02)
+			.build(out, rl("hydrotreater/naphtha_cracking"));
+		
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 1024, 60)
+			.addCondition(new ModLoadedCondition("pneumaticcraft"))
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.ethylene, 100))
+			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.05)
+			.build(out, rl("hydrotreater/ethylene_plastic"));
 
-		/* TODO: Figure Out PNC Maven & Add Compat Recipes, or Remove Compat
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack([PNC PLASTIC]), 1000), 1024, 60)
-				.addCondition(new ModLoadedCondition("pneumaticcraft"))
-				.addInputFluid(new FluidTagInput(IPTags.Fluids.ethylene, 100))
-				.addSecondaryInputFluid(FluidTags.WATER, 5)
-				.build(out, rl("hydrotreater/ethylene_plastic"));
-
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack([PNC PLASTIC], 2000), 1024, 60)
-				.addCondition(new ModLoadedCondition("pneumaticcraft"))
-				.addInputFluid(new FluidTagInput(IPTags.Fluids.propylene, 100))
-				.addSecondaryInputFluid(FluidTags.WATER, 5)
-				.build(out, rl("hydrotreater/propylene_plastic"));*/
+		SulfurRecoveryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 2000), 1024, 60)
+			.addCondition(new ModLoadedCondition("pneumaticcraft"))
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.propylene, 100))
+			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.1)
+			.build(out, rl("hydrotreater/propylene_plastic"));
 	}
 	
 	private void speedboatUpgradeRecipes(){

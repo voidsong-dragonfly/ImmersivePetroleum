@@ -190,7 +190,7 @@ public class IPRenderTypes extends RenderStateShard{
 				.setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, false))
 				.setTransparencyState(NO_TRANSPARENCY)
 				.setLightmapState(LIGHTMAP)
-				.setOverlayState(NO_OVERLAY)
+				.setOverlayState(OVERLAY)
 				.createCompositeState(true);
 		return RenderType.create("entity_solid", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, renderState);
 	}
