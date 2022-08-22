@@ -186,6 +186,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 							if(accepted > 0){
 								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), false), FluidAction.EXECUTE);
 								this.tank.drain(Utils.copyFluidStackWithAmount(this.tank.getFluid(), drained, false), FluidAction.EXECUTE);
+								this.setChanged();
 								this.markContainingBlockForUpdate(null);
 								return true;
 							}
