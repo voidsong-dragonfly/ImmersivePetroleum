@@ -221,6 +221,8 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			dst.tank.fill(fs, FluidAction.EXECUTE);
 			src.tank.drain(fs, FluidAction.EXECUTE);
 			
+			src.setChanged();
+			dst.setChanged();
 			src.markContainingBlockForUpdate(null);
 			dst.markContainingBlockForUpdate(null);
 			return true;
