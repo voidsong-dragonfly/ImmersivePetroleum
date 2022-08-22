@@ -136,8 +136,9 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			this.gridStorage = PipeConfig.Grid.fromCompound(nbt.getCompound("grid"));
 		}
 		
-		if(!descPacket){
-			readInventory(nbt.getCompound("inventory"));
+		if(!descPacket && !this.isDummy()){
+			ContainerHelper.loadAllItems(nbt, this.inventory);
+			this.setChanged();
 		}
 	}
 	
@@ -157,28 +158,11 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			nbt.put("grid", this.gridStorage.toCompound());
 		}
 		
-		if(!descPacket){
-			nbt.put("inventory", writeInventory(this.inventory));
+		if(!descPacket && !this.isDummy()){
+			ContainerHelper.saveAllItems(nbt, this.inventory);
 		}
 	}
-	
-	protected void readInventory(CompoundTag nbt){
-		NonNullList<ItemStack> list = NonNullList.create();
-		ContainerHelper.loadAllItems(nbt, list);
-		
-		for(int i = 0;i < this.inventory.size();i++){
-			ItemStack stack = ItemStack.EMPTY;
-			if(i < list.size()){
-				stack = list.get(i);
-			}
-			
-			this.inventory.set(i, stack);
-		}
-	}
-	
-	protected CompoundTag writeInventory(NonNullList<ItemStack> list){
-		return ContainerHelper.saveAllItems(new CompoundTag(), list);
-	}
+
 	
 	private boolean acceptsFluid(FluidStack fs){
 		WellTileEntity well = getOrCreateWell(false);
@@ -267,9 +251,9 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				}
 				this.spilling = true;
 			}else{
+				WellTileEntity well = getOrCreateWell(getInventory(Inventory.INPUT) != ItemStack.EMPTY);
 				if(!isRSDisabled()){
 					if(this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.derrick_consumption.get(), true) >= IPServerConfig.EXTRACTION.derrick_consumption.get()){
-						WellTileEntity well = getOrCreateWell(getInventory(Inventory.INPUT) != ItemStack.EMPTY);
 						
 						if(well != null){
 							if(well.wellPipeLength < well.getMaxPipeLength()){
@@ -342,16 +326,16 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 										}
 									}
 								}
-							}else{
-								outputReservoirFluid();
 							}
 						}
 					}
 				}
+				if(well != null && well.wellPipeLength == well.getMaxPipeLength()) outputReservoirFluid();
 			}
 			
 			if(forceUpdate || (lastDrilling != this.drilling) || (lastSpilling != this.spilling)){
 				updateMasterBlock(null, true);
+				setChanged();
 			}
 		}
 	}
