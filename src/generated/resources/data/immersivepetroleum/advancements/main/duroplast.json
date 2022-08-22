@@ -1,0 +1,82 @@
+{
+  "parent": "immersivepetroleum:main/naphtha_distillates",
+  "display": {
+    "icon": {
+      "item": "immersiveengineering:duroplast"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.duroplast"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.duroplast.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "benzene": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:benzene_bucket"
+            ]
+          }
+        ]
+      }
+    },
+    "propylene": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:propylene_bucket"
+            ]
+          }
+        ]
+      }
+    },
+    "ethylene": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:ethylene_bucket"
+            ]
+          }
+        ]
+      }
+    },
+    "duroplast_block": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersiveengineering:duroplast"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "benzene"
+    ],
+    [
+      "propylene"
+    ],
+    [
+      "ethylene"
+    ],
+    [
+      "duroplast_block"
+    ]
+  ]
+}

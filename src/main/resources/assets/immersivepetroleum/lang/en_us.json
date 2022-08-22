@@ -22,7 +22,7 @@
 	"block.immersivepetroleum.pumpjack": "Pumpjack",
 	"block.immersivepetroleum.distillation_tower": "Distillation Tower",
 	"block.immersivepetroleum.coker_unit": "Coker",
-	"block.immersivepetroleum.hydrotreater": "Sulfur Recovery Unit",
+	"block.immersivepetroleum.hydrotreater": "High-Pressure Refinery Unit",
 	"block.immersivepetroleum.derrick": "Derrick",
 	"block.immersivepetroleum.oiltank": "Oil Tank",
 	
@@ -32,6 +32,11 @@
 	"fluid.immersivepetroleum.lubricant": "Lubricant",
 	"fluid.immersivepetroleum.gasoline": "Gasoline",
 	"fluid.immersivepetroleum.napalm": "Napalm",
+	"fluid.immersivepetroleum.naphtha": "Naphtha",
+	"fluid.immersivepetroleum.naphtha_cracked": "Cracked Naphtha",
+	"fluid.immersivepetroleum.benzene": "Benzene",
+	"fluid.immersivepetroleum.propylene": "Propylene",
+	"fluid.immersivepetroleum.ethylene": "Ethylene",
 	
 	"_comment": "################## Items ##################",
 	
@@ -50,6 +55,11 @@
 	"item.immersivepetroleum.lubricant_bucket": "Bucket of Lubricant",
 	"item.immersivepetroleum.gasoline_bucket": "Bucket of Gasoline",
 	"item.immersivepetroleum.napalm_bucket": "Bucket of Napalm",
+	"item.immersivepetroleum.naphtha_bucket": "Bucket of Naphtha",
+	"item.immersivepetroleum.naphtha_cracked_bucket": "Bucket of Cracked Naphtha",
+	"item.immersivepetroleum.benzene_bucket": "Bucket of Benzene",
+	"item.immersivepetroleum.propylene_bucket": "Bucket of Propylene",
+	"item.immersivepetroleum.ethylene_bucket": "Bucket of Ethylene",
 	
 	"item.immersivepetroleum.upgrade_reinforced_hull": "Reinforced Hull",
 	"item.immersivepetroleum.upgrade_icebreaker": "Icebreaker Bow",
@@ -200,7 +210,7 @@
 	"advancement.immersivepetroleum.petcoke": "Can we keep it, please?",
 	"advancement.immersivepetroleum.petcoke.desc": "Pick up some Petcoke",
 	"advancement.immersivepetroleum.mb_hydrotreater": "Clean™ Diesel",
-	"advancement.immersivepetroleum.mb_hydrotreater.desc": "Form the Sulfur Recovery Unit",
+	"advancement.immersivepetroleum.mb_hydrotreater.desc": "Form the High-Pressure Refinery Unit",
 	"advancement.immersivepetroleum.gas_generator": "Power 2 Go",
 	"advancement.immersivepetroleum.gas_generator.desc": "Insert some Gasoline into the Portable Generator",
 	"advancement.immersivepetroleum.motorboat": "Relaxing Adventure",
@@ -219,6 +229,12 @@
 	"advancement.immersivepetroleum.auto_lubricator.desc": "Place an Automatic Lubricator next to a Machine",
 	"advancement.immersivepetroleum.oil_can": "A few squirts here and there",
 	"advancement.immersivepetroleum.oil_can.desc": "Manually lubricate a Machine",
+	"advancement.immersivepetroleum.cracking": "Deadly Sauna",
+	"advancement.immersivepetroleum.cracking.desc": "Use the HPRU to crack some Naphtha",
+	"advancement.immersivepetroleum.naphtha_distillates": "Plethora of Petroleum Products",
+	"advancement.immersivepetroleum.naphtha_distillates.desc": "Produce a bucket of each naphtha product",
+	"advancement.immersivepetroleum.duroplast": "Nu-Modern Materials",
+	"advancement.immersivepetroleum.duroplast.desc": "Produce duroplast blocks from petroleum",
 	
 	"_comment": "################## Subtitles ##################",
 	

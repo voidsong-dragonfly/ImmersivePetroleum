@@ -1,0 +1,67 @@
+{
+  "parent": "immersivepetroleum:main/cracking",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:benzene_bucket"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.naphtha_distillates"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.naphtha_distillates.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "benzene": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:benzene_bucket"
+            ]
+          }
+        ]
+      }
+    },
+    "propylene": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:propylene_bucket"
+            ]
+          }
+        ]
+      }
+    },
+    "ethylene": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:ethylene_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "benzene"
+    ],
+    [
+      "propylene"
+    ],
+    [
+      "ethylene"
+    ]
+  ]
+}

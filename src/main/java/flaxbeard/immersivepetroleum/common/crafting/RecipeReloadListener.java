@@ -63,7 +63,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		ImmersivePetroleum.log.info("Loading Coker-Unit Recipes.");
 		CokerUnitRecipe.recipes = filterRecipes(recipes, CokerUnitRecipe.class, IPRecipeTypes.COKER);
 		
-		ImmersivePetroleum.log.info("Loading Sulfur Recovery Recipes.");
+		ImmersivePetroleum.log.info("Loading High-Pressure Refinery Recipes.");
 		SulfurRecoveryRecipe.recipes = filterRecipes(recipes, SulfurRecoveryRecipe.class, IPRecipeTypes.SULFUR_RECOVERY);
 	}
 	

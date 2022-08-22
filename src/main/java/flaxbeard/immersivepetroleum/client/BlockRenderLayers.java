@@ -44,6 +44,11 @@ public class BlockRenderLayers{
 		setRenderLayer(IPContent.Fluids.GASOLINE, RenderType.translucent());
 		setRenderLayer(IPContent.Fluids.LUBRICANT, RenderType.translucent());
 		setRenderLayer(IPContent.Fluids.NAPALM, RenderType.translucent());
+		setRenderLayer(IPContent.Fluids.NAPHTHA, RenderType.translucent());
+		setRenderLayer(IPContent.Fluids.NAPHTHA_CRACKED, RenderType.translucent());
+		setRenderLayer(IPContent.Fluids.BENZENE, RenderType.translucent());
+		setRenderLayer(IPContent.Fluids.PROPYLENE, RenderType.translucent());
+		setRenderLayer(IPContent.Fluids.ETHYLENE, RenderType.translucent());
 	}
 	
 	private static void setRenderLayer(RegistryObject<? extends Block> block, RenderType types){

@@ -1,0 +1,11 @@
+{
+	"plastics0":{
+		"type":"item_display",
+		"items":[{"item":"immersivepetroleum:naphtha_bucket"}]},
+	"plastics1":{
+		"type":"item_display",
+		"items":[{"item":"immersivepetroleum:naphtha_cracked_bucket"}]},
+	"plastics2":{"type":"item_display",
+		"type":"item_display",
+		"items":[{"item":"immersivepetroleum:benzene_bucket"}, {"item":"immersivepetroleum:propylene_bucket"}, {"item":"immersivepetroleum:ethylene_bucket"}]}
+}

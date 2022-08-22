@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +20,7 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.IEMultiblocks;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualElementCrafting;
+import blusunrize.lib.manual.ManualElementItem;
 import blusunrize.lib.manual.ManualElementTable;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualEntry.EntryData;
@@ -29,7 +29,6 @@ import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
 import blusunrize.lib.manual.utils.ManualRecipeRef;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
@@ -108,7 +107,8 @@ public class ClientProxy extends CommonProxy{
 		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch(str){
 			case "distillationtower_operationcost" -> (int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get());
 			case "coker_operationcost" -> (int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get());
-			case "hydrotreater_operationcost" -> (int) (512 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
+			case "hydrotreater_operationcost_lower" -> (int) (256 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
+			case "hydrotreater_operationcost_upper" -> (int) (1024 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
 			case "pumpjack_consumption" -> IPServerConfig.EXTRACTION.pumpjack_consumption.get();
 			case "pumpjack_speed" -> IPServerConfig.EXTRACTION.pumpjack_speed.get();
 			case "pumpjack_days" -> {
@@ -241,24 +241,31 @@ public class ClientProxy extends CommonProxy{
 		IP_CATEGORY = man.getRoot().getOrCreateSubnode(ResourceUtils.ip("main"), 100);
 		
 		int priority = 0;
-		
+
+		//Basic Resources
+		handleReservoirManual(ResourceUtils.ip("reservoir"), priority++);
+		fluids(ResourceUtils.ip("fluids"), priority++);
+		man.addEntry(IP_CATEGORY, ResourceUtils.ip("asphalt"), priority++);
+		lubricant(ResourceUtils.ip("lubricant"), priority++);
+		plastics(ResourceUtils.ip("plastics"), priority++);
+
+		//Oil Extraction & Storage
+		derrick(ResourceUtils.ip("derrick"), priority++);
 		pumpjack(ResourceUtils.ip("pumpjack"), priority++);
+		oiltank(ResourceUtils.ip("oiltank"), priority++);
+		//Oil Processing
 		distillation(ResourceUtils.ip("distillationtower"), priority++);
 		coker(ResourceUtils.ip("cokerunit"), priority++);
 		hydrotreater(ResourceUtils.ip("hydrotreater"), priority++);
-		derrick(ResourceUtils.ip("derrick"), priority++);
-		oiltank(ResourceUtils.ip("oiltank"), priority++);
-		
-		handleReservoirManual(ResourceUtils.ip("reservoir"), priority++);
-		
-		lubricant(ResourceUtils.ip("lubricant"), priority++);
-		man.addEntry(IP_CATEGORY, ResourceUtils.ip("asphalt"), priority++);
-		projector(ResourceUtils.ip("projector"), priority++);
-		speedboat(ResourceUtils.ip("speedboat"), priority++);
-		man.addEntry(IP_CATEGORY, ResourceUtils.ip("napalm"), priority++);
+
+		//Singleblocks
+		flarestack(ResourceUtils.ip("flarestack"), priority++);
 		generator(ResourceUtils.ip("portablegenerator"), priority++);
 		autolube(ResourceUtils.ip("automaticlubricator"), priority++);
-		flarestack(ResourceUtils.ip("flarestack"), priority++);
+		
+		//Tools & Vehicles
+		projector(ResourceUtils.ip("projector"), priority++);
+		speedboat(ResourceUtils.ip("speedboat"), priority++);
 	}
 	
 	private static void flarestack(ResourceLocation location, int priority){
@@ -323,6 +330,40 @@ public class ClientProxy extends CommonProxy{
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
+
+	private static void plastics(ResourceLocation location, int priority){
+		ManualInstance man = ManualHelper.getManual();
+
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement(new SpecialElementData("plastics0", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("plastics1", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA_CRACKED.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("plastics2", 0, new ManualElementItem(man,
+				new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
+				new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
+				new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
+		);
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+
+	private static void fluids(ResourceLocation location, int priority){
+		ManualInstance man = ManualHelper.getManual();
+
+		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
+		builder.addSpecialElement(new SpecialElementData("crude", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("lubricant", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.LUBRICANT.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("diesel", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.DIESEL_SULFUR.bucket().get()), new ItemStack(IPContent.Fluids.DIESEL.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("gasoline", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.GASOLINE.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("naphtha", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("naphtha_derivates", 0, new ManualElementItem(man,
+			new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
+			new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
+			new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
+		);
+		builder.addSpecialElement(new SpecialElementData("napalm", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPALM.bucket().get()))));
+		builder.readFromFile(location);
+		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
 	
 	private static void pumpjack(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
@@ -338,26 +379,6 @@ public class ClientProxy extends CommonProxy{
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement(new SpecialElementData("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE)));
-		builder.addSpecialElement(new SpecialElementData("distillationtower1", 0, () -> {
-			Collection<DistillationRecipe> recipeList = DistillationRecipe.recipes.values();
-			List<Component[]> list = new ArrayList<>();
-			for(DistillationRecipe recipe:recipeList){
-				boolean first = true;
-				for(FluidStack output:recipe.getFluidOutputs()){
-					Component outputName = output.getDisplayName();
-					
-					Component[] entry = new Component[]{
-							first ? new TextComponent(recipe.getInputFluid().getAmount() + "mB ").append(recipe.getInputFluid().getMatchingFluidStacks().get(0).getDisplayName()) : TextComponent.EMPTY,
-									new TextComponent(output.getAmount() + "mB ").append(outputName)
-					};
-					
-					list.add(entry);
-					first = false;
-				}
-			}
-			
-			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
-		}));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}

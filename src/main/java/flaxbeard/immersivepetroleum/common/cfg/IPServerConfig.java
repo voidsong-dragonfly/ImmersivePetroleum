@@ -112,11 +112,11 @@ public class IPServerConfig{
 					.define("cokerUnit_timeModifier", 1.0);
 			
 			hydrotreater_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every Sulfur Recovery Unit recipe", "Default: 1.0")
+					.comment("A modifier to apply to the energy costs of every High-Pressure Refinery Unit recipe", "Default: 1.0")
 					.define("hydrotreater_energyModifier", 1.0);
 			
 			hydrotreater_timeModifier = builder
-					.comment("A modifier to apply to the time of every Sulfur Recovery Unit recipe. Can't be lower than 1", "Default: 1.0")
+					.comment("A modifier to apply to the time of every High-Pressure Refinery Unit recipe. Can't be lower than 1", "Default: 1.0")
 					.define("hydrotreater_timeModifier", 1.0);
 			
 			builder.pop();
@@ -130,7 +130,11 @@ public class IPServerConfig{
 			
 			fuels = builder
 					.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
-					.defineList("fuels", List.of("immersivepetroleum:gasoline, 5, 256"), o -> true);
+					.defineList("generator_fuels",
+					    List.of("immersivepetroleum:gasoline, 5, 256",
+								"immersivepetroleum:naphtha, 5, 256",
+								"immersivepetroleum:naphtha_cracked, 5, 256",
+								"immersivepetroleum:benzene, 5, 256"), o -> true);
 			
 			builder.pop();
 		}
@@ -145,7 +149,11 @@ public class IPServerConfig{
 			
 			boat_fuels = builder
 					.comment("List of Motorboat fuels. Format: fluid_name, mb_used_per_tick")
-					.defineList("boat_fuels", List.of("immersivepetroleum:gasoline, 1"), o -> true);
+					.defineList("boat_fuels",
+							List.of("immersivepetroleum:gasoline, 1",
+									"immersivepetroleum:naphtha, 1",
+									"immersivepetroleum:naphtha_cracked, 1",
+									"immersivepetroleum:benzene, 1"), o -> true);
 			
 			autounlock_recipes = builder
 					.comment("Automatically unlock IP recipes for new players", "Default: true")

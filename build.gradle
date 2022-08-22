@@ -25,6 +25,7 @@ repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }         // IE & CT Files
 	maven { name = "DVS1 Maven FS"; url = "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
 	maven { url = 'https://maven.latmod.com/' }                                     // Needed for JEI
+	maven { name = "CurseMaven";    url = 'https://cfa2.cursemaven.com' }           // Needed for PNC
 	
 	flatDir { dirs 'flatdir' }
 }
@@ -114,7 +115,10 @@ dependencies {
 	implementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}")
 	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145:api")
 	datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
-	
+
+	implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
+	implementation fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:3913972")
+
 	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${version_ct}")
 	
 	runtimeOnly fg.deobf("mezz.jei:jei-${version_minecraft}:${version_jei}")

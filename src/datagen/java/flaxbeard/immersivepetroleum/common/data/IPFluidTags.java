@@ -42,10 +42,30 @@ public class IPFluidTags extends FluidTagsProvider{
 			.addTag(IPTags.Fluids.gasoline)
 			.addTag(IETags.fluidPlantoil)
 			.addTag(IETags.fluidCreosote)
-			.addTag(IETags.fluidEthanol);
+			.addTag(IETags.fluidEthanol)
+			.addTag(IPTags.Fluids.naphtha)
+			.addTag(IPTags.Fluids.naphtha_cracked)
+			.addTag(IPTags.Fluids.benzene)
+			.addTag(IPTags.Fluids.propylene)
+			.addTag(IPTags.Fluids.ethylene);
 		
 		tag(IETags.drillFuel)
 			.addTag(IPTags.Fluids.diesel)
 			.addTag(IPTags.Fluids.diesel_sulfur);
+
+		tag(IPTags.Fluids.naphtha)
+				.add(IPContent.Fluids.NAPHTHA.still().get());
+
+		tag(IPTags.Fluids.naphtha_cracked)
+				.add(IPContent.Fluids.NAPHTHA_CRACKED.still().get());
+
+		tag(IPTags.Fluids.benzene)
+				.add(IPContent.Fluids.BENZENE.still().get());
+
+		tag(IPTags.Fluids.propylene)
+				.add(IPContent.Fluids.PROPYLENE.still().get());
+
+		tag(IPTags.Fluids.ethylene)
+				.add(IPContent.Fluids.ETHYLENE.still().get());
 	}
 }
