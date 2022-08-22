@@ -8,6 +8,12 @@
     "immersivepetroleum:gas_generator",
     "immersivepetroleum:flarestack",
     "immersivepetroleum:well_pipe",
-    "immersivepetroleum:seismic_survey"
+    "immersivepetroleum:seismic_survey",
+    "immersivepetroleum:derrick",
+    "immersivepetroleum:pumpjack",
+    "immersivepetroleum:oiltank",
+    "immersivepetroleum:distillation_tower",
+    "immersivepetroleum:coker_unit",
+    "immersivepetroleum:hydrotreater"
   ]
 }
