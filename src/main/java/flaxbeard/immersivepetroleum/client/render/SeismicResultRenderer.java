@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 
+import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.SeismicSurveyTileEntity;
@@ -43,7 +44,7 @@ public class SeismicResultRenderer{
 		
 		if(mc.player != null && event.getType() == RenderGameOverlayEvent.ElementType.ALL){
 			ItemStack main = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
-			ItemStack off = mc.player.getItemInHand(InteractionHand.OFF_HAND); // TODO Offhand variant
+			ItemStack off = mc.player.getItemInHand(InteractionHand.OFF_HAND); // TODO Offhand variant?
 			
 			if((main != ItemStack.EMPTY && main.getItem() == IPContent.Items.SURVEYRESULT.get()) || (off != ItemStack.EMPTY && off.getItem() == IPContent.Items.SURVEYRESULT.get())){
 				PoseStack matrix = event.getMatrixStack();
@@ -65,6 +66,12 @@ public class SeismicResultRenderer{
 						{
 							matrix.translate(xCenter, yCenter, 0);
 							
+							int scale = MCUtil.getOptions().guiScale;
+							if(scale != 0){
+								float f = Math.max(5 - scale, 1.0F);
+								matrix.scale(f, f, f);
+							}
+							
 							matrix.pushPose();
 							{
 								matrix.translate(-wrapper.width / 2F, -wrapper.height / 2F, 0);
@@ -85,7 +92,7 @@ public class SeismicResultRenderer{
 							matrix.pushPose();
 							{
 								final int w = 85;
-								final int h = 85; //TODO: SCALE BY mc#options#guiScale
+								final int h = 85;
 								
 								matrix.translate(-w / 2F, -h / 2F, 1);
 								
