@@ -156,6 +156,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.font.draw(matrix, text, 60, 10 + (9 * line), color);
 	}
 	
+	@SuppressWarnings("unused")
 	private void drawInfoTextCentered(PoseStack matrix, Component text, int line){
 		drawInfoTextCentered(matrix, text, line, Lib.colour_nixieTubeText);
 	}
