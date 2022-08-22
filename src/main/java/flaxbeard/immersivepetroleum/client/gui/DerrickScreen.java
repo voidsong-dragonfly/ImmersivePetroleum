@@ -106,13 +106,12 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			}
 			
 			// Possible display prototypes
-			
-			if(this.tile.isRSDisabled()){
-				drawInfoTextCentered(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.disabled")), 0, 0xEF0000);
-				return;
-			}
-			
 			if(well.wellPipeLength < well.getMaxPipeLength()){
+				if(this.tile.isRSDisabled()){
+					drawInfoTextCentered(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.disabled")), 0, 0xEF0000);
+					return;
+				}
+				
 				if(this.tile.drilling){
 					String str = String.format(Locale.ROOT, "(%d%%)", (int) (100 * well.wellPipeLength / (float) well.getMaxPipeLength()));
 					drawInfoText(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.drilling") + str), 0);

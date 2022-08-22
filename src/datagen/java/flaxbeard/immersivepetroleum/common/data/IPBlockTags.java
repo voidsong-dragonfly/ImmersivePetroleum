@@ -33,7 +33,14 @@ public class IPBlockTags extends BlockTagsProvider{
 			IPContent.Blocks.GAS_GENERATOR.get(),
 			IPContent.Blocks.FLARESTACK.get(),
 			IPContent.Blocks.WELL_PIPE.get(),
-			IPContent.Blocks.SEISMIC_SURVEY.get()
+			IPContent.Blocks.SEISMIC_SURVEY.get(),
+			//MBs
+			IPContent.Multiblock.DERRICK.get(),
+			IPContent.Multiblock.PUMPJACK.get(),
+			IPContent.Multiblock.OILTANK.get(),
+			IPContent.Multiblock.DISTILLATIONTOWER.get(),
+			IPContent.Multiblock.COKERUNIT.get(),
+			IPContent.Multiblock.HYDROTREATER.get()
 		);
 		
 		tag(BlockTags.MINEABLE_WITH_AXE).add(
