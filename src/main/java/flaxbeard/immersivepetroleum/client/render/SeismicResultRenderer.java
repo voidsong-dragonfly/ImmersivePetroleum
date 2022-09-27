@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 
-import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.SeismicSurveyTileEntity;
@@ -65,12 +64,7 @@ public class SeismicResultRenderer{
 						matrix.pushPose();
 						{
 							matrix.translate(xCenter, yCenter, 0);
-							
-							int scale = MCUtil.getOptions().guiScale;
-							if(scale != 0){
-								float f = Math.max(5 - scale, 1.0F);
-								matrix.scale(f, f, f);
-							}
+							matrix.scale(2F, 2F, 2F);
 							
 							matrix.pushPose();
 							{
