@@ -73,7 +73,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  * @author TwistedGate
  */
 public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
-
+	
 	public static FluidStack WATER = FluidStack.EMPTY;
 	public static FluidStack CONCRETE = FluidStack.EMPTY;
 	
@@ -162,8 +162,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			ContainerHelper.saveAllItems(nbt, this.inventory);
 		}
 	}
-
 	
+	// Only accept as much Concrete and Water as needed
 	private boolean acceptsFluid(FluidStack fs){
 		WellTileEntity well = getOrCreateWell(false);
 		if(well == null){
@@ -172,9 +172,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		
 		int realPipeLength = (getBlockPos().getY() - 1) - well.getBlockPos().getY();
 		int concreteNeeded = (CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength));
-		
-		// Only accept as much Concrete and Water as needed
-		if(ExternalModContent.isIEConcrete(fs) && concreteNeeded > 0){
+		if(fs.getFluid().equals(CONCRETE.getFluid()) && concreteNeeded > 0){
 			FluidStack tFluidStack = this.tank.getFluid();
 			
 			if(ExternalModContent.isIEConcrete(tFluidStack) && tFluidStack.getAmount() >= concreteNeeded){
@@ -184,15 +182,17 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			return concreteNeeded >= fs.getAmount();
 		}
 		
-		int waterNeeded = WATER.getAmount() * (well.getMaxPipeLength() - well.wellPipeLength);
-		if(fs.getFluid() == WATER.getFluid() && waterNeeded > 0){
-			FluidStack tFluidStack = this.tank.getFluid();
-			
-			if(tFluidStack.getFluid() == WATER.getFluid() && tFluidStack.getAmount() >= waterNeeded){
-				return false;
+		if(concreteNeeded <= 0){
+			int waterNeeded = WATER.getAmount() * (well.getMaxPipeLength() - well.wellPipeLength);
+			if(fs.getFluid() == WATER.getFluid() && waterNeeded > 0){
+				FluidStack tFluidStack = this.tank.getFluid();
+				
+				if(tFluidStack.getFluid() == WATER.getFluid() && tFluidStack.getAmount() >= waterNeeded){
+					return false;
+				}
+				
+				return waterNeeded >= fs.getAmount();
 			}
-			
-			return waterNeeded >= fs.getAmount();
 		}
 		
 		return false;
@@ -1037,12 +1037,12 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	private static AABB box(double x0, double y0, double z0, double x1, double y1, double z1){
 		return new AABB(x0 / 16D, y0 / 16D, z0 / 16D, x1 / 16D, y1 / 16D, z1 / 16D);
 	}
-
+	
 	public static void onConfigReload(ModConfigEvent ev){
 		if(ev.getConfig().getSpec() != IPServerConfig.ALL){
 			return;
 		}
-
+		
 		//Load from config on reload
 		Fluid temporary = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(IPServerConfig.EXTRACTION.derrick_drilling.get()));
 		if(temporary != null) WATER = new FluidStack(temporary, 125);
