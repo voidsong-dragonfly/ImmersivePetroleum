@@ -175,7 +175,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		if(fs.getFluid().equals(CONCRETE.getFluid()) && concreteNeeded > 0){
 			FluidStack tFluidStack = this.tank.getFluid();
 			
-			if(ExternalModContent.isIEConcrete(tFluidStack) && tFluidStack.getAmount() >= concreteNeeded){
+			if(fs.getFluid().equals(CONCRETE.getFluid()) && tFluidStack.getAmount() >= concreteNeeded){
 				return false;
 			}
 			
