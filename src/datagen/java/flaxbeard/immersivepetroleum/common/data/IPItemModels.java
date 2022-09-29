@@ -164,8 +164,8 @@ public class IPItemModels extends ItemModelProvider{
 	}
 	
 	private void cokerunitItem(){
-		ItemModelBuilder model = obj(IPContent.Multiblock.COKERUNIT.get(), "multiblock/obj/cokerunit_new.obj")
-				.texture("texture", modLoc("multiblock/cokerunit_new"));
+		ItemModelBuilder model = obj(IPContent.Multiblock.COKERUNIT.get(), "multiblock/obj/cokerunit.obj")
+				.texture("texture", modLoc("multiblock/cokerunit"));
 		
 		ModelBuilder<?>.TransformsBuilder trans = model.transforms();
 		doTransform(trans, TransformType.FIRST_PERSON_LEFT_HAND, null, new Vector3f(0, 225, 0), 0.03125F);

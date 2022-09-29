@@ -113,9 +113,9 @@
     }
   },
   "textures": {
-    "texture": "immersivepetroleum:multiblock/cokerunit_new"
+    "texture": "immersivepetroleum:multiblock/cokerunit"
   },
   "loader": "forge:obj",
-  "model": "immersivepetroleum:models/multiblock/obj/cokerunit_new.obj",
+  "model": "immersivepetroleum:models/multiblock/obj/cokerunit.obj",
   "flip-v": true
 }
