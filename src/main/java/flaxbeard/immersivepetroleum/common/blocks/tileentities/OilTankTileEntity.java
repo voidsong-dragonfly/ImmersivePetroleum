@@ -24,6 +24,7 @@ import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
+import flaxbeard.immersivepetroleum.common.util.LayeredComparatorOutput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -54,7 +55,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IHammerInteraction, IPressurizedFluidOutput{
+public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IHammerInteraction, IEBlockInterfaces.IComparatorOverride, IPressurizedFluidOutput{
 	
 	public enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;
@@ -196,6 +197,8 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 				}
 			}
 		}
+		
+		this.comparatorHelper.update(this.tank.getFluidAmount());
 	}
 	
 	private boolean equalize(Port port, int threshold, int maxTransfer){
@@ -351,6 +354,28 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	public AABB getRenderBoundingBox(){
 		BlockPos pos = getBlockPos();
 		return new AABB(pos.offset(-3, -1, -3), pos.offset(3, 4, 3));
+	}
+	
+	private final LayeredComparatorOutput comparatorHelper = new LayeredComparatorOutput(
+			this.tank.getCapacity(),
+			3,
+			() -> this.level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock()),
+			layer -> {
+				BlockPos masterPos = this.worldPosition.subtract(this.offsetToMaster);
+				for(int z = -1;z <= 1;z++){
+					for(int x = -1;x <= 1;x++){
+						BlockPos pos = masterPos.offset(x, layer + 1, z);
+						level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
+					}
+				}
+			});
+	@Override
+	public int getComparatorInputOverride(){
+		OilTankTileEntity master = master();
+		if(master != null && this.offsetToMaster.getY() >= 0 && this.offsetToMaster.getY() < this.comparatorHelper.getLayers()){
+			return master.comparatorHelper.getLayerOutput(this.offsetToMaster.getY());
+		}
+		return 0;
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
