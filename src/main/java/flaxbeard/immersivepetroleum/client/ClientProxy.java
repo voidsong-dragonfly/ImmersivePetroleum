@@ -268,6 +268,7 @@ public class ClientProxy extends CommonProxy{
 		speedboat(ResourceUtils.ip("speedboat"), priority++);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static void flarestack(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
@@ -277,13 +278,20 @@ public class ClientProxy extends CommonProxy{
 			Set<TagKey<Fluid>> fluids = FlarestackHandler.getSet();
 			List<Component[]> list = new ArrayList<>();
 			for(TagKey<Fluid> tag:fluids){
-				ResourceLocation rl = tag.registry().location();
-				Fluid f = ForgeRegistries.FLUIDS.getValue(rl);
-				Component[] entry = new Component[]{TextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()};
-				
-				list.add(entry);
+				ForgeRegistries.FLUIDS.getValues().stream().forEach(fluid -> {
+					if(fluid.is(tag)){
+						Component[] entry = new Component[]{TextComponent.EMPTY, new FluidStack(fluid, 1).getDisplayName()};
+						list.add(entry);
+					}
+				});
+//				ResourceLocation rl = tag.registry().location();
+//				Fluid f = ForgeRegistries.FLUIDS.getValue(rl);
+//				Component[] entry = new Component[]{TextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()};
+//				
+//				list.add(entry);
 			}
 			
+			// FIXME Breaks the bounds, split up every 10 or so
 			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
 		}));
 		builder.readFromFile(location);
