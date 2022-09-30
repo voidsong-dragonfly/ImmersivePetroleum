@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.CokerUnitRecipeSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.DistillationRecipeSerializer;
@@ -25,7 +25,7 @@ public class Serializers{
 			"hydrotreater", SulfurRecoveryRecipeSerializer::new
 	);
 	
-	public static final RegistryObject<IERecipeSerializer<Reservoir>> RESERVOIR_SERIALIZER = IPRegisters.registerSerializer(
+	public static final RegistryObject<IERecipeSerializer<ReservoirType>> RESERVOIR_SERIALIZER = IPRegisters.registerSerializer(
 			"reservoirs", ReservoirSerializer::new
 	);
 	

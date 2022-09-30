@@ -17,10 +17,10 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.api.reservoir.IslandAxisAlignedBB;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -150,7 +150,7 @@ public class IslandCommand{
 	}
 	
 	private static CompletableFuture<Suggestions> typeSuggestor(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder){
-		return SharedSuggestionProvider.suggest(Reservoir.map.values().stream().map(type -> type.name), builder);
+		return SharedSuggestionProvider.suggest(ReservoirType.map.values().stream().map(type -> type.name), builder);
 	}
 	
 	private static int setReservoirAmount(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
@@ -173,8 +173,8 @@ public class IslandCommand{
 	
 	private static int setReservoirType(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		String name = context.getArgument("name", String.class);
-		Reservoir reservoir = null;
-		for(Reservoir res:Reservoir.map.values()){
+		ReservoirType reservoir = null;
+		for(ReservoirType res:ReservoirType.map.values()){
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 		}

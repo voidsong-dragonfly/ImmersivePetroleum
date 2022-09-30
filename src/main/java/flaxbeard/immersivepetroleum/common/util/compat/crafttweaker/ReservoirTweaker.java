@@ -10,8 +10,8 @@ import org.openzen.zencode.java.ZenCodeType.Name;
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
@@ -22,15 +22,15 @@ public class ReservoirTweaker{
 	
 	@Method
 	public static boolean remove(String name){
-			List<ResourceLocation> test = Reservoir.map.keySet().stream()
+			List<ResourceLocation> test = ReservoirType.map.keySet().stream()
 					.filter(loc -> loc.getPath().contains(name)).toList();
 		
 		if(test.size() > 1){
 			//CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
 		}else if(test.size() == 1){
 			ResourceLocation id = test.get(0);
-			if(Reservoir.map.containsKey(id)){
-				Reservoir.map.remove(id);
+			if(ReservoirType.map.containsKey(id)){
+				ReservoirType.map.remove(id);
 				return true;
 			}else{
 				//CraftTweakerAPI.logError("§c%s does not exist, or was already removed.§r", id);
@@ -44,7 +44,7 @@ public class ReservoirTweaker{
 	
 	@Method
 	public static void removeAll(){
-		Reservoir.map.clear();
+		ReservoirType.map.clear();
 	}
 	
 	@ZenRegister
@@ -140,8 +140,8 @@ public class ReservoirTweaker{
 			if(this.isValid){
 				ResourceLocation id = ResourceUtils.ct(name);
 				
-				if(!Reservoir.map.containsKey(id)){
-					Reservoir reservoir = new Reservoir(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
+				if(!ReservoirType.map.containsKey(id)){
+					ReservoirType reservoir = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
 					
 					if(!this.dimWhitelist.isEmpty()){
 						reservoir.addDimension(false, this.dimWhitelist);

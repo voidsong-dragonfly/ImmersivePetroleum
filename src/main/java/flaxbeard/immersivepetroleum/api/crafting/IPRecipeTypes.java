@@ -1,7 +1,7 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -16,7 +16,7 @@ public class IPRecipeTypes{
 	public static final RegistryObject<RecipeType<CokerUnitRecipe>> COKER = makeType("cokerunit");
 	public static final RegistryObject<RecipeType<DistillationRecipe>> DISTILLATION = makeType("distillationtower");
 	public static final RegistryObject<RecipeType<SulfurRecoveryRecipe>> SULFUR_RECOVERY = makeType("hydrotreater");
-	public static final RegistryObject<RecipeType<Reservoir>> RESERVOIR = makeType("reservoir");
+	public static final RegistryObject<RecipeType<ReservoirType>> RESERVOIR = makeType("reservoir");
 	
 	public static void modConstruction(){
 		REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());

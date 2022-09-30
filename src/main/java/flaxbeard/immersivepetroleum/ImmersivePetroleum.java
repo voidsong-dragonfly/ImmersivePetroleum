@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;

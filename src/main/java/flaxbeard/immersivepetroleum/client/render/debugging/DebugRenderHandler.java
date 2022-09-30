@@ -16,9 +16,9 @@ import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBl
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.IslandAxisAlignedBB;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.api.reservoir.IslandAxisAlignedBB;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.common.IPContent;

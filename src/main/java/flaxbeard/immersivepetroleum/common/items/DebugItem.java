@@ -11,8 +11,8 @@ import org.lwjgl.glfw.GLFW;
 import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;

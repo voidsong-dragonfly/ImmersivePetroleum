@@ -18,8 +18,8 @@ import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBl
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;

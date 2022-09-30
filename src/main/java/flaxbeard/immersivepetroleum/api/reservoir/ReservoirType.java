@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.api.crafting.reservoir;
+package flaxbeard.immersivepetroleum.api.reservoir;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,10 +24,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class Reservoir extends IESerializableRecipe{
+public class ReservoirType extends IESerializableRecipe{
 	static final Lazy<ItemStack> EMPTY_LAZY = Lazy.of(() -> ItemStack.EMPTY);
 	
-	public static Map<ResourceLocation, Reservoir> map = new HashMap<>();
+	public static Map<ResourceLocation, ReservoirType> map = new HashMap<>();
 	
 	public String name;
 	public ResourceLocation fluidLocation;
@@ -57,7 +57,7 @@ public class Reservoir extends IESerializableRecipe{
 	 * @param residual      Leftover fluid amount after depletion
 	 * @param weight        The weight for this reservoir
 	 */
-	public Reservoir(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int weight){
+	public ReservoirType(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int weight){
 		this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, residual, weight);
 	}
 	
@@ -72,7 +72,7 @@ public class Reservoir extends IESerializableRecipe{
 	 * @param residual Leftover fluid amount after depletion
 	 * @param weight   The weight for this reservoir
 	 */
-	public Reservoir(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int weight){
+	public ReservoirType(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int weight){
 		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR.get(), id);
 		this.name = name;
 		this.fluidLocation = fluid.getRegistryName();
@@ -83,7 +83,7 @@ public class Reservoir extends IESerializableRecipe{
 		this.weight = weight;
 	}
 	
-	public Reservoir(CompoundTag nbt){
+	public ReservoirType(CompoundTag nbt){
 		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR.get(), new ResourceLocation(nbt.getString("id")));
 		
 		this.name = nbt.getString("name");
@@ -103,7 +103,7 @@ public class Reservoir extends IESerializableRecipe{
 	}
 	
 	@Override
-	protected IERecipeSerializer<Reservoir> getIESerializer(){
+	protected IERecipeSerializer<ReservoirType> getIESerializer(){
 		return Serializers.RESERVOIR_SERIALIZER.get();
 	}
 	

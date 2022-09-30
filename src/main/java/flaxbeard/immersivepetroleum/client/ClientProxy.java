@@ -30,8 +30,8 @@ import blusunrize.lib.manual.Tree.InnerNode;
 import blusunrize.lib.manual.utils.ManualRecipeRef;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DerrickScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
@@ -114,7 +114,7 @@ public class ClientProxy extends CommonProxy{
 			case "pumpjack_days" -> {
 				int oil_min = 1000000;
 				int oil_max = 5000000;
-				for(Reservoir reservoir:Reservoir.map.values()){
+				for(ReservoirType reservoir:ReservoirType.map.values()){
 					if(reservoir.name.equals("oil")){
 						oil_min = reservoir.minSize;
 						oil_max = reservoir.maxSize;
@@ -443,14 +443,14 @@ public class ClientProxy extends CommonProxy{
 	
 	protected static EntryData createContent(){
 		ArrayList<ItemStack> list = new ArrayList<>();
-		final Reservoir[] reservoirs = Reservoir.map.values().toArray(new Reservoir[0]);
+		final ReservoirType[] reservoirs = ReservoirType.map.values().toArray(new ReservoirType[0]);
 		
 		StringBuilder contentBuilder = new StringBuilder();
 		contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.oil0"));
 		contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.oil1"));
 		
 		for(int i = 0;i < reservoirs.length;i++){
-			Reservoir reservoir = reservoirs[i];
+			ReservoirType reservoir = reservoirs[i];
 			
 			ImmersivePetroleum.log.debug("Creating entry for " + reservoir);
 			

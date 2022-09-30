@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.api.crafting.reservoir;
+package flaxbeard.immersivepetroleum.api.reservoir;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,11 +68,11 @@ public class ReservoirHandler{
 							continue;
 						}
 						
-						Reservoir reservoir = null;
+						ReservoirType reservoir = null;
 						int totalWeight = getTotalWeight(dimensionRL, biome);
 						if(totalWeight > 0){
 							int weight = Math.abs(random.nextInt() % totalWeight);
-							for(Reservoir res:Reservoir.map.values()){
+							for(ReservoirType res:ReservoirType.map.values()){
 								if(res.isValidDimension(dimensionRL) && res.isValidBiome(biome)){
 									weight -= res.weight;
 									if(weight < 0){
@@ -113,7 +113,7 @@ public class ReservoirHandler{
 		if(totalWeight == null){
 			totalWeight = 0;
 			
-			for(Reservoir reservoir:Reservoir.map.values()){
+			for(ReservoirType reservoir:ReservoirType.map.values()){
 				if(reservoir.isValidDimension(dimension) && reservoir.isValidBiome(biome)){
 					totalWeight += reservoir.weight;
 				}
@@ -163,11 +163,11 @@ public class ReservoirHandler{
 	 * Adds a reservoir type to the pool of valid reservoirs
 	 * 
 	 * @param id        The "recipeId" of the reservoir type
-	 * @param reservoir The {@link Reservoir} type to add
-	 * @return The {@link Reservoir} passed in
+	 * @param reservoir The {@link ReservoirType} type to add
+	 * @return The {@link ReservoirType} passed in
 	 */
-	public static Reservoir addReservoir(ResourceLocation id, Reservoir reservoir){
-		Reservoir.map.put(id, reservoir);
+	public static ReservoirType addReservoir(ResourceLocation id, ReservoirType reservoir){
+		ReservoirType.map.put(id, reservoir);
 		return reservoir;
 	}
 	

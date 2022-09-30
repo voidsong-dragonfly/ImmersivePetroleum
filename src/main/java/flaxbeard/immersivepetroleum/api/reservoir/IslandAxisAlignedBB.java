@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.api.crafting.reservoir;
+package flaxbeard.immersivepetroleum.api.reservoir;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

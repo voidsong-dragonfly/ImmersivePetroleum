@@ -11,16 +11,16 @@ import com.google.gson.JsonObject;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 
-public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
+public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 	@Override
-	public Reservoir readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
+	public ReservoirType readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		String name = GsonHelper.getAsString(json, "name");
 		ResourceLocation fluid = new ResourceLocation(GsonHelper.getAsString(json, "fluid"));
 		int min = GsonHelper.getAsInt(json, "fluidminimum");
@@ -28,7 +28,7 @@ public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 		int trace = GsonHelper.getAsInt(json, "fluidtrace");
 		int weight = GsonHelper.getAsInt(json, "weight");
 		
-		Reservoir reservoir = new Reservoir(name, recipeId, fluid, min, max, trace, weight);
+		ReservoirType reservoir = new ReservoirType(name, recipeId, fluid, min, max, trace, weight);
 		
 		ImmersivePetroleum.log.debug(String.format("Loaded reservoir %s as %s, with %smB to %smB of %s and %smB trace, with %s of weight.",
 				recipeId, name, min, max, fluid, trace, weight));
@@ -99,12 +99,12 @@ public class ReservoirSerializer extends IERecipeSerializer<Reservoir>{
 	}
 	
 	@Override
-	public Reservoir fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
-		return new Reservoir(buffer.readNbt()); // Very convenient having the NBT stuff already.
+	public ReservoirType fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
+		return new ReservoirType(buffer.readNbt()); // Very convenient having the NBT stuff already.
 	}
 	
 	@Override
-	public void toNetwork(FriendlyByteBuf buffer, Reservoir recipe){
+	public void toNetwork(FriendlyByteBuf buffer, ReservoirType recipe){
 		buffer.writeNbt(recipe.writeToNBT());
 	}
 	

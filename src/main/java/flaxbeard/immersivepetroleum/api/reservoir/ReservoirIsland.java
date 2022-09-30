@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.api.crafting.reservoir;
+package flaxbeard.immersivepetroleum.api.reservoir;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +37,7 @@ public class ReservoirIsland{
 	public static final long MAX_AMOUNT = 0xFFFFFFFFL;
 	
 	@Nonnull
-	private Reservoir reservoir;
+	private ReservoirType reservoir;
 	@Nonnull
 	private List<ColumnPos> poly;
 	private IslandAxisAlignedBB islandAABB;
@@ -46,7 +46,7 @@ public class ReservoirIsland{
 	
 	private ReservoirIsland(){}
 	
-	public ReservoirIsland(@Nonnull List<ColumnPos> poly, @Nonnull Reservoir reservoir, long amount){
+	public ReservoirIsland(@Nonnull List<ColumnPos> poly, @Nonnull ReservoirType reservoir, long amount){
 		Objects.requireNonNull(poly);
 		Objects.requireNonNull(reservoir);
 		
@@ -113,7 +113,7 @@ public class ReservoirIsland{
 	/**
 	 * Sets the Reservoir Type
 	 */
-	public ReservoirIsland setReservoirType(@Nonnull Reservoir reservoir){
+	public ReservoirIsland setReservoirType(@Nonnull ReservoirType reservoir){
 		this.reservoir = Objects.requireNonNull(reservoir);
 		return this;
 	}
@@ -137,7 +137,7 @@ public class ReservoirIsland{
 	}
 	
 	@Nonnull
-	public Reservoir getType(){
+	public ReservoirType getType(){
 		return this.reservoir;
 	}
 	
@@ -278,7 +278,7 @@ public class ReservoirIsland{
 	
 	public static ReservoirIsland readFromNBT(CompoundTag nbt){
 		try{
-			Reservoir reservoir = Reservoir.map.get(new ResourceLocation(nbt.getString("reservoir")));
+			ReservoirType reservoir = ReservoirType.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
 				long amount = ((long) nbt.getInt("amount")) & MAX_AMOUNT;
 				long capacity = ((long) nbt.getInt("capacity")) & MAX_AMOUNT;
