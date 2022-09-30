@@ -118,7 +118,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	public final EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
 	public OilTankTileEntity(BlockEntityType<OilTankTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(OilTankMultiblock.INSTANCE, type, true, pWorldPosition, pBlockState);
-		this.redstoneControlInverted = true;
+		this.redstoneControlInverted = false;
 		for(Port port:Port.values()){
 			if(port == Port.DYNAMIC_B || port == Port.DYNAMIC_C || port == Port.BOTTOM){
 				portConfig.put(port, PortState.OUTPUT);
@@ -174,7 +174,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			wasBalancing |= equalize(Port.DYNAMIC_B, threshold, FluidAttributes.BUCKET_VOLUME);
 		}
 		
-		if(!isRSDisabled()){
+		if(isRSDisabled()){
 			for(Port port:Port.values()){
 				if((!wasBalancing && getPortStateFor(port) == PortState.OUTPUT) || (wasBalancing && port == Port.BOTTOM)){
 					Direction facing = getPortDirection(port);
@@ -251,6 +251,27 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			default:
 				return Direction.DOWN;
 		}
+	}
+	
+	@Override
+	public boolean isRSDisabled(){
+		Set<BlockPos> rsPositions = getRedstonePos();
+		if(rsPositions == null || rsPositions.isEmpty())
+			return false;
+		MultiblockPartBlockEntity<?> master = master();
+		if(master == null)
+			master = this;
+		if(master.computerControl.isAttached())
+			return !master.computerControl.isEnabled();
+		
+		boolean ret = false;
+		for(BlockPos rsPos:rsPositions){
+			OilTankTileEntity tile = this.getEntityForPos(rsPos);
+			if(tile != null){
+				ret |= tile.isRSPowered();
+			}
+		}
+		return this.redstoneControlInverted != ret;
 	}
 	
 	@Override
