@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
@@ -26,6 +28,11 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 		
 		this.imageWidth = 140;
 		this.imageHeight = 69;
+	}
+	
+	@Override
+	protected void renderLabels(PoseStack transform, int mouseX, int mouseY){
+		// Render no labels
 	}
 	
 	@Nonnull

@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
@@ -32,6 +34,11 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		
 		this.imageWidth = 200;
 		this.imageHeight = 187;
+	}
+	
+	@Override
+	protected void renderLabels(PoseStack transform, int mouseX, int mouseY){
+		// Render no labels
 	}
 	
 	@Nonnull
