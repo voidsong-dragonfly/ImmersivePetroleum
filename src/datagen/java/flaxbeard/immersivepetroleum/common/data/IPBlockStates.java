@@ -256,22 +256,22 @@ public class IPBlockStates extends BlockStateProvider{
 		final Vec3i offset = mb.getMasterFromOriginOffset();
 		
 		Stream<Vec3i> partsStream = mb.getStructure(null).stream()
-				.filter(info -> !info.state.isAir())
-				.map(info -> info.pos)
-				.map(transform)
-				.map(p -> p.subtract(offset));
+			.filter(info -> !info.state.isAir())
+			.map(info -> info.pos)
+			.map(transform)
+			.map(p -> p.subtract(offset));
 		
 		String name = getMultiblockPath(block) + add;
 		NongeneratedModel base = nongeneratedModels.withExistingParent(name, mcLoc("block"))
-				.customLoader(OBJLoaderBuilder::begin).modelLocation(model).detectCullableFaces(false).flipV(true).end()
-				.texture("texture", texture)
-				.texture("particle", texture);
+			.customLoader(OBJLoaderBuilder::begin).modelLocation(model).detectCullableFaces(false).flipV(true).end()
+			.texture("texture", texture)
+			.texture("particle", texture);
 		
 		BlockModelBuilder split = this.models().withExistingParent(name + "_split", mcLoc("block"))
-				.customLoader(SplitModelBuilder::begin)
-				.innerModel(base)
-				.parts(partsStream.collect(Collectors.toList()))
-				.dynamic(false).end();
+			.customLoader(SplitModelBuilder::begin)
+			.innerModel(base)
+			.parts(partsStream.collect(Collectors.toList()))
+			.dynamic(false).end();
 		
 		return split;
 	}
@@ -282,9 +282,9 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder lube_empty = this.models().withExistingParent("lube_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture);
 		
 		BlockModelBuilder lubeModel = this.models().withExistingParent(getPath(IPContent.Blocks.AUTO_LUBRICATOR.get()), mcLoc("block"))
-				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/autolubricator.obj")).flipV(true).end()
-				.texture("texture", texture)
-				.texture("particle", texture);
+			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/autolubricator.obj")).flipV(true).end()
+			.texture("texture", texture)
+			.texture("particle", texture);
 		
 		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.AUTO_LUBRICATOR.get());
 		for(Direction dir:AutoLubricatorBlock.FACING.getPossibleValues()){
@@ -307,9 +307,9 @@ public class IPBlockStates extends BlockStateProvider{
 		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("flare_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture));
 		
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.FLARESTACK.get()), mcLoc("block"))
-				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/flarestack.obj")).flipV(true).end()
-				.texture("texture", texture)
-				.texture("particle", texture);
+			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/flarestack.obj")).flipV(true).end()
+			.texture("texture", texture)
+			.texture("particle", texture);
 		
 		VariantBlockStateBuilder flarestackBuilder = getVariantBuilder(IPContent.Blocks.FLARESTACK.get());
 		
@@ -327,9 +327,9 @@ public class IPBlockStates extends BlockStateProvider{
 		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("seismic_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture));
 		
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.SEISMIC_SURVEY.get()), mcLoc("block"))
-				.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/seismic_survey_tool.obj")).flipV(true).end()
-				.texture("texture", texture)
-				.texture("particle", texture);
+			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/seismic_survey_tool.obj")).flipV(true).end()
+			.texture("texture", texture)
+			.texture("particle", texture);
 		
 		VariantBlockStateBuilder flarestackBuilder = getVariantBuilder(IPContent.Blocks.SEISMIC_SURVEY.get());
 		
@@ -349,7 +349,7 @@ public class IPBlockStates extends BlockStateProvider{
 			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/generator.obj")).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
-
+		
 		VariantBlockStateBuilder builder = getVariantBuilder(IPContent.Blocks.GAS_GENERATOR.get());
 		for(Direction dir:GasGeneratorBlock.FACING.getPossibleValues()){
 			int rot = (int) (dir.toYRot() % 360);

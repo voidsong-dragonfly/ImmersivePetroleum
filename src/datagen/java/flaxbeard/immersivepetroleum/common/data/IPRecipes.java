@@ -106,17 +106,17 @@ public class IPRecipes extends RecipeProvider{
 				new FluidStack(IPContent.Fluids.GASOLINE.get(), 20),
 				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 36),
 				new FluidStack(IPContent.Fluids.LUBRICANT.get(), 9),
-				})
+			})
 			.addByproduct(new ItemStack(IPContent.Items.BITUMEN.get()), 0.07)
 			.addInput(IPTags.Fluids.crudeOil, 75)
 			.setTimeAndEnergy(1, 2048)
 			.build(this.out, rl("distillationtower/oilcracking"));
 		
 		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
-						new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
-						new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
-						new FluidStack(IPContent.Fluids.BENZENE.get(), 2),
-				})
+				new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
+				new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
+				new FluidStack(IPContent.Fluids.BENZENE.get(), 2),
+			})
 			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
 			.addInput(IPTags.Fluids.naphtha_cracked, 10)
 			.setTimeAndEnergy(1, 2048)
@@ -192,6 +192,7 @@ public class IPRecipes extends RecipeProvider{
 			.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.02)
 			.build(out, rl("hydrotreater/naphtha_cracking"));
 		
+		// PNC Compat
 		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 1024, 60)
 			.addCondition(new ModLoadedCondition("pneumaticcraft"))
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.ethylene, 100))
@@ -203,6 +204,20 @@ public class IPRecipes extends RecipeProvider{
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.propylene, 100))
 			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.1)
 			.build(out, rl("hydrotreater/propylene_plastic"));
+	}
+	
+	private void refineryRecipes(){
+		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.CREOSOTE.getStill(), 16))
+			.addInput(new FluidTagInput(IPTags.Fluids.benzene, 8))
+			.addInput(new FluidTagInput(IPTags.Fluids.propylene, 8))
+			.setEnergy(240)
+			.build(out, rl("refinery/phenol"));
+		
+		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.ACETALDEHYDE.getStill(), 8))
+			.addCatalyst(IETags.getTagsFor(EnumMetals.COPPER).plate)
+			.addInput(new FluidTagInput(IPTags.Fluids.ethylene, 8))
+			.setEnergy(120)
+			.build(out, rl("refinery/acetaldehyde"));
 	}
 	
 	private void speedboatUpgradeRecipes(){
@@ -393,20 +408,6 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_treated_planks", has(IETags.getItemTag(IETags.treatedWood)))
 			.unlockedBy("has_"+toPath(MetalDecoration.ENGINEERING_LIGHT), has(MetalDecoration.ENGINEERING_LIGHT))
 			.save(this.out);
-	}
-	
-	private void refineryRecipes(){
-		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.CREOSOTE.getStill(), 16))
-				.addInput(new FluidTagInput(IPTags.Fluids.benzene, 8))
-				.addInput(new FluidTagInput(IPTags.Fluids.propylene, 8))
-				.setEnergy(240)
-				.build(out, rl("refinery/phenol"));
-		
-		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.ACETALDEHYDE.getStill(), 8))
-				.addCatalyst(IETags.getTagsFor(EnumMetals.COPPER).plate)
-				.addInput(new FluidTagInput(IPTags.Fluids.ethylene, 8))
-				.setEnergy(120)
-				.build(out, rl("refinery/acetaldehyde"));
 	}
 	
 	private ResourceLocation rl(String str){

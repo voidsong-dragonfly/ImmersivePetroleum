@@ -61,7 +61,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	
 	/** Output Fluid Tank<br> */
 	public static final int TANK_OUTPUT = 2;
-
+	
 	/** Template-Location of the Fluid Input Port. (1 0 3)<br> */
 	public static final BlockPos Fluid_IN_A = new BlockPos(1, 0, 3);
 	
@@ -298,7 +298,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	public boolean isInWorldProcessingMachine(){
 		return false;
 	}
-
+	
 	private final MultiblockCapability<IFluidHandler> inputAHandler = MultiblockCapability.make(
 			this, be -> be.inputAHandler, HydrotreaterTileEntity::master, registerFluidInput(this.tanks[TANK_INPUT_A])
 	);
@@ -308,7 +308,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
 			this, be -> be.outputHandler, HydrotreaterTileEntity::master, registerFluidOutput(this.tanks[TANK_OUTPUT])
 	);
-
+	
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){

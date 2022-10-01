@@ -58,8 +58,8 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		});
 		addRenderableWidget(this.cfgButton);
 		this.areas = List.of(
-				new FluidInfoArea(tile.tank, new Rect2i(leftPos + 11, topPos + 16, 16, 47), 200, 0, 20, 51, GUI_TEXTURE),
-				new EnergyInfoArea(leftPos + 185, topPos + 19, tile.energyStorage)
+			new FluidInfoArea(tile.tank, new Rect2i(leftPos + 11, topPos + 16, 16, 47), 200, 0, 20, 51, GUI_TEXTURE),
+			new EnergyInfoArea(leftPos + 185, topPos + 19, tile.energyStorage)
 		);
 	}
 	
@@ -84,8 +84,6 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	// TODO ! All of these below need translation stuff!
 	@Override
 	protected void renderLabels(@Nonnull PoseStack matrix, int x, int y){
-		//super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-		
 		if(this.tile.getBlockPos().getY() <= 62){
 			drawInfoTextCenteredMultiLine(matrix, I18n.get("gui.immersivepetroleum.derrick.msg.water_table"), 0xEF0000);
 			return;
@@ -164,10 +162,10 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		int strWidth = this.font.width(text.getString());
 		this.font.draw(matrix, text, 118.5F - (strWidth / 2F), 10 + (9 * line), color);
 	}
-
-	private void drawInfoTextCenteredMultiLine(PoseStack matrix, String text, int color) {
+	
+	private void drawInfoTextCenteredMultiLine(PoseStack matrix, String text, int color){
 		String[] lines = text.split("<br>");
-		for (int i = 0; i < Math.min(lines.length, 4); i++) {
+		for(int i = 0;i < Math.min(lines.length, 4);i++){
 			drawInfoTextCentered(matrix, new TextComponent(lines[i].length() > 25 ? lines[i].substring(0, 25) : lines[i]), i, color);
 		}
 	}

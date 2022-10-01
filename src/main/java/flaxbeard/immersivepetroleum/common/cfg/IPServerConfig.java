@@ -62,24 +62,24 @@ public class IPServerConfig{
 			builder.push("Extraction");
 			
 			pumpjack_consumption = builder
-					.comment("The Flux the Pumpjack requires each tick to pump", "Default: 1024")
-					.define("pumpjack_consumption", 1024);
+				.comment("The Flux the Pumpjack requires each tick to pump", "Default: 1024")
+				.define("pumpjack_consumption", 1024);
 			
 			pumpjack_speed = builder
-					.comment("The amount of mB of oil a Pumpjack extracts per tick", "Default: 15")
-					.define("pumpjack_speed", 15);
-
+				.comment("The amount of mB of oil a Pumpjack extracts per tick", "Default: 15")
+				.define("pumpjack_speed", 15);
+			
 			derrick_consumption = builder
-					.comment("The Flux the Derrick requires each tick to operate", "Default: 512")
-					.define("derrick_consumption", 512);
-
+				.comment("The Flux the Derrick requires each tick to operate", "Default: 512")
+				.define("derrick_consumption", 512);
+			
 			derrick_drilling = builder
-					.comment("The Fluid the Derrick uses for drilling lubricant", "Default: \"minecraft:water\"")
-					.define("derrick_drilling", "minecraft:water");
-
+				.comment("The Fluid the Derrick uses for drilling lubricant", "Default: \"minecraft:water\"")
+				.define("derrick_drilling", "minecraft:water");
+			
 			derrick_concrete = builder
-					.comment("The Fluid the Derrick uses for drilling concrete", "Default: \"immersiveengineering:concrete\"")
-					.define("derrick_concrete", "immersiveengineering:concrete");
+				.comment("The Fluid the Derrick uses for drilling concrete", "Default: \"immersiveengineering:concrete\"")
+				.define("derrick_concrete", "immersiveengineering:concrete");
 			
 			builder.pop();
 		}
@@ -96,28 +96,28 @@ public class IPServerConfig{
 			builder.push("Refining");
 			
 			distillationTower_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every Distillation Tower recipe", "Default: 1.0")
-					.define("distillationTower_energyModifier", 1.0);
-			
+				.comment("A modifier to apply to the energy costs of every Distillation Tower recipe", "Default: 1.0")
+				.define("distillationTower_energyModifier", 1.0);
+	
 			distillationTower_timeModifier = builder
-					.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1", "Default: 1.0")
-					.define("distillationTower_timeModifier", 1.0);
-			
+				.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1", "Default: 1.0")
+				.define("distillationTower_timeModifier", 1.0);
+	
 			cokerUnit_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every Coker Tower recipe", "Default: 1.0")
-					.define("cokerUnit_energyModifier", 1.0);
-			
+				.comment("A modifier to apply to the energy costs of every Coker Tower recipe", "Default: 1.0")
+				.define("cokerUnit_energyModifier", 1.0);
+	
 			cokerUnit_timeModifier = builder
-					.comment("A modifier to apply to the time of every Coker recipe. Can't be lower than 1", "Default: 1.0")
-					.define("cokerUnit_timeModifier", 1.0);
-			
+				.comment("A modifier to apply to the time of every Coker recipe. Can't be lower than 1", "Default: 1.0")
+				.define("cokerUnit_timeModifier", 1.0);
+	
 			hydrotreater_energyModifier = builder
-					.comment("A modifier to apply to the energy costs of every High-Pressure Refinery Unit recipe", "Default: 1.0")
-					.define("hydrotreater_energyModifier", 1.0);
-			
+				.comment("A modifier to apply to the energy costs of every High-Pressure Refinery Unit recipe", "Default: 1.0")
+				.define("hydrotreater_energyModifier", 1.0);
+	
 			hydrotreater_timeModifier = builder
-					.comment("A modifier to apply to the time of every High-Pressure Refinery Unit recipe. Can't be lower than 1", "Default: 1.0")
-					.define("hydrotreater_timeModifier", 1.0);
+				.comment("A modifier to apply to the time of every High-Pressure Refinery Unit recipe. Can't be lower than 1", "Default: 1.0")
+				.define("hydrotreater_timeModifier", 1.0);
 			
 			builder.pop();
 		}
@@ -129,12 +129,12 @@ public class IPServerConfig{
 			builder.push("Generation");
 			
 			fuels = builder
-					.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
-					.defineList("generator_fuels",
-					    List.of("immersivepetroleum:gasoline, 5, 256",
-								"immersivepetroleum:naphtha, 5, 256",
-								"immersivepetroleum:naphtha_cracked, 5, 256",
-								"immersivepetroleum:benzene, 5, 256"), o -> true);
+				.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
+				.defineList("generator_fuels",
+				    List.of("immersivepetroleum:gasoline, 5, 256",
+							"immersivepetroleum:naphtha, 5, 256",
+							"immersivepetroleum:naphtha_cracked, 5, 256",
+							"immersivepetroleum:benzene, 5, 256"), o -> true);
 			
 			builder.pop();
 		}

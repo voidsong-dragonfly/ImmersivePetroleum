@@ -242,29 +242,29 @@ public class ClientProxy extends CommonProxy{
 		IP_CATEGORY = man.getRoot().getOrCreateSubnode(ResourceUtils.ip("main"), 100);
 		
 		int priority = 0;
-
-		//Basic Resources
+		
+		// Basic Resources
 		handleReservoirManual(ResourceUtils.ip("reservoir"), priority++);
 		fluids(ResourceUtils.ip("fluids"), priority++);
 		man.addEntry(IP_CATEGORY, ResourceUtils.ip("asphalt"), priority++);
 		lubricant(ResourceUtils.ip("lubricant"), priority++);
 		plastics(ResourceUtils.ip("plastics"), priority++);
-
-		//Oil Extraction & Storage
+		
+		// Oil Extraction & Storage
 		derrick(ResourceUtils.ip("derrick"), priority++);
 		pumpjack(ResourceUtils.ip("pumpjack"), priority++);
 		oiltank(ResourceUtils.ip("oiltank"), priority++);
-		//Oil Processing
+		// Oil Processing
 		distillation(ResourceUtils.ip("distillationtower"), priority++);
 		coker(ResourceUtils.ip("cokerunit"), priority++);
 		hydrotreater(ResourceUtils.ip("hydrotreater"), priority++);
-
-		//Singleblocks
+		
+		// Singleblocks
 		flarestack(ResourceUtils.ip("flarestack"), priority++);
 		generator(ResourceUtils.ip("portablegenerator"), priority++);
 		autolube(ResourceUtils.ip("automaticlubricator"), priority++);
 		
-		//Tools & Vehicles
+		// Tools & Vehicles
 		projector(ResourceUtils.ip("projector"), priority++);
 		speedboat(ResourceUtils.ip("speedboat"), priority++);
 	}
@@ -345,25 +345,25 @@ public class ClientProxy extends CommonProxy{
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
-
+	
 	private static void plastics(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
-
+		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement(new SpecialElementData("plastics0", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("plastics1", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA_CRACKED.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("plastics2", 0, new ManualElementItem(man,
-				new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
-				new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
-				new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
+			new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
+			new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
+			new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
 		);
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
-
+	
 	private static void fluids(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
-
+		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement(new SpecialElementData("crude", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("lubricant", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.LUBRICANT.bucket().get()))));
