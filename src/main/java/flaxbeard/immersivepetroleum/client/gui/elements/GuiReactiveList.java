@@ -16,7 +16,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import flaxbeard.immersivepetroleum.client.MCUtil;
+import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;

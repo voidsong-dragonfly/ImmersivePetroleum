@@ -9,7 +9,7 @@ import com.mojang.math.Vector3f;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.client.MCUtil;
+import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;

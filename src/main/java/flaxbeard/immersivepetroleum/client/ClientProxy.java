@@ -38,6 +38,7 @@ import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
 import flaxbeard.immersivepetroleum.client.render.SeismicResultRenderer;
 import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
+import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
