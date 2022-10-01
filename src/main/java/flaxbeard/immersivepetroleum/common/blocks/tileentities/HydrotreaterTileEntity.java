@@ -17,7 +17,7 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.process.Multibl
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
-import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
@@ -52,7 +52,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, SulfurRecoveryRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<HydrotreaterTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, HighPressureRefineryRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<HydrotreaterTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -83,8 +83,8 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	public final FluidTank[] tanks = new FluidTank[]{new FluidTank(12000), new FluidTank(12000), new FluidTank(12000)};
 	public HydrotreaterTileEntity(BlockEntityType<HydrotreaterTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(HydroTreaterMultiblock.INSTANCE, 8000, true, type, pWorldPosition, pBlockState);
-		tanks[TANK_INPUT_A].setValidator(fs -> SulfurRecoveryRecipe.hasRecipeWithInput(fs, true));
-		tanks[TANK_INPUT_B].setValidator(fs -> SulfurRecoveryRecipe.hasRecipeWithSecondaryInput(fs, true));
+		tanks[TANK_INPUT_A].setValidator(fs -> HighPressureRefineryRecipe.hasRecipeWithInput(fs, true));
+		tanks[TANK_INPUT_B].setValidator(fs -> HighPressureRefineryRecipe.hasRecipeWithSecondaryInput(fs, true));
 	}
 	
 	@Override
@@ -106,8 +106,8 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	protected SulfurRecoveryRecipe getRecipeForId(Level level, ResourceLocation id){
-		return SulfurRecoveryRecipe.recipes.get(id);
+	protected HighPressureRefineryRecipe getRecipeForId(Level level, ResourceLocation id){
+		return HighPressureRefineryRecipe.recipes.get(id);
 	}
 	
 	@Override
@@ -147,7 +147,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public SulfurRecoveryRecipe findRecipeForInsertion(ItemStack inserting){
+	public HighPressureRefineryRecipe findRecipeForInsertion(ItemStack inserting){
 		return null;
 	}
 	
@@ -162,7 +162,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<SulfurRecoveryRecipe> process){
+	public boolean additionalCanProcessCheck(MultiblockProcess<HighPressureRefineryRecipe> process){
 		int outputAmount = 0;
 		for(FluidStack outputFluid:process.getRecipe(this.level).getFluidOutputs()){
 			outputAmount += outputFluid.getAmount();
@@ -208,7 +208,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public void onProcessFinish(MultiblockProcess<SulfurRecoveryRecipe> process){
+	public void onProcessFinish(MultiblockProcess<HighPressureRefineryRecipe> process){
 	}
 	
 	@Override
@@ -222,7 +222,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 		if(!isRSDisabled()){
 			if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 				if(this.tanks[TANK_INPUT_A].getFluidAmount() > 0 || this.tanks[TANK_INPUT_B].getFluidAmount() > 0){
-					SulfurRecoveryRecipe recipe = SulfurRecoveryRecipe.findRecipe(this.tanks[TANK_INPUT_A].getFluid(), this.tanks[TANK_INPUT_B].getFluid());
+					HighPressureRefineryRecipe recipe = HighPressureRefineryRecipe.findRecipe(this.tanks[TANK_INPUT_A].getFluid(), this.tanks[TANK_INPUT_B].getFluid());
 					
 					if(recipe != null && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
 						if(this.tanks[TANK_INPUT_A].getFluidAmount() >= recipe.getInputFluid().getAmount() && (recipe.getSecondaryInputFluid() == null || (this.tanks[TANK_INPUT_B].getFluidAmount() >= recipe.getSecondaryInputFluid().getAmount()))){
@@ -236,7 +236,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 								inputAmounts = new int[]{recipe.getInputFluid().getAmount()};
 							}
 							
-							MultiblockProcessInMachine<SulfurRecoveryRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId)
+							MultiblockProcessInMachine<HighPressureRefineryRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId)
 									.setInputTanks(inputs)
 									.setInputAmounts(inputAmounts);
 							if(addProcessToQueue(process, true)){
@@ -290,7 +290,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	}
 	
 	@Override
-	public float getMinProcessDistance(MultiblockProcess<SulfurRecoveryRecipe> process){
+	public float getMinProcessDistance(MultiblockProcess<HighPressureRefineryRecipe> process){
 		return 1.0F;
 	}
 	

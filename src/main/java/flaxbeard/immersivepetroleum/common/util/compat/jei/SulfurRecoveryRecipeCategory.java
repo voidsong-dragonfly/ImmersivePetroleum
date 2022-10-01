@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.client.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.Utils;
@@ -26,12 +26,12 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecoveryRecipe>{
+public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<HighPressureRefineryRecipe>{
 	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater");
 	
 	private final IDrawableStatic tankOverlay;
 	public SulfurRecoveryRecipeCategory(IGuiHelper guiHelper){
-		super(SulfurRecoveryRecipe.class, guiHelper, ID, "block.immersivepetroleum.hydrotreater");
+		super(HighPressureRefineryRecipe.class, guiHelper, ID, "block.immersivepetroleum.hydrotreater");
 		ResourceLocation background = new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/jei/hydrotreater.png");
 		setBackground(guiHelper.createDrawable(background, 0, 0, 113, 75));
 		setIcon(new ItemStack(IPContent.Multiblock.HYDROTREATER.get()));
@@ -40,7 +40,7 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 	}
 	
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, SulfurRecoveryRecipe recipe, @Nonnull IFocusGroup focuses){
+	public void setRecipe(IRecipeLayoutBuilder builder, HighPressureRefineryRecipe recipe, @Nonnull IFocusGroup focuses){
 		builder.addSlot(RecipeIngredientRole.INPUT, 25, 3)
 			.setFluidRenderer(1, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0)
@@ -62,7 +62,7 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 	}
 	
 	@Override
-	public void draw(SulfurRecoveryRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
+	public void draw(HighPressureRefineryRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, PoseStack matrix, double mouseX, double mouseY){
 		IDrawable background = getBackground();
 		int bWidth = background.getWidth();
 		int bHeight = background.getHeight();
@@ -92,7 +92,7 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<SulfurRecover
 	
 	@Override
 	@Deprecated
-	public Class<? extends SulfurRecoveryRecipe> getRecipeClass(){
+	public Class<? extends HighPressureRefineryRecipe> getRecipeClass(){
 		return null;
 	}
 }

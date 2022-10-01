@@ -20,15 +20,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
 
-public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
+public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 	
-	public static Map<ResourceLocation, SulfurRecoveryRecipe> recipes = new HashMap<>();
+	public static Map<ResourceLocation, HighPressureRefineryRecipe> recipes = new HashMap<>();
 	
-	public static SulfurRecoveryRecipe findRecipe(@Nonnull FluidStack input, @Nonnull FluidStack secondary){
+	public static HighPressureRefineryRecipe findRecipe(@Nonnull FluidStack input, @Nonnull FluidStack secondary){
 		Objects.requireNonNull(input);
 		Objects.requireNonNull(secondary);
 		
-		for(SulfurRecoveryRecipe recipe:recipes.values()){
+		for(HighPressureRefineryRecipe recipe:recipes.values()){
 			if(secondary.isEmpty()){
 				if(recipe.inputFluidSecondary == null && (recipe.inputFluid != null && recipe.inputFluid.test(input))){
 					return recipe;
@@ -46,7 +46,7 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(SulfurRecoveryRecipe recipe:recipes.values()){
+			for(HighPressureRefineryRecipe recipe:recipes.values()){
 				if(recipe.inputFluid != null){
 					if((!ignoreAmount && recipe.inputFluid.test(fluid)) || (ignoreAmount && recipe.inputFluid.testIgnoringAmount(fluid))){
 						return true;
@@ -61,7 +61,7 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(SulfurRecoveryRecipe recipe:recipes.values()){
+			for(HighPressureRefineryRecipe recipe:recipes.values()){
 				if(recipe.inputFluidSecondary != null){
 					if((!ignoreAmount && recipe.inputFluidSecondary.test(fluid)) || (ignoreAmount && recipe.inputFluidSecondary.testIgnoringAmount(fluid))){
 						return true;
@@ -91,8 +91,8 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	 * @param energy              amount of FE to consume
 	 * @param time                duration of the recipe
 	 */
-	public SulfurRecoveryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
-		super(ItemStack.EMPTY, IPRecipeTypes.SULFUR_RECOVERY, id);
+	public HighPressureRefineryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
+		super(ItemStack.EMPTY, IPRecipeTypes.HYDROTREATER, id);
 		this.output = output;
 		this.outputItem = outputItem;
 		this.inputFluid = inputFluid;
@@ -131,7 +131,7 @@ public class SulfurRecoveryRecipe extends IPMultiblockRecipe{
 	}
 	
 	@Override
-	protected IERecipeSerializer<SulfurRecoveryRecipe> getIESerializer(){
+	protected IERecipeSerializer<HighPressureRefineryRecipe> getIESerializer(){
 		return Serializers.HYDROTREATER_SERIALIZER.get();
 	}
 }

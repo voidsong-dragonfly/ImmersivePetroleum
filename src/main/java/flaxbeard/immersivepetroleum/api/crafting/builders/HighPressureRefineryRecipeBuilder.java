@@ -10,56 +10,56 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-public class SulfurRecoveryRecipeBuilder extends IEFinishedRecipe<SulfurRecoveryRecipeBuilder>{
+public class HighPressureRefineryRecipeBuilder extends IEFinishedRecipe<HighPressureRefineryRecipeBuilder>{
 	
-	public static SulfurRecoveryRecipeBuilder builder(FluidStack fluidOutput, int energy, int time){
-		return new SulfurRecoveryRecipeBuilder()
+	public static HighPressureRefineryRecipeBuilder builder(FluidStack fluidOutput, int energy, int time){
+		return new HighPressureRefineryRecipeBuilder()
 				.setTimeAndEnergy(time, energy)
 				.addResultFluid(fluidOutput);
 	}
 	
-	protected SulfurRecoveryRecipeBuilder(){
+	protected HighPressureRefineryRecipeBuilder(){
 		super(Serializers.HYDROTREATER_SERIALIZER.get());
 	}
 	
-	public SulfurRecoveryRecipeBuilder addResultFluid(FluidStack fluid){
+	public HighPressureRefineryRecipeBuilder addResultFluid(FluidStack fluid){
 		return addFluid("result", fluid);
 	}
 	
-	public SulfurRecoveryRecipeBuilder addInputFluid(FluidStack fluid){
+	public HighPressureRefineryRecipeBuilder addInputFluid(FluidStack fluid){
 		return addFluid("input", fluid);
 	}
 	
-	public SulfurRecoveryRecipeBuilder addInputFluid(FluidTagInput fluid){
+	public HighPressureRefineryRecipeBuilder addInputFluid(FluidTagInput fluid){
 		return addFluidTag("input", fluid);
 	}
 	
-	public SulfurRecoveryRecipeBuilder addInputFluid(TagKey<Fluid> fluid, int amount){
+	public HighPressureRefineryRecipeBuilder addInputFluid(TagKey<Fluid> fluid, int amount){
 		return addFluidTag("input", fluid, amount);
 	}
 	
 	/** Optionaly add a second fluid to be pumped in */
-	public SulfurRecoveryRecipeBuilder addSecondaryInputFluid(FluidStack fluid){
+	public HighPressureRefineryRecipeBuilder addSecondaryInputFluid(FluidStack fluid){
 		return addFluid("secondary_input", fluid);
 	}
 	
 	/** Optionaly add a second fluid to be pumped in */
-	public SulfurRecoveryRecipeBuilder addSecondaryInputFluid(FluidTagInput fluid){
+	public HighPressureRefineryRecipeBuilder addSecondaryInputFluid(FluidTagInput fluid){
 		return addFluidTag("secondary_input", fluid);
 	}
 	
 	/** Optionaly add a second fluid to be pumped in */
-	public SulfurRecoveryRecipeBuilder addSecondaryInputFluid(TagKey<Fluid> fluid, int amount){
+	public HighPressureRefineryRecipeBuilder addSecondaryInputFluid(TagKey<Fluid> fluid, int amount){
 		return addFluidTag("secondary_input", fluid, amount);
 	}
 	
-	public SulfurRecoveryRecipeBuilder addItemWithChance(ItemStack item, double chance){
+	public HighPressureRefineryRecipeBuilder addItemWithChance(ItemStack item, double chance){
 		return addWriter(jsonObject -> {
 			jsonObject.add("secondary_result", this.serializerItemStackWithChance(item, chance));
 		});
 	}
 	
-	protected SulfurRecoveryRecipeBuilder setTimeAndEnergy(int time, int energy){
+	protected HighPressureRefineryRecipeBuilder setTimeAndEnergy(int time, int energy){
 		return setTime(time).setEnergy(energy);
 	}
 	

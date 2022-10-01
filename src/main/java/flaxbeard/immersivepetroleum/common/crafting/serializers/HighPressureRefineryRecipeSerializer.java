@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,10 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.fluids.FluidStack;
 
-public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRecoveryRecipe>{
+public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<HighPressureRefineryRecipe>{
 	
 	@Override
-	public SulfurRecoveryRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
+	public HighPressureRefineryRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
 		FluidTagInput inputFluid0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
 		FluidTagInput inputFluid1 = null;
@@ -35,11 +35,11 @@ public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRec
 		int energy = GsonHelper.getAsInt(json, "energy");
 		int time = GsonHelper.getAsInt(json, "time");
 		
-		return new SulfurRecoveryRecipe(recipeId, output, itemWithChance.getA(), inputFluid0, inputFluid1, itemWithChance.getB(), energy, time);
+		return new HighPressureRefineryRecipe(recipeId, output, itemWithChance.getA(), inputFluid0, inputFluid1, itemWithChance.getB(), energy, time);
 	}
 	
 	@Override
-	public SulfurRecoveryRecipe fromNetwork(@Nonnull ResourceLocation id, FriendlyByteBuf buffer){
+	public HighPressureRefineryRecipe fromNetwork(@Nonnull ResourceLocation id, FriendlyByteBuf buffer){
 		ItemStack outputItem = buffer.readItem();
 		double chance = buffer.readDouble();
 		
@@ -50,11 +50,11 @@ public class SulfurRecoveryRecipeSerializer extends IERecipeSerializer<SulfurRec
 		int energy = buffer.readInt();
 		int time = buffer.readInt();
 		
-		return new SulfurRecoveryRecipe(id, output, outputItem, inputFluid0, inputFluid1, chance, energy, time);
+		return new HighPressureRefineryRecipe(id, output, outputItem, inputFluid0, inputFluid1, chance, energy, time);
 	}
 	
 	@Override
-	public void toNetwork(FriendlyByteBuf buffer, SulfurRecoveryRecipe recipe){
+	public void toNetwork(FriendlyByteBuf buffer, HighPressureRefineryRecipe recipe){
 		buffer.writeItem(recipe.outputItem);
 		buffer.writeDouble(recipe.chance);
 		

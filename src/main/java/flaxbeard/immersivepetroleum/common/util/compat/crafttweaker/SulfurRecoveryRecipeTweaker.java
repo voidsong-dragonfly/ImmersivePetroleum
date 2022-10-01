@@ -15,7 +15,7 @@ import com.blamejared.crafttweaker_annotations.annotations.Document;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
-import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -24,10 +24,10 @@ import net.minecraft.world.level.material.Fluid;
 @ZenRegister
 @Document("mods/immersivepetroleum/SRU")
 @Name("mods.immersivepetroleum.Hydrotreater")
-public class SulfurRecoveryRecipeTweaker implements IRecipeManager<SulfurRecoveryRecipe>{
+public class SulfurRecoveryRecipeTweaker implements IRecipeManager<HighPressureRefineryRecipe>{
 	@Override
-	public RecipeType<SulfurRecoveryRecipe> getRecipeType(){
-		return IPRecipeTypes.SULFUR_RECOVERY.get();
+	public RecipeType<HighPressureRefineryRecipe> getRecipeType(){
+		return IPRecipeTypes.HYDROTREATER.get();
 	}
 	
 	/**
@@ -35,17 +35,17 @@ public class SulfurRecoveryRecipeTweaker implements IRecipeManager<SulfurRecover
 	 */
 	@Method
 	public void removeAll(){
-		SulfurRecoveryRecipe.recipes.clear();
+		HighPressureRefineryRecipe.recipes.clear();
 	}
 	
 	@Method
 	public void removeByOutputItem(IIngredient output){
-		SulfurRecoveryRecipe.recipes.values().removeIf(recipe -> output.matches(new MCItemStack(recipe.outputItem)));
+		HighPressureRefineryRecipe.recipes.values().removeIf(recipe -> output.matches(new MCItemStack(recipe.outputItem)));
 	}
 	
 	@Method
 	public void removeByOutputFluid(IFluidStack output){
-		SulfurRecoveryRecipe.recipes.values().removeIf(recipe -> recipe.output.isFluidEqual(output.getInternal()));
+		HighPressureRefineryRecipe.recipes.values().removeIf(recipe -> recipe.output.isFluidEqual(output.getInternal()));
 	}
 	
 	@Method
@@ -72,11 +72,11 @@ public class SulfurRecoveryRecipeTweaker implements IRecipeManager<SulfurRecover
 	}
 	
 	private void newRecipe(ResourceLocation id, IFluidStack output, IItemStack outputItem, double chance, FluidTagInput primary, FluidTagInput secondary, int energy){
-		SulfurRecoveryRecipe recipe = new SulfurRecoveryRecipe(id, output.getInternal(), outputItem.getInternal(), primary, secondary, chance, energy, 1);
+		HighPressureRefineryRecipe recipe = new HighPressureRefineryRecipe(id, output.getInternal(), outputItem.getInternal(), primary, secondary, chance, energy, 1);
 		// Does NOT work with this
 		//CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));
 		
 		// This however does, while it may not be the safest thing to do..
-		SulfurRecoveryRecipe.recipes.put(id, recipe);
+		HighPressureRefineryRecipe.recipes.put(id, recipe);
 	}
 }

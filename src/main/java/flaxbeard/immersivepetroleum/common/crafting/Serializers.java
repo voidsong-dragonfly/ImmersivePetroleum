@@ -3,13 +3,13 @@ package flaxbeard.immersivepetroleum.common.crafting;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.CokerUnitRecipeSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.DistillationRecipeSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.ReservoirSerializer;
-import flaxbeard.immersivepetroleum.common.crafting.serializers.SulfurRecoveryRecipeSerializer;
+import flaxbeard.immersivepetroleum.common.crafting.serializers.HighPressureRefineryRecipeSerializer;
 import net.minecraftforge.registries.RegistryObject;
 
 public class Serializers{
@@ -21,8 +21,8 @@ public class Serializers{
 			"coker", CokerUnitRecipeSerializer::new
 	);
 	
-	public static final RegistryObject<IERecipeSerializer<SulfurRecoveryRecipe>> HYDROTREATER_SERIALIZER = IPRegisters.registerSerializer(
-			"hydrotreater", SulfurRecoveryRecipeSerializer::new
+	public static final RegistryObject<IERecipeSerializer<HighPressureRefineryRecipe>> HYDROTREATER_SERIALIZER = IPRegisters.registerSerializer(
+			"hydrotreater", HighPressureRefineryRecipeSerializer::new
 	);
 	
 	public static final RegistryObject<IERecipeSerializer<ReservoirType>> RESERVOIR_SERIALIZER = IPRegisters.registerSerializer(

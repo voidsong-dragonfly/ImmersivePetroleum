@@ -26,7 +26,7 @@ import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
-import flaxbeard.immersivepetroleum.api.crafting.builders.SulfurRecoveryRecipeBuilder;
+import flaxbeard.immersivepetroleum.api.crafting.builders.HighPressureRefineryRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
@@ -111,7 +111,7 @@ public class IPRecipes extends RecipeProvider{
 			.addInput(IPTags.Fluids.crudeOil, 75)
 			.setTimeAndEnergy(1, 2048)
 			.build(this.out, rl("distillationtower/oilcracking"));
-
+		
 		DistillationRecipeBuilder.builder(new FluidStack[]{
 						new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
 						new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
@@ -180,25 +180,25 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void hydrotreaterRecipes(){
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL.get(), 5), 256, 5)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL.get(), 5), 256, 5)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 5))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
 			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.02)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
-
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 1024, 5)
+		
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 1024, 5)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 20))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
 			.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.02)
 			.build(out, rl("hydrotreater/naphtha_cracking"));
 		
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 1024, 60)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 1024, 60)
 			.addCondition(new ModLoadedCondition("pneumaticcraft"))
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.ethylene, 100))
 			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.05)
 			.build(out, rl("hydrotreater/ethylene_plastic"));
-
-		SulfurRecoveryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 2000), 1024, 60)
+		
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 2000), 1024, 60)
 			.addCondition(new ModLoadedCondition("pneumaticcraft"))
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.propylene, 100))
 			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.1)
@@ -394,14 +394,14 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_"+toPath(MetalDecoration.ENGINEERING_LIGHT), has(MetalDecoration.ENGINEERING_LIGHT))
 			.save(this.out);
 	}
-
+	
 	private void refineryRecipes(){
 		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.CREOSOTE.getStill(), 16))
 				.addInput(new FluidTagInput(IPTags.Fluids.benzene, 8))
 				.addInput(new FluidTagInput(IPTags.Fluids.propylene, 8))
 				.setEnergy(240)
 				.build(out, rl("refinery/phenol"));
-
+		
 		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.ACETALDEHYDE.getStill(), 8))
 				.addCatalyst(IETags.getTagsFor(EnumMetals.COPPER).plate)
 				.addInput(new FluidTagInput(IPTags.Fluids.ethylene, 8))

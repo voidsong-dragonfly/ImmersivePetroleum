@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.SulfurRecoveryRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
 import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
@@ -29,7 +29,7 @@ public class JEIStuff implements IModPlugin{
 	
 	private RecipeType<DistillationRecipe> distillation_type;
 	private RecipeType<CokerUnitRecipe> coker_type;
-	private RecipeType<SulfurRecoveryRecipe> recovery_type;
+	private RecipeType<HighPressureRefineryRecipe> recovery_type;
 	
 	@Override
 	@Nonnull
@@ -56,7 +56,7 @@ public class JEIStuff implements IModPlugin{
 	public void registerRecipes(IRecipeRegistration registration){
 		registration.addRecipes(this.distillation_type, new ArrayList<>(DistillationRecipe.recipes.values()));
 		registration.addRecipes(this.coker_type, new ArrayList<>(CokerUnitRecipe.recipes.values()));
-		registration.addRecipes(this.recovery_type, new ArrayList<>(SulfurRecoveryRecipe.recipes.values()));
+		registration.addRecipes(this.recovery_type, new ArrayList<>(HighPressureRefineryRecipe.recipes.values()));
 	}
 	
 	@Override
