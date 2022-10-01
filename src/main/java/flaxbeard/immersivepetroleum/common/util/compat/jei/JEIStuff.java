@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
 import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
@@ -27,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 public class JEIStuff implements IModPlugin{
 	private static final ResourceLocation ID = ResourceUtils.ip("main");
 	
-	private RecipeType<DistillationRecipe> distillation_type;
+	private RecipeType<DistillationTowerRecipe> distillation_type;
 	private RecipeType<CokerUnitRecipe> coker_type;
 	private RecipeType<HighPressureRefineryRecipe> recovery_type;
 	
@@ -54,7 +54,7 @@ public class JEIStuff implements IModPlugin{
 	
 	@Override
 	public void registerRecipes(IRecipeRegistration registration){
-		registration.addRecipes(this.distillation_type, new ArrayList<>(DistillationRecipe.recipes.values()));
+		registration.addRecipes(this.distillation_type, new ArrayList<>(DistillationTowerRecipe.recipes.values()));
 		registration.addRecipes(this.coker_type, new ArrayList<>(CokerUnitRecipe.recipes.values()));
 		registration.addRecipes(this.recovery_type, new ArrayList<>(HighPressureRefineryRecipe.recipes.values()));
 	}

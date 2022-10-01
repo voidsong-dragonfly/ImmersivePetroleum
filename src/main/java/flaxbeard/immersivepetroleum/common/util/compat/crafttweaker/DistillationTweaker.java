@@ -12,7 +12,7 @@ import com.blamejared.crafttweaker.api.util.Many;
 import com.blamejared.crafttweaker_annotations.annotations.Document;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -24,9 +24,9 @@ import net.minecraftforge.fluids.FluidStack;
 @ZenRegister
 @Document("mods/immersivepetroleum/DistillationTowerAlt")
 @Name("mods.immersivepetroleum.DistillationTowerAlt")
-public class DistillationTweaker implements IRecipeManager<DistillationRecipe>{
+public class DistillationTweaker implements IRecipeManager<DistillationTowerRecipe>{
 	@Override
-	public RecipeType<DistillationRecipe> getRecipeType(){
+	public RecipeType<DistillationTowerRecipe> getRecipeType(){
 		return IPRecipeTypes.DISTILLATION.get();
 	}
 	
@@ -57,12 +57,12 @@ public class DistillationTweaker implements IRecipeManager<DistillationRecipe>{
 			outputItems[i] = byproducts[i].getInternal();
 		}
 		
-		DistillationRecipe recipe = new DistillationRecipe(id, outputFluids, outputItems, inputFluid, energy, time, byproductChances);
+		DistillationTowerRecipe recipe = new DistillationTowerRecipe(id, outputFluids, outputItems, inputFluid, energy, time, byproductChances);
 		
 		// Does NOT work with this
 		//CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));
 		
 		// This however does, while it may not be the safest thing to do..
-		DistillationRecipe.recipes.put(id, recipe);
+		DistillationTowerRecipe.recipes.put(id, recipe);
 	}
 }

@@ -24,7 +24,7 @@ import blusunrize.immersiveengineering.common.register.IEItems;
 import blusunrize.immersiveengineering.data.recipebuilder.FluidAwareShapedRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
-import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
+import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.HighPressureRefineryRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
@@ -101,7 +101,7 @@ public class IPRecipes extends RecipeProvider{
 	private void distillationRecipes(){
 		// setEnergy and setTime are 2048 and 1 by default. But still allows to be customized.
 		
-		DistillationRecipeBuilder.builder(new FluidStack[]{
+		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
 				new FluidStack(IPContent.Fluids.NAPHTHA.get(), 10),
 				new FluidStack(IPContent.Fluids.GASOLINE.get(), 20),
 				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 36),
@@ -112,7 +112,7 @@ public class IPRecipes extends RecipeProvider{
 			.setTimeAndEnergy(1, 2048)
 			.build(this.out, rl("distillationtower/oilcracking"));
 		
-		DistillationRecipeBuilder.builder(new FluidStack[]{
+		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
 						new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
 						new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
 						new FluidStack(IPContent.Fluids.BENZENE.get(), 2),

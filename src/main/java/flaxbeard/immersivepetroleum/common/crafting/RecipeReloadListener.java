@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
@@ -55,7 +55,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		}
 		
 		ImmersivePetroleum.log.info("Loading Distillation Recipes.");
-		DistillationRecipe.recipes = filterRecipes(recipes, DistillationRecipe.class, IPRecipeTypes.DISTILLATION);
+		DistillationTowerRecipe.recipes = filterRecipes(recipes, DistillationTowerRecipe.class, IPRecipeTypes.DISTILLATION);
 		
 		ImmersivePetroleum.log.info("Loading Reservoirs.");
 		ReservoirType.map = filterRecipes(recipes, ReservoirType.class, IPRecipeTypes.RESERVOIR);

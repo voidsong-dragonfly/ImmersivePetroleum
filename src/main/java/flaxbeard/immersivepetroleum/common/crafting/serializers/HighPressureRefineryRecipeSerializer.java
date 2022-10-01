@@ -8,7 +8,7 @@ import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
+import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +30,7 @@ public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<Hig
 			inputFluid1 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "secondary_input"));
 		}
 		
-		Tuple<ItemStack, Double> itemWithChance = DistillationRecipeBuilder.deserializeItemStackWithChance(json.get("secondary_result").getAsJsonObject());
+		Tuple<ItemStack, Double> itemWithChance = DistillationTowerRecipeBuilder.deserializeItemStackWithChance(json.get("secondary_result").getAsJsonObject());
 		
 		int energy = GsonHelper.getAsInt(json, "energy");
 		int time = GsonHelper.getAsInt(json, "time");

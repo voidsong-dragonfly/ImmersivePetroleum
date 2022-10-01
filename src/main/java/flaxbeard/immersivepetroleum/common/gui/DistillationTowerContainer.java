@@ -8,7 +8,7 @@ import static flaxbeard.immersivepetroleum.common.blocks.tileentities.Distillati
 
 import javax.annotation.Nonnull;
 
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
@@ -36,7 +36,7 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer<Dist
 						return false;
 					}
 					
-					DistillationRecipe recipe = DistillationRecipe.findRecipe(fs);
+					DistillationTowerRecipe recipe = DistillationTowerRecipe.findRecipe(fs);
 					return recipe != null;
 				}).orElse(false);
 			}

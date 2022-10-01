@@ -11,8 +11,8 @@ import com.google.gson.JsonObject;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationRecipeBuilder;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -22,9 +22,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.fluids.FluidStack;
 
-public class DistillationRecipeSerializer extends IERecipeSerializer<DistillationRecipe>{
+public class DistillationTowerRecipeSerializer extends IERecipeSerializer<DistillationTowerRecipe>{
 	@Override
-	public DistillationRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
+	public DistillationTowerRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
 		JsonArray fluidResults = GsonHelper.getAsJsonArray(json, "results");
 		JsonArray itemResults = GsonHelper.getAsJsonArray(json, "byproducts");
@@ -36,7 +36,7 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		List<ItemStack> byproducts = new ArrayList<>(0);
 		List<Double> chances = new ArrayList<>(0);
 		for(int i = 0;i < itemResults.size();i++){
-			Tuple<ItemStack, Double> chancedStack = DistillationRecipeBuilder.deserializeItemStackWithChance(itemResults.get(i).getAsJsonObject());
+			Tuple<ItemStack, Double> chancedStack = DistillationTowerRecipeBuilder.deserializeItemStackWithChance(itemResults.get(i).getAsJsonObject());
 			
 			byproducts.add(chancedStack.getA());
 			chances.add(chancedStack.getB());
@@ -55,11 +55,11 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		int energy = GsonHelper.getAsInt(json, "energy");
 		int time = GsonHelper.getAsInt(json, "time");
 		
-		return new DistillationRecipe(recipeId, fluidOutput, array0, input, energy, time, array1);
+		return new DistillationTowerRecipe(recipeId, fluidOutput, array0, input, energy, time, array1);
 	}
 	
 	@Override
-	public DistillationRecipe fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
+	public DistillationTowerRecipe fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
 		FluidStack[] fluidOutput = new FluidStack[buffer.readInt()];
 		for(int i = 0;i < fluidOutput.length;i++)
 			fluidOutput[i] = buffer.readFluidStack();
@@ -76,11 +76,11 @@ public class DistillationRecipeSerializer extends IERecipeSerializer<Distillatio
 		int energy = buffer.readInt();
 		int time = buffer.readInt();
 		
-		return new DistillationRecipe(recipeId, fluidOutput, byproducts, input, energy, time, chances);
+		return new DistillationTowerRecipe(recipeId, fluidOutput, byproducts, input, energy, time, chances);
 	}
 	
 	@Override
-	public void toNetwork(FriendlyByteBuf buffer, DistillationRecipe recipe){
+	public void toNetwork(FriendlyByteBuf buffer, DistillationTowerRecipe recipe){
 		buffer.writeInt(recipe.getFluidOutputs().size());
 		for(FluidStack stack:recipe.getFluidOutputs())
 			buffer.writeFluidStack(stack);

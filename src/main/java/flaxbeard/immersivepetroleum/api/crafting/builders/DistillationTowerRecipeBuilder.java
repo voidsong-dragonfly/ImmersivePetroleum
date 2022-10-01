@@ -23,13 +23,13 @@ import net.minecraftforge.fluids.FluidStack;
  * 
  * @author TwistedGate
  */
-public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationRecipeBuilder>{
+public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<DistillationTowerRecipeBuilder>{
 	
-	public static DistillationRecipeBuilder builder(FluidStack... fluidOutput){
+	public static DistillationTowerRecipeBuilder builder(FluidStack... fluidOutput){
 		if(fluidOutput == null || fluidOutput.length == 0)
 			throw new IllegalArgumentException("Fluid output missing. It's required.");
 		
-		DistillationRecipeBuilder b = new DistillationRecipeBuilder();
+		DistillationTowerRecipeBuilder b = new DistillationTowerRecipeBuilder();
 		b.addFluids("results", fluidOutput);
 		return b;
 	}
@@ -37,7 +37,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	/** Temporary storage for byproducts */
 	private final List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
 	
-	private DistillationRecipeBuilder(){
+	private DistillationTowerRecipeBuilder(){
 		super(Serializers.DISTILLATION_SERIALIZER.get());
 		addWriter(jsonObject -> {
 			if(this.byproducts.size() > 0){
@@ -56,7 +56,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * @param chance    0 to 100 (clamped)
 	 * @return self for chaining
 	 */
-	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, int chance){
+	public DistillationTowerRecipeBuilder addByproduct(ItemStack byproduct, int chance){
 		return addByproduct(byproduct, chance / 100D);
 	}
 	
@@ -65,30 +65,30 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 	 * 
 	 * @param byproduct {@link ItemStack} to output as byproduct
 	 * @param chance    0.0 to 1.0 (clamped)
-	 * @return {@link DistillationRecipeBuilder} self for chaining
+	 * @return {@link DistillationTowerRecipeBuilder} self for chaining
 	 */
-	public DistillationRecipeBuilder addByproduct(ItemStack byproduct, double chance){
+	public DistillationTowerRecipeBuilder addByproduct(ItemStack byproduct, double chance){
 		this.byproducts.add(new Tuple<>(byproduct, Math.max(Math.min(chance, 1.0), 0.0)));
 		return this;
 	}
 	
-	public DistillationRecipeBuilder setTimeAndEnergy(int time, int energy){
+	public DistillationTowerRecipeBuilder setTimeAndEnergy(int time, int energy){
 		return setTime(time).setEnergy(energy);
 	}
 	
-	public DistillationRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount){
+	public DistillationTowerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount){
 		return addFluidTag("input", fluidTag, amount);
 	}
 	
-	public DistillationRecipeBuilder addInput(Fluid fluid, int amount){
+	public DistillationTowerRecipeBuilder addInput(Fluid fluid, int amount){
 		return addInput(new FluidStack(fluid, amount));
 	}
 	
-	public DistillationRecipeBuilder addInput(FluidStack fluidStack){
+	public DistillationTowerRecipeBuilder addInput(FluidStack fluidStack){
 		return addFluid("input", fluidStack);
 	}
 	
-	public DistillationRecipeBuilder addFluids(String key, FluidStack... fluidStacks){
+	public DistillationTowerRecipeBuilder addFluids(String key, FluidStack... fluidStacks){
 		return addWriter(jsonObject -> {
 			JsonArray array = new JsonArray();
 			for(FluidStack stack:fluidStacks)
@@ -97,7 +97,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 		});
 	}
 	
-	public DistillationRecipeBuilder addItems(String key, ItemStack... itemStacks){
+	public DistillationTowerRecipeBuilder addItems(String key, ItemStack... itemStacks){
 		return addWriter(jsonObject -> {
 			JsonArray array = new JsonArray();
 			for(ItemStack stack:itemStacks){
@@ -118,7 +118,7 @@ public class DistillationRecipeBuilder extends IEFinishedRecipe<DistillationReci
 		throw new IllegalArgumentException("Unexpected json object.");
 	}
 	
-	private static final DistillationRecipeBuilder dummy = new DistillationRecipeBuilder();
+	private static final DistillationTowerRecipeBuilder dummy = new DistillationTowerRecipeBuilder();
 	public static JsonObject serializerItemStackWithChance(@Nonnull Tuple<ItemStack, Double> tuple){
 		JsonObject itemJson = dummy.serializeItemStack(tuple.getA());
 		itemJson.addProperty("chance", tuple.getB().toString());

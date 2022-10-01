@@ -18,13 +18,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 
-public class DistillationRecipe extends IPMultiblockRecipe{
-	public static Map<ResourceLocation, DistillationRecipe> recipes = new HashMap<>();
+public class DistillationTowerRecipe extends IPMultiblockRecipe{
+	public static Map<ResourceLocation, DistillationTowerRecipe> recipes = new HashMap<>();
 	
 	/** May return null! */
-	public static DistillationRecipe findRecipe(FluidStack input){
+	public static DistillationTowerRecipe findRecipe(FluidStack input){
 		if(!recipes.isEmpty()){
-			for(DistillationRecipe r:recipes.values()){
+			for(DistillationTowerRecipe r:recipes.values()){
 				if(r.input != null && r.input.testIgnoringAmount(input)){
 					return r;
 				}
@@ -33,7 +33,7 @@ public class DistillationRecipe extends IPMultiblockRecipe{
 		return null;
 	}
 	
-	public static DistillationRecipe loadFromNBT(CompoundTag nbt){
+	public static DistillationTowerRecipe loadFromNBT(CompoundTag nbt){
 		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input"));
 		return findRecipe(input);
 	}
@@ -43,7 +43,7 @@ public class DistillationRecipe extends IPMultiblockRecipe{
 	protected final ItemStack[] itemOutput;
 	protected final double[] chances;
 	
-	public DistillationRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
+	public DistillationTowerRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
 		super(ItemStack.EMPTY, IPRecipeTypes.DISTILLATION, id);
 		this.fluidOutput = fluidOutput;
 		this.itemOutput = itemOutput;
@@ -59,7 +59,7 @@ public class DistillationRecipe extends IPMultiblockRecipe{
 	}
 	
 	@Override
-	protected IERecipeSerializer<DistillationRecipe> getIESerializer(){
+	protected IERecipeSerializer<DistillationTowerRecipe> getIESerializer(){
 		return Serializers.DISTILLATION_SERIALIZER.get();
 	}
 	

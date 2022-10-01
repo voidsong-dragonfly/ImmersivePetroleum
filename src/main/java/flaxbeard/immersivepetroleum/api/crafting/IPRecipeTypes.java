@@ -13,7 +13,7 @@ public class IPRecipeTypes{
 	private static final DeferredRegister<RecipeType<?>> REGISTER = DeferredRegister.create(Registry.RECIPE_TYPE_REGISTRY, ImmersivePetroleum.MODID);
 	
 	public static final RegistryObject<RecipeType<CokerUnitRecipe>> COKER = makeType("cokerunit");
-	public static final RegistryObject<RecipeType<DistillationRecipe>> DISTILLATION = makeType("distillationtower");
+	public static final RegistryObject<RecipeType<DistillationTowerRecipe>> DISTILLATION = makeType("distillationtower");
 	public static final RegistryObject<RecipeType<HighPressureRefineryRecipe>> HYDROTREATER = makeType("hydrotreater");
 	
 	public static final RegistryObject<RecipeType<ReservoirType>> RESERVOIR = makeType("reservoir");

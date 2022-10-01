@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import mezz.jei.api.forge.ForgeTypes;
@@ -20,12 +20,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRecipe>{
+public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTowerRecipe>{
 	public static final ResourceLocation ID = ResourceUtils.ip("distillation");
 	
 	private final IDrawableStatic tankOverlay;
 	public DistillationRecipeCategory(IGuiHelper guiHelper){
-		super(DistillationRecipe.class, guiHelper, ID, "block.immersivepetroleum.distillation_tower");
+		super(DistillationTowerRecipe.class, guiHelper, ID, "block.immersivepetroleum.distillation_tower");
 		ResourceLocation background = ResourceUtils.ip("textures/gui/distillation.png");
 		setBackground(guiHelper.createDrawable(background, 51, 0, 81, 77));
 		setIcon(new ItemStack(IPContent.Multiblock.DISTILLATIONTOWER.get()));
@@ -33,7 +33,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	}
 	
 	@Override
-	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, DistillationRecipe recipe, @Nonnull IFocusGroup focuses){
+	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, DistillationTowerRecipe recipe, @Nonnull IFocusGroup focuses){
 		if(recipe.getInputFluid() != null){
 			int total = 0;
 			List<FluidStack> list = recipe.getInputFluid().getMatchingFluidStacks();
@@ -70,7 +70,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	}
 	
 	@Override
-	public void draw(@Nonnull DistillationRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull PoseStack matrix, double mouseX, double mouseY){
+	public void draw(@Nonnull DistillationTowerRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull PoseStack matrix, double mouseX, double mouseY){
 	}
 	
 	@Override
@@ -81,7 +81,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationRec
 	
 	@Override
 	@Deprecated
-	public Class<? extends DistillationRecipe> getRecipeClass(){
+	public Class<? extends DistillationTowerRecipe> getRecipeClass(){
 		return null;
 	}
 }

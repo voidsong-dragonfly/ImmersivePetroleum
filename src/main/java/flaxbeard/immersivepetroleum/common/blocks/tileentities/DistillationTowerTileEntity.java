@@ -20,7 +20,7 @@ import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
-import flaxbeard.immersivepetroleum.api.crafting.DistillationRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
@@ -56,7 +56,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<DistillationTowerTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationTowerRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<DistillationTowerTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;
 	
@@ -163,9 +163,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		if(!isRSDisabled()){
 			if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 				if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
-					DistillationRecipe recipe = DistillationRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
+					DistillationTowerRecipe recipe = DistillationTowerRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
 					if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
-						MultiblockProcessInMachine<DistillationRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId).setInputTanks(TANK_INPUT);
+						MultiblockProcessInMachine<DistillationTowerRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId).setInputTanks(TANK_INPUT);
 						if(addProcessToQueue(process, true)){
 							addProcessToQueue(process, false);
 							update = true;
@@ -335,8 +335,8 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	protected DistillationRecipe getRecipeForId(Level level, ResourceLocation id){
-		return DistillationRecipe.recipes.get(id);
+	protected DistillationTowerRecipe getRecipeForId(Level level, ResourceLocation id){
+		return DistillationTowerRecipe.recipes.get(id);
 	}
 	
 	@Override
@@ -355,7 +355,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	public DistillationRecipe findRecipeForInsertion(ItemStack inserting){
+	public DistillationTowerRecipe findRecipeForInsertion(ItemStack inserting){
 		return null;
 	}
 	
@@ -370,7 +370,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<DistillationRecipe> process){
+	public boolean additionalCanProcessCheck(MultiblockProcess<DistillationTowerRecipe> process){
 		int outputAmount = 0;
 		for(FluidStack outputFluid:process.getRecipe(this.level).getFluidOutputs()){
 			outputAmount += outputFluid.getAmount();
@@ -416,11 +416,11 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	}
 	
 	@Override
-	public void onProcessFinish(MultiblockProcess<DistillationRecipe> process){
+	public void onProcessFinish(MultiblockProcess<DistillationTowerRecipe> process){
 	}
 	
 	@Override
-	public float getMinProcessDistance(MultiblockProcess<DistillationRecipe> process){
+	public float getMinProcessDistance(MultiblockProcess<DistillationTowerRecipe> process){
 		return 1.0F;
 	}
 	
