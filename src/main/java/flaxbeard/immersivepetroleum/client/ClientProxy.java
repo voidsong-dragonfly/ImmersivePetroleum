@@ -1,10 +1,7 @@
 package flaxbeard.immersivepetroleum.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -271,7 +268,7 @@ public class ClientProxy extends CommonProxy{
 		speedboat(ResourceUtils.ip("speedboat"), priority++);
 	}
 	
-	@SuppressWarnings({"deprecation", "unused"})
+	@SuppressWarnings({"deprecation"})
 	private static void flarestack(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
 		
@@ -281,31 +278,29 @@ public class ClientProxy extends CommonProxy{
 		builder.appendText(() -> {
 			List<Component[]> list = new ArrayList<>();
 			for(TagKey<Fluid> tag:FlarestackHandler.getSet()){
-				for (Fluid fluid : ForgeRegistries.FLUIDS.getValues()){
-					if (fluid.is(tag)){
+				for(Fluid fluid:ForgeRegistries.FLUIDS.getValues()){
+					if(fluid.is(tag)){
 						Component[] entry = new Component[]{TextComponent.EMPTY, new FluidStack(fluid, 1).getDisplayName()};
 						list.add(entry);
 					}
 				}
 			}
-
+			
 			StringBuilder additionalText = new StringBuilder();
 			List<SpecialElementData> newElements = new ArrayList<>();
 			int nextLine = 0;
-			for (int page = 0; nextLine < list.size(); ++page){
+			for(int page = 0;nextLine < list.size();++page){
 				final int linesOnPage = page == 0 ? 12 : 14;
 				final int endIndex = Math.min(nextLine + linesOnPage, list.size());
 				List<Component[]> onPage = list.subList(nextLine, endIndex);
 				nextLine = endIndex;
-				final String key = "flarestack_table"+page;
+				final String key = "flarestack_table" + page;
 				additionalText.append("<&").append(key).append(">");
-				newElements.add(new SpecialElementData(key, 0, new ManualElementTable(
-						man, onPage.toArray(Component[][]::new), false
-				)));
+				newElements.add(new SpecialElementData(key, 0, new ManualElementTable(man, onPage.toArray(Component[][]::new), false)));
 			}
 			return Pair.of(additionalText.toString(), newElements);
 		});
-
+		
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
 	
