@@ -1,8 +1,10 @@
 package flaxbeard.immersivepetroleum.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +13,7 @@ import com.electronwill.nightconfig.core.Config;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
@@ -268,34 +271,70 @@ public class ClientProxy extends CommonProxy{
 		speedboat(ResourceUtils.ip("speedboat"), priority++);
 	}
 	
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation", "unused"})
 	private static void flarestack(ResourceLocation location, int priority){
+		final List<Component[]> list = new ArrayList<>();
+		
 		ManualInstance man = ManualHelper.getManual();
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.addSpecialElement(new SpecialElementData("flarestack0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.FLARESTACK.get())))));
 		builder.addSpecialElement(new SpecialElementData("flarestack1", 0, () -> {
-			Set<TagKey<Fluid>> fluids = FlarestackHandler.getSet();
-			List<Component[]> list = new ArrayList<>();
-			for(TagKey<Fluid> tag:fluids){
+			
+			for(TagKey<Fluid> tag:FlarestackHandler.getSet()){
 				ForgeRegistries.FLUIDS.getValues().stream().forEach(fluid -> {
 					if(fluid.is(tag)){
 						Component[] entry = new Component[]{TextComponent.EMPTY, new FluidStack(fluid, 1).getDisplayName()};
 						list.add(entry);
 					}
 				});
-//				ResourceLocation rl = tag.registry().location();
-//				Fluid f = ForgeRegistries.FLUIDS.getValue(rl);
-//				Component[] entry = new Component[]{TextComponent.EMPTY, new FluidStack(f, 1).getDisplayName()};
-//				
-//				list.add(entry);
 			}
 			
-			// FIXME Breaks the bounds, split up every 10 or so
-			return new ManualElementTable(man, list.toArray(new Component[0][]), false);
+			// This was an attempt to have dynamicly added pages
+			// to split up the fluids able to be burned by the flarestack
+			// but it does not work, even if looks like it should.
+			// This piece of code requires time-travel to accomplish its goal!
+			if(list.size() > 12){
+				final Function<Integer, Component[][]> func = s -> {
+					Component[][] array = new Component[s][];
+					for(int i = 0;i < array.length;i++){
+						array[i] = list.remove(0);
+					}
+					return array;
+				};
+				
+				final Component[][] mainArray = func.apply(12);
+				
+				if(list.size() > 0){
+					int expectedSize = list.size();
+					int index = 2;
+					while(expectedSize > 14){
+//						final Pair<String, List<SpecialElementData>> pair = fsList(man, index++, () -> func.apply(14));
+//						builder.appendText(() -> pair);
+						expectedSize -= 14;
+					}
+					
+//					final Pair<String, List<SpecialElementData>> pair = fsList(man, index++, () -> list.toArray(new Component[0][]));
+//					builder.appendText(() -> pair);
+				}
+				
+				return new ManualElementTable(man, mainArray, false);
+			}else{
+				return new ManualElementTable(man, list.toArray(new Component[0][]), false);
+			}
 		}));
 		builder.readFromFile(location);
+		
+		final Pair<String, List<SpecialElementData>> pair = fsList(man, 2, () -> list.toArray(new Component[0][]));
+		builder.appendText(() -> pair);
+		
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
+	}
+	
+	static Pair<String, List<SpecialElementData>> fsList(ManualInstance man, int index, Supplier<Component[][]> tabs){
+		return Pair.of("<&flarestack" + index + ">", Arrays.asList(new SpecialElementData("flarestack" + index, 0, () -> {
+			return new ManualElementTable(man, tabs.get(), false);
+		})));
 	}
 	
 	private static void autolube(ResourceLocation location, int priority){
