@@ -17,7 +17,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 		this.addSlot(new Slot(this.inv, 0, 92, 55){
 			@Override
 			public boolean mayPlace(@Nonnull ItemStack stack){
-				return ExternalModContent.isIEPipeItem(stack);
+				return ExternalModContent.isIEItem_Pipe(stack);
 			}
 		});
 		

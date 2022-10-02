@@ -8,8 +8,8 @@ import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.CokerUnitRecipeSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.DistillationTowerRecipeSerializer;
-import flaxbeard.immersivepetroleum.common.crafting.serializers.ReservoirSerializer;
 import flaxbeard.immersivepetroleum.common.crafting.serializers.HighPressureRefineryRecipeSerializer;
+import flaxbeard.immersivepetroleum.common.crafting.serializers.ReservoirSerializer;
 import net.minecraftforge.registries.RegistryObject;
 
 public class Serializers{

@@ -14,8 +14,8 @@ import com.blamejared.crafttweaker.api.util.Many;
 import com.blamejared.crafttweaker_annotations.annotations.Document;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeType;

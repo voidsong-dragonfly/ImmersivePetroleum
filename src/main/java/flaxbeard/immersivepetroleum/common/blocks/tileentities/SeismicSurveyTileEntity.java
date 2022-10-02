@@ -107,12 +107,12 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 			boolean fire = false;
 			
 			if(!this.stack.isEmpty()){
-				if(this.stack.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
+				if(ExternalModContent.isIEItem_Buckshot(this.stack)){
 					fire = true;
 					
 					if(!world.isClientSide){
 						this.timer = DELAY;
-						this.stack = new ItemStack(ExternalModContent.IE_ITEM_EMPTY_SHELL.get());
+						this.stack = new ItemStack(ExternalModContent.getIEItem_EmptyShell());
 						this.setChanged();
 					}
 					
@@ -163,7 +163,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						world.addParticle(Math.random() < 0.5 ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, bX + xa, bY, bZ + za, hSpeed * xa, 0, hSpeed * za);
 					}
 				}else{
-					SoundEvent sound = ((BulletItem) ExternalModContent.IE_ITEM_BUCKSHOT.get()).getType().getSound();
+					SoundEvent sound = ((BulletItem) ExternalModContent.getIEItem_Buckshot()).getType().getSound();
 					if(sound == null){
 						sound = IESounds.revolverFire;
 					}
@@ -242,7 +242,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 			}
 			
 			return false;
-		}else if(held.getItem().equals(ExternalModContent.IE_ITEM_BUCKSHOT.get())){
+		}else if(ExternalModContent.isIEItem_Buckshot(held)){
 			if(this.stack.isEmpty()){
 				if(!world.isClientSide){
 					ItemStack copy = held.copy();
