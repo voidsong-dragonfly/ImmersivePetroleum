@@ -24,8 +24,14 @@ archivesBaseName = 'ImmersivePetroleum-1.18.2'
 repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }		 // IE & CT Files
 	maven { name = "DVS1 Maven FS"; url = "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
-	maven { url = 'https://maven.latmod.com/' }                                     // Needed for JEI
-	maven { name = "CurseMaven";    url = 'https://cfa2.cursemaven.com' }           // Needed for PNC
+	maven { url = 'https://maven.latmod.com/' }									 // Needed for JEI
+	maven { name = "CurseMaven";	url = 'https://cfa2.cursemaven.com' }		   // Needed for PNC
+	maven { // CC-Tweaked
+		url 'https://squiddev.cc/maven/'
+		content {
+			includeGroup 'org.squiddev'
+		}
+	}
 	
 	flatDir { dirs 'flatdir' }
 }
@@ -123,6 +129,8 @@ dependencies {
 	
 	runtimeOnly fg.deobf("mezz.jei:jei-${version_minecraft}:${version_jei}")
 	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}:${version_jei}:api")
+	
+    compileOnly fg.deobf("org.squiddev:cc-tweaked-${version_minecraft}:${version_cctweaked}")
 }
 
 def customGradle = rootProject.file('custom.gradle');
