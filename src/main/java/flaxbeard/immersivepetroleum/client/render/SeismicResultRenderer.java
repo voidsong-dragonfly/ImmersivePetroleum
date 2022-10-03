@@ -28,7 +28,8 @@ public class SeismicResultRenderer{
 	
 	@SubscribeEvent
 	public void renderHandEvent(RenderHandEvent event){
-		if(event.getItemStack().getItem().equals(IPContent.Items.SURVEYRESULT.get())){
+		ItemStack stack = event.getItemStack();
+		if(stack.getItem().equals(IPContent.Items.SURVEYRESULT.get()) && stack.hasTag() && stack.getTagElement("surveyscan") != null){
 			event.setCanceled(true);
 		}
 	}
