@@ -88,6 +88,8 @@ public class SeismicResultRenderer{
 							{
 								final int w = 85;
 								final int h = 85;
+								final float u = w / 256F;
+								final float v = h / 256F;
 								
 								matrix.translate(-w / 2F, -h / 2F, 1);
 								
@@ -96,9 +98,9 @@ public class SeismicResultRenderer{
 								Matrix4f mat = matrix.last().pose();
 								
 								builder.vertex(mat, 0, 0, 0).uv(0.0F, 0.0F).uv2(0xF000F0).endVertex();
-								builder.vertex(mat, 0, h, 0).uv(0.0F, 1.0F).uv2(0xF000F0).endVertex();
-								builder.vertex(mat, w, h, 0).uv(1.0F, 1.0F).uv2(0xF000F0).endVertex();
-								builder.vertex(mat, w, 0, 0).uv(1.0F, 0.0F).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, 0, h, 0).uv(0.0F, v).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, w, h, 0).uv(u, v).uv2(0xF000F0).endVertex();
+								builder.vertex(mat, w, 0, 0).uv(u, 0.0F).uv2(0xF000F0).endVertex();
 							}
 							matrix.popPose();
 						}
