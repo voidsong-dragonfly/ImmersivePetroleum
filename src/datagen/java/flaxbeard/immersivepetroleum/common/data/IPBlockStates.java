@@ -43,7 +43,6 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelFile.ExistingModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
@@ -63,26 +62,6 @@ public class IPBlockStates extends BlockStateProvider{
 	
 	@Override
 	protected void registerStatesAndModels(){
-		// Dummy Oil Ore
-		ModelFile dummyOilOreModel = cubeAll(IPContent.Blocks.DUMMYOILORE.get());
-		getVariantBuilder(IPContent.Blocks.DUMMYOILORE.get()).partialState()
-			.setModels(new ConfiguredModel(dummyOilOreModel));
-		itemModelWithParent(IPContent.Blocks.DUMMYOILORE.get(), dummyOilOreModel);
-		
-		// Dummy Pipe
-		ModelFile dummyPipeModel = new ExistingModelFile(modLoc("block/dummy_pipe"), this.exFileHelper);
-		getVariantBuilder(IPContent.Blocks.DUMMYPIPE.get()).partialState()
-			.setModels(new ConfiguredModel(dummyPipeModel));
-		itemModelWithParent(IPContent.Blocks.DUMMYPIPE.get(), dummyPipeModel);
-		
-		// Dummy Conveyor
-		ModelFile dummyConveyorModel = new ExistingModelFile(modLoc("block/dummy_conveyor"), this.exFileHelper);
-		getVariantBuilder(IPContent.Blocks.DUMMYCONVEYOR.get()).partialState()
-			.setModels(new ConfiguredModel(dummyConveyorModel));
-		getItemBuilder(IPContent.Blocks.DUMMYCONVEYOR.get())
-			.parent(dummyConveyorModel)
-			.texture("particle", ResourceUtils.ie("block/conveyor/conveyor"));
-		
 		// Multiblocks
 		distillationtower();
 		pumpjack();

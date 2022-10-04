@@ -27,10 +27,6 @@ public class BlockRenderLayers{
 		
 		setRenderLayer(IPContent.Blocks.WELL, RenderType.cutout());
 		
-		setRenderLayer(IPContent.Blocks.DUMMYCONVEYOR, RenderType.cutout());
-		setRenderLayer(IPContent.Blocks.DUMMYOILORE, RenderType.cutout());
-		setRenderLayer(IPContent.Blocks.DUMMYPIPE, RenderType.cutout());
-		
 		setRenderLayer(IPContent.Multiblock.DISTILLATIONTOWER, RenderType.cutout());
 		setRenderLayer(IPContent.Multiblock.PUMPJACK, RenderType.cutout());
 		setRenderLayer(IPContent.Multiblock.COKERUNIT, RenderType.cutout());

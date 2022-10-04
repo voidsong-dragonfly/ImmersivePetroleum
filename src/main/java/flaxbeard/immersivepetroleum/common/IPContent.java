@@ -21,7 +21,6 @@ import flaxbeard.immersivepetroleum.client.particle.FluidSpill;
 import flaxbeard.immersivepetroleum.client.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
-import flaxbeard.immersivepetroleum.common.blocks.metal.BlockDummy;
 import flaxbeard.immersivepetroleum.common.blocks.metal.CokerUnitBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DerrickBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
@@ -145,15 +144,6 @@ public class IPContent{
 		
 		public static final RegistryObject<WellBlock> WELL = IPRegisters.registerBlock("well", WellBlock::new);
 		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerBlock("well_pipe", WellPipeBlock::new);
-		
-		
-		// Dead weight, will be removed next commit
-		@Deprecated(forRemoval = true)
-		public static final RegistryObject<BlockDummy> DUMMYOILORE = IPRegisters.registerIPBlock("dummy_oil_ore", BlockDummy::new);
-		@Deprecated(forRemoval = true)
-		public static final RegistryObject<BlockDummy> DUMMYPIPE = IPRegisters.registerIPBlock("dummy_pipe", BlockDummy::new);
-		@Deprecated(forRemoval = true)
-		public static final RegistryObject<BlockDummy> DUMMYCONVEYOR = IPRegisters.registerIPBlock("dummy_conveyor", BlockDummy::new);
 		
 		private static void forceClassLoad(){
 		}

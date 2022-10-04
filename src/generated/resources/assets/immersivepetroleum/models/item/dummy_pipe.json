@@ -1,6 +1,0 @@
-{
-  "parent": "immersivepetroleum:block/dummy_pipe",
-  "textures": {
-    "particle": "immersivepetroleum:block/dummy_pipe"
-  }
-}
