@@ -114,56 +114,56 @@ public class IPContent{
 	
 	public static class Fluids{
 		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", CrudeOilFluid::new);
-		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new);
 		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new);
+		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new);
 		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000, false));
 		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", e -> new IPFluid(e, 789, 1200, false));
 		
-		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid();
 		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", e -> new IPFluid(e, 750, 750, false));
 		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", e -> new IPFluid(e, 750, 750, false));
 		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", e -> new IPFluid(e, 876, 700, false));
 		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", e -> new IPFluid(e, 2, 1, true));
 		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", e -> new IPFluid(e, 1, 1, true));
 		
+		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid();
+		
 		private static void forceClassLoad(){
 		}
 	}
 	
 	public static class Blocks{
-		public static final RegistryObject<AsphaltBlock> ASPHALT = IPRegisters.registerIPBlock("asphalt", AsphaltBlock::new);
-		public static final RegistryObject<SlabBlock> ASPHALT_SLAB = IPRegisters.registerBlock("asphalt_slab", () -> new AsphaltSlab(ASPHALT.get()));
-		public static final RegistryObject<StairBlock> ASPHALT_STAIR = IPRegisters.registerBlock("asphalt_stair", () -> new AsphaltStairs(ASPHALT.get()));
-		public static final RegistryObject<PetcokeBlock> PETCOKE = IPRegisters.registerIPBlock("petcoke_block", PetcokeBlock::new);
+		public static final RegistryObject<SeismicSurveyBlock> SEISMIC_SURVEY = IPRegisters.registerIPBlock("seismic_survey", SeismicSurveyBlock::new);
 		
 		public static final RegistryObject<GasGeneratorBlock> GAS_GENERATOR = IPRegisters.registerIPBlock("gas_generator", GasGeneratorBlock::new);
 		public static final RegistryObject<AutoLubricatorBlock> AUTO_LUBRICATOR = IPRegisters.registerIPBlock("auto_lubricator", AutoLubricatorBlock::new);
 		public static final RegistryObject<FlarestackBlock> FLARESTACK = IPRegisters.registerIPBlock("flarestack", FlarestackBlock::new);
 		
-		public static final RegistryObject<BlockDummy> DUMMYOILORE = IPRegisters.registerIPBlock("dummy_oil_ore", BlockDummy::new);
-		public static final RegistryObject<BlockDummy> DUMMYPIPE = IPRegisters.registerIPBlock("dummy_pipe", BlockDummy::new);
-		public static final RegistryObject<BlockDummy> DUMMYCONVEYOR = IPRegisters.registerIPBlock("dummy_conveyor", BlockDummy::new);
+		public static final RegistryObject<AsphaltBlock> ASPHALT = IPRegisters.registerIPBlock("asphalt", AsphaltBlock::new);
+		public static final RegistryObject<SlabBlock> ASPHALT_SLAB = IPRegisters.registerBlock("asphalt_slab", () -> new AsphaltSlab(ASPHALT.get()));
+		public static final RegistryObject<StairBlock> ASPHALT_STAIR = IPRegisters.registerBlock("asphalt_stair", () -> new AsphaltStairs(ASPHALT.get()));
+		public static final RegistryObject<PetcokeBlock> PETCOKE = IPRegisters.registerIPBlock("petcoke_block", PetcokeBlock::new);
 		
 		public static final RegistryObject<WellBlock> WELL = IPRegisters.registerBlock("well", WellBlock::new);
 		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerBlock("well_pipe", WellPipeBlock::new);
 		
-		public static final RegistryObject<SeismicSurveyBlock> SEISMIC_SURVEY = IPRegisters.registerIPBlock("seismic_survey", SeismicSurveyBlock::new);
+		
+		// Dead weight, will be removed next commit
+		@Deprecated(forRemoval = true)
+		public static final RegistryObject<BlockDummy> DUMMYOILORE = IPRegisters.registerIPBlock("dummy_oil_ore", BlockDummy::new);
+		@Deprecated(forRemoval = true)
+		public static final RegistryObject<BlockDummy> DUMMYPIPE = IPRegisters.registerIPBlock("dummy_pipe", BlockDummy::new);
+		@Deprecated(forRemoval = true)
+		public static final RegistryObject<BlockDummy> DUMMYCONVEYOR = IPRegisters.registerIPBlock("dummy_conveyor", BlockDummy::new);
 		
 		private static void forceClassLoad(){
-			registerItemBlock(ASPHALT_SLAB);
-			registerItemBlock(ASPHALT_STAIR);
-		}
-		
-		private static void registerItemBlock(RegistryObject<? extends Block> block){
-			IPRegisters.registerItem(block.getId().getPath(), () -> new IPBlockItemBase(block.get(), new Item.Properties().tab(ImmersivePetroleum.creativeTab)));
 		}
 	}
 	
 	public static class Items{
-		public static final RegistryObject<Item> BITUMEN = IPRegisters.registerItem("bitumen", IPItemBase::new);
 		public static final RegistryObject<Item> PROJECTOR = IPRegisters.registerItem("projector", ProjectorItem::new);
 		public static final RegistryObject<MotorboatItem> SPEEDBOAT = IPRegisters.registerItem("speedboat", MotorboatItem::new);
 		public static final RegistryObject<OilCanItem> OIL_CAN = IPRegisters.registerItem("oil_can", OilCanItem::new);
+		public static final RegistryObject<Item> BITUMEN = IPRegisters.registerItem("bitumen", IPItemBase::new);
 		public static final RegistryObject<Item> PETCOKE = IPRegisters.registerItem("petcoke", () -> new IPItemBase(){
 			@Override
 			public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
@@ -174,15 +174,21 @@ public class IPContent{
 		public static final RegistryObject<Item> SURVEYRESULT = IPRegisters.registerItem("survey_result", SurveyResultItem::new);
 		
 		private static void forceClassLoad(){
+			registerItemBlock(Blocks.ASPHALT_SLAB);
+			registerItemBlock(Blocks.ASPHALT_STAIR);
+		}
+		
+		private static void registerItemBlock(RegistryObject<? extends Block> block){
+			IPRegisters.registerItem(block.getId().getPath(), () -> new IPBlockItemBase(block.get(), new Item.Properties().tab(ImmersivePetroleum.creativeTab)));
 		}
 	}
 	
 	public static class BoatUpgrades{
-		public static RegistryObject<IPUpgradeItem> REINFORCED_HULL = createBoatUpgrade("reinforced_hull");
-		public static RegistryObject<IPUpgradeItem> ICE_BREAKER = createBoatUpgrade("icebreaker");
-		public static RegistryObject<IPUpgradeItem> TANK = createBoatUpgrade("tank");
-		public static RegistryObject<IPUpgradeItem> RUDDERS = createBoatUpgrade("rudders");
-		public static RegistryObject<IPUpgradeItem> PADDLES = createBoatUpgrade("paddles");
+		public static final RegistryObject<IPUpgradeItem> REINFORCED_HULL = createBoatUpgrade("reinforced_hull");
+		public static final RegistryObject<IPUpgradeItem> ICE_BREAKER = createBoatUpgrade("icebreaker");
+		public static final RegistryObject<IPUpgradeItem> TANK = createBoatUpgrade("tank");
+		public static final RegistryObject<IPUpgradeItem> RUDDERS = createBoatUpgrade("rudders");
+		public static final RegistryObject<IPUpgradeItem> PADDLES = createBoatUpgrade("paddles");
 		
 		private static void forceClassLoad(){
 		}
@@ -192,14 +198,14 @@ public class IPContent{
 		}
 	}
 	
-	public static RegistryObject<Item> DEBUGITEM = IPRegisters.registerItem("debug", DebugItem::new);
+	public static final RegistryObject<Item> DEBUGITEM = IPRegisters.registerItem("debug", DebugItem::new);
 	
 	/** block/item/fluid population */
 	public static void populate(){
 		Blocks.forceClassLoad();
-		Fluids.forceClassLoad();
 		Items.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
+		Fluids.forceClassLoad();
 		Multiblock.forceClassLoad();
 		IPMenuTypes.forceClassLoad();
 		Serializers.forceClassLoad();
@@ -221,20 +227,17 @@ public class IPContent{
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.SLIPPERY.get(), 60, 1));
 		ChemthrowerHandler.registerEffect(IETags.fluidPlantoil, new LubricantEffect());
 		
-		ChemthrowerHandler.registerFlammable(IPTags.Fluids.crudeOil);
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.crudeOil, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 1));
-		
-		ChemthrowerHandler.registerFlammable(IPTags.Fluids.gasoline);
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.gasoline, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 1));
-		
-		ChemthrowerHandler.registerFlammable(IPTags.Fluids.naphtha);
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.naphtha, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 1));
-		
-		ChemthrowerHandler.registerFlammable(IPTags.Fluids.benzene);
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.benzene, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 1));
-		
-		ChemthrowerHandler.registerFlammable(IPTags.Fluids.napalm);
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.napalm, new ChemthrowerEffect_Potion(null, 0, IEPotions.FLAMMABLE.get(), 60, 2));
+		
+		ChemthrowerHandler.registerFlammable(IPTags.Fluids.crudeOil);
+		ChemthrowerHandler.registerFlammable(IPTags.Fluids.gasoline);
+		ChemthrowerHandler.registerFlammable(IPTags.Fluids.naphtha);
+		ChemthrowerHandler.registerFlammable(IPTags.Fluids.benzene);
+		ChemthrowerHandler.registerFlammable(IPTags.Fluids.napalm);
 		
 		MultiblockHandler.registerMultiblock(DistillationTowerMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(PumpjackMultiblock.INSTANCE);
@@ -242,9 +245,6 @@ public class IPContent{
 		MultiblockHandler.registerMultiblock(HydroTreaterMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(DerrickMultiblock.INSTANCE);
 		MultiblockHandler.registerMultiblock(OilTankMultiblock.INSTANCE);
-		
-		//ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
-		//ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
 		
 		LubricantHandler.register(IPTags.Fluids.lubricant, 3);
 		LubricantHandler.register(IETags.fluidPlantoil, 12);
