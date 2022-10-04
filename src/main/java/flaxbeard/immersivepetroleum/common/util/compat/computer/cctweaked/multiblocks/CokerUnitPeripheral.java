@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked;
+package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,8 @@ import dan200.computercraft.api.lua.MethodResult;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
-import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.util.CCTUtils;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.CCTUtils;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic.PoweredMultiblockPeripheral;
 import net.minecraft.resources.ResourceLocation;
 
 public class CokerUnitPeripheral extends PoweredMultiblockPeripheral{

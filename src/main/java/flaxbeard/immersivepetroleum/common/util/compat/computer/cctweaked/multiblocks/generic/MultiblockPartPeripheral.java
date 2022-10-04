@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked;
+package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic;
 
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import dan200.computercraft.api.lua.LuaFunction;

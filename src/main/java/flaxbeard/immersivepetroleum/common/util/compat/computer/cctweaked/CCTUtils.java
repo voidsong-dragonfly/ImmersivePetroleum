@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.util;
+package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked;
 
 import java.util.HashMap;
 import java.util.Map;

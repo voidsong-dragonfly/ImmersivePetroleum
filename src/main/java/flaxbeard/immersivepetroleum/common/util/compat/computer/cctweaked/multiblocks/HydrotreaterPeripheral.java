@@ -1,11 +1,12 @@
-package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked;
+package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks;
 
 import java.util.Map;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
-import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.util.CCTUtils;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.CCTUtils;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic.PoweredMultiblockPeripheral;
 import net.minecraftforge.fluids.FluidStack;
 
 public class HydrotreaterPeripheral extends PoweredMultiblockPeripheral{

@@ -8,6 +8,11 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTower
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.CokerUnitPeripheral;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.DistillationTowerPeripheral;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.HydrotreaterPeripheral;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.OilTankPeripheral;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.PumpjackPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
