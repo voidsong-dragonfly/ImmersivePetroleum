@@ -17,8 +17,8 @@ public class OilTankBlock extends IPMetalMultiblock<OilTankTileEntity>{
 	@Override
 	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity){
 		BlockEntity te = world.getBlockEntity(pos);
-		if(te instanceof OilTankTileEntity){
-			return ((OilTankTileEntity) te).isLadder();
+		if(te instanceof OilTankTileEntity oiltank && oiltank.isLadder()){
+			return true;
 		}
 		return false;
 	}

@@ -89,9 +89,9 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTi
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
 			if(side == null || side == Direction.DOWN){
 				BlockEntity te = this.level.getBlockEntity(getBlockPos());
-				if(te instanceof FlarestackTileEntity){
+				if(te instanceof FlarestackTileEntity flare){
 					if(this.inputHandler == null){
-						this.inputHandler = LazyOptional.of(() -> ((FlarestackTileEntity) te).tank);
+						this.inputHandler = LazyOptional.of(() -> flare.tank);
 					}
 				}else{
 					return LazyOptional.empty();

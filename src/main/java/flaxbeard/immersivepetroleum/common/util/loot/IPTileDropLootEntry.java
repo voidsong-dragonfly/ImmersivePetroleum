@@ -30,8 +30,8 @@ public class IPTileDropLootEntry extends LootPoolSingletonContainer{
 	protected void createItemStack(@Nonnull Consumer<ItemStack> stackConsumer, LootContext context){
 		if(context.hasParam(LootContextParams.BLOCK_ENTITY)){
 			BlockEntity te = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
-			if(te instanceof IEBlockInterfaces.IBlockEntityDrop){
-				((IEBlockInterfaces.IBlockEntityDrop) te).getBlockEntityDrop(context).forEach(stackConsumer);
+			if(te instanceof IEBlockInterfaces.IBlockEntityDrop dropTe){
+				dropTe.getBlockEntityDrop(context).forEach(stackConsumer);
 			}
 		}
 	}

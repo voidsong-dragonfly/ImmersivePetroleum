@@ -26,8 +26,8 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 		for(int y = this.worldPosition.getY() - 1;y >= this.level.getMinBuildHeight();y--){
 			BlockEntity teLow = this.level.getBlockEntity(new BlockPos(this.worldPosition.getX(), y, this.worldPosition.getZ()));
 			
-			if(teLow instanceof WellTileEntity){
-				return (WellTileEntity) teLow;
+			if(teLow instanceof WellTileEntity well){
+				return well;
 			}
 			
 			if(!(teLow instanceof WellPipeTileEntity)){
@@ -60,7 +60,7 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 			pos = new BlockPos(this.worldPosition.getX(), y, this.worldPosition.getZ());
 			BlockEntity teHigh = this.level.getBlockEntity(pos);
 			
-			if((teHigh instanceof PumpjackTileEntity && ((PumpjackTileEntity) teHigh).offsetToMaster.equals(BlockPos.ZERO)) || (teHigh instanceof DerrickTileEntity && ((DerrickTileEntity) teHigh).offsetToMaster.equals(BlockPos.ZERO))){
+			if((teHigh instanceof PumpjackTileEntity pumpjack && pumpjack.offsetToMaster.equals(BlockPos.ZERO)) || (teHigh instanceof DerrickTileEntity derrick && derrick.offsetToMaster.equals(BlockPos.ZERO))){
 				return Pair.of(true, pos);
 			}
 			

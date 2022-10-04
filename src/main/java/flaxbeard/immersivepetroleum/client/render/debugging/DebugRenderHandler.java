@@ -118,9 +118,8 @@ public class DebugRenderHandler{
 								}else if(te instanceof WellPipeTileEntity wellPipe){
 								}
 								
-							}else if(te instanceof MultiblockPartBlockEntity<?>){
+							}else if(te instanceof MultiblockPartBlockEntity<?> generic){
 								{
-									MultiblockPartBlockEntity<?> generic = (MultiblockPartBlockEntity<?>) te;
 									BlockPos tPos = generic.posInMultiblock;
 									if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
 										generic = generic.master();

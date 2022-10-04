@@ -181,8 +181,8 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			return NonNullList.create();
 		}
 		
-		if(handler instanceof IPItemStackHandler){
-			return ((IPItemStackHandler) handler).getContainedItems();
+		if(handler instanceof IPItemStackHandler ipStackHandler){
+			return ipStackHandler.getContainedItems();
 		}
 		
 		ImmersivePetroleum.log.warn("Inefficiently getting contained items. Why does " + stack + " have a non-IE IItemHandler?");

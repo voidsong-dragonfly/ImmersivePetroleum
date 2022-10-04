@@ -52,9 +52,9 @@ public class Utils{
 	
 	/** Copy of {@link blusunrize.immersiveengineering.common.util.Utils#unlockIEAdvancement(Player, String)} */
 	public static void unlockIPAdvancement(Player player, String name){
-		if(player instanceof ServerPlayer){
-			PlayerAdvancements advancements = ((ServerPlayer) player).getAdvancements();
-			ServerAdvancementManager manager = ((ServerLevel) player.getCommandSenderWorld()).getServer().getAdvancements();
+		if(player instanceof ServerPlayer serverPlayer){
+			PlayerAdvancements advancements = serverPlayer.getAdvancements();
+			ServerAdvancementManager manager = ((ServerLevel) serverPlayer.getCommandSenderWorld()).getServer().getAdvancements();
 			Advancement advancement = manager.getAdvancement(new ResourceLocation(ImmersivePetroleum.MODID, name));
 			if(advancement != null)
 				advancements.award(advancement, "code_trigger");

@@ -2,6 +2,8 @@ package flaxbeard.immersivepetroleum.common.network;
 
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -42,11 +44,10 @@ public class IPPacketHandler{
 	 * @param player  The {@link Player} to send to
 	 * @param message The message to send
 	 */
-	public static <MSG> void sendToPlayer(Player player, MSG message){
-		if(message == null || !(player instanceof ServerPlayer))
-			return;
-		
-		INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
+	public static <MSG> void sendToPlayer(Player player, @Nonnull MSG message){
+		if(message != null && player instanceof ServerPlayer serverPlayer){
+			INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message);
+		}
 	}
 	
 	/** Client -> Server */

@@ -47,8 +47,9 @@ public class PumpjackLubricationHandler implements ILubricationHandler<PumpjackT
 		BlockPos target = lubricator.getBlockPos().relative(facing);
 		BlockEntity te = world.getBlockEntity(target);
 		
-		if(te instanceof PumpjackTileEntity){
-			PumpjackTileEntity master = ((PumpjackTileEntity) te).master();
+		if(te instanceof PumpjackTileEntity master){
+			master = master.master();
+			
 			if(master != null){
 				Direction f = master.getIsMirrored() ? facing : facing.getOpposite();
 				if(master.getFacing().getClockWise() == f){

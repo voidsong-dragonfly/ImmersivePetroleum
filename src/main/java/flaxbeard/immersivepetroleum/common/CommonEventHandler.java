@@ -105,15 +105,11 @@ public class CommonEventHandler{
 			return;
 		}
 		
-		if(event.getEntityMounting() instanceof LivingEntity && event.getEntityBeingMounted() instanceof MotorboatEntity){
+		if(event.getEntityMounting() instanceof LivingEntity living && event.getEntityBeingMounted() instanceof MotorboatEntity boat){
 			if(event.isDismounting()){
-				MotorboatEntity boat = (MotorboatEntity) event.getEntityBeingMounted();
-				
 				if(boat.isFireproof){
 					FluidState fluidstate = event.getWorldObj().getBlockState(new BlockPos(boat.position().add(0.5, 0, 0.5))).getFluidState();
 					if(fluidstate != Fluids.EMPTY.defaultFluidState() && fluidstate.is(FluidTags.LAVA)){
-						LivingEntity living = (LivingEntity) event.getEntityMounting();
-						
 						living.addEffect(new MobEffectInstance(IPEffects.ANTI_DISMOUNT_FIRE.get(), 1, 0, false, false));
 					}
 				}
@@ -156,8 +152,8 @@ public class CommonEventHandler{
 									continue;
 								
 								BlockEntity te2 = world.getBlockEntity(pos);
-								if(te2 instanceof MultiblockPartBlockEntity){
-									if(((MultiblockPartBlockEntity<?>) te2).master() == part.master()){
+								if(te2 instanceof MultiblockPartBlockEntity part2){
+									if(part2.master() == part.master()){
 										for(Direction facing:Direction.Plane.HORIZONTAL){
 											if(world.random.nextInt(30) == 0){
 												Vec3i direction = facing.getNormal();
@@ -187,7 +183,7 @@ public class CommonEventHandler{
 	
 	@SubscribeEvent
 	public void onEntityJoiningWorld(EntityJoinWorldEvent event){
-		if(event.getEntity() instanceof Player){
+		if(event.getEntity() instanceof Player player){
 			if(event.getEntity() instanceof FakePlayer){
 				return;
 			}
@@ -202,7 +198,7 @@ public class CommonEventHandler{
 					}
 				});
 				
-				((Player) event.getEntity()).awardRecipes(l);
+				player.awardRecipes(l);
 			}
 		}
 	}

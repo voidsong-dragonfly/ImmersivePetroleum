@@ -130,8 +130,8 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		if(!worldIn.isClientSide){
 			worldIn.setBlockAndUpdate(pos.offset(0, 1, 0), state.setValue(SLAVE, true));
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(te instanceof IReadOnPlacement){
-				((IReadOnPlacement) te).readOnPlacement(placer, stack);
+			if(te instanceof IReadOnPlacement read){
+				read.readOnPlacement(placer, stack);
 			}
 		}
 	}

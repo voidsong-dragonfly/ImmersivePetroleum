@@ -36,8 +36,8 @@ public class CokerUnitBlock extends IPMetalMultiblock<CokerUnitTileEntity>{
 	@Override
 	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity){
 		BlockEntity te = world.getBlockEntity(pos);
-		if(te instanceof CokerUnitTileEntity){
-			return ((CokerUnitTileEntity) te).isLadder();
+		if(te instanceof CokerUnitTileEntity coker && coker.isLadder()){
+			return true;
 		}
 		return false;
 	}

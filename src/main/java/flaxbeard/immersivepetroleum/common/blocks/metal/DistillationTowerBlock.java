@@ -36,8 +36,8 @@ public class DistillationTowerBlock extends IPMetalMultiblock<DistillationTowerT
 	@Override
 	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity){
 		BlockEntity te = world.getBlockEntity(pos);
-		if(te instanceof DistillationTowerTileEntity){
-			return ((DistillationTowerTileEntity) te).isLadder();
+		if(te instanceof DistillationTowerTileEntity tower && tower.isLadder()){
+			return true;
 		}
 		return false;
 	}

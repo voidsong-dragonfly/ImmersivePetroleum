@@ -385,8 +385,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public InteractionResult interact(Player player, @Nonnull InteractionHand hand){
 		ItemStack stack = player.getItemInHand(hand);
 		
-		if(stack != ItemStack.EMPTY && stack.getItem() instanceof DebugItem){
-			((DebugItem) stack.getItem()).onSpeedboatClick(this, player, stack);
+		if(stack != ItemStack.EMPTY && stack.getItem() instanceof DebugItem debugItem){
+			debugItem.onSpeedboatClick(this, player, stack);
 			return InteractionResult.SUCCESS;
 		}
 		
@@ -620,14 +620,14 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 							this.push(entity);
 							
 							if(this.hasIcebreaker){
-								if(entity instanceof LivingEntity && !(entity instanceof Player) && this.getControllingPassenger() instanceof Player){
+								if(entity instanceof LivingEntity && !(entity instanceof Player) && this.getControllingPassenger() instanceof Player player){
 									Vector3f vec2 = new Vector3f((float) (entity.getX() - getX()), (float) (entity.getZ() - getZ()), 0.0F);
 									vec2.normalize();
 									
 									float sim = vec2.dot(vec);
 									if(sim > .5f){
 										Vec3 motion = entity.getDeltaMovement();
-										entity.hurt(DamageSource.playerAttack((Player) this.getControllingPassenger()), 4);
+										entity.hurt(DamageSource.playerAttack(player), 4);
 										entity.setDeltaMovement(new Vec3(motion.x + (vec2.x() * .75F), motion.y, motion.z + (vec2.y() * .75F)));
 									}
 								}

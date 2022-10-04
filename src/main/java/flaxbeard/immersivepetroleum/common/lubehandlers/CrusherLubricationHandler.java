@@ -47,8 +47,8 @@ public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlo
 		BlockPos target = lubricator.getBlockPos().relative(facing);
 		BlockEntity te = world.getBlockEntity(target);
 		
-		if(te instanceof CrusherBlockEntity){
-			CrusherBlockEntity master = ((CrusherBlockEntity) te).master();
+		if(te instanceof CrusherBlockEntity master){
+			master = master.master();
 			
 			if(master != null && master.getFacing().getOpposite() == facing){
 				return master;

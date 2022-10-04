@@ -155,8 +155,8 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 					Fluid fType = Fluids.EMPTY;
 					
 					BlockEntity teHigh = getWorldNonnull().getBlockEntity(getBlockPos().above());
-					if(teHigh instanceof WellPipeTileEntity){
-						Pair<Boolean, BlockPos> result = ((WellPipeTileEntity) teHigh).hasValidConnection();
+					if(teHigh instanceof WellPipeTileEntity well){
+						Pair<Boolean, BlockPos> result = well.hasValidConnection();
 						
 						// Don't stop spilling even if the pumpjack is ontop, because it is "not designed" to handle the high pressure
 						if(!result.getLeft() || getWorldNonnull().getBlockEntity(result.getRight()) instanceof PumpjackTileEntity){

@@ -93,8 +93,8 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 			for(int y = pos.getY() - 1;y >= world.getMinBuildHeight();y--){
 				BlockEntity teLow = world.getBlockEntity(new BlockPos(pos.getX(), y, pos.getZ()));
 				
-				if(teLow instanceof WellTileEntity){
-					well = (WellTileEntity) teLow;
+				if(teLow instanceof WellTileEntity w){
+					well = w;
 					break;
 				}
 			}

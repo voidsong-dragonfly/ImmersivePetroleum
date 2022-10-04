@@ -60,8 +60,8 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<Excavato
 		BlockPos target = lubricator.getBlockPos().relative(facing);
 		BlockEntity te = world.getBlockEntity(target);
 		
-		if(te instanceof ExcavatorBlockEntity){
-			ExcavatorBlockEntity master = ((ExcavatorBlockEntity) te).master();
+		if(te instanceof ExcavatorBlockEntity master){
+			master = master.master();
 			
 			if(master != null){
 				Direction dir = master.getIsMirrored() ? master.getFacing().getClockWise() : master.getFacing().getCounterClockWise();

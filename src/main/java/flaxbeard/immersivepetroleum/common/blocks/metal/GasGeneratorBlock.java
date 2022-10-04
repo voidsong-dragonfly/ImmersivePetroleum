@@ -86,8 +86,8 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	@Nonnull
 	public InteractionResult use(@Nonnull BlockState state, Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand handIn, @Nonnull BlockHitResult hit){
 		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof IPlayerInteraction){
-			if(((IPlayerInteraction) te).interact(hit.getDirection(), player, handIn, player.getItemInHand(handIn), (float) hit.getLocation().x, (float) hit.getLocation().y, (float) hit.getLocation().z)){
+		if(te instanceof IPlayerInteraction inst){
+			if(inst.interact(hit.getDirection(), player, handIn, player.getItemInHand(handIn), (float) hit.getLocation().x, (float) hit.getLocation().y, (float) hit.getLocation().z)){
 				return InteractionResult.SUCCESS;
 			}
 		}
@@ -98,8 +98,8 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	public void setPlacedBy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack){
 		if(!worldIn.isClientSide){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(te instanceof IReadOnPlacement){
-				((IReadOnPlacement) te).readOnPlacement(placer, stack);
+			if(te instanceof IReadOnPlacement read){
+				read.readOnPlacement(placer, stack);
 			}
 		}
 	}

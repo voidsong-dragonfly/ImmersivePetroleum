@@ -206,8 +206,9 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		BlockPos pos = getBlockPosForPos(port.posInMultiblock).relative(facing);
 		BlockEntity te = getLevel().getBlockEntity(pos);
 		
-		if(te instanceof OilTankTileEntity){
-			OilTankTileEntity otherMaster = ((OilTankTileEntity) te).master();
+		if(te instanceof OilTankTileEntity otherMaster){
+			otherMaster = otherMaster.master();
+			
 			int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
 			int amount = Math.min(Math.abs(diff) / 2, maxTransfer);
 			

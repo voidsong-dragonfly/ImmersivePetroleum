@@ -37,8 +37,8 @@ public class DerrickBlock extends IPMetalMultiblock<DerrickTileEntity>{
 	@Override
 	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity){
 		BlockEntity te = world.getBlockEntity(pos);
-		if(te instanceof DerrickTileEntity){
-			return ((DerrickTileEntity) te).isLadder();
+		if(te instanceof DerrickTileEntity derrick && derrick.isLadder()){
+			return true;
 		}
 		return false;
 	}
