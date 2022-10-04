@@ -18,7 +18,7 @@ import net.minecraft.world.level.material.Material;
 
 public class NapalmFluid extends IPFluid{
 	public NapalmFluid(IPFluidEntry entry){
-		super(entry, 1000, 4000);
+		super(entry, 1000, 4000, false);
 	}
 	
 	public static IPFluidEntry makeFluid(){

@@ -116,15 +116,15 @@ public class IPContent{
 		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", CrudeOilFluid::new);
 		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new);
 		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new);
-		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000));
-		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", e -> new IPFluid(e, 789, 1200));
+		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000, false));
+		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", e -> new IPFluid(e, 789, 1200, false));
 		
 		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid();
-		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", e -> new IPFluid(e, 750, 750));
-		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", e -> new IPFluid(e, 750, 750));
-		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", e -> new IPFluid(e, 876, 700));
-		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", e -> new IPFluid(e, 2, 1));
-		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", e -> new IPFluid(e, 1, 1));
+		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", e -> new IPFluid(e, 750, 750, false));
+		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", e -> new IPFluid(e, 750, 750, false));
+		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", e -> new IPFluid(e, 876, 700, false));
+		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", e -> new IPFluid(e, 2, 1, true));
+		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", e -> new IPFluid(e, 1, 1, true));
 		
 		private static void forceClassLoad(){
 		}

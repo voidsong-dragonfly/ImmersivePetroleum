@@ -50,10 +50,18 @@ public class IPFluid extends FlowingFluid{
 	@Nullable
 	protected final Consumer<FluidAttributes.Builder> buildAttributes;
 	
-	public IPFluid(IPFluidEntry entry, int density, int viscosity){
+	public IPFluid(IPFluidEntry entry, int density, int viscosity, boolean isGas){
+		this(entry, builder -> {
+			builder.viscosity(viscosity).density(density);
+			if(isGas)
+				builder.gaseous();
+		});
+	}
+	
+	protected IPFluid(IPFluidEntry entry, Consumer<FluidAttributes.Builder> attributeBuilder){
 		this(entry,
 				ResourceUtils.ip("block/fluid/" + entry.name + "_still"),
-				ResourceUtils.ip("block/fluid/" + entry.name + "_flow"), IPFluid.createBuilder(density, viscosity));
+				ResourceUtils.ip("block/fluid/" + entry.name + "_flow"), attributeBuilder);
 	}
 	
 	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
@@ -83,6 +91,14 @@ public class IPFluid extends FlowingFluid{
 		));
 		FLUIDS.add(entry.getValue());
 		return entry.getValue();
+	}
+	
+	public static Consumer<FluidAttributes.Builder> fluidBuilder(int density, int viscosity){
+		return builder -> builder.viscosity(viscosity).density(density);
+	}
+	
+	public static Consumer<FluidAttributes.Builder> gasBuilder(int density, int viscosity){
+		return builder -> builder.viscosity(viscosity).density(density).gaseous();
 	}
 	
 	@Override
@@ -168,10 +184,6 @@ public class IPFluid extends FlowingFluid{
 	@Override
 	public boolean isSame(Fluid fluidIn){
 		return fluidIn.equals(this.getSource()) || fluidIn.equals(this.getFlowing());
-	}
-	
-	public static Consumer<FluidAttributes.Builder> createBuilder(int density, int viscosity){
-		return builder -> builder.viscosity(viscosity).density(density);
 	}
 	
 	// STATIC CLASSES
