@@ -53,6 +53,7 @@ public class HighPressureRefineryRecipeBuilder extends IEFinishedRecipe<HighPres
 		return addFluidTag("secondary_input", fluid, amount);
 	}
 	
+	/** Optional */
 	public HighPressureRefineryRecipeBuilder addItemWithChance(ItemStack item, double chance){
 		return addWriter(jsonObject -> {
 			jsonObject.add("secondary_result", this.serializerItemStackWithChance(item, chance));

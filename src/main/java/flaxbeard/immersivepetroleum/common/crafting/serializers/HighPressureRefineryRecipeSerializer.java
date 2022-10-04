@@ -25,12 +25,15 @@ public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<Hig
 		FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
 		FluidTagInput inputFluid0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
 		FluidTagInput inputFluid1 = null;
+		Tuple<ItemStack, Double> itemWithChance = new Tuple<ItemStack, Double>(ItemStack.EMPTY, 0.0D);
 		
 		if(json.has("secondary_input")){
 			inputFluid1 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "secondary_input"));
 		}
 		
-		Tuple<ItemStack, Double> itemWithChance = DistillationTowerRecipeBuilder.deserializeItemStackWithChance(json.get("secondary_result").getAsJsonObject());
+		if(json.has("secondary_result")){
+			itemWithChance = DistillationTowerRecipeBuilder.deserializeItemStackWithChance(json.get("secondary_result").getAsJsonObject());
+		}
 		
 		int energy = GsonHelper.getAsInt(json, "energy");
 		int time = GsonHelper.getAsInt(json, "time");

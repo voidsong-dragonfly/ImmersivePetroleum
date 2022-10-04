@@ -43,7 +43,7 @@ public class JEIStuff implements IModPlugin{
 		
 		DistillationRecipeCategory distillation = new DistillationRecipeCategory(guiHelper);
 		CokerUnitRecipeCategory coker = new CokerUnitRecipeCategory(guiHelper);
-		SulfurRecoveryRecipeCategory recovery = new SulfurRecoveryRecipeCategory(guiHelper);
+		HighPressureRefineryRecipeCategory recovery = new HighPressureRefineryRecipeCategory(guiHelper);
 		
 		this.distillation_type = distillation.getRecipeType();
 		this.coker_type = coker.getRecipeType();

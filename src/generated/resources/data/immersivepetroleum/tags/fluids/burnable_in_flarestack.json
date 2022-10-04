@@ -5,13 +5,13 @@
     "#forge:diesel",
     "#forge:diesel_sulfur",
     "#forge:gasoline",
-    "#forge:plantoil",
-    "#forge:creosote",
-    "#forge:ethanol",
     "#forge:naphtha",
     "#forge:naphtha_cracked",
     "#forge:benzene",
     "#forge:propylene",
-    "#forge:ethylene"
+    "#forge:ethylene",
+    "#forge:plantoil",
+    "#forge:creosote",
+    "#forge:ethanol"
   ]
 }

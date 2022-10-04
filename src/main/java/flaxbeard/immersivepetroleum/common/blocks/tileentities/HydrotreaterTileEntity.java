@@ -173,6 +173,9 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	
 	@Override
 	public void doProcessOutput(ItemStack output){
+		if(output == null || output.isEmpty())
+			return;
+		
 		Direction outputdir = (getIsMirrored() ? getFacing().getClockWise() : getFacing().getCounterClockWise());
 		BlockPos outputpos = getBlockPosForPos(Item_OUT).relative(outputdir);
 		

@@ -106,6 +106,10 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 		modifyTimeAndEnergy(IPServerConfig.REFINING.hydrotreater_timeModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
 	}
 	
+	public boolean hasSecondaryItem(){
+		return this.outputItem != null && !this.outputItem.isEmpty();
+	}
+	
 	@Override
 	public int getMultipleProcessTicks(){
 		return 0;

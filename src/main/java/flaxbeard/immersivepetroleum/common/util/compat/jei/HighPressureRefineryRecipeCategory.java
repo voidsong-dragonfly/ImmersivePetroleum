@@ -26,11 +26,11 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<HighPressureRefineryRecipe>{
+public class HighPressureRefineryRecipeCategory extends IPRecipeCategory<HighPressureRefineryRecipe>{
 	public static final ResourceLocation ID = new ResourceLocation(ImmersivePetroleum.MODID, "hydrotreater");
 	
 	private final IDrawableStatic tankOverlay;
-	public SulfurRecoveryRecipeCategory(IGuiHelper guiHelper){
+	public HighPressureRefineryRecipeCategory(IGuiHelper guiHelper){
 		super(HighPressureRefineryRecipe.class, guiHelper, ID, "block.immersivepetroleum.hydrotreater");
 		ResourceLocation background = new ResourceLocation(ImmersivePetroleum.MODID, "textures/gui/jei/hydrotreater.png");
 		setBackground(guiHelper.createDrawable(background, 0, 0, 113, 75));
@@ -79,8 +79,10 @@ public class SulfurRecoveryRecipeCategory extends IPRecipeCategory<HighPressureR
 		String text1 = I18n.get("desc.immersiveengineering.info.seconds", Utils.fDecimal(time / 20D));
 		font.draw(matrix, text1, bWidth / 2 - font.width(text1) / 2, bHeight - font.lineHeight, 0);
 		
-		String text2 = String.format(Locale.US, "%d%%", chance);
-		font.draw(matrix, text2, bWidth + 3 - font.width(text2), bHeight / 2 + 4, 0);
+		if(recipe.hasSecondaryItem()){
+			String text2 = String.format(Locale.US, "%d%%", chance);
+			font.draw(matrix, text2, bWidth + 3 - font.width(text2), bHeight / 2 + 4, 0);
+		}
 		matrix.popPose();
 	}
 	
