@@ -93,14 +93,6 @@ public class IPFluid extends FlowingFluid{
 		return entry.getValue();
 	}
 	
-	public static Consumer<FluidAttributes.Builder> fluidBuilder(int density, int viscosity){
-		return builder -> builder.viscosity(viscosity).density(density);
-	}
-	
-	public static Consumer<FluidAttributes.Builder> gasBuilder(int density, int viscosity){
-		return builder -> builder.viscosity(viscosity).density(density).gaseous();
-	}
-	
 	@Override
 	@Nonnull
 	protected FluidAttributes createAttributes(){

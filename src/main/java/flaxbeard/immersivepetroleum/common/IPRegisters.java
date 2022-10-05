@@ -40,9 +40,9 @@ public class IPRegisters{
 	private static final DeferredRegister<MobEffect> MOB_EFFECT = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ImmersivePetroleum.MODID);
 	
 	public static void addRegistersToEventBus(IEventBus eventBus){
+		FLUID_REGISTER.register(eventBus);
 		BLOCK_REGISTER.register(eventBus);
 		ITEM_REGISTER.register(eventBus);
-		FLUID_REGISTER.register(eventBus);
 		TE_REGISTER.register(eventBus);
 		ENTITY_REGISTER.register(eventBus);
 		MENU_REGISTER.register(eventBus);

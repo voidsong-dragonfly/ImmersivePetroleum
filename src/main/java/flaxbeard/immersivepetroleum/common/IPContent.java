@@ -146,6 +146,12 @@ public class IPContent{
 		public static final RegistryObject<WellPipeBlock> WELL_PIPE = IPRegisters.registerBlock("well_pipe", WellPipeBlock::new);
 		
 		private static void forceClassLoad(){
+			registerItemBlock(Blocks.ASPHALT_SLAB);
+			registerItemBlock(Blocks.ASPHALT_STAIR);
+		}
+		
+		private static void registerItemBlock(RegistryObject<? extends Block> block){
+			IPRegisters.registerItem(block.getId().getPath(), () -> new IPBlockItemBase(block.get(), new Item.Properties().tab(ImmersivePetroleum.creativeTab)));
 		}
 	}
 	
@@ -164,12 +170,6 @@ public class IPContent{
 		public static final RegistryObject<Item> SURVEYRESULT = IPRegisters.registerItem("survey_result", SurveyResultItem::new);
 		
 		private static void forceClassLoad(){
-			registerItemBlock(Blocks.ASPHALT_SLAB);
-			registerItemBlock(Blocks.ASPHALT_STAIR);
-		}
-		
-		private static void registerItemBlock(RegistryObject<? extends Block> block){
-			IPRegisters.registerItem(block.getId().getPath(), () -> new IPBlockItemBase(block.get(), new Item.Properties().tab(ImmersivePetroleum.creativeTab)));
 		}
 	}
 	
@@ -192,10 +192,10 @@ public class IPContent{
 	
 	/** block/item/fluid population */
 	public static void populate(){
+		Fluids.forceClassLoad();
 		Blocks.forceClassLoad();
 		Items.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
-		Fluids.forceClassLoad();
 		Multiblock.forceClassLoad();
 		IPMenuTypes.forceClassLoad();
 		Serializers.forceClassLoad();
