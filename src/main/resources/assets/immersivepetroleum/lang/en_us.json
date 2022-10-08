@@ -37,6 +37,9 @@
 	"fluid.immersivepetroleum.benzene": "Benzene",
 	"fluid.immersivepetroleum.propylene": "Propylene",
 	"fluid.immersivepetroleum.ethylene": "Ethylene",
+	"fluid.immersivepetroleum.lubricant_cracked": "Cracked Lubricant",
+	"fluid.immersivepetroleum.kerosene": "Kerosene",
+	"fluid.immersivepetroleum.gasoline_additives": "Gasoline Additives",
 	
 	"_comment": "################## Items ##################",
 	
@@ -60,6 +63,9 @@
 	"item.immersivepetroleum.benzene_bucket": "Bucket of Benzene",
 	"item.immersivepetroleum.propylene_bucket": "Bucket of Propylene",
 	"item.immersivepetroleum.ethylene_bucket": "Bucket of Ethylene",
+	"item.immersivepetroleum.lubricant_cracked_bucket": "Bucket of Cracked Lubricant",
+	"item.immersivepetroleum.kerosene_bucket": "Bucket of Kerosene",
+	"item.immersivepetroleum.gasoline_additives_bucket": "Bucket of Gasoline Additives",
 	
 	"item.immersivepetroleum.upgrade_reinforced_hull": "Reinforced Hull",
 	"item.immersivepetroleum.upgrade_icebreaker": "Icebreaker Bow",

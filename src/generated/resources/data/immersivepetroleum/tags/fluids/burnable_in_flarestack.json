@@ -10,6 +10,9 @@
     "#forge:benzene",
     "#forge:propylene",
     "#forge:ethylene",
+    "#forge:lubricant_cracked",
+    "#forge:kerosene",
+    "#forge:gasoline_additives",
     "#forge:plantoil",
     "#forge:creosote",
     "#forge:ethanol"
