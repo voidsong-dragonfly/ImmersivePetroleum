@@ -675,7 +675,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				FluidStack fluid = getContainedFluid();
 				int consumeAmount = 0;
 				if(fluid != FluidStack.EMPTY){
-					consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
+					consumeAmount = FuelHandler.getBoatFuelUse(fluid.getFluid());
 				}
 				
 				if(fluid != FluidStack.EMPTY && fluid.getAmount() >= consumeAmount && (this.inputUp || this.inputDown)){
@@ -757,7 +757,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public boolean isEmergency(){
 		FluidStack fluid = getContainedFluid();
 		if(fluid != FluidStack.EMPTY){
-			int consumeAmount = FuelHandler.getBoatFuelUsedPerTick(fluid.getFluid());
+			int consumeAmount = FuelHandler.getBoatFuelUse(fluid.getFluid());
 			return fluid.getAmount() < consumeAmount && this.hasPaddles;
 		}
 		
