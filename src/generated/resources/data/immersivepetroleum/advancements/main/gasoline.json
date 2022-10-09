@@ -1,28 +1,28 @@
 {
-  "parent": "immersivepetroleum:main/gasoline",
+  "parent": "immersivepetroleum:main/kerosene",
   "display": {
     "icon": {
-      "item": "immersivepetroleum:napalm_bucket"
+      "item": "immersivepetroleum:gasoline_bucket"
     },
     "title": {
-      "translate": "advancement.immersivepetroleum.napalm"
+      "translate": "advancement.immersivepetroleum.gasoline"
     },
     "description": {
-      "translate": "advancement.immersivepetroleum.napalm.desc"
+      "translate": "advancement.immersivepetroleum.gasoline.desc"
     },
-    "frame": "task",
+    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "napalm": {
+    "gasoline": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "immersivepetroleum:napalm_bucket"
+              "immersivepetroleum:gasoline_bucket"
             ]
           }
         ]
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "napalm"
+      "gasoline"
     ]
   ]
 }

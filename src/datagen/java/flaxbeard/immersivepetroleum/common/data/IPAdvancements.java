@@ -95,12 +95,8 @@ public class IPAdvancements extends AdvancementProvider{
 			.addCriterion("code_trigger", new ImpossibleTrigger.TriggerInstance())
 			.save(consumer, ResourceUtils.ip("main/flarestack"), this.fileHelper);
 		
-		advancement(tower, IPContent.Fluids.NAPALM.bucket().get(), "napalm", FrameType.TASK, true, true, false)
-			.addCriterion("code_trigger", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.NAPALM.bucket().get()))
-			.save(consumer, ResourceUtils.ip("main/napalm"), this.fileHelper);
-		
 		Advancement cracking = advancement(hydrotreater, IPContent.Fluids.NAPHTHA_CRACKED.bucket().get(), "cracking", FrameType.TASK, true, true, false)
-			.addCriterion("code_trigger", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.NAPHTHA_CRACKED.bucket().get()))
+			.addCriterion("cracking", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.NAPHTHA_CRACKED.bucket().get()))
 			.save(consumer, ResourceUtils.ip("main/cracking"), this.fileHelper);
 		
 		Advancement naphtha_distillates = advancement(cracking, IPContent.Fluids.BENZENE.bucket().get(), "naphtha_distillates", FrameType.GOAL, true, true, false)
@@ -115,6 +111,18 @@ public class IPAdvancements extends AdvancementProvider{
 			.addCriterion("ethylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.ETHYLENE.bucket().get()))
 			.addCriterion("duroplast_block", InventoryChangeTrigger.TriggerInstance.hasItems(IEBlocks.StoneDecoration.DUROPLAST.get().asItem()))
 			.save(consumer, ResourceUtils.ip("main/duroplast"), this.fileHelper);
+		
+		Advancement kerosene = advancement(tower, IPContent.Fluids.GASOLINE_ADDITIVES.bucket().get(), "kerosene", FrameType.TASK, true, true, false)
+			.addCriterion("kerosene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.GASOLINE_ADDITIVES.bucket().get()))
+			.save(consumer, ResourceUtils.ip("main/kerosene"), this.fileHelper);
+		
+		Advancement gasoline = advancement(kerosene, IPContent.Fluids.GASOLINE.bucket().get(), "gasoline", FrameType.GOAL, true, true, false)
+			.addCriterion("gasoline", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.GASOLINE.bucket().get()))
+			.save(consumer, ResourceUtils.ip("main/gasoline"), this.fileHelper);
+		
+		advancement(gasoline, IPContent.Fluids.NAPALM.bucket().get(), "napalm", FrameType.TASK, true, true, false)
+			.addCriterion("napalm", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.NAPALM.bucket().get()))
+			.save(consumer, ResourceUtils.ip("main/napalm"), this.fileHelper);
 	}
 	
 	private void motorboat(Consumer<Advancement> consumer, Advancement start){

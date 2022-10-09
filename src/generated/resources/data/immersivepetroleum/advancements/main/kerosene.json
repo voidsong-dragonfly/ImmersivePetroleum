@@ -1,14 +1,14 @@
 {
-  "parent": "immersivepetroleum:main/gasoline",
+  "parent": "immersivepetroleum:main/mb_distillationtower",
   "display": {
     "icon": {
-      "item": "immersivepetroleum:napalm_bucket"
+      "item": "immersivepetroleum:gasoline_additives_bucket"
     },
     "title": {
-      "translate": "advancement.immersivepetroleum.napalm"
+      "translate": "advancement.immersivepetroleum.kerosene"
     },
     "description": {
-      "translate": "advancement.immersivepetroleum.napalm.desc"
+      "translate": "advancement.immersivepetroleum.kerosene.desc"
     },
     "frame": "task",
     "show_toast": true,
@@ -16,13 +16,13 @@
     "hidden": false
   },
   "criteria": {
-    "napalm": {
+    "kerosene": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "immersivepetroleum:napalm_bucket"
+              "immersivepetroleum:gasoline_additives_bucket"
             ]
           }
         ]
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "napalm"
+      "kerosene"
     ]
   ]
 }
