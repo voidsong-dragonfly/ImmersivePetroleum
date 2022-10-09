@@ -8,4 +8,4 @@ The side fluid ports can be configured with the hammer, while the top and bottom
 
 Because of its generous capacity, the tank is a good fit for use with the <link;immersivepetroleum:derrick;§o§nDerrick§r>, to handle the high production.
 
-Redstone behavior is as of yet indeterminate. //TODO UPDATE
+Attaching a comparator to the redstone port of the tank will read the fill of the full tank in a 0-15 metric. Attaching the comparator to one of the layers results in a signal proportional to the height of the comparator. For example, a comparator attached to the second layer of a tank would not emit any signal until the tank is 1/4 full and have a signal strength of 15 if the tank is half full or more.
