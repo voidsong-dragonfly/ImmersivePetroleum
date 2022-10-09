@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import dan200.computercraft.api.ComputerCraftAPI;
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.client.ClientProxy;
@@ -42,6 +41,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -125,7 +125,9 @@ public class ImmersivePetroleum{
 		
 		proxy.init();
 		
-		ComputerCraftAPI.registerPeripheralProvider(IPPeripheralProvider.INSTANCE);
+		if(ModList.get().isLoaded("computercraft")){
+			IPPeripheralProvider.init();
+		}
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
 		

@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked;
 
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
+import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
@@ -45,5 +46,9 @@ public class IPPeripheralProvider implements IPeripheralProvider{
 			
 		}
 		return LazyOptional.empty();
+	}
+	
+	public static void init(){
+		ComputerCraftAPI.registerPeripheralProvider(IPPeripheralProvider.INSTANCE);
 	}
 }
