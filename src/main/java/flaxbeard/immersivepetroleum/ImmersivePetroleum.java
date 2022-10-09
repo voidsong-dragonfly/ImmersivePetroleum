@@ -125,7 +125,7 @@ public class ImmersivePetroleum{
 		
 		proxy.init();
 		
-		//ComputerCraftAPI.registerPeripheralProvider(IPPeripheralProvider.INSTANCE);
+		ComputerCraftAPI.registerPeripheralProvider(IPPeripheralProvider.INSTANCE);
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
 		
