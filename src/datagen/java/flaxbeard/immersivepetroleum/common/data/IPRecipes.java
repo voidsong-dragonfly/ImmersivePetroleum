@@ -99,18 +99,28 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void distillationRecipes(){
-		// setEnergy and setTime are 2048 and 1 by default. But still allows to be customized.
+		// setEnergy and setTime are 1024 and 1 by default. But still allows to be customized.
 		
 		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
-				new FluidStack(IPContent.Fluids.NAPHTHA.get(), 10),
-				new FluidStack(IPContent.Fluids.GASOLINE.get(), 20),
-				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 36),
-				new FluidStack(IPContent.Fluids.LUBRICANT.get(), 9),
+				new FluidStack(IPContent.Fluids.NAPHTHA.get(), 17),
+				new FluidStack(IPContent.Fluids.KEROSENE.get(), 18),
+				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 30),
+				new FluidStack(IPContent.Fluids.LUBRICANT.get(), 12),
 			})
 			.addByproduct(new ItemStack(IPContent.Items.BITUMEN.get()), 0.07)
-			.addInput(IPTags.Fluids.crudeOil, 75)
-			.setTimeAndEnergy(1, 2048)
-			.build(this.out, rl("distillationtower/oilcracking"));
+			.addInput(IPTags.Fluids.crudeOil, 50)
+			.setTimeAndEnergy(1, 1024)
+			.build(this.out, rl("distillationtower/oil"));
+		
+		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
+				new FluidStack(IPContent.Fluids.NAPHTHA.get(), 2),
+				new FluidStack(IPContent.Fluids.GASOLINE_ADDITIVES.get(), 3),
+				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 5),
+			})
+			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
+			.addInput(IPTags.Fluids.kerosene, 10)
+			.setTimeAndEnergy(1, 1024)
+			.build(this.out, rl("distillationtower/kerosene"));
 		
 		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
 				new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
@@ -119,13 +129,22 @@ public class IPRecipes extends RecipeProvider{
 			})
 			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
 			.addInput(IPTags.Fluids.naphtha_cracked, 10)
-			.setTimeAndEnergy(1, 2048)
-			.build(this.out, rl("distillationtower/naphthacracking"));
+			.setTimeAndEnergy(1, 1024)
+			.build(this.out, rl("distillationtower/naphtha_cracking"));
+		
+		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
+				new FluidStack(IPContent.Fluids.KEROSENE.get(), 6),
+				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 10),
+			})
+			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
+			.addInput(IPTags.Fluids.lubricant_cracked, 12)
+			.setTimeAndEnergy(1, 1024)
+			.build(this.out, rl("distillationtower/lubricant_cracking"));
 	}
 	
 	/** Contains everything related to Petcoke */
 	private void cokerRecipes(){
-		CokerUnitRecipeBuilder.builder(new ItemStack(IPContent.Items.PETCOKE.get()), IPTags.Fluids.diesel_sulfur, 27)
+		CokerUnitRecipeBuilder.builder(new ItemStack(IPContent.Items.PETCOKE.get(), 2), IPTags.Fluids.diesel_sulfur, 27)
 			.addInputItem(IPTags.Items.bitumen, 2)
 			.addInputFluid(FluidTags.WATER, 125)
 			.setTimeAndEnergy(30, 512)
@@ -180,17 +199,21 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void hydrotreaterRecipes(){
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL.get(), 5), 256, 5)
-			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 5))
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL.get(), 10), 80, 1)
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 10))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
-			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.02)
+			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.05)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 1024, 5)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 512, 5)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 20))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
-			.addItemWithChance(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.02)
 			.build(out, rl("hydrotreater/naphtha_cracking"));
+		
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.LUBRICANT_CRACKED.get(), 24), 512, 5)
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.lubricant, 24))
+			.addSecondaryInputFluid(FluidTags.WATER, 5)
+			.build(out, rl("hydrotreater/lubricant_cracking"));
 		
 		// PNC Compat
 		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 1024, 60)
@@ -207,6 +230,12 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void refineryRecipes(){
+		RefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.GASOLINE.get(), 10))
+			.addInput(new FluidTagInput(IPTags.Fluids.naphtha, 7))
+			.addInput(new FluidTagInput(IPTags.Fluids.gasoline_additives, 3))
+			.setEnergy(80)
+			.build(out, rl("refinery/gasoline"));
+		
 		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.CREOSOTE.getStill(), 16))
 			.addInput(new FluidTagInput(IPTags.Fluids.benzene, 8))
 			.addInput(new FluidTagInput(IPTags.Fluids.propylene, 8))

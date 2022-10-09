@@ -1,14 +1,14 @@
 {
   "type": "immersivepetroleum:hydrotreater",
-  "time": 5,
-  "energy": 256,
+  "time": 1,
+  "energy": 80,
   "result": {
     "fluid": "immersivepetroleum:diesel",
-    "amount": 5
+    "amount": 10
   },
   "input": {
     "tag": "forge:diesel_sulfur",
-    "amount": 5
+    "amount": 10
   },
   "secondary_input": {
     "tag": "minecraft:water",
@@ -16,6 +16,6 @@
   },
   "secondary_result": {
     "item": "immersiveengineering:dust_sulfur",
-    "chance": "0.02"
+    "chance": "0.05"
   }
 }
