@@ -131,9 +131,9 @@ public class IPServerConfig{
 			fuels = builder
 				.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
 				.defineList("generator_fuels",
-				    List.of("immersivepetroleum:gasoline, 20, 256",
-							"immersivepetroleum:naphtha, 20, 256",
-							"immersivepetroleum:benzene, 20, 256"), o -> true);
+				    List.of("immersivepetroleum:naphtha, 9, 256",
+						    "immersivepetroleum:gasoline, 6, 256",
+							"immersivepetroleum:benzene, 6, 256"), o -> true);
 			
 			builder.pop();
 		}
@@ -150,8 +150,8 @@ public class IPServerConfig{
 					.comment("List of Motorboat fuels. Format: fluid_name, mb_used_per_tick")
 					.defineList("boat_fuels",
 							List.of("immersivepetroleum:gasoline, 1",
-									"immersivepetroleum:naphtha, 1",
-									"immersivepetroleum:benzene, 1"), o -> true);
+									"immersivepetroleum:naphtha, 2",
+									"immersivepetroleum:benzene, 2"), o -> true);
 			
 			autounlock_recipes = builder
 					.comment("Automatically unlock IP recipes for new players", "Default: true")

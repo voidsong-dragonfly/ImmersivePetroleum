@@ -78,10 +78,12 @@ public class IPRecipes extends RecipeProvider{
 			.setEnergy(3200)
 			.build(this.out, rl("mixer/napalm"));
 		
-		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel, 320)
+		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel, 322)
 			.build(this.out, rl("fuels/diesel"));
-		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel_sulfur, 320)
+		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel_sulfur, 285)
 			.build(this.out, rl("fuels/diesel_sulfur"));
+		GeneratorFuelBuilder.builder(IPTags.Fluids.kerosene, 208)
+			.build(this.out, rl("fuels/kerosene"));
 	}
 	
 	private void reservoirs(){
