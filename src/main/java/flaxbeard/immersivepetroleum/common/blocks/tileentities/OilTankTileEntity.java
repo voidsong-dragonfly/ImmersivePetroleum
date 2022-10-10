@@ -212,7 +212,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			int diff = otherMaster.tank.getFluidAmount() - this.tank.getFluidAmount();
 			int amount = Math.min(Math.abs(diff) / 2, maxTransfer);
 			
-			return (diff < -threshold && transfer(this, otherMaster, amount)) || (diff > threshold && transfer(otherMaster, this, amount));
+			return (diff <= -threshold && transfer(this, otherMaster, amount)) || (diff >= threshold && transfer(otherMaster, this, amount));
 		}
 		
 		return false;

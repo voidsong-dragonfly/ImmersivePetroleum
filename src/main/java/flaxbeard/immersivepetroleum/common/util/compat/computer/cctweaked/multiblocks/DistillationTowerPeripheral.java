@@ -8,13 +8,10 @@ import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
-import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.CCTUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic.PoweredMultiblockPeripheral;
 
 public class DistillationTowerPeripheral extends PoweredMultiblockPeripheral{
-	private static final String TYPE = ResourceUtils.ip("distillationtower").toString();
-	
 	DistillationTowerTileEntity master;
 	public DistillationTowerPeripheral(DistillationTowerTileEntity tower){
 		super(tower);
@@ -23,7 +20,7 @@ public class DistillationTowerPeripheral extends PoweredMultiblockPeripheral{
 	
 	@Override
 	public String getType(){
-		return TYPE;
+		return "ip_distillationtower";
 	}
 	
 	@LuaFunction

@@ -7,14 +7,11 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
-import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.CCTUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic.PoweredMultiblockPeripheral;
 import net.minecraft.resources.ResourceLocation;
 
 public class CokerUnitPeripheral extends PoweredMultiblockPeripheral{
-	private static final String TYPE = ResourceUtils.ip("cokerunit").toString();
-	
 	CokerUnitTileEntity master;
 	public CokerUnitPeripheral(CokerUnitTileEntity coker){
 		super(coker);
@@ -23,7 +20,7 @@ public class CokerUnitPeripheral extends PoweredMultiblockPeripheral{
 	
 	@Override
 	public String getType(){
-		return TYPE;
+		return "ip_cokerunit";
 	}
 	
 	@LuaFunction

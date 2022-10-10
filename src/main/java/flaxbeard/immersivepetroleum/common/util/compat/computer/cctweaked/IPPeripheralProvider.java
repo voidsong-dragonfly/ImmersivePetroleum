@@ -5,11 +5,13 @@ import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.CokerUnitPeripheral;
+import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.DerrickPeripheral;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.DistillationTowerPeripheral;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.HydrotreaterPeripheral;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.OilTankPeripheral;
@@ -42,6 +44,9 @@ public class IPPeripheralProvider implements IPeripheralProvider{
 			}
 			if(be instanceof OilTankTileEntity oiltank){
 				return LazyOptional.of(() -> new OilTankPeripheral(oiltank));
+			}
+			if(be instanceof DerrickTileEntity derrick){
+				return LazyOptional.of(() -> new DerrickPeripheral(derrick));
 			}
 			
 		}
