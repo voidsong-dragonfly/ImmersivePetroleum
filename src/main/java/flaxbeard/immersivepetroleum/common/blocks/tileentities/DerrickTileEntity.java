@@ -311,12 +311,12 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 										}
 									}else{
 										if(this.tank.drain(WATER, FluidAction.SIMULATE).getAmount() >= WATER.getAmount()){
-											this.tank.drain(WATER, FluidAction.EXECUTE);
 											this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.derrick_consumption.get(), false);
 											
 											if(advanceTimer()){
 												restorePhysicalPipeProgress(dPos, realPipeLength);
 												
+												this.tank.drain(WATER, FluidAction.EXECUTE);
 												well.usePipe();
 											}
 											
