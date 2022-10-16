@@ -5,15 +5,15 @@
   "fluidcapacity": 10000000,
   "fluidtrace": 6,
   "weight": 30,
-  "dimension": {
-    "whitelist": [
+  "dimensions": {
+    "isBlacklist": false,
+    "list": [
       "minecraft:overworld"
-    ],
-    "blacklist": []
+    ]
   },
-  "biome": {
-    "whitelist": [],
-    "blacklist": []
+  "biomes": {
+    "isBlacklist": false,
+    "list": []
   },
   "name": "aquifer"
 }

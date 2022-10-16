@@ -1,5 +1,9 @@
 package flaxbeard.immersivepetroleum.api.crafting.builders;
 
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -15,10 +19,13 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	private int fluidMaximum;
 	private int fluidTrace;
 	private int weight;
-	private final JsonArray dimWhitelist = new JsonArray();
-	private final JsonArray dimBlacklist = new JsonArray();
-	private final JsonArray bioWhitelist = new JsonArray();
-	private final JsonArray bioBlacklist = new JsonArray();
+	
+	private boolean isDimBlacklist = false;
+	private final JsonArray dimensions = new JsonArray();
+	
+	private boolean isBioBlacklist = false;
+	private final JsonArray biomes = new JsonArray();
+	
 	private ReservoirBuilder(){
 		super(Serializers.RESERVOIR_SERIALIZER.get());
 		addWriter(writer -> {
@@ -29,18 +36,18 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 			writer.addProperty("weight", this.weight);
 		});
 		
-		// Writes both even if there is nothing. Helpful for datapack makers.
 		addWriter(writer -> {
-			JsonObject dimension = new JsonObject();
-			dimension.add("whitelist", this.dimWhitelist);
-			dimension.add("blacklist", this.dimBlacklist);
-			writer.add("dimension", dimension);
+			JsonObject dimensions = new JsonObject();
+			dimensions.add("isBlacklist", new JsonPrimitive(this.isDimBlacklist));
+			dimensions.add("list", this.dimensions);
+			writer.add("dimensions", dimensions);
 		});
+		
 		addWriter(writer -> {
-			JsonObject biome = new JsonObject();
-			biome.add("whitelist", this.bioWhitelist);
-			biome.add("blacklist", this.bioBlacklist);
-			writer.add("biome", biome);
+			JsonObject biomes = new JsonObject();
+			biomes.add("isBlacklist", new JsonPrimitive(this.isBioBlacklist));
+			biomes.add("list", this.biomes);
+			writer.add("biomes", biomes);
 		});
 	}
 	
@@ -73,7 +80,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * Sets the fluid for this Reservoir.
 	 * 
 	 * @param fluid The fluid to set.
-	 * @return {@link ReservoirBuilder} Self
+	 * @return {@link ReservoirBuilder}
 	 */
 	public ReservoirBuilder setFluid(Fluid fluid){
 		this.fluid = fluid.getRegistryName().toString();
@@ -87,7 +94,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * </pre></code>
 	 * 
 	 * @param amount The amount to set.
-	 * @return self
+	 * @return {@link ReservoirBuilder}
 	 */
 	public ReservoirBuilder min(double amount){
 		this.fluidMinimum = (int) Math.floor(amount * 1000D);
@@ -101,7 +108,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * </pre></code>
 	 * 
 	 * @param amount The amount to set.
-	 * @return self
+	 * @return {@link ReservoirBuilder}
 	 */
 	public ReservoirBuilder max(double amount){
 		this.fluidMaximum = (int) Math.floor(amount * 1000D);
@@ -115,7 +122,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * </pre></code>
 	 * 
 	 * @param amount The amount to set.
-	 * @return {@link ReservoirBuilder} self
+	 * @return {@link ReservoirBuilder}
 	 */
 	public ReservoirBuilder trace(double amount){
 		this.fluidTrace = (int) Math.floor(amount * 1000D);
@@ -126,7 +133,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * Reservoir Weight
 	 * 
 	 * @param weight the weight to provide the reservoir
-	 * @return {@link ReservoirBuilder} Self
+	 * @return {@link ReservoirBuilder}
 	 */
 	public ReservoirBuilder weight(int weight){
 		this.weight = weight;
@@ -134,76 +141,54 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	}
 	
 	/**
-	 * Dimension check for this Reservior. Only one may be added per instance, but not both.
+	 * <i>This may only be called once.</i><br>
+	 * <br>
+	 * Dimension check for this Reservior.
 	 * 
 	 * @param isBlacklist Marks this as a blacklist when true. Whilelist otherwise.
 	 * @param dimensions  Dimensions to blacklist/whitelist
-	 * @return self
-	 * @throws IllegalArgumentException when attempting to add a blacklist and whitelist in the same instance.
+	 * @return {@link ReservoirBuilder}
+	 * @throws IllegalArgumentException when it has already been set
 	 */
-	public ReservoirBuilder addDimensions(boolean isBlacklist, ResourceLocation... dimensions){
-		if(isBlacklist){
-			if(dimensions != null && dimensions.length > 0){
-				if(this.dimWhitelist.size() > 0)
-					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
-				
-				// Avoid duplicates
-				for(ResourceLocation rl:dimensions){
-					if(rl != null && !this.dimBlacklist.contains(new JsonPrimitive(rl.toString()))){
-						this.dimBlacklist.add(rl.toString());
-					}
-				}
-			}
-		}else{
-			if(dimensions != null && dimensions.length > 0){
-				if(this.dimBlacklist.size() > 0)
-					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
-				
-				// Avoid duplicates
-				for(ResourceLocation rl:dimensions){
-					if(rl != null && !this.dimWhitelist.contains(new JsonPrimitive(rl.toString()))){
-						this.dimWhitelist.add(rl.toString());
-					}
-				}
+	public ReservoirBuilder setDimensions(boolean isBlacklist, @Nonnull ResourceLocation[] dimensions){
+		if(this.dimensions.size() > 0){
+			throw new IllegalArgumentException("Dimensions list already set.");
+		}
+		Objects.requireNonNull(dimensions);
+		
+		this.isDimBlacklist = isBlacklist;
+		for(ResourceLocation rl:dimensions){
+			if(rl != null && !this.dimensions.contains(new JsonPrimitive(rl.toString()))){
+				this.dimensions.add(rl.toString());
 			}
 		}
+		
 		return this;
 	}
 	
 	/**
-	 * Biome check for this Reservior. Only one may be added per instance, but not both.
+	 * <i>This may only be called once.</i><br>
+	 * <br>
+	 * Biome check for this Reservior.
 	 * 
 	 * @param isBlacklist Marks this as a blacklist when true. Whilelist otherwise.
-	 * @param biomes      Biome to blacklist/whitelist
-	 * @return self
-	 * @throws IllegalArgumentException when attempting to add a blacklist and whitelist in the same instance.
+	 * @param biomes      Biomes to blacklist/whitelist
+	 * @return {@link ReservoirBuilder}
+	 * @throws IllegalArgumentException when it has already been set
 	 */
-	public ReservoirBuilder addBiomes(boolean isBlacklist, ResourceLocation... biomes){
-		if(isBlacklist){
-			if(biomes != null && biomes.length > 0){
-				if(this.bioWhitelist.size() > 0)
-					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
-				
-				// Avoid duplicates
-				for(ResourceLocation rl:biomes){
-					if(rl != null && !this.bioBlacklist.contains(new JsonPrimitive(rl.toString()))){
-						this.bioBlacklist.add(rl.toString());
-					}
-				}
-			}
-		}else{
-			if(biomes != null && biomes.length > 0){
-				if(this.bioBlacklist.size() > 0)
-					throw new IllegalArgumentException("Cannot set a whitelist and blacklist at the same time.");
-				
-				// Avoid duplicates
-				for(ResourceLocation rl:biomes){
-					if(rl != null && !this.bioWhitelist.contains(new JsonPrimitive(rl.toString()))){
-						this.bioWhitelist.add(rl.toString());
-					}
-				}
+	public ReservoirBuilder setBiomes(boolean isBlacklist, @Nonnull ResourceLocation[] biomes){
+		if(this.biomes.size() > 0){
+			throw new IllegalArgumentException("Biomes list already set.");
+		}
+		Objects.requireNonNull(biomes);
+		
+		this.isBioBlacklist = isBlacklist;
+		for(ResourceLocation rl:biomes){
+			if(rl != null && !this.biomes.contains(new JsonPrimitive(rl.toString()))){
+				this.biomes.add(rl.toString());
 			}
 		}
+		
 		return this;
 	}
 }

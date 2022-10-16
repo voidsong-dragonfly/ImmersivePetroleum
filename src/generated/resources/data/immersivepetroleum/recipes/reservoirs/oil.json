@@ -5,15 +5,15 @@
   "fluidcapacity": 32500000,
   "fluidtrace": 6,
   "weight": 40,
-  "dimension": {
-    "whitelist": [],
-    "blacklist": [
+  "dimensions": {
+    "isBlacklist": true,
+    "list": [
       "minecraft:the_end"
     ]
   },
-  "biome": {
-    "whitelist": [],
-    "blacklist": []
+  "biomes": {
+    "isBlacklist": false,
+    "list": []
   },
   "name": "oil"
 }

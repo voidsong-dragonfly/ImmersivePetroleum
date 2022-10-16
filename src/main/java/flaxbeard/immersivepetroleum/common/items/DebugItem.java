@@ -13,16 +13,16 @@ import com.google.common.collect.Multimap;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType.BWList;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
-import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
@@ -35,7 +35,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ColumnPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -210,16 +210,34 @@ public class DebugItem extends IPItemBase{
 				if(world.isClientSide){
 					// Client
 					
-					player.displayClientMessage(new TextComponent(DynamicTextureWrapper.DYN_TEXTURE_CACHE.size() + ""), false);
+					//player.displayClientMessage(new TextComponent(""), false);
 					
 				}else{
 					// Server
 					
-					if(te instanceof WellTileEntity well){
+					BlockPos pos = context.getClickedPos();
+					
+					ResourceLocation dimensionRL = world.dimension().location();
+					ResourceLocation biomeRL = world.getBiome(pos).value().getRegistryName();
+					
+					player.displayClientMessage(new TextComponent(dimensionRL.toString()), false);
+					
+					for(ReservoirType res:ReservoirType.map.values()){
+						BWList dims = res.getDimensions();
+						BWList biom = res.getBiomes();
 						
-						if(well.tappedIslands.isEmpty()){
-							well.tappedIslands.add(new ColumnPos(well.getBlockPos()));
+						boolean validDimension = dims.valid(dimensionRL);
+						boolean validBiome = biom.valid(biomeRL);
+						
+						MutableComponent component = new TextComponent(res.name)
+							.append(new TextComponent(" Dimension").withStyle(validDimension ? ChatFormatting.GREEN : ChatFormatting.RED))
+							.append(new TextComponent(" Biome").withStyle(validBiome ? ChatFormatting.GREEN : ChatFormatting.RED));
+						
+						if(validDimension && validBiome){
+							component = component.append(" (can spawn here)");
 						}
+						
+						player.displayClientMessage(component, false);
 					}
 				}
 				

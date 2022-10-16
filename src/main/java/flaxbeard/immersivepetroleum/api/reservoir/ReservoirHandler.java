@@ -60,7 +60,7 @@ public class ReservoirHandler{
 				
 				if(ReservoirHandler.getValueOf(world, x, z) > -1){
 					// Getting the biome now to prevent lockups
-					ResourceLocation biome = world.getBiome(new BlockPos(x, 64, z)).value().getRegistryName();
+					ResourceLocation biomeRL = world.getBiome(new BlockPos(x, 64, z)).value().getRegistryName();
 					
 					synchronized(RESERVOIR_ISLAND_LIST){
 						final ColumnPos current = new ColumnPos(x, z);
@@ -69,11 +69,11 @@ public class ReservoirHandler{
 						}
 						
 						ReservoirType reservoir = null;
-						int totalWeight = getTotalWeight(dimensionRL, biome);
+						int totalWeight = getTotalWeight(dimensionRL, biomeRL);
 						if(totalWeight > 0){
 							int weight = Math.abs(random.nextInt() % totalWeight);
 							for(ReservoirType res:ReservoirType.map.values()){
-								if(res.isValidDimension(dimensionRL) && res.isValidBiome(biome)){
+								if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
 									weight -= res.weight;
 									if(weight < 0){
 										reservoir = res;
@@ -91,6 +91,7 @@ public class ReservoirHandler{
 							int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
 							ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
 							RESERVOIR_ISLAND_LIST.put(dimensionKey, island);
+							ImmersivePetroleum.log.info("Spawned {}", reservoir.name);
 							IPSaveData.markInstanceAsDirty();
 						}
 					}
@@ -114,7 +115,7 @@ public class ReservoirHandler{
 			totalWeight = 0;
 			
 			for(ReservoirType reservoir:ReservoirType.map.values()){
-				if(reservoir.isValidDimension(dimension) && reservoir.isValidBiome(biome)){
+				if(reservoir.getDimensions().valid(dimension) && reservoir.getBiomes().valid(biome)){
 					totalWeight += reservoir.weight;
 				}
 			}

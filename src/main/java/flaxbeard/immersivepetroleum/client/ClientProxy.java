@@ -478,40 +478,39 @@ public class ClientProxy extends CommonProxy{
 			boolean isVowel = (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
 			String aOrAn = I18n.get(isVowel ? "ie.manual.entry.reservoirs.vowel" : "ie.manual.entry.reservoirs.consonant");
 			
-			String dimBLWL = "";
-			if(reservoir.dimWhitelist != null && reservoir.dimWhitelist.size() > 0){
-				StringBuilder validDims = new StringBuilder();
-				for(ResourceLocation rl:reservoir.dimWhitelist){
-					validDims.append((validDims.length() > 0) ? ", " : "").append("<dim;").append(rl).append(">");
+			String dimBWList = "", bioBWList = "";
+			
+			if(reservoir.getDimensions().hasEntries()){
+				StringBuilder strBuilder = new StringBuilder();
+				
+				reservoir.getDimensions().forEach(rl -> {
+					strBuilder.append((strBuilder.length() > 0) ? ", " : "").append("<dim;").append(rl).append(">");
+				});
+				
+				if(reservoir.getDimensions().isBlacklist()){
+					dimBWList = I18n.get("ie.manual.entry.reservoirs.dim.invalid", localizedName, strBuilder.toString(), aOrAn);
+				}else{
+					dimBWList = I18n.get("ie.manual.entry.reservoirs.dim.valid", localizedName, strBuilder.toString(), aOrAn);
 				}
-				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.valid", localizedName, validDims.toString(), aOrAn);
-			}else if(reservoir.dimBlacklist != null && reservoir.dimBlacklist.size() > 0){
-				StringBuilder invalidDims = new StringBuilder();
-				for(ResourceLocation rl:reservoir.dimBlacklist){
-					invalidDims.append((invalidDims.length() > 0) ? ", " : "").append("<dim;").append(rl).append(">");
-				}
-				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.invalid", localizedName, invalidDims.toString(), aOrAn);
 			}else{
-				dimBLWL = I18n.get("ie.manual.entry.reservoirs.dim.any", localizedName, aOrAn);
+				dimBWList = I18n.get("ie.manual.entry.reservoirs.dim.any", localizedName, aOrAn);
 			}
 			
-			String bioBLWL = "";
-			if(reservoir.bioWhitelist != null && reservoir.bioWhitelist.size() > 0){
-				StringBuilder validBiomes = new StringBuilder();
-				for(ResourceLocation rl:reservoir.bioWhitelist){
+			if(reservoir.getBiomes().hasEntries()){
+				StringBuilder strBuilder = new StringBuilder();
+				
+				reservoir.getBiomes().forEach(rl -> {
 					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
-					validBiomes.append((validBiomes.length() > 0) ? ", " : "").append(bio != null ? bio.toString() : rl);
+					strBuilder.append((strBuilder.length() > 0) ? ", " : "").append(bio != null ? bio.toString() : rl);
+				});
+				
+				if(reservoir.getBiomes().isBlacklist()){
+					dimBWList = I18n.get("ie.manual.entry.reservoirs.bio.invalid", localizedName, strBuilder.toString(), aOrAn);
+				}else{
+					dimBWList = I18n.get("ie.manual.entry.reservoirs.bio.valid", localizedName, strBuilder.toString(), aOrAn);
 				}
-				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.valid", validBiomes.toString());
-			}else if(reservoir.bioBlacklist != null && reservoir.bioBlacklist.size() > 0){
-				StringBuilder invalidBiomes = new StringBuilder();
-				for(ResourceLocation rl:reservoir.bioBlacklist){
-					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
-					invalidBiomes.append((invalidBiomes.length() > 0) ? ", " : "").append(bio != null ? bio.toString() : rl);
-				}
-				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.invalid", invalidBiomes.toString());
 			}else{
-				bioBLWL = I18n.get("ie.manual.entry.reservoirs.bio.any");
+				dimBWList = I18n.get("ie.manual.entry.reservoirs.bio.any", localizedName, aOrAn);
 			}
 			
 			String fluidName = "";
@@ -524,7 +523,7 @@ public class ClientProxy extends CommonProxy{
 			if(reservoir.residual > 0){
 				repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName);
 			}
-			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBLWL, fluidName, Utils.fDecimal(reservoir.minSize), Utils.fDecimal(reservoir.maxSize), repRate, bioBLWL));
+			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBWList, fluidName, Utils.fDecimal(reservoir.minSize), Utils.fDecimal(reservoir.maxSize), repRate, bioBWList));
 			
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");

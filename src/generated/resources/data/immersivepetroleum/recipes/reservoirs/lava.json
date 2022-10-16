@@ -5,15 +5,15 @@
   "fluidcapacity": 1000000,
   "fluidtrace": 0,
   "weight": 30,
-  "dimension": {
-    "whitelist": [],
-    "blacklist": [
-      "minecraft:overworld"
+  "dimensions": {
+    "isBlacklist": true,
+    "list": [
+      "minecraft:the_end"
     ]
   },
-  "biome": {
-    "whitelist": [],
-    "blacklist": []
+  "biomes": {
+    "isBlacklist": false,
+    "list": []
   },
   "name": "lava"
 }
