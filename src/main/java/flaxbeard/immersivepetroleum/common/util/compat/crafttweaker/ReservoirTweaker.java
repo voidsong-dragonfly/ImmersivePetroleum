@@ -22,8 +22,8 @@ public class ReservoirTweaker{
 	
 	@Method
 	public static boolean remove(String name){
-			List<ResourceLocation> test = ReservoirType.map.keySet().stream()
-					.filter(loc -> loc.getPath().contains(name)).toList();
+		List<ResourceLocation> test = ReservoirType.map.keySet().stream()
+				.filter(loc -> loc.getPath().contains(name)).toList();
 		
 		if(test.size() > 1){
 			//CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
@@ -59,10 +59,11 @@ public class ReservoirTweaker{
 		private final int traceAmount;
 		private final int weight;
 		
-		private final List<ResourceLocation> dimWhitelist = new ArrayList<>();
-		private final List<ResourceLocation> dimBlacklist = new ArrayList<>();
-		private final List<ResourceLocation> bioWhitelist = new ArrayList<>();
-		private final List<ResourceLocation> bioBlacklist = new ArrayList<>();
+		private boolean isDimBlacklist = false;
+		private final List<ResourceLocation> dimensions = new ArrayList<>();
+		
+		private boolean isBioBlacklist = false;
+		private final List<ResourceLocation> biomes = new ArrayList<>();
 		
 		@Constructor
 		public ReservoirBuilder(IFluidStack fluid, int minSize, int maxSize, int traceAmount, int weight){
@@ -91,42 +92,38 @@ public class ReservoirTweaker{
 		}
 		
 		@Method
-		public ReservoirBuilder addDimensions(boolean blacklist, String[] names){
-			List<ResourceLocation> list = new ArrayList<>();
+		public ReservoirBuilder setDimensions(boolean blacklist, String[] names){
+			if(!this.dimensions.isEmpty()){
+				throw new IllegalArgumentException("Dimensions B/W-List already set!");
+			}
+			
+			this.isDimBlacklist = blacklist;
 			for(String name:names){
 				try{
-					list.add(new ResourceLocation(name));
+					ResourceLocation rl = new ResourceLocation(name);
+					this.dimensions.add(rl);
 				}catch(ResourceLocationException e){
-					//CraftTweakerAPI.logError("§caddDimension: %s§r", e.getMessage());
+					throw new IllegalArgumentException(e);
 				}
 			}
-			
-			if(blacklist){
-				this.dimBlacklist.addAll(list);
-			}else{
-				this.dimWhitelist.addAll(list);
-			}
-			
 			return this;
 		}
 		
 		@Method
-		public ReservoirBuilder addBiomes(boolean blacklist, String[] names){
-			List<ResourceLocation> list = new ArrayList<>();
+		public ReservoirBuilder setBiomes(boolean blacklist, String[] names){
+			if(!this.dimensions.isEmpty()){
+				throw new IllegalArgumentException("Biomes B/W-List already set!");
+			}
+			
+			this.isBioBlacklist = blacklist;
 			for(String name:names){
 				try{
-					list.add(new ResourceLocation(name));
+					ResourceLocation rl = new ResourceLocation(name);
+					this.biomes.add(rl);
 				}catch(ResourceLocationException e){
-					//CraftTweakerAPI.logError("§caddBiome: %s§r", e.getMessage());
+					throw new IllegalArgumentException(e);
 				}
 			}
-			
-			if(blacklist){
-				this.bioBlacklist.addAll(list);
-			}else{
-				this.bioWhitelist.addAll(list);
-			}
-			
 			return this;
 		}
 		
@@ -143,19 +140,8 @@ public class ReservoirTweaker{
 				if(!ReservoirType.map.containsKey(id)){
 					ReservoirType reservoir = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
 					
-					if(!this.dimWhitelist.isEmpty()){
-						reservoir.addDimension(false, this.dimWhitelist);
-					}
-					if(!this.dimBlacklist.isEmpty()){
-						reservoir.addDimension(true, this.dimBlacklist);
-					}
-					
-					if(!this.bioWhitelist.isEmpty()){
-						reservoir.addBiome(false, this.bioWhitelist);
-					}
-					if(!this.bioBlacklist.isEmpty()){
-						reservoir.addBiome(true, this.bioBlacklist);
-					}
+					reservoir.setDimensions(this.isDimBlacklist, this.dimensions);
+					reservoir.setDimensions(this.isBioBlacklist, this.biomes);
 					
 					ReservoirHandler.addReservoir(id, reservoir);
 				}else{
