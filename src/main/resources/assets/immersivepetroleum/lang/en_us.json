@@ -143,6 +143,13 @@
 	"gui.immersivepetroleum.derrick.msg.set_in_stone": "Set In Stone",
 	"gui.immersivepetroleum.derrick.msg.config": "Config",
 	
+	"gui.immersivepetroleum.derrick.settings.button.set": "Set",
+	"gui.immersivepetroleum.derrick.settings.button.set.desc": "Applies path to Derrick.",
+	"gui.immersivepetroleum.derrick.settings.button.reset": "Reset",
+	"gui.immersivepetroleum.derrick.settings.button.reset.desc": "Reset to last config if possible.",
+	"gui.immersivepetroleum.derrick.settings.button.close": "Close",
+	"gui.immersivepetroleum.derrick.settings.button.close.desc": "Return to Derrick.",
+	
 	"_comment": "################## Effects ##################",
 	
 	"effect.immersivepetroleum.anti_fire": "",
