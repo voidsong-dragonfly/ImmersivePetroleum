@@ -310,6 +310,12 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 											this.drilling = true;
 										}
 									}else{
+										if(!this.tank.getFluid().isEmpty() && this.tank.getFluid().getFluid() == CONCRETE.getFluid()){
+											// FIXME ! This happens every now and then, and i have not yet nailed down HOW this happens.
+											// Void excess concrete.
+											this.tank.drain(this.tank.getFluidAmount(), FluidAction.EXECUTE);
+											forceUpdate = true;
+										}
 										if(this.tank.drain(WATER, FluidAction.SIMULATE).getAmount() >= WATER.getAmount()){
 											this.energyStorage.extractEnergy(IPServerConfig.EXTRACTION.derrick_consumption.get(), false);
 											
