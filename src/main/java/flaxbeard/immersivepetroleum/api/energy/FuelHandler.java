@@ -85,7 +85,7 @@ public class FuelHandler{
 		portablegen.clear();
 		motorboatAmountTick.clear();
 		
-		ConfigUtils.addFuel(IPServerConfig.GENERATION.fuels.get());
+		ConfigUtils.addGeneratorFuel(IPServerConfig.GENERATION.fuels.get());
 		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
 	}
 	
