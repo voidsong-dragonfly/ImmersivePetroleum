@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -81,7 +82,6 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		}
 	}
 	
-	// TODO ! All of these below need translation stuff!
 	@Override
 	protected void renderLabels(@Nonnull PoseStack matrix, int x, int y){
 		if(this.tile.getBlockPos().getY() <= 62){
@@ -106,16 +106,16 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			// Possible display prototypes
 			if(well.wellPipeLength < well.getMaxPipeLength()){
 				if(this.tile.isRSDisabled()){
-					drawInfoTextCentered(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.disabled")), 0, 0xEF0000);
+					drawInfoTextCentered(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.disabled"), 0, 0xEF0000);
 					return;
 				}
 				
 				if(this.tile.drilling){
 					String str = String.format(Locale.ROOT, "(%d%%)", (int) (100 * well.wellPipeLength / (float) well.getMaxPipeLength()));
-					drawInfoText(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.drilling") + str), 0);
+					drawInfoText(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.drilling", str), 0);
 					return;
 				}else if(well.pipes <= 0 && !this.menu.getSlot(0).hasItem()){
-					drawInfoTextCentered(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.out_of_pipes")), 3, 0xEF0000);
+					drawInfoTextCentered(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.out_of_pipes"), 3, 0xEF0000);
 					return;
 				}
 				
@@ -123,14 +123,14 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 					int realPipeLength = (this.tile.getBlockPos().getY() - 1) - well.getBlockPos().getY();
 					int concreteNeeded = (DerrickTileEntity.CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength));
 					if(concreteNeeded > 0){
-						drawInfoText(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.missing") + Utils.fDecimal(concreteNeeded) + "mB"), 0, 0xEF0000);
+						drawInfoText(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(concreteNeeded) + "mB"), 0, 0xEF0000);
 						drawInfoText(matrix, DerrickTileEntity.CONCRETE.getDisplayName(), 1, 0xEF0000);
 						return;
 					}
 					
 					int waterNeeded = DerrickTileEntity.WATER.getAmount() * (well.getMaxPipeLength() - well.wellPipeLength);
 					if(waterNeeded > 0){
-						drawInfoText(matrix, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.missing") + Utils.fDecimal(waterNeeded) + "mB"), 0, 0xEF0000);
+						drawInfoText(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(waterNeeded) + "mB"), 0, 0xEF0000);
 						drawInfoText(matrix, DerrickTileEntity.WATER.getDisplayName(), 1, 0xEF0000);
 						return;
 					}
