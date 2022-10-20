@@ -45,6 +45,9 @@ public class IPFluidTags extends FluidTagsProvider{
 			.addTag(IPTags.Fluids.benzene)
 			.addTag(IPTags.Fluids.propylene)
 			.addTag(IPTags.Fluids.ethylene)
+			.addTag(IPTags.Fluids.lubricant_cracked)
+			.addTag(IPTags.Fluids.kerosene)
+			.addTag(IPTags.Fluids.gasoline_additives)
 			.addTag(IETags.fluidPlantoil)
 			.addTag(IETags.fluidCreosote)
 			.addTag(IETags.fluidEthanol);
@@ -67,5 +70,14 @@ public class IPFluidTags extends FluidTagsProvider{
 		
 		tag(IPTags.Fluids.ethylene)
 			.add(IPContent.Fluids.ETHYLENE.still().get());
+		
+		tag(IPTags.Fluids.lubricant_cracked)
+			.add(IPContent.Fluids.LUBRICANT_CRACKED.still().get());
+		
+		tag(IPTags.Fluids.kerosene)
+			.add(IPContent.Fluids.KEROSENE.still().get());
+		
+		tag(IPTags.Fluids.gasoline_additives)
+			.add(IPContent.Fluids.GASOLINE_ADDITIVES.still().get());
 	}
 }

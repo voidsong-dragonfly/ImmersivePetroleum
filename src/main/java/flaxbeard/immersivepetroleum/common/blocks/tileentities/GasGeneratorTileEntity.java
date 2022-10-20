@@ -67,6 +67,8 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	protected WireType wireType;
 	protected boolean isActive = false;
+	protected int fluidTick = 0;
+	protected int currentFlux = 0;
 	protected Direction facing = Direction.NORTH;
 	protected final MutableEnergyStorage energyStorage = new MutableEnergyStorage(getMaxStorage(), Integer.MAX_VALUE, getMaxOutput());
 	protected final FluidTank tank = new FluidTank(FUEL_CAPACITY, fluid -> (fluid != FluidStack.EMPTY && FuelHandler.isValidFuel(fluid.getFluid())));
@@ -88,6 +90,8 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		super.load(nbt);
 		
 		this.isActive = nbt.getBoolean("isActive");
+		this.fluidTick = nbt.getInt("fluidTick");
+		this.currentFlux = nbt.getInt("currentFlux");
 		this.tank.readFromNBT(nbt.getCompound("tank"));
 		this.wireType = nbt.contains("wiretype") ? WireUtils.getWireTypeFromNBT(nbt, "wiretype") : null;
 		
@@ -97,6 +101,8 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	@Override
 	public void saveAdditional(CompoundTag nbt){
+		nbt.putInt("fluidTick", this.fluidTick);
+		nbt.putInt("currentFlux", this.currentFlux);
 		nbt.putBoolean("isActive", this.isActive);
 		nbt.put("tank", this.tank.writeToNBT(new CompoundTag()));
 		nbt.put("buffer", this.energyStorage.serializeNBT());
@@ -310,16 +316,22 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	public void tickServer(){
 		boolean lastActive = this.isActive;
 		this.isActive = false;
-		if(!this.level.hasNeighborSignal(this.worldPosition) && !this.tank.getFluid().isEmpty()){
-			Fluid fluid = this.tank.getFluid().getFluid();
-			int amount = FuelHandler.getFuelUsedPerTick(fluid);
-			if(amount > 0 && this.tank.getFluidAmount() >= amount){
-				int generated = FuelHandler.getFluxGeneratedPerTick(fluid);
-				
-				if(this.energyStorage.receiveEnergy(generated, true) >= generated){
-					this.energyStorage.receiveEnergy(FuelHandler.getFluxGeneratedPerTick(fluid), false);
+		if(!this.level.hasNeighborSignal(this.worldPosition)){
+			if (fluidTick == 0){
+				Fluid fluid = this.tank.getFluid().getFluid();
+				int amount = FuelHandler.getGeneratorFuelUse(fluid);
+				if(amount > 0 && this.tank.getFluidAmount() >= amount){
 					this.tank.drain(new FluidStack(fluid, amount), FluidAction.EXECUTE);
+					currentFlux = FuelHandler.getFluxGeneratedPerTick(fluid);
+					fluidTick = 20;
+				}
+			}
+			
+			if (fluidTick > 0) {
+				if(this.energyStorage.receiveEnergy(currentFlux, true) >= currentFlux){
+					this.energyStorage.receiveEnergy(currentFlux, false);
 					this.isActive = true;
+					fluidTick--;
 				}
 			}
 		}

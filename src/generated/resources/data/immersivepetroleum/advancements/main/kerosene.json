@@ -1,0 +1,37 @@
+{
+  "parent": "immersivepetroleum:main/mb_distillationtower",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:gasoline_additives_bucket"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.kerosene"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.kerosene.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "kerosene": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:gasoline_additives_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "kerosene"
+    ]
+  ]
+}

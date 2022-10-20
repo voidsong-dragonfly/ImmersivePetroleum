@@ -1,5 +1,5 @@
 {
-  "parent": "immersivepetroleum:main/mb_distillationtower",
+  "parent": "immersivepetroleum:main/gasoline",
   "display": {
     "icon": {
       "item": "immersivepetroleum:napalm_bucket"
@@ -16,7 +16,7 @@
     "hidden": false
   },
   "criteria": {
-    "code_trigger": {
+    "napalm": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "code_trigger"
+      "napalm"
     ]
   ]
 }

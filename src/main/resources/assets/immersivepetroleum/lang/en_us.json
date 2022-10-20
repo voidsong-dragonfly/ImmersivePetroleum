@@ -37,6 +37,9 @@
 	"fluid.immersivepetroleum.benzene": "Benzene",
 	"fluid.immersivepetroleum.propylene": "Propylene",
 	"fluid.immersivepetroleum.ethylene": "Ethylene",
+	"fluid.immersivepetroleum.lubricant_cracked": "Cracked Lubricant",
+	"fluid.immersivepetroleum.kerosene": "Kerosene",
+	"fluid.immersivepetroleum.gasoline_additives": "Gasoline Additives",
 	
 	"_comment": "################## Items ##################",
 	
@@ -60,6 +63,9 @@
 	"item.immersivepetroleum.benzene_bucket": "Bucket of Benzene",
 	"item.immersivepetroleum.propylene_bucket": "Bucket of Propylene",
 	"item.immersivepetroleum.ethylene_bucket": "Bucket of Ethylene",
+	"item.immersivepetroleum.lubricant_cracked_bucket": "Bucket of Cracked Lubricant",
+	"item.immersivepetroleum.kerosene_bucket": "Bucket of Kerosene",
+	"item.immersivepetroleum.gasoline_additives_bucket": "Bucket of Gasoline Additives",
 	
 	"item.immersivepetroleum.upgrade_reinforced_hull": "Reinforced Hull",
 	"item.immersivepetroleum.upgrade_icebreaker": "Icebreaker Bow",
@@ -187,13 +193,13 @@
 	
 	"advancement.immersivepetroleum.root": "Immersive Petroleum",
 	"advancement.immersivepetroleum.root.desc": "Find an Oil Reservoir using the Seismic Survey",
-	"advancement.immersivepetroleum.projector": "How do i build this thing?",
+	"advancement.immersivepetroleum.projector": "How do I build this thing?",
 	"advancement.immersivepetroleum.projector.desc": "Craft the Projector",
 	"advancement.immersivepetroleum.flarestack": "You Monster!",
 	"advancement.immersivepetroleum.flarestack.desc": "Kill a Goat with the Flarestack",
 	"advancement.immersivepetroleum.napalm": "Fortunate Son",
 	"advancement.immersivepetroleum.napalm.desc": "Mix some Napalm",
-	"advancement.immersivepetroleum.mb_derrick": "Overpressure",
+	"advancement.immersivepetroleum.mb_derrick": "Baku Blowout Blast",
 	"advancement.immersivepetroleum.mb_derrick.desc": "Form the Derrick",
 	"advancement.immersivepetroleum.mb_oiltank": "Self leveling Glory!",
 	"advancement.immersivepetroleum.mb_oiltank.desc": "Form the Oil-Tank",
@@ -231,10 +237,14 @@
 	"advancement.immersivepetroleum.oil_can.desc": "Manually lubricate a Machine",
 	"advancement.immersivepetroleum.cracking": "Deadly Sauna",
 	"advancement.immersivepetroleum.cracking.desc": "Use the HPRU to crack some Naphtha",
-	"advancement.immersivepetroleum.naphtha_distillates": "Plethora of Petroleum Products",
+	"advancement.immersivepetroleum.naphtha_distillates": "Entitled to Financial Compensation",
 	"advancement.immersivepetroleum.naphtha_distillates.desc": "Produce a bucket of each naphtha product",
 	"advancement.immersivepetroleum.duroplast": "Nu-Modern Materials",
 	"advancement.immersivepetroleum.duroplast.desc": "Produce duroplast blocks from petroleum",
+	"advancement.immersivepetroleum.kerosene": "The Shukhov Shuffle",
+	"advancement.immersivepetroleum.kerosene.desc": "Convert Kerosene into Gasoline Additives",
+	"advancement.immersivepetroleum.gasoline": "Overpowering Octane",
+	"advancement.immersivepetroleum.gasoline.desc": "Upgrade some Naphtha into Gasoline",
 	
 	"_comment": "################## Subtitles ##################",
 	

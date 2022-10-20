@@ -106,10 +106,10 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void completed(ParallelDispatchEvent event){
 		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch(str){
-			case "distillationtower_operationcost" -> (int) (2048 * IPServerConfig.REFINING.distillationTower_energyModifier.get());
+			case "distillationtower_operationcost" -> (int) (1024 * IPServerConfig.REFINING.distillationTower_energyModifier.get());
 			case "coker_operationcost" -> (int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get());
-			case "hydrotreater_operationcost_lower" -> (int) (256 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
-			case "hydrotreater_operationcost_upper" -> (int) (1024 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
+			case "hydrotreater_operationcost_lower" -> (int) (80 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
+			case "hydrotreater_operationcost_upper" -> (int) (512 * IPServerConfig.REFINING.hydrotreater_energyModifier.get());
 			case "pumpjack_consumption" -> IPServerConfig.EXTRACTION.pumpjack_consumption.get();
 			case "pumpjack_speed" -> IPServerConfig.EXTRACTION.pumpjack_speed.get();
 			case "pumpjack_days" -> {
@@ -368,13 +368,14 @@ public class ClientProxy extends CommonProxy{
 		builder.addSpecialElement(new SpecialElementData("crude", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("lubricant", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.LUBRICANT.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("diesel", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.DIESEL_SULFUR.bucket().get()), new ItemStack(IPContent.Fluids.DIESEL.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("gasoline", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.GASOLINE.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("kerosene", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.KEROSENE.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("naphtha", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("naphtha_derivates", 0, new ManualElementItem(man,
 			new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
 			new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
 			new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
 		);
+		builder.addSpecialElement(new SpecialElementData("gasoline", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.GASOLINE.bucket().get()), new ItemStack(IPContent.Fluids.GASOLINE_ADDITIVES.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("napalm", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPALM.bucket().get()))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);

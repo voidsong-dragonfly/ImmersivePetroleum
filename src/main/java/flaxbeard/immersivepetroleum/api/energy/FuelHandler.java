@@ -56,18 +56,18 @@ public class FuelHandler{
 		return fuel != null && portablegen.containsKey(fuel.getRegistryName());
 	}
 	
-	public static int getBoatFuelUsedPerTick(Fluid fuel){
+	public static int getBoatFuelUse(Fluid fuel){
 		if(!isValidBoatFuel(fuel))
 			return 0;
 		
 		return motorboatAmountTick.get(fuel.getRegistryName());
 	}
 	
-	public static int getFuelUsedPerTick(Fluid fuel){
+	public static int getGeneratorFuelUse(Fluid fuel){
 		if(!isValidFuel(fuel))
 			return 0;
 		
-		return portablegen.get(fuel.getRegistryName()).mbPerTick;
+		return portablegen.get(fuel.getRegistryName()).mBPerConsume;
 	}
 	
 	public static int getFluxGeneratedPerTick(Fluid fuel){
@@ -89,6 +89,6 @@ public class FuelHandler{
 		ConfigUtils.addBoatFuel(IPServerConfig.MISCELLANEOUS.boat_fuels.get());
 	}
 	
-	private record Values(int fluxPerTick, int mbPerTick){
+	private record Values(int fluxPerTick, int mBPerConsume){
 	}
 }

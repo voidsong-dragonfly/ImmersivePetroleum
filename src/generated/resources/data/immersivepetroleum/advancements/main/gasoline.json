@@ -1,0 +1,37 @@
+{
+  "parent": "immersivepetroleum:main/kerosene",
+  "display": {
+    "icon": {
+      "item": "immersivepetroleum:gasoline_bucket"
+    },
+    "title": {
+      "translate": "advancement.immersivepetroleum.gasoline"
+    },
+    "description": {
+      "translate": "advancement.immersivepetroleum.gasoline.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "gasoline": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:gasoline_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "gasoline"
+    ]
+  ]
+}

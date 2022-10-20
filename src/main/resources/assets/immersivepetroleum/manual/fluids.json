@@ -8,15 +8,18 @@
     "diesel":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:diesel_sulfur_bucket"}, {"item":"immersivepetroleum:diesel_bucket"}]},
-    "gasoline":{
+    "kerosene":{
         "type":"item_display",
-        "items":[{"item":"immersivepetroleum:gasoline_bucket"}]},
+        "items":[{"item":"immersivepetroleum:kerosene_bucket"}]},
     "naphtha":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:naphtha_bucket"}]},
     "naphtha_derivates":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:benzene_bucket"}, {"item":"immersivepetroleum:propylene_bucket"}, {"item":"immersivepetroleum:ethylene_bucket"}]},
+    "gasoline":{"type":"item_display",
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:gasoline_bucket"}, {"item":"immersivepetroleum:gasoline_additives_bucket"}]},
     "napalm":{"type":"item_display",
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:napalm_bucket"}]}

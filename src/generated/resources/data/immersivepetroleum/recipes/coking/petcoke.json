@@ -1,7 +1,8 @@
 {
   "type": "immersivepetroleum:coker",
   "result": {
-    "item": "immersivepetroleum:petcoke"
+    "item": "immersivepetroleum:petcoke",
+    "count": 2
   },
   "resultfluid": {
     "tag": "forge:diesel_sulfur",
