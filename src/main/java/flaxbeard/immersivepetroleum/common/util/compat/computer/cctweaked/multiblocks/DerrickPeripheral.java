@@ -4,7 +4,6 @@ import java.util.Map;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
@@ -57,8 +56,7 @@ public class DerrickPeripheral extends PoweredMultiblockPeripheral{
 	public final MethodResult getExpectedFluid(){
 		final WellTileEntity well;
 		if((well = this.master.getWell()) == null){
-			ImmersivePetroleum.log.info("Well not found!");
-			return MethodResult.of();
+			return MethodResult.of(null, "Well not found!");
 		}
 		
 		int realPipeLength = (this.master.getBlockPos().getY() - 1) - well.getBlockPos().getY();

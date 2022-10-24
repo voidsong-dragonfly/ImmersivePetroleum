@@ -30,7 +30,7 @@ public class DistillationTowerPeripheral extends PoweredMultiblockPeripheral{
 			case 2:
 				return MethodResult.of(this.master.tanks[tank - 1].getCapacity());
 			default:
-				return MethodResult.of((Object) null);
+				return MethodResult.of(null, "Index " + tank + " out of Bounds.");
 		}
 	}
 	
