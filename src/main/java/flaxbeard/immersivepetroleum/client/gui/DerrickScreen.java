@@ -89,7 +89,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			return;
 		}
 		
-		WellTileEntity well = this.tile.getOrCreateWell(false);
+		WellTileEntity well = this.tile.getWell();
 		if(well != null){
 			if(this.cfgButton.active && well.wellPipeLength > 0){
 				this.cfgButton.active = false;
