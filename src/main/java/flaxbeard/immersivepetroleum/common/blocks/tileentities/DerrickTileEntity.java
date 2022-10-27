@@ -269,7 +269,9 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 										well.setChanged();
 										forceUpdate = true;
 									}
-								}else if(well.pipes > 0){
+								}
+								
+								if(well.pipes > 0){
 									final BlockPos dPos = getBlockPos();
 									final BlockPos wPos = well.getBlockPos();
 									int realPipeLength = ((dPos.getY() - 1) - wPos.getY());
