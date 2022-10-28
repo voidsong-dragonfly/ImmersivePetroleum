@@ -401,14 +401,9 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
-	public static boolean updateShapes = false;
 	@Override
 	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
-		if(updateShapes){
-			updateShapes = false;
-			SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
-		}
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	

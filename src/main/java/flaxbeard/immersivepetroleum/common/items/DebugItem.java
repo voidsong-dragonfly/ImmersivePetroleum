@@ -20,9 +20,6 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
@@ -192,6 +189,7 @@ public class DebugItem extends IPItemBase{
 		return super.use(worldIn, playerIn, handIn);
 	}
 	
+	@SuppressWarnings("unused")
 	@Override
 	@Nonnull
 	public InteractionResult useOn(UseOnContext context){
@@ -244,21 +242,6 @@ public class DebugItem extends IPItemBase{
 				return InteractionResult.SUCCESS;
 			}
 			case UPDATE_SHAPES -> {
-				if(te instanceof CokerUnitTileEntity){
-					CokerUnitTileEntity.updateShapes = true;
-					return InteractionResult.SUCCESS;
-				}
-				
-				if(te instanceof DerrickTileEntity){
-					DerrickTileEntity.updateShapes = true;
-					return InteractionResult.SUCCESS;
-				}
-				
-				if(te instanceof OilTankTileEntity){
-					OilTankTileEntity.updateShapes = true;
-					return InteractionResult.SUCCESS;
-				}
-				
 				return InteractionResult.PASS;
 			}
 			default -> {

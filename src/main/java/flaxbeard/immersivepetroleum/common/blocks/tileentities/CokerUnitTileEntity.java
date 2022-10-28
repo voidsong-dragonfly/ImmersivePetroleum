@@ -561,15 +561,9 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	}
 	
 	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(CokerUnitTileEntity::getShape);
-	public static boolean updateShapes = false;
 	@Override
 	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){
-		if(updateShapes){
-			updateShapes = false;
-			SHAPES = CachedShapesWithTransform.createForMultiblock(CokerUnitTileEntity::getShape);
-		}
-		
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
 	}
 	
