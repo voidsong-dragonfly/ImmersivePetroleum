@@ -33,22 +33,22 @@ public class IPSaveData extends SavedData{
 		if(!reservoirs.isEmpty()){
 			Multimap<ResourceKey<Level>, ReservoirIsland> mainList = ReservoirHandler.getReservoirIslandList();
 			synchronized(mainList){
-				ImmersivePetroleum.log.info("[ReservoirIslands]: Clearing main list.");
+				ImmersivePetroleum.log.debug("[ReservoirIslands]: Clearing main list.");
 				mainList.clear();
 				
-				ImmersivePetroleum.log.info("[ReservoirIslands]: Reading...");
+				ImmersivePetroleum.log.debug("[ReservoirIslands]: Reading...");
 				for(int i = 0;i < reservoirs.size();i++){
 					CompoundTag dim = reservoirs.getCompound(i);
 					ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
 					ResourceKey<Level> dimType = ResourceKey.create(Registry.DIMENSION_REGISTRY, rl);
 					ListTag islands = dim.getList("islands", Tag.TAG_COMPOUND);
 					
-					ImmersivePetroleum.log.info("[ReservoirIslands]: Read islands for dim {}", dimType.toString());
+					ImmersivePetroleum.log.debug("[ReservoirIslands]: Read islands for dim {}", dimType.toString());
 					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundTag) inbt)).filter(o -> o != null).collect(Collectors.toList());
 					mainList.putAll(dimType, list);
 				}
 				
-				ImmersivePetroleum.log.info("[ReservoirIslands]: Clearing Cache...");
+				ImmersivePetroleum.log.debug("[ReservoirIslands]: Clearing Cache...");
 				ReservoirHandler.clearCache();
 			}
 		}

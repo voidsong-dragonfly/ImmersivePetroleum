@@ -1,12 +1,8 @@
 package flaxbeard.immersivepetroleum.common;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -19,9 +15,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 
 public class CommonProxy{
-	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/CommonProxy");
-	
 	/** Fired at {@link FMLCommonSetupEvent} */
 	public void setup(){
 	}

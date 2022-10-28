@@ -27,7 +27,7 @@ public class DynamicTextureWrapper{
 		DynamicTextureWrapper wrapper = ((DynamicTextureWrapper) s.getValue());
 		wrapper.dispose();
 		
-		ImmersivePetroleum.log.info("Disposed survey result texture {}", wrapper.rl);
+		ImmersivePetroleum.log.debug("Disposed survey result texture {}", wrapper.rl);
 	}).expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(50).build();
 	
 	/** Returns null if no valid UUID is provided */
@@ -43,7 +43,7 @@ public class DynamicTextureWrapper{
 				byte[] mapData = dataTag.getByteArray("map");
 				tex.write(mapData);
 				
-				ImmersivePetroleum.log.info("Created survey result texture {}", tex.rl);
+				ImmersivePetroleum.log.debug("Created survey result texture {}", tex.rl);
 			}
 			return tex;
 		}

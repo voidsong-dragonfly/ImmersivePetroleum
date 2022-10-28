@@ -28,7 +28,7 @@ public class IPSounds{
 	
 	@SubscribeEvent
 	public static void registerSounds(RegistryEvent.Register<SoundEvent> event){
-		ImmersivePetroleum.log.info("Loading sounds.");
+		ImmersivePetroleum.log.debug("Loading sounds.");
 		for(SoundEvent sound:soundEvents){
 			event.getRegistry().register(sound);
 		}

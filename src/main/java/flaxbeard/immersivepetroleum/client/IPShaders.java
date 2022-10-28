@@ -33,12 +33,12 @@ public class IPShaders{
 	@SubscribeEvent
 	public static void registerShaders(RegisterShadersEvent event) throws IOException{
 		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_line"), DefaultVertexFormat.POSITION_COLOR), s -> {
-			ImmersivePetroleum.log.info("rendertype_line shader loaded.");
+			ImmersivePetroleum.log.debug("rendertype_line shader loaded.");
 			shader_line = s;
 		});
 		
 		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_projection"), DefaultVertexFormat.POSITION_COLOR_TEX), s -> {
-			ImmersivePetroleum.log.info("rendertype_projection shader loaded.");
+			ImmersivePetroleum.log.debug("rendertype_projection shader loaded.");
 			shader_projection = s;
 			
 			projection_alpha = shader_projection.safeGetUniform("Alpha");
@@ -46,12 +46,12 @@ public class IPShaders{
 		});
 		
 		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_translucent_postion_color"), DefaultVertexFormat.POSITION_COLOR), s -> {
-			ImmersivePetroleum.log.info("rendertype_translucent_postion_color shader loaded.");
+			ImmersivePetroleum.log.debug("rendertype_translucent_postion_color shader loaded.");
 			shader_translucent_postion_color = s;
 		});
 		
 		event.registerShader(new ShaderInstance(event.getResourceManager(), ResourceUtils.ip("rendertype_translucent"), DefaultVertexFormat.BLOCK), s -> {
-			ImmersivePetroleum.log.info("rendertype_translucent shader loaded.");
+			ImmersivePetroleum.log.debug("rendertype_translucent shader loaded.");
 			shader_translucent_full = s;
 		});
 	}

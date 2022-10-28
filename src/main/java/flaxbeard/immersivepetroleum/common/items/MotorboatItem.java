@@ -177,7 +177,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
 		
 		if(handler == null){
-			ImmersivePetroleum.log.info("No valid inventory handler found for " + stack);
+			ImmersivePetroleum.log.debug("No valid inventory handler found for " + stack);
 			return NonNullList.create();
 		}
 		

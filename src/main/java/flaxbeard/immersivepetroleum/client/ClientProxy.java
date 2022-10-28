@@ -3,9 +3,6 @@ package flaxbeard.immersivepetroleum.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.electronwill.nightconfig.core.Config;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -87,8 +84,6 @@ import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ClientProxy extends CommonProxy{
-	@SuppressWarnings("unused")
-	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/ClientProxy");
 	public static final String CAT_IP = "ip";
 	
 	@Override
