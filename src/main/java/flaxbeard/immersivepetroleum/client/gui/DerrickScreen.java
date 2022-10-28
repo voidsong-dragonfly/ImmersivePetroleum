@@ -19,7 +19,6 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
@@ -93,14 +92,6 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		if(well != null){
 			if(this.cfgButton.active && well.wellPipeLength > 0){
 				this.cfgButton.active = false;
-			}
-			
-			{
-				// Debug Stuff (Renders above the GUI)
-				int realPipes = Math.max(0, (this.tile.getBlockPos().getY() - well.getBlockPos().getY() - 1) - well.wellPipeLength);
-				String str = String.format(Locale.ROOT, "R.Pipes: %d (%dmB)", realPipes, realPipes * 125);
-				drawInfoText(matrix, new TextComponent("Pipe, Timer: " + well.pipes + ", " + this.tile.timer + "t").withStyle(ChatFormatting.DARK_GRAY), -5);
-				drawInfoText(matrix, new TextComponent(str).withStyle(ChatFormatting.DARK_GRAY), -4);
 			}
 			
 			// Possible display prototypes
