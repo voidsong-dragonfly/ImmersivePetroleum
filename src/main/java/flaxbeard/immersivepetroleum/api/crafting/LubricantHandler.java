@@ -8,25 +8,12 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 public class LubricantHandler{
 	static final Set<Pair<TagKey<Fluid>, Integer>> lubricants = new HashSet<>();
-	
-	/**
-	 * Registers a lubricant to be used in the Lubricant Can and Automatic Lubricator
-	 *
-	 * @param lube   The {@link Fluid} to be used as lubricant
-	 * @param amount mB of lubricant to spend every 4 ticks
-	 * @deprecated THIS DOES NOTHING! in favour of fluid tags, use {@link #register(TagKey, int)} instead.
-	 */
-	@Deprecated
-	public static void registerLubricant(Fluid lube, int amount){
-		ImmersivePetroleum.log.warn("LubricantHandler skipped adding \"" + lube.getRegistryName() + "\". Please use the FluidTag registration!");
-	}
 	
 	/**
 	 * Registers a lubricant to be used in the Lubricant Can and Automatic Lubricator
