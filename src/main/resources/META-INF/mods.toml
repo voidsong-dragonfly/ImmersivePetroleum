@@ -24,7 +24,7 @@ license="All rights reserved"
 [[dependencies.immersivepetroleum]]
 	modId="forge"
 	mandatory=true
-	versionRange="[40.1.25,)"
+	versionRange="[40.1.48,)"
 	ordering="NONE"
 	side="BOTH"
 
