@@ -465,7 +465,10 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			}
 		}
 		
-		this.wellCache.abortSelfDestructSequence();
+		if(this.wellCache != null){
+			this.wellCache.abortSelfDestructSequence();
+		}
+		
 		return this.wellCache;
 	}
 	
