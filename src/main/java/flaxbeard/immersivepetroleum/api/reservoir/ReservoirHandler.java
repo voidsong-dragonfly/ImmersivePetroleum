@@ -81,17 +81,19 @@ public class ReservoirHandler{
 									}
 								}
 							}
-						}
-						
-						Set<ColumnPos> pol = new HashSet<>();
-						next(world, pol, x, z);
-						List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
-						
-						if(!poly.isEmpty()){
-							int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
-							ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
-							RESERVOIR_ISLAND_LIST.put(dimensionKey, island);
-							IPSaveData.markInstanceAsDirty();
+							
+							if(reservoir != null){
+								Set<ColumnPos> pol = new HashSet<>();
+								next(world, pol, x, z);
+								List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
+								
+								if(!poly.isEmpty()){
+									int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
+									ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
+									RESERVOIR_ISLAND_LIST.put(dimensionKey, island);
+									IPSaveData.markInstanceAsDirty();
+								}
+							}
 						}
 					}
 				}
