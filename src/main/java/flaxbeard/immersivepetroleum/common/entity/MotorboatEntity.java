@@ -276,7 +276,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
 	@Override
 	public double getPassengersRidingOffset(){
-		return 0.3D;
+		return 0.05D;
 	}
 	
 	@Override
