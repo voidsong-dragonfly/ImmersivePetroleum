@@ -341,6 +341,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 						
 						writeTank(stack.getOrCreateTag(), true);
 						
+						// Yes, this somehow fixes the tooltip stuff, do i know why? Nope :D
+						stack.getOrCreateTag().put("upgrades", new CompoundTag());
+						
 						if(isPlayer){
 							Player player = (Player) source.getDirectEntity();
 							if(!player.addItem(stack)){
