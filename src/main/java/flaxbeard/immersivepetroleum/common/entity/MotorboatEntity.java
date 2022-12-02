@@ -557,16 +557,16 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		if(this.isEmergency()){
 			for(int i = 0;i <= 1;++i){
 				if(this.getPaddleState(i)){
-					this.paddlePositions[i] = (float) ((double) this.paddlePositions[i] + (double) ((float) Math.PI / 4F));
+					this.paddlePositions[i] += (float) Math.PI / 8F;
 				}else{
 					this.paddlePositions[i] = 0.0F;
 				}
 			}
 		}else{
 			if(this.getPaddleState(0)){
-				this.paddlePositions[0] = (float) ((double) this.paddlePositions[0] + (isBoosting ? 0.02D : 0.01D));
+				this.paddlePositions[0] += (this.isBoosting ? 0.02D : 0.01D);
 			}else if(this.getPaddleState(1)){
-				this.paddlePositions[0] = (float) ((double) this.paddlePositions[0] - 0.01D);
+				this.paddlePositions[0] -= 0.01D;
 			}
 		}
 		
