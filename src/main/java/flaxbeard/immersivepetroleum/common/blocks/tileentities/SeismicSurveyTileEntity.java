@@ -228,6 +228,17 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 							}
 						}
 						
+						int max = Integer.MIN_VALUE;
+						for(int i = 0;i < mapData.length;i++){
+							int data = ((int) mapData[i]) & 0xFF;
+							if(data > max) max = data;
+						}
+						// Normalize
+						for(int i = 0;i < mapData.length;i++){
+							int data = ((int) mapData[i]) & 0xFF;
+							mapData[i] = (byte) (255 * (data / (float) max));
+						}
+						
 						CompoundTag result = stack.getOrCreateTagElement("surveyscan");
 						result.putUUID("uuid", UUID.randomUUID());
 						result.putInt("x", pos.getX());
