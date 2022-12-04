@@ -1,5 +1,8 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -17,6 +20,7 @@ import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ColumnPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -179,22 +183,22 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 				}
 				
 				if(!world.isClientSide){
-					ReservoirIsland island = ReservoirHandler.getIsland(world, pos);
+					ReservoirIsland currentIsland = ReservoirHandler.getIslandNoCache(world, pos);
 					
 					ItemStack stack = new ItemStack(IPContent.Items.SURVEYRESULT.get());
 					
-					if(island != null){
+					if(currentIsland != null){
 						// Give info about the current one.
 						
-						FluidStack fs = new FluidStack(island.getFluid(), 1);
+						FluidStack fs = new FluidStack(currentIsland.getFluid(), 1);
 						
 						CompoundTag result = stack.getOrCreateTagElement("islandscan");
 						result.putInt("x", pos.getX());
 						result.putInt("z", pos.getZ());
-						result.putByte("status", (byte) (island.getAmount() / (float) island.getCapacity() * 100));
-						result.putLong("amount", island.getAmount());
+						result.putByte("status", (byte) (currentIsland.getAmount() / (float) currentIsland.getCapacity() * 100));
+						result.putLong("amount", currentIsland.getAmount());
 						result.putString("fluid", fs.getTranslationKey());
-						result.putInt("expected", ReservoirIsland.getFlow(island.getPressure(world, pos.getX(), pos.getZ())));
+						result.putInt("expected", ReservoirIsland.getFlow(currentIsland.getPressure(world, pos.getX(), pos.getZ())));
 						
 						if(fs.getFluid().equals(IPContent.Fluids.CRUDEOIL.get())){
 							Utils.unlockIPAdvancement(player, "main/root");
@@ -202,6 +206,8 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						
 					}else{
 						// Find one nearby instead.
+						
+						final List<ReservoirIsland> islandCache = new ArrayList<>();
 						
 						double sqrt2048 = Math.sqrt(SCAN_RADIUS_SQR * 2);
 						byte[] mapData = new byte[SCAN_SIZE * SCAN_SIZE];
@@ -212,12 +218,25 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 								int x = pos.getX() - i;
 								int z = pos.getZ() - j;
 								
-								int data;
+								int data = 0;
 								double current = ReservoirHandler.getValueOf(world, x, z);
-								if(current == -1){
-									data = 0;
-								}else{
-									data = (int) Mth.clamp(255 * current, 0, 255);
+								if(current != -1){
+									Optional<ReservoirIsland> optional = islandCache.stream().filter(res -> {
+										return res.contains(x, z);
+									}).findFirst();
+									
+									ReservoirIsland nearbyIsland = optional.isPresent() ? optional.get() : null;
+									if(nearbyIsland == null){
+										nearbyIsland = ReservoirHandler.getIslandNoCache(world, new ColumnPos(x, z));
+										
+										if(nearbyIsland != null){
+											islandCache.add(nearbyIsland);
+										}
+									}
+									
+									if(nearbyIsland != null){
+										data = (int) Mth.clamp(255 * current, 0, 255);
+									}
 								}
 								
 								int noise = 31 + (int) (127 * Math.random());

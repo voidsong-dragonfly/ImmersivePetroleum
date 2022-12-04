@@ -148,9 +148,7 @@ public class ReservoirHandler{
 			if(ret == null){
 				for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
 					if(island.contains(pos)){
-						/*
-						 * There's no such thing as overlapping islands, so just return what was found directly (After putting it into the cache)
-						 */
+						// There's no such thing as overlapping islands, so just return what was found directly (After putting it into the cache)
 						CACHE.put(cacheKey, island);
 						return island;
 					}
@@ -159,6 +157,30 @@ public class ReservoirHandler{
 			
 			return ret;
 		}
+	}
+	
+	/** <i>This should not be called too much.</i> May only be called on the server-side, returns null on client-side. */
+	public static ReservoirIsland getIslandNoCache(Level world, BlockPos pos){
+		return getIslandNoCache(world, new ColumnPos(pos));
+	}
+	
+	/** <i>This should not be called too much.</i> May only be called on the server-side, returns null on client-side. */
+	public static ReservoirIsland getIslandNoCache(Level world, ColumnPos pos){
+		if(world.isClientSide){
+			return null;
+		}
+		
+		ResourceKey<Level> dimension = world.dimension();
+		synchronized(RESERVOIR_ISLAND_LIST){
+			for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
+				if(island.contains(pos)){
+					// There's no such thing as overlapping islands, so just return what was found directly
+					return island;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	/**

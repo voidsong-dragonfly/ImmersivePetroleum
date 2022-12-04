@@ -28,9 +28,13 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -44,6 +48,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -236,6 +241,40 @@ public class DebugItem extends IPItemBase{
 						}
 						
 						player.displayClientMessage(component, false);
+					}
+					
+					synchronized(ReservoirHandler.getReservoirIslandList()){
+						Collection<ReservoirIsland> list = ReservoirHandler.getReservoirIslandList().get(world.dimension());
+						
+						Vec3 playerPos = player.position();
+						double lastDistance = Double.MAX_VALUE;
+						ReservoirIsland nearestIsland = null;
+						for(ReservoirIsland res:list){
+							BlockPos centre = res.getBoundingBox().getCenter();
+							
+							double distance = playerPos.distanceToSqr(centre.getX(), centre.getY(), centre.getZ());
+							if(distance < lastDistance){
+								lastDistance = distance;
+								nearestIsland = res;
+							}
+						}
+						
+						if(nearestIsland != null){
+							BlockPos centre = nearestIsland.getBoundingBox().getCenter();
+							
+							final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + centre.getX() + " ~ " + centre.getZ());
+							final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("chat.coordinates.tooltip"));
+							
+							TranslatableComponent strOut = new TranslatableComponent("chat.immersivepetroleum.command.reservoir.locate",
+									nearestIsland.getType().name,
+									ComponentUtils.wrapInSquareBrackets(new TextComponent(centre.getX() + " " + centre.getZ())).withStyle((s) -> {
+										return s.withColor(ChatFormatting.GREEN)
+												.withItalic(true)
+												.withClickEvent(clickEvent)
+												.withHoverEvent(hoverEvent);
+									}));
+							player.displayClientMessage(strOut, false);
+						}
 					}
 				}
 				
