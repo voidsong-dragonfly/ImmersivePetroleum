@@ -27,6 +27,7 @@ import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
+import flaxbeard.immersivepetroleum.common.util.inventory.MultiFluidTankFiltered;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -91,7 +92,10 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 3));
 	
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
-	public final MultiFluidTank[] tanks = new MultiFluidTank[]{new MultiFluidTank(24000), new MultiFluidTank(24000)};
+	public final MultiFluidTank[] tanks = new MultiFluidTank[]{
+			new MultiFluidTankFiltered(24000, fs -> DistillationTowerRecipe.findRecipe(fs) != null),
+			new MultiFluidTankFiltered(24000)
+	};
 	private int cooldownTicks = 0;
 	private boolean wasActive = false;
 	
@@ -102,9 +106,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Override
 	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
-		tanks[0].readFromNBT(nbt.getCompound("tank0"));
-		tanks[1].readFromNBT(nbt.getCompound("tank1"));
-		cooldownTicks = nbt.getInt("cooldownTicks");
+		this.tanks[0].readFromNBT(nbt.getCompound("tank0"));
+		this.tanks[1].readFromNBT(nbt.getCompound("tank1"));
+		this.cooldownTicks = nbt.getInt("cooldownTicks");
 		
 		if(!descPacket){
 			this.inventory = readInventory(nbt.getCompound("inventory"));
@@ -114,9 +118,9 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Override
 	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.put("tank0", tanks[TANK_INPUT].writeToNBT(new CompoundTag()));
-		nbt.put("tank1", tanks[TANK_OUTPUT].writeToNBT(new CompoundTag()));
-		nbt.putInt("cooldownTicks", cooldownTicks);
+		nbt.put("tank0", this.tanks[TANK_INPUT].writeToNBT(new CompoundTag()));
+		nbt.put("tank1", this.tanks[TANK_OUTPUT].writeToNBT(new CompoundTag()));
+		nbt.putInt("cooldownTicks", this.cooldownTicks);
 		if(!descPacket){
 			nbt.put("inventory", writeInventory(this.inventory));
 		}
@@ -446,11 +450,11 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	
 	private final MultiblockCapability<IFluidHandler> outputHandler = MultiblockCapability.make(
 			this, be -> be.outputHandler, DistillationTowerTileEntity::master,
-			registerFluidOutput(tanks[TANK_OUTPUT])
+			registerFluidOutput(this.tanks[TANK_OUTPUT])
 	);
 	private final MultiblockCapability<IFluidHandler> inputHandler = MultiblockCapability.make(
 			this, be -> be.inputHandler, DistillationTowerTileEntity::master,
-			registerFluidInput(tanks[TANK_INPUT])
+			registerFluidInput(this.tanks[TANK_INPUT])
 	);
 	
 	@Nonnull
@@ -459,11 +463,11 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
 			if(this.posInMultiblock.equals(Fluid_IN)){
 				if(side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
-					return inputHandler.getAndCast();
+					return this.inputHandler.getAndCast();
 				}
 			}
 			if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == getFacing().getOpposite())){
-				return outputHandler.getAndCast();
+				return this.outputHandler.getAndCast();
 			}
 		}
 		return super.getCapability(capability, side);
