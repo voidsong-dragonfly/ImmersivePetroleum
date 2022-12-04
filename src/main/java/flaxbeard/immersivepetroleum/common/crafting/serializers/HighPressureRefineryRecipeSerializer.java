@@ -48,7 +48,12 @@ public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<Hig
 		
 		FluidStack output = buffer.readFluidStack();
 		FluidTagInput inputFluid0 = FluidTagInput.read(buffer);
-		FluidTagInput inputFluid1 = FluidTagInput.read(buffer);
+		FluidTagInput inputFluid1 = null;
+		
+		boolean hasSecondary = buffer.readBoolean();
+		if(hasSecondary){
+			inputFluid1 = FluidTagInput.read(buffer);
+		}
 		
 		int energy = buffer.readInt();
 		int time = buffer.readInt();
@@ -63,7 +68,12 @@ public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<Hig
 		
 		buffer.writeFluidStack(recipe.output);
 		recipe.inputFluid.write(buffer);
-		recipe.inputFluidSecondary.write(buffer);
+		
+		boolean hasSecondary = recipe.getSecondaryInputFluid() != null;
+		buffer.writeBoolean(hasSecondary);
+		if(hasSecondary){
+			recipe.inputFluidSecondary.write(buffer);
+		}
 		
 		buffer.writeInt(recipe.getTotalProcessEnergy());
 		buffer.writeInt(recipe.getTotalProcessTime());
