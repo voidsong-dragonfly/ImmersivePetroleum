@@ -28,29 +28,16 @@ public class SurveyResultItem extends IPItemBase{
 	@Nonnull
 	public Component getName(@Nonnull ItemStack stack){
 		String selfKey = getDescriptionId(stack);
-		if(stack.hasTag() && stack.getTag() != null){
-			if(stack.getTag().contains("surveyscan") || stack.getTag().contains("islandscan")){
-				CompoundTag tag;
-				if((tag = stack.getTagElement("surveyscan")) == null){
-					tag = stack.getTagElement("islandscan");
-				}
-				
-				if(tag != null){
-					int x = tag.getInt("x");
-					int z = tag.getInt("z");
-					
-					return new TranslatableComponent(selfKey).append(new TextComponent(String.format(Locale.ENGLISH, " [%d, %d]", x, z))).withStyle(ChatFormatting.GOLD);
-				}
-			}
-		}
-		
 		return new TranslatableComponent(selfKey).withStyle(ChatFormatting.GOLD);
 	}
 	
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(stack.hasTag() && stack.getTag() != null){
-			if(stack.getTag().contains("surveyscan")){
+			boolean hasSurveyScan = stack.getTag().contains("surveyscan");
+			boolean hasIslandScan = stack.getTag().contains("islandscan");
+			
+			if(hasSurveyScan){
 				CompoundTag tag = stack.getTagElement("surveyscan");
 				
 				tooltip.add(new TextComponent("Hold in Hand."));
@@ -64,7 +51,7 @@ public class SurveyResultItem extends IPItemBase{
 				}
 			}
 			
-			if(stack.getTag().contains("islandscan")){
+			if(hasIslandScan){
 				CompoundTag tag = stack.getTagElement("islandscan");
 				int expected = tag.getInt("expected");
 				long amount = tag.getLong("amount");
@@ -74,6 +61,20 @@ public class SurveyResultItem extends IPItemBase{
 				tooltip.add(new TranslatableComponent(fluidTranslation).withStyle(ChatFormatting.DARK_GRAY));
 				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.survey_result.amount", String.format(Locale.ENGLISH, "%,.3f", amount / 1000D), percentage).withStyle(ChatFormatting.DARK_GRAY));
 				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.info.survey_result.expected", expected).withStyle(ChatFormatting.DARK_GRAY));
+			}
+			
+			if(hasSurveyScan || hasIslandScan){
+				CompoundTag tag;
+				if((tag = stack.getTagElement("surveyscan")) == null){
+					tag = stack.getTagElement("islandscan");
+				}
+				
+				if(tag != null){
+					int x = tag.getInt("x");
+					int z = tag.getInt("z");
+					
+					tooltip.add(new TranslatableComponent("desc.immersivepetroleum.flavour.surveytool.location", x, z).withStyle(ChatFormatting.DARK_GRAY));
+				}
 			}
 		}
 	}
