@@ -83,7 +83,7 @@
 	
 	"desc.immersivepetroleum.info.reservoir.oil": "油藏",
 	"desc.immersivepetroleum.info.reservoir.aquifer": "含水层",
-	"desc.immersivepetroleum.info.reservoir.lava": "熔岩库",
+	"desc.immersivepetroleum.info.reservoir.lava": "熔岩层",
 	
 	"desc.immersivepetroleum.flavour.upgrade_reinforced_hull": "使汽艇防火，并且增加它的生命值",
 	"desc.immersivepetroleum.flavour.upgrade_icebreaker": "使汽艇能摧毁冰块、伤害怪物",
@@ -96,6 +96,8 @@
 	"_comment": "This is for the upgrade list of the speedboat tooltip",
 	"desc.immersivepetroleum.flavour.speedboat.prefix": "增强",
 	"desc.immersivepetroleum.flavour.speedboat.upgrade": "升级#%d：",
+	
+	"desc.immersivepetroleum.flavour.surveytool.location": "在[%1$d, %2$d]处获取的样本",
 	
 	"desc.immersivepetroleum.info.projector.noMultiblock": "右击打开菜单",
 	"desc.immersivepetroleum.info.projector.size": "尺寸：%dx%dx%d",
