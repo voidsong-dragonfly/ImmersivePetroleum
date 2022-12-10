@@ -241,7 +241,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			boolean lastSpilling = this.spilling;
 			this.drilling = this.spilling = false;
 			
-			if(this.worldPosition.getY() <= 62){
+			if(this.worldPosition.getY() < this.level.getSeaLevel()){
 				// Refuse to work below this height to avoid cheesing the system.
 				// Also displays in the GUI as to "why"
 				
