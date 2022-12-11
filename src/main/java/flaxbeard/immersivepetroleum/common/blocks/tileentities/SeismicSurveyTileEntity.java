@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
@@ -16,6 +15,7 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.items.SurveyResultItem;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -41,6 +41,8 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 	public static final int SCAN_RADIUS = 32;
 	public static final int SCAN_SIZE = SCAN_RADIUS * 2 + 1;
 	private static final int SCAN_RADIUS_SQR = SCAN_RADIUS * SCAN_RADIUS;
+	
+	private static final double sqrt2048 = Math.sqrt(SCAN_RADIUS_SQR * 2);
 	
 	public static final int DELAY = 10;
 	
@@ -192,13 +194,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 						
 						FluidStack fs = new FluidStack(currentIsland.getFluid(), 1);
 						
-						CompoundTag result = stack.getOrCreateTagElement("islandscan");
-						result.putInt("x", pos.getX());
-						result.putInt("z", pos.getZ());
-						result.putByte("status", (byte) (currentIsland.getAmount() / (float) currentIsland.getCapacity() * 100));
-						result.putLong("amount", currentIsland.getAmount());
-						result.putString("fluid", fs.getTranslationKey());
-						result.putInt("expected", ReservoirIsland.getFlow(currentIsland.getPressure(world, pos.getX(), pos.getZ())));
+						SurveyResultItem.writeIslandInfo(stack, fs, world, pos, currentIsland);
 						
 						if(fs.getFluid().equals(IPContent.Fluids.CRUDEOIL.get())){
 							Utils.unlockIPAdvancement(player, "main/root");
@@ -207,62 +203,8 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 					}else{
 						// Find one nearby instead.
 						
-						final List<ReservoirIsland> islandCache = new ArrayList<>();
-						
-						double sqrt2048 = Math.sqrt(SCAN_RADIUS_SQR * 2);
-						byte[] mapData = new byte[SCAN_SIZE * SCAN_SIZE];
-						for(int j = -SCAN_RADIUS,
-								a = 0;j <= SCAN_RADIUS;j++,a++){
-							for(int i = -SCAN_RADIUS,
-									b = 0;i <= SCAN_RADIUS;i++,b++){
-								int x = pos.getX() - i;
-								int z = pos.getZ() - j;
-								
-								int data = 0;
-								double current = ReservoirHandler.getValueOf(world, x, z);
-								if(current != -1){
-									Optional<ReservoirIsland> optional = islandCache.stream().filter(res -> {
-										return res.contains(x, z);
-									}).findFirst();
-									
-									ReservoirIsland nearbyIsland = optional.isPresent() ? optional.get() : null;
-									if(nearbyIsland == null){
-										nearbyIsland = ReservoirHandler.getIslandNoCache(world, new ColumnPos(x, z));
-										
-										if(nearbyIsland != null){
-											islandCache.add(nearbyIsland);
-										}
-									}
-									
-									if(nearbyIsland != null){
-										data = (int) Mth.clamp(255 * current, 0, 255);
-									}
-								}
-								
-								int noise = 31 + (int) (127 * Math.random());
-								
-								double blend = Math.sqrt(i * i + j * j) / sqrt2048;
-								int lerped = (int) (Mth.clampedLerp(data, noise, blend));
-								mapData[(a * SCAN_SIZE) + b] = (byte) (lerped & 0xFF);
-							}
-						}
-						
-						int max = Integer.MIN_VALUE;
-						for(int i = 0;i < mapData.length;i++){
-							int data = ((int) mapData[i]) & 0xFF;
-							if(data > max) max = data;
-						}
-						// Normalize
-						for(int i = 0;i < mapData.length;i++){
-							int data = ((int) mapData[i]) & 0xFF;
-							mapData[i] = (byte) (255 * (data / (float) max));
-						}
-						
-						CompoundTag result = stack.getOrCreateTagElement("surveyscan");
-						result.putUUID("uuid", UUID.randomUUID());
-						result.putInt("x", pos.getX());
-						result.putInt("z", pos.getZ());
-						result.putByteArray("map", mapData);
+						byte[] mapData = scanArea(world, pos);
+						SurveyResultItem.writeSurveyScan(stack, pos, mapData);
 					}
 					
 					Utils.dropItemNoDelay(world, player.blockPosition().above(), stack);
@@ -294,6 +236,62 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 		}
 		
 		return false;
+	}
+	
+	private byte[] scanArea(Level world, BlockPos pos){
+		final List<ReservoirIsland> islandCache = new ArrayList<>();
+		byte[] scanData = new byte[SCAN_SIZE * SCAN_SIZE];
+		
+		for(int j = -SCAN_RADIUS,
+				a = 0;j <= SCAN_RADIUS;j++,a++){
+			for(int i = -SCAN_RADIUS,
+					b = 0;i <= SCAN_RADIUS;i++,b++){
+				int x = pos.getX() - i;
+				int z = pos.getZ() - j;
+				
+				int data = 0;
+				double current = ReservoirHandler.getValueOf(world, x, z);
+				if(current != -1){
+					Optional<ReservoirIsland> optional = islandCache.stream().filter(res -> {
+						return res.contains(x, z);
+					}).findFirst();
+					
+					ReservoirIsland nearbyIsland = optional.isPresent() ? optional.get() : null;
+					if(nearbyIsland == null){
+						nearbyIsland = ReservoirHandler.getIslandNoCache(world, new ColumnPos(x, z));
+						
+						if(nearbyIsland != null){
+							islandCache.add(nearbyIsland);
+						}
+					}
+					
+					if(nearbyIsland != null){
+						data = (int) Mth.clamp(255 * current, 0, 255);
+					}
+				}
+				
+				int noise = 31 + (int) (127 * Math.random());
+				
+				double blend = Math.sqrt(i * i + j * j) / sqrt2048;
+				int lerped = (int) (Mth.clampedLerp(data, noise, blend));
+				scanData[(a * SCAN_SIZE) + b] = (byte) (lerped & 0xFF);
+			}
+		}
+		
+		return normalizeScanData(scanData);
+	}
+	
+	private byte[] normalizeScanData(byte[] scanData){
+		int max = Integer.MIN_VALUE;
+		for(int i = 0;i < scanData.length;i++){
+			int data = ((int) scanData[i]) & 0xFF;
+			if(data > max) max = data;
+		}
+		for(int i = 0;i < scanData.length;i++){
+			int data = ((int) scanData[i]) & 0xFF;
+			scanData[i] = (byte) (255 * (data / (float) max));
+		}
+		return scanData;
 	}
 	
 	@Override

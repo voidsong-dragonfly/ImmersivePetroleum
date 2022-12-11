@@ -6,7 +6,10 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -15,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.FluidStack;
 
 /**
  * @author TwistedGate
@@ -77,5 +81,29 @@ public class SurveyResultItem extends IPItemBase{
 				}
 			}
 		}
+	}
+	
+	public static ItemStack writeIslandInfo(ItemStack stack, FluidStack fs, Level world, BlockPos pos, ReservoirIsland island){
+		CompoundTag result = stack.getOrCreateTagElement("islandscan");
+		
+		result.putInt("x", pos.getX());
+		result.putInt("z", pos.getZ());
+		result.putByte("status", (byte) (island.getAmount() / (float) island.getCapacity() * 100));
+		result.putLong("amount", island.getAmount());
+		result.putString("fluid", fs.getTranslationKey());
+		result.putInt("expected", ReservoirIsland.getFlow(island.getPressure(world, pos.getX(), pos.getZ())));
+		
+		return stack;
+	}
+	
+	public static ItemStack writeSurveyScan(ItemStack stack, BlockPos pos, byte[] scanData){
+		CompoundTag result = stack.getOrCreateTagElement("surveyscan");
+		
+		result.putUUID("uuid", UUID.randomUUID());
+		result.putInt("x", pos.getX());
+		result.putInt("z", pos.getZ());
+		result.putByteArray("map", scanData);
+		
+		return stack;
 	}
 }
