@@ -39,7 +39,7 @@ public class SurveyResultItem extends IPItemBase{
 			ISurveyInfo info = ISurveyInfo.from(stack);
 			
 			if(info instanceof SurveyScan scan){
-				tooltip.add(new TextComponent("Hold in Hand.")); // TODO Translation
+				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.flavour.surveytool.holdme"));
 				
 				if(flagIn == TooltipFlag.Default.ADVANCED){
 					tooltip.add(new TextComponent("ID: " + (scan.getUuid() != null ? scan.getUuid().toString() : "Null")));
