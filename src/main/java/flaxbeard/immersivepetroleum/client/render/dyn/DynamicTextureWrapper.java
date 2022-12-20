@@ -2,10 +2,10 @@ package flaxbeard.immersivepetroleum.client.render.dyn;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -14,9 +14,9 @@ import com.mojang.blaze3d.platform.NativeImage;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import flaxbeard.immersivepetroleum.common.util.survey.SurveyScan;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -30,43 +30,20 @@ public class DynamicTextureWrapper{
 		ImmersivePetroleum.log.debug("Disposed survey result texture {}", wrapper.rl);
 	}).expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(50).build();
 	
-	/** Returns null if no valid UUID is provided */
-	public static DynamicTextureWrapper getOrCreate(int width, int height, CompoundTag dataTag){
-		UUID uuid = dataTag.hasUUID("uuid") ? dataTag.getUUID("uuid") : null;
-		if(uuid != null){
-			DynamicTextureWrapper tex = DYN_TEXTURE_CACHE.getIfPresent(uuid);
-			if(tex == null || tex.texture.getPixels() == null){
-				tex = new DynamicTextureWrapper(width, height, uuid);
-				DYN_TEXTURE_CACHE.invalidate(uuid);
-				DYN_TEXTURE_CACHE.put(uuid, tex);
-				
-				byte[] mapData = dataTag.getByteArray("map");
-				tex.write(mapData);
-				
-				ImmersivePetroleum.log.debug("Created survey result texture {}", tex.rl);
-			}
-			return tex;
+	/** May return null if it was unable to find or create the wrapper */
+	@Nullable
+	public static DynamicTextureWrapper getOrCreate(int width, int height, @Nonnull SurveyScan scan){
+		DynamicTextureWrapper tex = DYN_TEXTURE_CACHE.getIfPresent(scan.getUuid());
+		if(tex == null || tex.texture.getPixels() == null){
+			tex = new DynamicTextureWrapper(width, height, scan.getUuid());
+			DYN_TEXTURE_CACHE.invalidate(scan.getUuid());
+			DYN_TEXTURE_CACHE.put(scan.getUuid(), tex);
+			
+			tex.write(scan.getData());
+			
+			ImmersivePetroleum.log.debug("Created survey result texture {}", tex.rl);
 		}
-		
-		return null;
-	}
-	
-	static DynamicTextureWrapper makeNew(int width, int height){
-		return getOrCreate(width, height, UUID.randomUUID());
-	}
-	
-	static DynamicTextureWrapper getOrCreate(int width, int height, @Nonnull UUID uuid){
-		try{
-			return DYN_TEXTURE_CACHE.get(uuid, () -> new DynamicTextureWrapper(width, height, uuid));
-		}catch(ExecutionException e){
-			// Fallback
-			DynamicTextureWrapper tex = DYN_TEXTURE_CACHE.getIfPresent(uuid);
-			if(tex == null){
-				tex = new DynamicTextureWrapper(width, height, uuid);
-				DYN_TEXTURE_CACHE.put(uuid, tex);
-			}
-			return tex;
-		}
+		return tex;
 	}
 	
 	public static void clearCache(){

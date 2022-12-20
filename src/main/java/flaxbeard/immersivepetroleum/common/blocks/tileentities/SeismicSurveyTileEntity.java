@@ -1,9 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.common.items.BulletItem;
@@ -15,12 +11,13 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
-import flaxbeard.immersivepetroleum.common.items.SurveyResultItem;
 import flaxbeard.immersivepetroleum.common.util.Utils;
+import flaxbeard.immersivepetroleum.common.util.survey.ISurveyInfo;
+import flaxbeard.immersivepetroleum.common.util.survey.IslandInfo;
+import flaxbeard.immersivepetroleum.common.util.survey.SurveyScan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ColumnPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,19 +28,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidStack;
 
 /**
  * @author TwistedGate
  */
 public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile{
-	
-	public static final int SCAN_RADIUS = 32;
-	public static final int SCAN_SIZE = SCAN_RADIUS * 2 + 1;
-	private static final int SCAN_RADIUS_SQR = SCAN_RADIUS * SCAN_RADIUS;
-	
-	private static final double sqrt2048 = Math.sqrt(SCAN_RADIUS_SQR * 2);
-	
 	public static final int DELAY = 10;
 	
 	/** Used for recoil animation. Also prevents ejecting the shell for the duration. */
@@ -188,24 +177,24 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 					ReservoirIsland currentIsland = ReservoirHandler.getIslandNoCache(world, pos);
 					
 					ItemStack stack = new ItemStack(IPContent.Items.SURVEYRESULT.get());
+					ISurveyInfo info;
 					
 					if(currentIsland != null){
 						// Give info about the current one.
 						
-						FluidStack fs = new FluidStack(currentIsland.getFluid(), 1);
+						info = new IslandInfo(world, pos, currentIsland);
 						
-						SurveyResultItem.writeIslandInfo(stack, fs, world, pos, currentIsland);
-						
-						if(fs.getFluid().equals(IPContent.Fluids.CRUDEOIL.get())){
+						if(((IslandInfo) info).getFluid().equals(IPContent.Fluids.CRUDEOIL.get())){
 							Utils.unlockIPAdvancement(player, "main/root");
 						}
 						
 					}else{
-						// Find one nearby instead.
+						// Try find one nearby instead.
 						
-						byte[] mapData = scanArea(world, pos);
-						SurveyResultItem.writeSurveyScan(stack, pos, mapData);
+						info = new SurveyScan(world, pos);
 					}
+					
+					info.writeToStack(stack);
 					
 					Utils.dropItemNoDelay(world, player.blockPosition().above(), stack);
 				}
@@ -236,62 +225,6 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServe
 		}
 		
 		return false;
-	}
-	
-	private byte[] scanArea(Level world, BlockPos pos){
-		final List<ReservoirIsland> islandCache = new ArrayList<>();
-		byte[] scanData = new byte[SCAN_SIZE * SCAN_SIZE];
-		
-		for(int j = -SCAN_RADIUS,
-				a = 0;j <= SCAN_RADIUS;j++,a++){
-			for(int i = -SCAN_RADIUS,
-					b = 0;i <= SCAN_RADIUS;i++,b++){
-				int x = pos.getX() - i;
-				int z = pos.getZ() - j;
-				
-				int data = 0;
-				double current = ReservoirHandler.getValueOf(world, x, z);
-				if(current != -1){
-					Optional<ReservoirIsland> optional = islandCache.stream().filter(res -> {
-						return res.contains(x, z);
-					}).findFirst();
-					
-					ReservoirIsland nearbyIsland = optional.isPresent() ? optional.get() : null;
-					if(nearbyIsland == null){
-						nearbyIsland = ReservoirHandler.getIslandNoCache(world, new ColumnPos(x, z));
-						
-						if(nearbyIsland != null){
-							islandCache.add(nearbyIsland);
-						}
-					}
-					
-					if(nearbyIsland != null){
-						data = (int) Mth.clamp(255 * current, 0, 255);
-					}
-				}
-				
-				int noise = 31 + (int) (127 * Math.random());
-				
-				double blend = Math.sqrt(i * i + j * j) / sqrt2048;
-				int lerped = (int) (Mth.clampedLerp(data, noise, blend));
-				scanData[(a * SCAN_SIZE) + b] = (byte) (lerped & 0xFF);
-			}
-		}
-		
-		return normalizeScanData(scanData);
-	}
-	
-	private byte[] normalizeScanData(byte[] scanData){
-		int max = Integer.MIN_VALUE;
-		for(int i = 0;i < scanData.length;i++){
-			int data = ((int) scanData[i]) & 0xFF;
-			if(data > max) max = data;
-		}
-		for(int i = 0;i < scanData.length;i++){
-			int data = ((int) scanData[i]) & 0xFF;
-			scanData[i] = (byte) (255 * (data / (float) max));
-		}
-		return scanData;
 	}
 	
 	@Override

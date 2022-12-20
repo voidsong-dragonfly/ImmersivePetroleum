@@ -7,12 +7,12 @@ import com.mojang.math.Matrix4f;
 
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.SeismicSurveyTileEntity;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import flaxbeard.immersivepetroleum.common.util.survey.ISurveyInfo;
+import flaxbeard.immersivepetroleum.common.util.survey.SurveyScan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +46,7 @@ public class SeismicResultRenderer{
 			ItemStack main = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
 			ItemStack off = mc.player.getItemInHand(InteractionHand.OFF_HAND); // TODO Offhand variant?
 			
-			if((main != ItemStack.EMPTY && main.getItem() == IPContent.Items.SURVEYRESULT.get()) || (off != ItemStack.EMPTY && off.getItem() == IPContent.Items.SURVEYRESULT.get())){
+			if((!main.isEmpty() && main.getItem() == IPContent.Items.SURVEYRESULT.get()) || (!off.isEmpty() && off.getItem() == IPContent.Items.SURVEYRESULT.get())){
 				PoseStack matrix = event.getMatrixStack();
 				
 				int guiScaledWidth = event.getWindow().getGuiScaledWidth();
@@ -55,9 +55,8 @@ public class SeismicResultRenderer{
 				float xCenter = guiScaledWidth / 2F;
 				float yCenter = guiScaledHeight / 2F;
 				
-				CompoundTag tag;
-				if((main.hasTag() && main.getTag() != null) && (tag = main.getTagElement("surveyscan")) != null){
-					DynamicTextureWrapper wrapper = DynamicTextureWrapper.getOrCreate(SeismicSurveyTileEntity.SCAN_SIZE, SeismicSurveyTileEntity.SCAN_SIZE, tag);
+				if(ISurveyInfo.from(main) instanceof SurveyScan scan){
+					DynamicTextureWrapper wrapper = DynamicTextureWrapper.getOrCreate(SurveyScan.SCAN_SIZE, SurveyScan.SCAN_SIZE, scan);
 					
 					if(wrapper != null){
 						MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(TESSELATOR.getBuilder());
