@@ -379,6 +379,37 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			return;
 		}
 		
+		FluidStack extracted = getExtractedFluidStack(well);
+		if(!extracted.isEmpty()){
+			Direction facing = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
+			BlockPos outPos = getBlockPosForPos(Fluid_OUT).relative(facing, 1);
+			IFluidHandler output = FluidUtil.getFluidHandler(this.level, outPos, facing.getOpposite()).orElse(null);
+			if(output != null){
+				FluidStack fluid = FluidHelper.copyFluid(extracted, extracted.getAmount());
+				
+				int accepted = output.fill(fluid, FluidAction.SIMULATE);
+				if(accepted > 0){
+					int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), iePipe), FluidAction.EXECUTE);
+					if(fluid.getAmount() - drained > 0){
+						this.spilling = true;
+					}
+				}else{
+					this.spilling = true;
+				}
+			}else{
+				this.spilling = true;
+			}
+		}
+		
+		if(this.spilling && !extracted.isEmpty() && this.fluidSpilled != extracted.getFluid()){
+			this.fluidSpilled = extracted.getFluid();
+		}
+		if(!this.spilling && this.fluidSpilled != Fluids.EMPTY){
+			this.fluidSpilled = Fluids.EMPTY;
+		}
+	}
+	
+	private FluidStack getExtractedFluidStack(@Nonnull WellTileEntity well){
 		Fluid extractedFluid = Fluids.EMPTY;
 		int extractedAmount = 0;
 		for(ColumnPos cPos:well.tappedIslands){
@@ -394,33 +425,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			}
 		}
 		
-		if(extractedFluid != Fluids.EMPTY && extractedAmount > 0){
-			Direction facing = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
-			BlockPos outputPos = getBlockPosForPos(Fluid_OUT).relative(facing, 1);
-			IFluidHandler output = FluidUtil.getFluidHandler(this.level, outputPos, facing.getOpposite()).orElse(null);
-			if(output != null){
-				FluidStack fluid = FluidHelper.makePressurizedFluid(extractedFluid, extractedAmount);
-				
-				int accepted = output.fill(fluid, FluidAction.SIMULATE);
-				if(accepted > 0){
-					int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), true), FluidAction.EXECUTE);
-					if(fluid.getAmount() - drained > 0){
-						this.spilling = true;
-					}
-				}else{
-					this.spilling = true;
-				}
-			}else{
-				this.spilling = true;
-			}
-		}
-		
-		if(this.spilling && extractedFluid != Fluids.EMPTY && this.fluidSpilled != extractedFluid){
-			this.fluidSpilled = extractedFluid;
-		}
-		if(!this.spilling && this.fluidSpilled != Fluids.EMPTY){
-			this.fluidSpilled = Fluids.EMPTY;
-		}
+		return new FluidStack(extractedFluid, extractedAmount);
 	}
 	
 	private WellTileEntity wellCache = null;
