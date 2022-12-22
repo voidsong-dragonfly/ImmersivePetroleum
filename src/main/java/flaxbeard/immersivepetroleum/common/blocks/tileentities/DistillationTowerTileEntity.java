@@ -248,14 +248,14 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 				boolean ret = false;
 				if(this.tanks[TANK_OUTPUT].fluids.size() > 0){
 					List<FluidStack> toDrain = new ArrayList<>();
+					boolean iePipe = this.level.getBlockEntity(outPos) instanceof IFluidPipe;
 					
 					// Tries to Output the output-fluids in parallel
 					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
-						FluidStack outStack = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100));
+						FluidStack outStack = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100), iePipe);
 						
 						int accepted = output.fill(outStack, FluidAction.SIMULATE);
 						if(accepted > 0){
-							boolean iePipe = this.level.getBlockEntity(outPos) instanceof IFluidPipe;
 							int drained = output.fill(FluidHelper.copyFluid(outStack, Math.min(outStack.getAmount(), accepted), iePipe), FluidAction.EXECUTE);
 							
 							toDrain.add(new FluidStack(target.getFluid(), drained));
