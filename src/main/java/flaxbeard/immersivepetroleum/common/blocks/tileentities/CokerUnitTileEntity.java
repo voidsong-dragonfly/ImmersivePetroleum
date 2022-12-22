@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 
+import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
@@ -358,7 +359,8 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					fs = FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), 250));
 					int accepted = out.fill(fs, FluidAction.SIMULATE);
 					if(accepted > 0){
-						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), true), FluidAction.EXECUTE);
+						boolean iePipe = this.level.getBlockEntity(outPos) instanceof IFluidPipe;
+						int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), iePipe), FluidAction.EXECUTE);
 						this.bufferTanks[TANK_OUTPUT].drain(FluidHelper.copyFluid(fs, drained), FluidAction.EXECUTE);
 						return true;
 					}

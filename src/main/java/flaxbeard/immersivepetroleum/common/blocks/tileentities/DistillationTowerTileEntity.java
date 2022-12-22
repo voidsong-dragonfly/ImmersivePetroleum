@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 
+import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
@@ -250,11 +251,12 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 					
 					// Tries to Output the output-fluids in parallel
 					for(FluidStack target:this.tanks[TANK_OUTPUT].fluids){
-						FluidStack outStack = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100), true);
+						FluidStack outStack = FluidHelper.copyFluid(target, Math.min(target.getAmount(), 100));
 						
 						int accepted = output.fill(outStack, FluidAction.SIMULATE);
 						if(accepted > 0){
-							int drained = output.fill(FluidHelper.copyFluid(outStack, Math.min(outStack.getAmount(), accepted), true), FluidAction.EXECUTE);
+							boolean iePipe = this.level.getBlockEntity(outPos) instanceof IFluidPipe;
+							int drained = output.fill(FluidHelper.copyFluid(outStack, Math.min(outStack.getAmount(), accepted), iePipe), FluidAction.EXECUTE);
 							
 							toDrain.add(new FluidStack(target.getFluid(), drained));
 							ret = true;

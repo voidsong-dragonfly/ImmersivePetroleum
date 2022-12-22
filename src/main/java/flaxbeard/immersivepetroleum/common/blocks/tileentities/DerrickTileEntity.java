@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
@@ -389,6 +390,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				
 				int accepted = output.fill(fluid, FluidAction.SIMULATE);
 				if(accepted > 0){
+					boolean iePipe = this.level.getBlockEntity(outPos) instanceof IFluidPipe;
+					
 					int drained = output.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), iePipe), FluidAction.EXECUTE);
 					if(fluid.getAmount() - drained > 0){
 						this.spilling = true;
