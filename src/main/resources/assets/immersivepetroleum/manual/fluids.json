@@ -22,5 +22,8 @@
         "items":[{"item":"immersivepetroleum:gasoline_bucket"}, {"item":"immersivepetroleum:gasoline_additives_bucket"}]},
     "napalm":{"type":"item_display",
         "type":"item_display",
-        "items":[{"item":"immersivepetroleum:napalm_bucket"}]}
+        "items":[{"item":"immersivepetroleum:napalm_bucket"}]},
+    "paraffin":{"type":"item_display",
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:paraffin_wax"}]}
 }
