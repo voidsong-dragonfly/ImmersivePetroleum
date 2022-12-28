@@ -30,6 +30,8 @@ public class IPTags{
 		public static final TagKey<Item> petcoke = createItemWrapper(ResourceUtils.forge("coal_petcoke"));
 		public static final TagKey<Item> petcokeDust = createItemWrapper(ResourceUtils.forge("dusts/coal_petcoke"));
 		public static final TagKey<Item> petcokeStorage = createItemWrapper(ResourceUtils.forge("storage_blocks/coal_petcoke"));
+		public static final TagKey<Item> paraffinWax = createItemWrapper(ResourceUtils.forge("wax/paraffin"));
+		public static final TagKey<Item> wax = createItemWrapper(ResourceUtils.forge("wax"));
 	}
 	
 	public static class Fluids{
