@@ -450,6 +450,19 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void paraffinWaxRecipes(){
+		// Paraffin Wax Compression and Decompression
+		ShapedRecipeBuilder.shaped(Blocks.PARAFFIN_WAX.get())
+			.define('c', IPTags.Items.paraffinWax)
+			.pattern("ccc")
+			.pattern("ccc")
+			.pattern("ccc")
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(this.out, rl("paraffin_wax_to_block"));
+		ShapelessRecipeBuilder.shapeless(IPContent.Items.PARAFFIN_WAX.get(), 9)
+			.requires(IPTags.getItemTag(IPTags.Blocks.paraffinWaxBlock))
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(this.out, rl("paraffin_wax_block_to_items"));
+		
 		ShapedRecipeBuilder.shaped(IEItems.Ingredients.ERSATZ_LEATHER, 8)
 			.pattern("fff")
 			.pattern("fwf")

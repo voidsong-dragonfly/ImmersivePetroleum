@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "forge:storage_blocks/wax/paraffin"
+    }
+  ],
+  "result": {
+    "item": "immersivepetroleum:paraffin_wax",
+    "count": 9
+  }
+}

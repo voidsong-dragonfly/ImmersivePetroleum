@@ -23,5 +23,7 @@ public class IPItemTags extends ItemTagsProvider{
 		tag(IPTags.Items.petcokeStorage).add(IPContent.Blocks.PETCOKE.get().asItem());
 		tag(IPTags.Items.paraffinWax).add(IPContent.Items.PARAFFIN_WAX.get());
 		tag(IPTags.Items.wax).add(IPContent.Items.PARAFFIN_WAX.get());
+		tag(IPTags.Items.waxBlock).add(IPContent.Blocks.PARAFFIN_WAX.get().asItem());
+		tag(IPTags.Items.paraffinWaxBlock).add(IPContent.Blocks.PARAFFIN_WAX.get().asItem());
 	}
 }

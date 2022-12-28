@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "immersivepetroleum:paraffin_wax_to_block"
+    ]
+  },
+  "criteria": {
+    "has_paraffin_wax": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:wax/paraffin"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "immersivepetroleum:paraffin_wax_to_block"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_paraffin_wax",
+      "has_the_recipe"
+    ]
+  ]
+}

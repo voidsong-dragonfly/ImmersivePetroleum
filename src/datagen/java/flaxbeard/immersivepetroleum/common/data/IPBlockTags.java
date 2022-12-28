@@ -20,6 +20,9 @@ public class IPBlockTags extends BlockTagsProvider{
 		tag(IPTags.Blocks.asphalt).add(IPContent.Blocks.ASPHALT.get());
 		tag(IPTags.Blocks.petcoke).add(IPContent.Blocks.PETCOKE.get());
 		
+		tag(IPTags.Blocks.waxBlock).add(IPContent.Blocks.PARAFFIN_WAX.get());
+		tag(IPTags.Blocks.paraffinWaxBlock).add(IPContent.Blocks.PARAFFIN_WAX.get());
+		
 		// Minecraft Tags
 		
 		tag(BlockTags.STAIRS).add(IPContent.Blocks.ASPHALT_STAIR.get());
@@ -42,6 +45,8 @@ public class IPBlockTags extends BlockTagsProvider{
 			IPContent.Multiblock.COKERUNIT.get(),
 			IPContent.Multiblock.HYDROTREATER.get()
 		);
+		
+		tag(BlockTags.MINEABLE_WITH_SHOVEL).add(IPContent.Blocks.PARAFFIN_WAX.get());
 		
 		tag(BlockTags.MINEABLE_WITH_AXE).add(
 			IPContent.Blocks.AUTO_LUBRICATOR.get()

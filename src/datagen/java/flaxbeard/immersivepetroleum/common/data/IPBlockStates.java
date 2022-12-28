@@ -77,6 +77,7 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		// "Normal" Blocks
 		simpleBlockWithItem(IPContent.Blocks.PETCOKE.get());
+		simpleBlockWithItem(IPContent.Blocks.PARAFFIN_WAX.get());
 		gasGenerator();
 		asphaltBlocks();
 		

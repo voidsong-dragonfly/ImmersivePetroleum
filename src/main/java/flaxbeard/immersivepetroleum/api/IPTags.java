@@ -23,6 +23,8 @@ public class IPTags{
 	public static class Blocks{
 		public static final TagKey<Block> asphalt = createBlockTag(ResourceUtils.forge("asphalt"));
 		public static final TagKey<Block> petcoke = createBlockTag(ResourceUtils.forge("storage_blocks/petcoke"));
+		public static final TagKey<Block> waxBlock = createBlockTag(ResourceUtils.forge("storage_blocks/wax"));
+		public static final TagKey<Block> paraffinWaxBlock = createBlockTag(ResourceUtils.forge("storage_blocks/wax/paraffin"));
 	}
 	
 	public static class Items{
@@ -32,6 +34,8 @@ public class IPTags{
 		public static final TagKey<Item> petcokeStorage = createItemWrapper(ResourceUtils.forge("storage_blocks/coal_petcoke"));
 		public static final TagKey<Item> paraffinWax = createItemWrapper(ResourceUtils.forge("wax/paraffin"));
 		public static final TagKey<Item> wax = createItemWrapper(ResourceUtils.forge("wax"));
+		public static final TagKey<Item> waxBlock = createItemWrapper(ResourceUtils.forge("storage_blocks/wax"));
+		public static final TagKey<Item> paraffinWaxBlock = createItemWrapper(ResourceUtils.forge("storage_blocks/wax/paraffin"));
 	}
 	
 	public static class Fluids{
