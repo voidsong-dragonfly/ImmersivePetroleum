@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "fff",
+    "fwf",
+    "fff"
+  ],
+  "key": {
+    "f": {
+      "tag": "forge:fabric_hemp"
+    },
+    "w": {
+      "tag": "forge:wax/paraffin"
+    }
+  },
+  "result": {
+    "item": "immersiveengineering:ersatz_leather",
+    "count": 8
+  }
+}

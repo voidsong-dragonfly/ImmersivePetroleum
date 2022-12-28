@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "immersivepetroleum:ersatz_leather"
+    ]
+  },
+  "criteria": {
+    "has_hemp_fabric": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:fabric_hemp"
+          }
+        ]
+      }
+    },
+    "has_paraffin_wax": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:wax/paraffin"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "immersivepetroleum:ersatz_leather"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_hemp_fabric",
+      "has_paraffin_wax",
+      "has_the_recipe"
+    ]
+  ]
+}
