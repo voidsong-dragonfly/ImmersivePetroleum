@@ -222,6 +222,7 @@ public class IPRecipes extends RecipeProvider{
 		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.LUBRICANT_CRACKED.get(), 24), 512, 5)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.lubricant, 24))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
+			.addItemWithChance(new ItemStack(IPContent.Items.PARAFFIN_WAX.get()), 0.024)
 			.build(out, rl("hydrotreater/lubricant_cracking"));
 		
 		// PNC Compat
