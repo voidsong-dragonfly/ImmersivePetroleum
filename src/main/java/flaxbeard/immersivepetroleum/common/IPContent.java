@@ -173,8 +173,12 @@ public class IPContent{
 		public static final RegistryObject<Item> PETCOKEDUST = IPRegisters.registerItem("petcoke_dust", IPItemBase::new);
 		public static final RegistryObject<Item> SURVEYRESULT = IPRegisters.registerItem("survey_result", SurveyResultItem::new);
 		
-		public static final RegistryObject<Item> PARAFFIN_WAX = IPRegisters.registerItem("paraffin_wax", IPItemBase::new);
-		
+		public static final RegistryObject<Item> PARAFFIN_WAX = IPRegisters.registerItem("paraffin_wax", () -> new IPItemBase(){
+			@Override
+			public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
+				return 800;
+			}
+		});
 		private static void forceClassLoad(){
 		}
 	}
