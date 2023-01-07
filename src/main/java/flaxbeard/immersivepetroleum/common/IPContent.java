@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common;
 
-import flaxbeard.immersivepetroleum.common.blocks.stone.ParaffinWaxBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,6 +33,7 @@ import flaxbeard.immersivepetroleum.common.blocks.metal.SeismicSurveyBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltStairs;
+import flaxbeard.immersivepetroleum.common.blocks.stone.ParaffinWaxBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.PetcokeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;

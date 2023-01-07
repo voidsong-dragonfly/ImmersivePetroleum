@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import flaxbeard.immersivepetroleum.client.ClientProxy;
 import org.apache.commons.lang3.tuple.Pair;
 
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
