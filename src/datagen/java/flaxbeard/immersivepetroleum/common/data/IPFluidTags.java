@@ -54,6 +54,7 @@ public class IPFluidTags extends FluidTagsProvider{
 		
 		tag(IETags.drillFuel)
 			.addTag(IPTags.Fluids.diesel)
+			.addTag(IPTags.Fluids.kerosene)
 			.addTag(IPTags.Fluids.diesel_sulfur);
 		
 		tag(IPTags.Fluids.naphtha)

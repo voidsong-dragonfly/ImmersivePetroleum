@@ -17,6 +17,7 @@ import blusunrize.immersiveengineering.api.crafting.builders.RefineryRecipeBuild
 import blusunrize.immersiveengineering.api.crafting.builders.SqueezerRecipeBuilder;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
+import blusunrize.immersiveengineering.common.items.ToolUpgradeItem;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.register.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.register.IEFluids;
@@ -316,19 +317,6 @@ public class IPRecipes extends RecipeProvider{
 			.pattern("GBG")
 			.pattern("SCS")
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
-			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
-			.save(this.out, rl("asphalt"));
-		
-		FluidAwareShapedRecipeBuilder.builder(Blocks.ASPHALT.get(), 12)
-			.define('C', IPContent.Items.BITUMEN.get())
-			.define('S', IEItems.Ingredients.SLAG)
-			.define('G', Tags.Items.GRAVEL)
-			.define('B', new IngredientFluidStack(FluidTags.WATER, FluidAttributes.BUCKET_VOLUME))
-			.pattern("SCS")
-			.pattern("GBG")
-			.pattern("SCS")
-			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
-			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
 			.save(this.out, rl("asphalt"));
 		
 		ShapedRecipeBuilder.shaped(Blocks.ASPHALT_STAIR.get(), 6)
@@ -445,6 +433,16 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_treated_planks", has(IETags.getItemTag(IETags.treatedWood)))
 			.unlockedBy("has_"+toPath(MetalDecoration.ENGINEERING_LIGHT), has(MetalDecoration.ENGINEERING_LIGHT))
 			.save(this.out);
+		
+		FluidAwareShapedRecipeBuilder.builder(IEItems.Misc.TOOL_UPGRADES.get(ToolUpgradeItem.ToolUpgrade.DRILL_LUBE))
+			.pattern(" i ")
+			.pattern("ioi")
+			.pattern(" ip")
+			.define('o', new IngredientFluidStack(IPTags.Fluids.lubricant, FluidAttributes.BUCKET_VOLUME))
+			.define('i', IETags.getTagsFor(EnumMetals.IRON).plate)
+			.define('p', IEBlocks.MetalDevices.FLUID_PIPE)
+			.unlockedBy("has_drill", has(IEItems.Tools.DRILL))
+			.save(out, rl(toPath(IEItems.Misc.TOOL_UPGRADES.get(ToolUpgradeItem.ToolUpgrade.DRILL_LUBE))));
 	}
 	
 	private ResourceLocation rl(String str){
