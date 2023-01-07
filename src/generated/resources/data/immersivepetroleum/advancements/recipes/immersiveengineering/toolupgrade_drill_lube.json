@@ -2,29 +2,17 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "immersivepetroleum:asphalt3"
+      "immersivepetroleum:toolupgrade_drill_lube"
     ]
   },
   "criteria": {
-    "has_bitumen": {
+    "has_drill": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "immersivepetroleum:bitumen"
-            ]
-          }
-        ]
-      }
-    },
-    "has_slag": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "immersiveengineering:slag"
+              "immersiveengineering:drill"
             ]
           }
         ]
@@ -33,14 +21,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "immersivepetroleum:asphalt3"
+        "recipe": "immersivepetroleum:toolupgrade_drill_lube"
       }
     }
   },
   "requirements": [
     [
-      "has_bitumen",
-      "has_slag",
+      "has_drill",
       "has_the_recipe"
     ]
   ]

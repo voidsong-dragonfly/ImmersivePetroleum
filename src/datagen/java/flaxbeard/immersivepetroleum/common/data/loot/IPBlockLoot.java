@@ -43,6 +43,9 @@ public class IPBlockLoot implements Consumer<BiConsumer<ResourceLocation, LootTa
 		registerMultiblock(IPContent.Multiblock.DISTILLATIONTOWER.get());
 		registerMultiblock(IPContent.Multiblock.PUMPJACK.get());
 		registerMultiblock(IPContent.Multiblock.HYDROTREATER.get());
+		registerMultiblock(IPContent.Multiblock.COKERUNIT.get());
+		registerMultiblock(IPContent.Multiblock.DERRICK.get());
+		registerMultiblock(IPContent.Multiblock.OILTANK.get());
 	}
 	
 	private <S extends SlabBlock> void createSlabItemTable(S block){
