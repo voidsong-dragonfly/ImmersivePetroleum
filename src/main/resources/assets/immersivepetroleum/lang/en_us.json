@@ -13,6 +13,7 @@
 	"block.immersivepetroleum.asphalt_slab": "Asphalt Concrete Slab",
 	"block.immersivepetroleum.asphalt_stair": "Asphalt Concrete Stairs",
 	"block.immersivepetroleum.petcoke_block": "Block of Petcoke",
+	"block.immersivepetroleum.paraffin_wax_block": "Block of Paraffin Wax",
 	
 	"block.immersivepetroleum.auto_lubricator": "Automatic Lubricator",
 	"block.immersivepetroleum.gas_generator": "Portable Generator",
@@ -66,7 +67,8 @@
 	"item.immersivepetroleum.lubricant_cracked_bucket": "Bucket of Cracked Lubricant",
 	"item.immersivepetroleum.kerosene_bucket": "Bucket of Kerosene",
 	"item.immersivepetroleum.gasoline_additives_bucket": "Bucket of Gasoline Additives",
-	
+	"item.immersivepetroleum.paraffin_wax": "Paraffin Wax",
+
 	"item.immersivepetroleum.upgrade_reinforced_hull": "Reinforced Hull",
 	"item.immersivepetroleum.upgrade_icebreaker": "Icebreaker Bow",
 	"item.immersivepetroleum.upgrade_tank": "Expanded Fuel Tank",
@@ -92,6 +94,7 @@
 	"desc.immersivepetroleum.flavour.upgrade_paddles": "Can paddle Motorboat when out of fuel",
 	
 	"desc.immersivepetroleum.flavour.asphalt": "Increases walking speed by %1$s",
+	"desc.immersivepetroleum.flavour.paraffin_wax": "Decreases walking speed by 5%%. Slippery.",
 	
 	"_comment": "This is for the upgrade list of the speedboat tooltip",
 	"desc.immersivepetroleum.flavour.speedboat.prefix": "Upgraded ",

@@ -43,6 +43,7 @@ public class IPItemModels extends ItemModelProvider{
 		genericItem(IPContent.Items.PETCOKEDUST.get());
 		genericItem(IPContent.Items.OIL_CAN.get());
 		genericItem(IPContent.Items.SPEEDBOAT.get());
+		genericItem(IPContent.Items.PARAFFIN_WAX.get());
 		
 		genericItem(IPContent.BoatUpgrades.ICE_BREAKER.get());
 		genericItem(IPContent.BoatUpgrades.REINFORCED_HULL.get());

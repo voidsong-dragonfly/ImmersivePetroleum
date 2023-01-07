@@ -72,6 +72,7 @@ public class IPRecipes extends RecipeProvider{
 		hydrotreaterRecipes();
 		reservoirs();
 		refineryRecipes();
+		paraffinWaxRecipes();
 		
 		MixerRecipeBuilder.builder(IPContent.Fluids.NAPALM.still().get(), 500)
 			.addFluidTag(IPTags.Fluids.gasoline, 500)
@@ -222,6 +223,7 @@ public class IPRecipes extends RecipeProvider{
 		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.LUBRICANT_CRACKED.get(), 24), 512, 5)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.lubricant, 24))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
+			.addItemWithChance(new ItemStack(IPContent.Items.PARAFFIN_WAX.get()), 0.024)
 			.build(out, rl("hydrotreater/lubricant_cracking"));
 		
 		// PNC Compat
@@ -443,6 +445,136 @@ public class IPRecipes extends RecipeProvider{
 			.define('p', IEBlocks.MetalDevices.FLUID_PIPE)
 			.unlockedBy("has_drill", has(IEItems.Tools.DRILL))
 			.save(out, rl(toPath(IEItems.Misc.TOOL_UPGRADES.get(ToolUpgradeItem.ToolUpgrade.DRILL_LUBE))));
+	}
+	
+	private void paraffinWaxRecipes(){
+		// Paraffin Wax Compression and Decompression
+		ShapedRecipeBuilder.shaped(Blocks.PARAFFIN_WAX.get())
+			.define('c', IPTags.Items.paraffinWax)
+			.pattern("ccc")
+			.pattern("ccc")
+			.pattern("ccc")
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(this.out, rl("paraffin_wax_to_block"));
+		ShapelessRecipeBuilder.shapeless(IPContent.Items.PARAFFIN_WAX.get(), 9)
+			.requires(IPTags.getItemTag(IPTags.Blocks.paraffinWaxBlock))
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(this.out, rl("paraffin_wax_block_to_items"));
+		
+		ShapedRecipeBuilder.shaped(IEItems.Ingredients.ERSATZ_LEATHER, 8)
+			.pattern("fff")
+			.pattern("fwf")
+			.pattern("fff")
+			.define('f', IETags.fabricHemp)
+			.define('w', IPTags.Items.paraffinWax)
+			.unlockedBy("has_hemp_fabric", has(IETags.fabricHemp))
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(IEItems.Ingredients.ERSATZ_LEATHER)));
+		
+		ShapedRecipeBuilder.shaped(Items.CANDLE, 1)
+			.pattern("s")
+			.pattern("w")
+			.define('s', Tags.Items.STRING)
+			.define('w', IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.CANDLE)));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_COPPER_BLOCK, 1)
+			.requires(Tags.Items.STORAGE_BLOCKS_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.COPPER_BLOCK) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_CUT_COPPER, 1)
+			.requires(Items.CUT_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.CUT_COPPER) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_CUT_COPPER_STAIRS, 1)
+			.requires(Items.CUT_COPPER_STAIRS)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.CUT_COPPER_STAIRS) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_CUT_COPPER_SLAB, 1)
+			.requires(Items.CUT_COPPER_SLAB)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.CUT_COPPER_SLAB) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_COPPER, 1)
+			.requires(Items.EXPOSED_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.EXPOSED_COPPER) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_CUT_COPPER, 1)
+			.requires(Items.EXPOSED_CUT_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.EXPOSED_CUT_COPPER) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_CUT_COPPER_STAIRS, 1)
+			.requires(Items.EXPOSED_CUT_COPPER_STAIRS)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.EXPOSED_CUT_COPPER_STAIRS) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_CUT_COPPER_SLAB, 1)
+			.requires(Items.EXPOSED_CUT_COPPER_SLAB)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.EXPOSED_CUT_COPPER_SLAB) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_COPPER, 1)
+			.requires(Items.WEATHERED_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.WEATHERED_COPPER) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_CUT_COPPER, 1)
+			.requires(Items.WEATHERED_CUT_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.WEATHERED_CUT_COPPER) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_CUT_COPPER_STAIRS, 1)
+			.requires(Items.WEATHERED_CUT_COPPER_STAIRS)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.WEATHERED_CUT_COPPER_STAIRS) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_CUT_COPPER_SLAB, 1)
+			.requires(Items.WEATHERED_CUT_COPPER_SLAB)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.WEATHERED_CUT_COPPER_SLAB) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_COPPER, 1)
+			.requires(Items.OXIDIZED_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.OXIDIZED_COPPER) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_CUT_COPPER, 1)
+			.requires(Items.OXIDIZED_CUT_COPPER)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.OXIDIZED_CUT_COPPER) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_CUT_COPPER_STAIRS, 1)
+			.requires(Items.OXIDIZED_CUT_COPPER_STAIRS)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.OXIDIZED_CUT_COPPER_STAIRS) + "_paraffin_waxed"));
+		
+		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_CUT_COPPER_SLAB, 1)
+			.requires(Items.OXIDIZED_CUT_COPPER_SLAB)
+			.requires(IPTags.Items.paraffinWax)
+			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
+			.save(out, rl(toPath(Items.OXIDIZED_CUT_COPPER_SLAB) + "_paraffin_waxed"));
+		
 	}
 	
 	private ResourceLocation rl(String str){

@@ -13,5 +13,9 @@
   "secondary_input": {
     "tag": "minecraft:water",
     "amount": 5
+  },
+  "secondary_result": {
+    "item": "immersivepetroleum:paraffin_wax",
+    "chance": "0.024"
   }
 }

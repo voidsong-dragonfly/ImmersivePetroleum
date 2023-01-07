@@ -399,6 +399,7 @@ public class ClientProxy extends CommonProxy{
 		);
 		builder.addSpecialElement(new SpecialElementData("gasoline", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.GASOLINE.bucket().get()), new ItemStack(IPContent.Fluids.GASOLINE_ADDITIVES.bucket().get()))));
 		builder.addSpecialElement(new SpecialElementData("napalm", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPALM.bucket().get()))));
+		builder.addSpecialElement(new SpecialElementData("paraffin", 0, new ManualElementItem(man, new ItemStack(IPContent.Items.PARAFFIN_WAX.get()))));
 		builder.readFromFile(location);
 		man.addEntry(IP_CATEGORY, builder.create(), priority);
 	}
