@@ -69,7 +69,6 @@ public class SurveyResultItem extends IPItemBase{
 				int z = info.getZ();
 				
 				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.flavour.surveytool.location", x, z).withStyle(ChatFormatting.DARK_GRAY));
-				return;
 			}
 		}
 	}
