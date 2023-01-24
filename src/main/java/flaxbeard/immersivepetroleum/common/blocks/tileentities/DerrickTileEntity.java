@@ -227,7 +227,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		}
 		
 		if(this.spilling){
-			ClientProxy.spawnSpillParticles(level, this.worldPosition, this.fluidSpilled, 5, 15.75F, clientFlow);
+			ClientProxy.spawnSpillParticles(level, this.worldPosition, this.fluidSpilled, 5, 15.75F, this.clientFlow);
 		}
 	}
 	
@@ -342,7 +342,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 				if(well != null && well.wellPipeLength == well.getMaxPipeLength()) outputReservoirFluid();
 			}
 			
-			if(forceUpdate || (lastDrilling != this.drilling) || (lastSpilling != this.spilling) || (Math.abs(getReservoirFlow() - clientFlow) > 0.075*clientFlow)){
+			if(forceUpdate || (lastDrilling != this.drilling) || (lastSpilling != this.spilling) || (Math.abs(getReservoirFlow() - this.clientFlow) > 0.075 * this.clientFlow)){
 				updateMasterBlock(null, true);
 				setChanged();
 			}

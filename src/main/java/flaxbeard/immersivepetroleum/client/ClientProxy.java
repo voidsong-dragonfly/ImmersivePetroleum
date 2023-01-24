@@ -217,7 +217,7 @@ public class ClientProxy extends CommonProxy{
 		
 		for(int i = 0;i < particles;i++){
 			float xa = (world.random.nextFloat() - .5F) / 2F;
-			float ya = 0.25F + (0.5F + (world.random.nextFloat() * 0.25F)) * flow/800;
+			float ya = 0.25F + (0.5F + (world.random.nextFloat() * 0.25F)) * flow / 800;
 			float za = (world.random.nextFloat() - .5F) / 2F;
 			
 			float rx = (world.random.nextFloat() - .5F) * 0.5F;

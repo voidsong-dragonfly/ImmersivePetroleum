@@ -167,21 +167,17 @@ public class CommonEventHandler{
 							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
 							for(int i = 0;i < numBlocks;i++){
 								BlockPos pos = part.getBlockPosForPos(new BlockPos(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
-								if(world.getBlockState(pos) == Blocks.AIR.defaultBlockState())
-									continue;
 								
-								BlockEntity te2 = world.getBlockEntity(pos);
-								if(te2 instanceof MultiblockPartBlockEntity part2){
-									if(part2.master() == part.master()){
-										for(Direction facing:Direction.Plane.HORIZONTAL){
-											if(world.random.nextInt(30) == 0){
-												Vec3i direction = facing.getNormal();
-												world.addParticle(ParticleTypes.FALLING_HONEY,
-														(pos.getX() + .5f) + (direction.getX() * .65f),
-														pos.getY() + 1,
-														(pos.getZ() + .5f) + (direction.getZ() * .65f),
-														0, 0, 0);
-											}
+								if(world.getBlockState(pos).getBlock() != Blocks.AIR && world.getBlockEntity(pos) instanceof MultiblockPartBlockEntity part2 && part2.master() == part.master()){
+									for(Direction facing:Direction.Plane.HORIZONTAL){
+										if(world.random.nextInt(30) == 0){
+											Vec3i direction = facing.getNormal();
+											
+											float x = (pos.getX() + .5f) + (direction.getX() * .65f);
+											float y = pos.getY() + 1;
+											float z = (pos.getZ() + .5f) + (direction.getZ() * .65f);
+											
+											world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, 0, 0, 0);
 										}
 									}
 								}
