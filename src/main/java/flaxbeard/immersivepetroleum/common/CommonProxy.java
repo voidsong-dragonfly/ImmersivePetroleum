@@ -38,15 +38,6 @@ public class CommonProxy{
 	public void completed(ParallelDispatchEvent event){
 	}
 	
-	public void serverAboutToStart(){
-	}
-	
-	public void serverStarting(){
-	}
-	
-	public void serverStarted(){
-	}
-	
 	public void renderTile(BlockEntity te, VertexConsumer iVertexBuilder, PoseStack transform, MultiBufferSource buffer){
 	}
 	

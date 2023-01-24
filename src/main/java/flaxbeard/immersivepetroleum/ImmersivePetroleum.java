@@ -36,9 +36,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
@@ -88,8 +86,6 @@ public class ImmersivePetroleum{
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
 		
-		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
-		MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
 		MinecraftForge.EVENT_BUS.addListener(this::registerCommand);
 		MinecraftForge.EVENT_BUS.addListener(this::addReloadListeners);
@@ -143,14 +139,6 @@ public class ImmersivePetroleum{
 		proxy.completed(event);
 	}
 	
-	public void serverAboutToStart(ServerAboutToStartEvent event){
-		proxy.serverAboutToStart();
-	}
-	
-	public void serverStarting(ServerStartingEvent event){
-		proxy.serverStarting();
-	}
-	
 	public void registerCommand(RegisterCommandsEvent event){
 		LiteralArgumentBuilder<CommandSourceStack> ip = Commands.literal("ip");
 		
@@ -164,8 +152,6 @@ public class ImmersivePetroleum{
 	}
 	
 	public void serverStarted(ServerStartedEvent event){
-		proxy.serverStarted();
-		
 		ServerLevel world = event.getServer().getLevel(Level.OVERWORLD);
 		if(!world.isClientSide){
 			IPSaveData worldData = world.getDataStorage().computeIfAbsent(IPSaveData::new, IPSaveData::new, IPSaveData.dataName);
