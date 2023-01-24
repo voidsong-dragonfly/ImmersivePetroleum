@@ -412,9 +412,11 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				
 				setContainedFluid(tank.getFluid());
 				
-				Utils.unlockIPAdvancement(player, "main/motorboat");
-				if(this.hasTank && tank.getFluidAmount() == tank.getCapacity()){
-					Utils.unlockIPAdvancement(player, "main/tank");
+				if(tank.isFluidValid(fstack)){
+					Utils.unlockIPAdvancement(player, "main/motorboat");
+					if(this.hasTank && tank.getFluidAmount() == tank.getCapacity()){
+						Utils.unlockIPAdvancement(player, "main/tank");
+					}
 				}
 			}
 			return InteractionResult.SUCCESS;
