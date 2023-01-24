@@ -39,6 +39,12 @@ public class SurveyResultItem extends IPItemBase{
 			ISurveyInfo info = ISurveyInfo.from(stack);
 			
 			if(info instanceof SurveyScan scan){
+				if(scan.getUuid() == null){
+					tooltip.add(new TextComponent("SORRY, IM FAULTY!").withStyle(ChatFormatting.RED));
+					tooltip.add(new TextComponent("YOU'LL HAVE TO TOSS ME!").withStyle(ChatFormatting.RED));
+					return;
+				}
+				
 				tooltip.add(new TranslatableComponent("desc.immersivepetroleum.flavour.surveytool.holdme"));
 				
 				if(flagIn == TooltipFlag.Default.ADVANCED){

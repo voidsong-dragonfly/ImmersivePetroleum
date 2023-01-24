@@ -33,6 +33,10 @@ public class DynamicTextureWrapper{
 	/** May return null if it was unable to find or create the wrapper */
 	@Nullable
 	public static DynamicTextureWrapper getOrCreate(int width, int height, @Nonnull SurveyScan scan){
+		if(scan == null || scan.getUuid() == null){
+			return null;
+		}
+		
 		DynamicTextureWrapper tex = DYN_TEXTURE_CACHE.getIfPresent(scan.getUuid());
 		if(tex == null || tex.texture.getPixels() == null){
 			tex = new DynamicTextureWrapper(width, height, scan.getUuid());
