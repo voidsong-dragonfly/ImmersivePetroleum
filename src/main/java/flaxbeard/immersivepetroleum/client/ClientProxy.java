@@ -89,7 +89,6 @@ import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ClientProxy extends CommonProxy{
-	public static final String CAT_IP = "ip";
 	
 	@Override
 	public void setup(){
@@ -250,45 +249,10 @@ public class ClientProxy extends CommonProxy{
 	public void handleTileSound(SoundEvent soundEvent, BlockEntity te, boolean active, float volume, float pitch){
 		// TODO Sound: Perhaps give some MBs some audio
 	}
-	
-	private static ManualRecipeRef[][] singleRecipeRef(ItemStack stack){
-		return new ManualRecipeRef[][]{{new ManualRecipeRef(stack)}};
-	}
-	
-	/** ImmersivePetroleum's Manual Category */
-	private static InnerNode<ResourceLocation, ManualEntry> IP_CATEGORY;
-	
+
 	public void setupManualPages(){
-		ManualInstance man = ManualHelper.getManual();
-		
-		IP_CATEGORY = man.getRoot().getOrCreateSubnode(ResourceUtils.ip("main"), 100);
-		
-		int priority = 0;
-		
-		// Basic Resources
-		handleReservoirManual(ResourceUtils.ip("reservoir"), priority++);
-		fluids(ResourceUtils.ip("fluids"), priority++);
-		man.addEntry(IP_CATEGORY, ResourceUtils.ip("asphalt"), priority++);
-		lubricant(ResourceUtils.ip("lubricant"), priority++);
-		plastics(ResourceUtils.ip("plastics"), priority++);
-		
-		// Oil Extraction & Storage
-		derrick(ResourceUtils.ip("derrick"), priority++);
-		pumpjack(ResourceUtils.ip("pumpjack"), priority++);
-		oiltank(ResourceUtils.ip("oiltank"), priority++);
-		// Oil Processing
-		distillation(ResourceUtils.ip("distillationtower"), priority++);
-		coker(ResourceUtils.ip("cokerunit"), priority++);
-		hydrotreater(ResourceUtils.ip("hydrotreater"), priority++);
-		
-		// Singleblocks
-		flarestack(ResourceUtils.ip("flarestack"), priority++);
-		generator(ResourceUtils.ip("portablegenerator"), priority++);
-		autolube(ResourceUtils.ip("automaticlubricator"), priority++);
-		
-		// Tools & Vehicles
-		projector(ResourceUtils.ip("projector"), priority++);
-		speedboat(ResourceUtils.ip("speedboat"), priority++);
+		handleReservoirManual(ResourceUtils.ip("reservoir"), 0);
+		flarestack(ResourceUtils.ip("flarestack"), 12);
 	}
 	
 	@SuppressWarnings({"deprecation"})
@@ -297,7 +261,6 @@ public class ClientProxy extends CommonProxy{
 		
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.readFromFile(location);
-		builder.addSpecialElement(new SpecialElementData("flarestack0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.FLARESTACK.get())))));
 		builder.appendText(() -> {
 			List<Component[]> list = new ArrayList<>();
 			for(TagKey<Fluid> tag:FlarestackHandler.getSet()){
@@ -324,152 +287,10 @@ public class ClientProxy extends CommonProxy{
 			return Pair.of(additionalText.toString(), newElements);
 		});
 		
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
+		man.addEntry(man.getRoot().getOrCreateSubnode(new ResourceLocation(ImmersivePetroleum.MODID, "petroleum")), builder.create(), priority);
 	}
 	
-	private static void autolube(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("automaticlubricator0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.AUTO_LUBRICATOR.get())))));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	private static void generator(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("portablegenerator0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Blocks.GAS_GENERATOR.get())))));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	private static void speedboat(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("speedboat0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Items.SPEEDBOAT.get())))));
-		builder.addSpecialElement(new SpecialElementData("speedboat1", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.TANK.get())))));
-		builder.addSpecialElement(new SpecialElementData("speedboat2", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.RUDDERS.get())))));
-		builder.addSpecialElement(new SpecialElementData("speedboat3", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.ICE_BREAKER.get())))));
-		builder.addSpecialElement(new SpecialElementData("speedboat4", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.REINFORCED_HULL.get())))));
-		builder.addSpecialElement(new SpecialElementData("speedboat5", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.BoatUpgrades.PADDLES.get())))));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	private static void lubricant(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("lubricant1", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Items.OIL_CAN.get())))));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	private static void plastics(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("plastics0", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("plastics1", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA_CRACKED.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("plastics2", 0, new ManualElementItem(man,
-			new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
-			new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
-			new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
-		);
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	private static void fluids(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("crude", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("lubricant", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.LUBRICANT.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("diesel", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.DIESEL_SULFUR.bucket().get()), new ItemStack(IPContent.Fluids.DIESEL.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("kerosene", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.KEROSENE.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("naphtha", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPHTHA.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("naphtha_derivates", 0, new ManualElementItem(man,
-			new ItemStack(IPContent.Fluids.BENZENE.bucket().get()),
-			new ItemStack(IPContent.Fluids.PROPYLENE.bucket().get()),
-			new ItemStack(IPContent.Fluids.ETHYLENE.bucket().get())))
-		);
-		builder.addSpecialElement(new SpecialElementData("gasoline", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.GASOLINE.bucket().get()), new ItemStack(IPContent.Fluids.GASOLINE_ADDITIVES.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("napalm", 0, new ManualElementItem(man, new ItemStack(IPContent.Fluids.NAPALM.bucket().get()))));
-		builder.addSpecialElement(new SpecialElementData("paraffin", 0, new ManualElementItem(man, new ItemStack(IPContent.Items.PARAFFIN_WAX.get()))));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	private static void pumpjack(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("pumpjack0", 0, () -> new ManualElementMultiblock(man, PumpjackMultiblock.INSTANCE)));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	private static void distillation(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("distillationtower0", 0, () -> new ManualElementMultiblock(man, DistillationTowerMultiblock.INSTANCE)));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	protected static void coker(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("cokerunit0", 0, () -> new ManualElementMultiblock(man, CokerUnitMultiblock.INSTANCE)));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	protected static void hydrotreater(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("hydrotreater0", 0, () -> new ManualElementMultiblock(man, HydroTreaterMultiblock.INSTANCE)));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	protected static void derrick(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("derrick0", 0, () -> new ManualElementMultiblock(man, DerrickMultiblock.INSTANCE)));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	protected static void oiltank(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("oiltank0", 0, () -> new ManualElementMultiblock(man, OilTankMultiblock.INSTANCE)));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
-	
-	protected static void projector(ResourceLocation location, int priority){
-		ManualInstance man = ManualHelper.getManual();
-		
-		ItemStack projectorWithNBT = new ItemStack(IPContent.Items.PROJECTOR.get());
-		ItemNBTHelper.putString(projectorWithNBT, "multiblock", IEMultiblocks.ARC_FURNACE.getUniqueName().toString());
-		
-		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
-		builder.addSpecialElement(new SpecialElementData("projector0", 0, new ManualElementCrafting(man, singleRecipeRef(new ItemStack(IPContent.Items.PROJECTOR.get())))));
-		builder.addSpecialElement(new SpecialElementData("projector1", 0, new ManualElementCrafting(man, singleRecipeRef(projectorWithNBT))));
-		builder.readFromFile(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
-	}
+
 	
 	private static void handleReservoirManual(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
@@ -477,7 +298,7 @@ public class ClientProxy extends CommonProxy{
 		ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(man);
 		builder.setContent(ClientProxy::createContent);
 		builder.setLocation(location);
-		man.addEntry(IP_CATEGORY, builder.create(), priority);
+		man.addEntry(man.getRoot().addNewSubnode(new ResourceLocation(ImmersivePetroleum.MODID, "petroleum"), 100), builder.create(), priority);
 	}
 	
 	protected static EntryData createContent(){

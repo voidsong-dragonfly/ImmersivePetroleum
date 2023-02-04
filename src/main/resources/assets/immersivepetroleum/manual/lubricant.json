@@ -2,5 +2,9 @@
 	"lubricant1":{
 		"type": "crafting",
 		"recipe": "immersivepetroleum:oil_can"
+	},
+	"lubricant2":{
+		"type": "crafting",
+		"recipe": "immersivepetroleum:auto_lubricator"
 	}
 }
