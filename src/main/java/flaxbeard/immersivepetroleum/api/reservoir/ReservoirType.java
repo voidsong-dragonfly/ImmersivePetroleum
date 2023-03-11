@@ -37,6 +37,7 @@ public class ReservoirType extends IESerializableRecipe{
 	public int minSize;
 	public int maxSize;
 	public int residual;
+	public int equilibrium;
 	
 	public int weight;
 	
@@ -47,17 +48,18 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	/**
 	 * Creates a new reservoir.
-	 * 
+	 *
 	 * @param name          The name of this reservoir type
 	 * @param id            The "recipeId" of this reservoir
 	 * @param fluidLocation The registry name of the fluid this reservoir is containing
 	 * @param minSize       Minimum amount of fluid in this reservoir
 	 * @param maxSize       Maximum amount of fluid in this reservoir
 	 * @param residual      Leftover fluid amount after depletion
+	 * @param equilibrium   Maximum amount of fluid that residuals regenerate at
 	 * @param weight        The weight for this reservoir
 	 */
-	public ReservoirType(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int weight){
-		this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, residual, weight);
+	public ReservoirType(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int equilibrium, int weight){
+		this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, residual, equilibrium, weight);
 	}
 	
 	/**
@@ -68,15 +70,17 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @param fluid    The fluid this reservoir is containing
 	 * @param minSize  Minimum amount of fluid in this reservoir
 	 * @param maxSize  Maximum amount of fluid in this reservoir
-	 * @param residual Leftover fluid amount after depletion
+	 * @param residual      Leftover fluid amount after depletion
+	 * @param equilibrium   Maximum amount of fluid that residuals regenerate at
 	 * @param weight   The weight for this reservoir
 	 */
-	public ReservoirType(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int weight){
+	public ReservoirType(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int equilibrium, int weight){
 		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR.get(), id);
 		this.name = name;
 		this.fluidLocation = fluid.getRegistryName();
 		this.fluid = fluid;
 		this.residual = residual;
+		this.equilibrium = equilibrium;
 		this.minSize = minSize;
 		this.maxSize = maxSize;
 		this.weight = weight;
@@ -93,6 +97,7 @@ public class ReservoirType extends IESerializableRecipe{
 		this.minSize = nbt.getInt("minSize");
 		this.maxSize = nbt.getInt("maxSize");
 		this.residual = nbt.getInt("residual");
+		this.equilibrium = nbt.getInt("equilibrium");
 		
 		this.biomes = new BWList(nbt.getCompound("biomes"));
 		this.dimensions = new BWList(nbt.getCompound("dimensions"));
@@ -115,6 +120,7 @@ public class ReservoirType extends IESerializableRecipe{
 		nbt.putInt("minSize", this.minSize);
 		nbt.putInt("maxSize", this.maxSize);
 		nbt.putInt("residual", this.residual);
+		nbt.putInt("equilibrium", this.equilibrium);
 		
 		nbt.put("biomes", this.biomes.toNbt());
 		nbt.put("dimensions", this.dimensions.toNbt());

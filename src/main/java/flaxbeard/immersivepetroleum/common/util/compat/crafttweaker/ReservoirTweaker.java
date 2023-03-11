@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openzen.zencode.java.ZenCodeType;
 import org.openzen.zencode.java.ZenCodeType.Constructor;
 import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
@@ -57,6 +58,7 @@ public class ReservoirTweaker{
 		private final int minSize;
 		private final int maxSize;
 		private final int traceAmount;
+		private final int equilibrium;
 		private final int weight;
 		
 		private boolean isDimBlacklist = false;
@@ -66,7 +68,7 @@ public class ReservoirTweaker{
 		private final List<ResourceLocation> biomes = new ArrayList<>();
 		
 		@Constructor
-		public ReservoirBuilder(IFluidStack fluid, int minSize, int maxSize, int traceAmount, int weight){
+		public ReservoirBuilder(IFluidStack fluid, int minSize, int maxSize, int traceAmount, int weight, @ZenCodeType.OptionalInt int equilibrium){
 			if(fluid == null){
 				//CraftTweakerAPI.logError("§cReservoir fluid can not be null!§r");
 				this.isValid = false;
@@ -83,12 +85,17 @@ public class ReservoirTweaker{
 				//CraftTweakerAPI.logError("§cReservoir weight has to be greater than or equal to 1!§r");
 				this.isValid = false;
 			}
+			if(equilibrium <= 0){
+				//CraftTweakerAPI.logError("§cReservoir equilibrium amount has to be greater than or equal to 0!§r");
+				this.isValid = false;
+			}
 			
 			this.iFluidStack = fluid;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
 			this.traceAmount = traceAmount;
 			this.weight = weight;
+			this.equilibrium = equilibrium;
 		}
 		
 		@Method
@@ -138,7 +145,7 @@ public class ReservoirTweaker{
 				ResourceLocation id = ResourceUtils.ct(name);
 				
 				if(!ReservoirType.map.containsKey(id)){
-					ReservoirType reservoir = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
+					ReservoirType reservoir = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.equilibrium, this.weight);
 					
 					reservoir.setDimensions(this.isDimBlacklist, this.dimensions);
 					reservoir.setDimensions(this.isBioBlacklist, this.biomes);
