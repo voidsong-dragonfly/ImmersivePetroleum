@@ -3,8 +3,9 @@
   "fluid": "minecraft:water",
   "fluidminimum": 5000000,
   "fluidcapacity": 10000000,
-  "fluidtrace": 6,
+  "fluidtrace": 25,
   "weight": 30,
+  "equilibrium": 2000000,
   "dimensions": {
     "isBlacklist": false,
     "list": [

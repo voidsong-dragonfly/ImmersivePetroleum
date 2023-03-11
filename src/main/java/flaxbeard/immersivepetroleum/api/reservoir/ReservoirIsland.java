@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 /**
  * Every instance of this class is it's own little ecosystem.
  * <p>
- * What kind of Fluid it has, how much of it, how much residual (if any) after it's drained, etc.
+ * What kind of Fluid it has, how much of it, etc.
  * 
  * @author TwistedGate
  */
@@ -153,23 +153,39 @@ public class ReservoirIsland{
 		return Collections.unmodifiableList(this.poly);
 	}
 	
-	private long lastExtract = -1L;
+	private long lastEquilibriumTick = -1L;
+	
+	/**
+	 * Used by WellTileEntity to check to see if reservoir should regenerate residuals or not
+	 *
+	 * @param level needed to check game time
+	 * @return boolean on whether reservoir is below hydrostatic equilibrium
+	 */
+	public boolean belowHydrostaticEquilibrium(@Nonnull Level level) {
+		return reservoir.residual > 0 && amount <= reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime();
+	}
+	
+	/**
+	 * Used by WellTileEntity to handle reservoir residual regeneration
+	 *
+	 * @param level needed to check game time
+	 */
+	public void equalizeHydrostaticPressure(@Nonnull Level level) {
+		if(amount <= reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime()){
+			this.lastEquilibriumTick = level.getGameTime();
+			amount += reservoir.residual;
+		}
+	}
 	
 	/**
 	 * Used by Pumpjack
-	 * 
-	 * @param level       used to get the game time
+	 *
 	 * @param amount      to extract
 	 * @param fluidAction the {@link FluidAction} to extract with
-	 * @return how much has been extracted or residual if drained
+	 * @return how much has been extracted
 	 */
-	public int extract(@Nonnull Level level, int amount, FluidAction fluidAction){
+	public int extract(int amount, FluidAction fluidAction){
 		if(isEmpty()){
-			if(this.lastExtract != level.getGameTime()){
-				this.lastExtract = level.getGameTime();
-				return this.reservoir.residual;
-			}
-			
 			return 0;
 		}
 		

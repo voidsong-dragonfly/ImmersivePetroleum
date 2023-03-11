@@ -25,7 +25,7 @@ public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 		int min = GsonHelper.getAsInt(json, "fluidminimum");
 		int max = GsonHelper.getAsInt(json, "fluidcapacity");
 		int trace = GsonHelper.getAsInt(json, "fluidtrace");
-		int equilibrium = GsonHelper.getAsInt(json, "equilibrium, 0");
+		int equilibrium = GsonHelper.getAsInt(json, "equilibrium", 0);
 		int weight = GsonHelper.getAsInt(json, "weight");
 		
 		ReservoirType reservoir = new ReservoirType(name, recipeId, fluid, min, max, trace, equilibrium, weight);

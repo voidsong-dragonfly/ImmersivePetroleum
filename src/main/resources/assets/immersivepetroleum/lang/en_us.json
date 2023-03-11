@@ -184,7 +184,8 @@
 	"ie.manual.entry.reservoirs.bio.any": "This reservoir will generate in any Biome.",
 	
 	"ie.manual.entry.reservoirs.content": "%1$s %6$s\nIt contains %3$s to %4$s mB of %2$s.%5$s",
-	"ie.manual.entry.reservoirs.replenish": "\nAfter the reservoir is depleted, %1$d mB/tick of trace %2$s can be extracted by a single Pumpjack.",
+	"ie.manual.entry.reservoirs.replenish": "\nAfter the reservoir is below %3$d mB, %1$d mB/tick of trace %2$s will replenish to equilibrium pressure.",
+	"ie.manual.entry.reservoirs.replenish_depleted": "\nAfter the reservoir is depleted, %1$d mB/tick of trace %2$s can be extracted by Pumpjack.",
 	
 	"_comment": "################## Chat ##################",
 	

@@ -366,7 +366,10 @@ public class ClientProxy extends CommonProxy{
 			
 			String repRate = "";
 			if(reservoir.residual > 0){
-				repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName);
+				if (reservoir.equilibrium > 0)
+					repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName, reservoir.equilibrium);
+				else
+				    repRate = I18n.get("ie.manual.entry.reservoirs.replenish_depleted", reservoir.residual, fluidName);
 			}
 			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBWList, fluidName, Utils.fDecimal(reservoir.minSize), Utils.fDecimal(reservoir.maxSize), repRate, bioBWList));
 			
