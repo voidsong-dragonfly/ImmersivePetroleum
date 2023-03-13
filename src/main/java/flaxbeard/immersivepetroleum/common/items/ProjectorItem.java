@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +23,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.api.shader.CapabilityShader;
+import blusunrize.immersiveengineering.api.shader.CapabilityShader.ShaderWrapper_Item;
+import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
+import blusunrize.immersiveengineering.api.utils.CapabilityUtils;
+import blusunrize.immersiveengineering.api.utils.ItemUtils;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.event.ProjectorEvent;
 import flaxbeard.immersivepetroleum.client.IPShaders;
@@ -31,6 +36,7 @@ import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
+import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
 import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings.Mode;
@@ -49,6 +55,7 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -58,6 +65,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -74,17 +83,22 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.IItemHandler;
 
-public class ProjectorItem extends IPItemBase{
+public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 	public ProjectorItem(){
 		super(new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
 	}
@@ -357,6 +371,10 @@ public class ProjectorItem extends IPItemBase{
 		}
 	}
 	
+	public static boolean hasKey(ItemStack stack, String key, int tagId){
+		return stack.hasTag() && stack.getTag().contains(key, tagId);
+	}
+	
 	// STATIC SUPPORT CLASSES
 	
 	/** Client Rendering Stuff */
@@ -364,7 +382,13 @@ public class ProjectorItem extends IPItemBase{
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientRenderHandler{
 		@SubscribeEvent
-		public static void renderLast(RenderLevelLastEvent event){
+		public static void renderLevelStage(RenderLevelStageEvent event){
+			if(event.getStage() == Stage.AFTER_TRIPWIRE_BLOCKS){
+				renderProjection(event);
+			}
+		}
+		
+		private static void renderProjection(RenderLevelStageEvent event){
 			Minecraft mc = Minecraft.getInstance();
 			
 			if(mc.player != null){
@@ -376,11 +400,11 @@ public class ProjectorItem extends IPItemBase{
 					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
 					ItemStack secondItem = mc.player.getOffhandItem();
-					boolean off = secondItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(secondItem, "settings");
+					boolean off = secondItem.is(Items.PROJECTOR.get()) && hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
 					
 					for(int i = 0;i <= 10;i++){
 						ItemStack stack = (i == 10 ? secondItem : mc.player.getInventory().getItem(i));
-						if(stack.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(stack, "settings")){
+						if(stack.is(Items.PROJECTOR.get()) && hasKey(stack, "settings", Tag.TAG_COMPOUND)){
 							Settings settings = getSettings(stack);
 							matrix.pushPose();
 							{
@@ -719,8 +743,8 @@ public class ProjectorItem extends IPItemBase{
 				ItemStack mainItem = player.getMainHandItem();
 				ItemStack secondItem = player.getOffhandItem();
 				
-				boolean main = mainItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
-				boolean off = secondItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
+				boolean main = mainItem.is(Items.PROJECTOR.get()) && hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
+				boolean off = secondItem.is(Items.PROJECTOR.get()) && hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
 				
 				if(main || off){
 					ItemStack target = main ? mainItem : secondItem;
@@ -765,8 +789,8 @@ public class ProjectorItem extends IPItemBase{
 			ItemStack mainItem = player.getMainHandItem();
 			ItemStack secondItem = player.getOffhandItem();
 			
-			boolean main = mainItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
-			boolean off = secondItem.is(Items.PROJECTOR.get()) && ItemNBTHelper.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
+			boolean main = mainItem.is(Items.PROJECTOR.get()) && hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
+			boolean off = secondItem.is(Items.PROJECTOR.get()) && hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
 			ItemStack target = main ? mainItem : secondItem;
 			
 			if(main || off){
@@ -789,5 +813,61 @@ public class ProjectorItem extends IPItemBase{
 	
 	public enum RenderLayer{
 		ALL, BAD, PERFECT
+	}
+
+	@Override
+	public CompoundTag getUpgrades(ItemStack stack){
+		return stack.hasTag() ? stack.getOrCreateTag().getCompound("upgrades") : new CompoundTag();
+	}
+
+	@Override
+	public void clearUpgrades(ItemStack stack){
+		ItemUtils.removeTag(stack, "upgrades");
+	}
+
+	@Override
+	public boolean canTakeFromWorkbench(ItemStack stack){
+		return true;
+	}
+
+	@Override
+	public boolean canModify(ItemStack stack){
+		return true;
+	}
+
+	@Override
+	public void recalculateUpgrades(ItemStack stack, Level w, Player player){
+	}
+
+	@Override
+	public void removeFromWorkbench(Player player, ItemStack stack){
+	}
+
+	@Override
+	public void finishUpgradeRecalculation(ItemStack stack){
+	}
+	
+	private static final Slot[] NONE = new Slot[0];
+	@Override
+	public Slot[] getWorkbenchSlots(AbstractContainerMenu container, ItemStack stack, Level level, Supplier<Player> getPlayer, IItemHandler toolInventory){
+		return NONE;
+	}
+	
+	@Override
+	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt){
+		if(!stack.isEmpty()){
+			return new IPItemStackHandler(0){
+				private final LazyOptional<ShaderWrapper_Item> shaders = CapabilityUtils.constantOptional(new ShaderWrapper_Item(getRegistryName(), stack));
+				
+				@Override
+				public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing){
+					if(capability == CapabilityShader.SHADER_CAPABILITY){
+						return shaders.cast();
+					}
+					return super.getCapability(capability, facing);
+				}
+			};
+		}
+		return null;
 	}
 }
