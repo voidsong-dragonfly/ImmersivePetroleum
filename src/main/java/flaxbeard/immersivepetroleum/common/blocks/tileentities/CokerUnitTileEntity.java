@@ -1091,8 +1091,8 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				}
 				case PROCESSING -> {
 					if(this.inputAmount > 0 && !getInputItem().isEmpty() && (this.tank.getCapacity() - this.tank.getFluidAmount()) >= this.recipe.outputFluid.getAmount()){
-						if(cokerunit.energyStorage.getEnergyStored() >= this.recipe.getTotalProcessEnergy()){
-							cokerunit.energyStorage.extractEnergy(this.recipe.getTotalProcessEnergy(), false);
+						if(cokerunit.energyStorage.getEnergyStored() >= this.recipe.getTotalProcessEnergy()/this.recipe.getTotalProcessTime()){
+							cokerunit.energyStorage.extractEnergy(this.recipe.getTotalProcessEnergy()/this.recipe.getTotalProcessTime(), false);
 							
 							this.timer++;
 							if(this.timer >= (this.recipe.getTotalProcessTime() * this.recipe.inputItem.getCount())){
