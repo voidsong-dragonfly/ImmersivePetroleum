@@ -18,6 +18,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	private int fluidMinimum;
 	private int fluidMaximum;
 	private int fluidTrace;
+	private int equilibrium;
 	private int weight;
 	
 	private boolean isDimBlacklist = false;
@@ -34,6 +35,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 			writer.addProperty("fluidcapacity", this.fluidMaximum);
 			writer.addProperty("fluidtrace", this.fluidTrace);
 			writer.addProperty("weight", this.weight);
+			writer.addProperty("equilibrium", this.equilibrium);
 		});
 		
 		addWriter(writer -> {
@@ -137,6 +139,20 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 */
 	public ReservoirBuilder weight(int weight){
 		this.weight = weight;
+		return this;
+	}
+	
+	/**
+	 * Sets maximum fluid <code>amount</code> for trace fluid to regenerate. <code><pre>
+	 * 1.000 = 1 Bucket
+	 * 0.001 = 1 Millibucket
+	 * </pre></code>
+	 *
+	 * @param amount The amount to set.
+	 * @return {@link ReservoirBuilder}
+	 */
+	public ReservoirBuilder equilibrium(double amount){
+		this.equilibrium = (int) Math.floor(amount * 1000D);
 		return this;
 	}
 	

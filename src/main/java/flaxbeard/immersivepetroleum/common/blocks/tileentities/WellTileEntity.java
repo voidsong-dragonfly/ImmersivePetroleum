@@ -156,7 +156,14 @@ public class WellTileEntity extends IPTileEntityBase implements IPServerTickable
 	public void tickServer(){
 		if(this.drillingCompleted){
 			if(this.tappedIslands.size() > 0){
-				if(this.level.getGameTime() % 5 == 0){
+				for(ColumnPos cPos:this.tappedIslands){
+					ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+					if(island != null && island.belowHydrostaticEquilibrium(getWorldNonnull())){
+						island.equalizeHydrostaticPressure(getWorldNonnull());
+					}
+				}
+				
+				if(this.getWorldNonnull().getGameTime() % 5 == 0){
 					boolean spill = false;
 					
 					int height = -1;

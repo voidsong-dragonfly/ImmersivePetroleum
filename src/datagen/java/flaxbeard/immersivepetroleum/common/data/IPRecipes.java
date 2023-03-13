@@ -89,10 +89,11 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void reservoirs(){
-		ReservoirBuilder.builder("aquifer", Fluids.WATER, 5000.000, 10000.000, 0.006, 30)
+		ReservoirBuilder.builder("aquifer", Fluids.WATER, 5000.000, 10000.000, 0.025, 30)
 			.setDimensions(false, new ResourceLocation[]{
 					Level.OVERWORLD.location()
 			})
+			.equilibrium(2000)
 			.build(this.out, rl("reservoirs/aquifer"));
 		
 		ReservoirBuilder.builder("oil", IPContent.Fluids.CRUDEOIL.still().get(), 2500.000, 32500.000, 0.006, 40)

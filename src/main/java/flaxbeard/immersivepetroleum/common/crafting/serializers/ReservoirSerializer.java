@@ -25,12 +25,13 @@ public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 		int min = GsonHelper.getAsInt(json, "fluidminimum");
 		int max = GsonHelper.getAsInt(json, "fluidcapacity");
 		int trace = GsonHelper.getAsInt(json, "fluidtrace");
+		int equilibrium = GsonHelper.getAsInt(json, "equilibrium", 0);
 		int weight = GsonHelper.getAsInt(json, "weight");
 		
-		ReservoirType reservoir = new ReservoirType(name, recipeId, fluid, min, max, trace, weight);
+		ReservoirType reservoir = new ReservoirType(name, recipeId, fluid, min, max, trace, equilibrium, weight);
 		
-		ImmersivePetroleum.log.debug("Loaded reservoir {} as {}, with {}mB to {}mB of {} and {}mB trace, with {} of weight.",
-				recipeId, name, min, max, fluid, trace, weight);
+		ImmersivePetroleum.log.debug("Loaded reservoir {} as {}, with {}mB to {}mB of {} and {}mB trace at {}mB equilibrium, with {} of weight.",
+				recipeId, name, min, max, fluid, trace, equilibrium, weight);
 		
 		if(GsonHelper.isValidNode(json, "dimensions")){
 			JsonObject dimensions = GsonHelper.getAsJsonObject(json, "dimensions");

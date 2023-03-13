@@ -5,6 +5,7 @@
   "fluidcapacity": 1000000,
   "fluidtrace": 0,
   "weight": 30,
+  "equilibrium": 0,
   "dimensions": {
     "isBlacklist": true,
     "list": [

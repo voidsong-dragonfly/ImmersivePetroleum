@@ -71,6 +71,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -302,7 +303,8 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	protected static EntryData createContent(){
-		ArrayList<ItemStack> list = new ArrayList<>();
+		ManualInstance man = ManualHelper.getManual();
+		ArrayList<SpecialElementData> itemList = new ArrayList<>();
 		final ReservoirType[] reservoirs = ReservoirType.map.values().toArray(new ReservoirType[0]);
 		
 		StringBuilder contentBuilder = new StringBuilder();
@@ -350,12 +352,12 @@ public class ClientProxy extends CommonProxy{
 				});
 				
 				if(reservoir.getBiomes().isBlacklist()){
-					dimBWList = I18n.get("ie.manual.entry.reservoirs.bio.invalid", localizedName, strBuilder.toString(), aOrAn);
+					bioBWList = I18n.get("ie.manual.entry.reservoirs.bio.invalid", strBuilder.toString());
 				}else{
-					dimBWList = I18n.get("ie.manual.entry.reservoirs.bio.valid", localizedName, strBuilder.toString(), aOrAn);
+					bioBWList = I18n.get("ie.manual.entry.reservoirs.bio.valid", strBuilder.toString());
 				}
 			}else{
-				dimBWList = I18n.get("ie.manual.entry.reservoirs.bio.any", localizedName, aOrAn);
+				bioBWList = I18n.get("ie.manual.entry.reservoirs.bio.any");
 			}
 			
 			String fluidName = "";
@@ -366,19 +368,23 @@ public class ClientProxy extends CommonProxy{
 			
 			String repRate = "";
 			if(reservoir.residual > 0){
-				repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName);
+				if (reservoir.equilibrium > 0)
+					repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName, Utils.fDecimal(reservoir.equilibrium/1000));
+				else
+				    repRate = I18n.get("ie.manual.entry.reservoirs.replenish_depleted", reservoir.residual, fluidName);
 			}
-			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBWList, fluidName, Utils.fDecimal(reservoir.minSize), Utils.fDecimal(reservoir.maxSize), repRate, bioBWList));
+			contentBuilder.append("<&").append(reservoir.getId().toString()).append(">");
+			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBWList, fluidName, Utils.fDecimal(reservoir.minSize/1000), Utils.fDecimal(reservoir.maxSize/1000), repRate, bioBWList));
 			
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");
 			
-			list.add(new ItemStack(fluid.getBucket()));
+			itemList.add(new SpecialElementData(reservoir.getId().toString(), 0, new ManualElementItem(man, new ItemStack(fluid.getBucket()))));
 		}
 		
 		String translatedTitle = I18n.get("ie.manual.entry.reservoirs.title");
 		String tanslatedSubtext = I18n.get("ie.manual.entry.reservoirs.subtitle");
 		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
-		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent, List.of());
+		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent, itemList);
 	}
 }
