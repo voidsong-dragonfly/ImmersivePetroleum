@@ -36,7 +36,6 @@ import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
  * 
  * @author TwistedGate
  */
-// FIXME There is a leak *SOMEWHERE* that causes islands from an existing world to carry over to freshly created worlds
 public class ReservoirHandler{
 	private static final Multimap<ResourceKey<Level>, ReservoirIsland> RESERVOIR_ISLAND_LIST = ArrayListMultimap.create();
 	private static final Map<Pair<ResourceKey<Level>, ColumnPos>, ReservoirIsland> CACHE = new HashMap<>();

@@ -31,20 +31,19 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	public static Map<ResourceLocation, ReservoirType> map = new HashMap<>();
 	
-	public String name;
-	public ResourceLocation fluidLocation;
+	public final String name;
+	public final ResourceLocation fluidLocation;
+	public final int weight;
 	
-	public int minSize;
-	public int maxSize;
-	public int residual;
-	public int equilibrium;
+	public final int minSize;
+	public final int maxSize;
+	public final int residual;
+	public final int equilibrium;
 	
-	public int weight;
+	private final Fluid fluid;
 	
 	private BWList biomes = new BWList(false);
 	private BWList dimensions = new BWList(false);
-	
-	private final Fluid fluid;
 	
 	/**
 	 * Creates a new reservoir.
@@ -101,6 +100,8 @@ public class ReservoirType extends IESerializableRecipe{
 		
 		this.biomes = new BWList(nbt.getCompound("biomes"));
 		this.dimensions = new BWList(nbt.getCompound("dimensions"));
+		
+		this.weight = nbt.getInt("weight");
 	}
 	
 	@Override
@@ -124,6 +125,8 @@ public class ReservoirType extends IESerializableRecipe{
 		
 		nbt.put("biomes", this.biomes.toNbt());
 		nbt.put("dimensions", this.dimensions.toNbt());
+		
+		nbt.putInt("weight", this.weight);
 		
 		return nbt;
 	}

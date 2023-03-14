@@ -162,7 +162,7 @@ public class ReservoirIsland{
 	 * @return boolean on whether reservoir is below hydrostatic equilibrium
 	 */
 	public boolean belowHydrostaticEquilibrium(@Nonnull Level level) {
-		return reservoir.residual > 0 && amount <= reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime();
+		return this.reservoir.residual > 0 && this.amount <= this.reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime();
 	}
 	
 	/**
@@ -171,9 +171,9 @@ public class ReservoirIsland{
 	 * @param level needed to check game time
 	 */
 	public void equalizeHydrostaticPressure(@Nonnull Level level) {
-		if(amount <= reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime()){
+		if(this.amount <= this.reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime()){
 			this.lastEquilibriumTick = level.getGameTime();
-			amount += reservoir.residual;
+			this.amount += this.reservoir.residual;
 		}
 	}
 	
@@ -242,26 +242,11 @@ public class ReservoirIsland{
 			// Pressure should drop from 100% to 0%
 			// While the reservoir is between 100% and 50% at max
 			
-			boolean debug = false;
-			if(debug){
-				float modifier = (this.amount - (this.capacity * 0.75F)) / ((float) this.capacity);
-				
-				modifier = Mth.clamp(modifier, 0.0F, 1.0F);
-				
-				// Slightly modified version of what TeamSpen210 gave me, thank you!
-				float min = 1F;
-				float max = 1000F;
-				float decay = (float) (-Math.log(min / max) / 1.0D);
-				float output = (float) (Math.exp(decay * noise) / max) * modifier;
-				
-				return output <= 0.001F ? 0.0F : output;
-			}else{
-				double half = this.capacity * 0.50;
-				double alt = this.amount - half;
-				if(alt > 0){
-					double pre = alt / half;
-					return (float) (pre * noise);
-				}
+			double half = this.capacity * 0.50;
+			double alt = this.amount - half;
+			if(alt > 0){
+				double pre = alt / half;
+				return (float) (pre * noise);
 			}
 		}
 		
