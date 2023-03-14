@@ -36,6 +36,6 @@ public class WellBlock extends IPBlockBase implements EntityBlock{
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type){
-		return createTickerHelper(level.isClientSide, type, IPTileTypes.WELL);
+		return createCommonTicker(level.isClientSide, type, IPTileTypes.WELL);
 	}
 }

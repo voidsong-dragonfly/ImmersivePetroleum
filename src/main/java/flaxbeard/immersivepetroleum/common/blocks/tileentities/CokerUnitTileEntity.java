@@ -24,8 +24,7 @@ import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -63,7 +62,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<CokerUnitTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IPCommonTickableTile, IPMenuProvider<CokerUnitTileEntity>, IEBlockInterfaces.IBlockBounds{
 	
 	public enum Inventory{
 		/** Inventory Item Input */

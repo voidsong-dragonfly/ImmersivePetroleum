@@ -184,7 +184,7 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 		if(state.getValue(SLAVE))
 			return null;
 		
-		return createTickerHelper(level.isClientSide, type, IPTileTypes.FLARE);
+		return createCommonTicker(level.isClientSide, type, IPTileTypes.FLARE);
 	}
 	
 	public static class FlarestackBlockItem extends IPBlockItemBase{

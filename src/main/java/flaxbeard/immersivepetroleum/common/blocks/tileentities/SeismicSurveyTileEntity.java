@@ -9,8 +9,7 @@ import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.util.survey.ISurveyInfo;
 import flaxbeard.immersivepetroleum.common.util.survey.IslandInfo;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * @author TwistedGate
  */
-public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile{
+public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommonTickableTile{
 	public static final int DELAY = 10;
 	
 	/** Used for recoil animation. Also prevents ejecting the shell for the duration. */

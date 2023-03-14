@@ -20,8 +20,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import flaxbeard.immersivepetroleum.common.util.LayeredComparatorOutput;
@@ -55,7 +54,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IHammerInteraction, IEBlockInterfaces.IComparatorOverride, IPressurizedFluidOutput{
+public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPCommonTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IHammerInteraction, IEBlockInterfaces.IComparatorOverride, IPressurizedFluidOutput{
 	
 	public enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;

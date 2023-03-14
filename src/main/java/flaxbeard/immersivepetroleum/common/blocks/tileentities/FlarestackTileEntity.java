@@ -9,8 +9,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.client.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.core.BlockPos;
@@ -34,7 +33,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class FlarestackTileEntity extends IPTileEntityBase implements IPServerTickableTile, IPClientTickableTile, IEBlockInterfaces.ISoundBE{
+public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTickableTile, IEBlockInterfaces.ISoundBE{
 	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").bypassArmor().setIsFire();
 	
 	protected boolean isRedstoneInverted;

@@ -26,8 +26,7 @@ import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
@@ -70,7 +69,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * @author TwistedGate
  */
-public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPServerTickableTile, IPClientTickableTile, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPCommonTickableTile, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
 	
 	public static FluidStack WATER = FluidStack.EMPTY;
 	public static FluidStack CONCRETE = FluidStack.EMPTY;

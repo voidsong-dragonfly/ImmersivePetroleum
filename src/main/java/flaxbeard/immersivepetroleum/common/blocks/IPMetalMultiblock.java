@@ -5,8 +5,7 @@ import javax.annotation.Nonnull;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalMultiblockBlock;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
-import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -16,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 
-public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & IPServerTickableTile & IPClientTickableTile> extends MetalMultiblockBlock<T>{
+public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & IPCommonTickableTile> extends MetalMultiblockBlock<T>{
 	private final MultiblockBEType<T> multiblockBEType;
 	
 	public IPMetalMultiblock(MultiblockBEType<T> te){
@@ -31,7 +30,7 @@ public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & IPServer
 	}
 	
 	@Override
-	public <T2 extends BlockEntity> BlockEntityTicker<T2> getTicker(@Nonnull Level world, @Nonnull BlockState state, @Nonnull BlockEntityType<T2> type){
-		return IPBlockBase.createTickerHelper(world.isClientSide, type, multiblockBEType.master());
+	public <E extends BlockEntity> BlockEntityTicker<E> getTicker(@Nonnull Level world, @Nonnull BlockState state, @Nonnull BlockEntityType<E> type){
+		return IPBlockBase.createCommonTicker(world.isClientSide, type, multiblockBEType.master());
 	}
 }

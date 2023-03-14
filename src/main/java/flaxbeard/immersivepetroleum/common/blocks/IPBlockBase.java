@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
+import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -25,26 +26,26 @@ public class IPBlockBase extends Block{
 	}
 	
 	@Nullable
-	public static <E extends BlockEntity & IPServerTickableTile & IPClientTickableTile, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(boolean isClient, BlockEntityType<A> actual, RegistryObject<BlockEntityType<E>> expected){
-		return createTickerHelper(isClient, actual, expected.get());
+	public static <E extends BlockEntity & IPCommonTickableTile, A extends BlockEntity> BlockEntityTicker<A> createCommonTicker(boolean isClient, BlockEntityType<A> actual, RegistryObject<BlockEntityType<E>> expected){
+		return createCommonTicker(isClient, actual, expected.get());
 	}
 	
 	@Nullable
-	public static <E extends BlockEntity & IPServerTickableTile & IPClientTickableTile, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(boolean isClient, BlockEntityType<A> actual, BlockEntityType<E> expected){
+	public static <E extends BlockEntity & IPCommonTickableTile, A extends BlockEntity> BlockEntityTicker<A> createCommonTicker(boolean isClient, BlockEntityType<A> actual, BlockEntityType<E> expected){
 		if(isClient){
-			return createClientTickerHelper(actual, expected);
+			return createClientTicker(actual, expected);
 		}else{
-			return createServerTickerHelper(actual, expected);
+			return createServerTicker(actual, expected);
 		}
 	}
 	
 	@Nullable
-	public static <E extends BlockEntity & IPClientTickableTile, A extends BlockEntity> BlockEntityTicker<A> createClientTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected){
+	public static <E extends BlockEntity & IPClientTickableTile, A extends BlockEntity> BlockEntityTicker<A> createClientTicker(BlockEntityType<A> actual, BlockEntityType<E> expected){
 		return createTickerHelper(actual, expected, IPClientTickableTile::makeTicker);
 	}
 	
 	@Nullable
-	public static <E extends BlockEntity & IPServerTickableTile, A extends BlockEntity> BlockEntityTicker<A> createServerTickerHelper(BlockEntityType<A> actual, BlockEntityType<E> expected){
+	public static <E extends BlockEntity & IPServerTickableTile, A extends BlockEntity> BlockEntityTicker<A> createServerTicker(BlockEntityType<A> actual, BlockEntityType<E> expected){
 		return createTickerHelper(actual, expected, IPServerTickableTile::makeTicker);
 	}
 	

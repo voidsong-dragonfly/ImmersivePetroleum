@@ -3,6 +3,9 @@ package flaxbeard.immersivepetroleum.common.blocks.ticking;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 
+/**
+ * If both Client and Server ticking is required {@link IPCommonTickableTile} should to be used.
+ */
 public interface IPClientTickableTile{
 	void tickClient();
 	
