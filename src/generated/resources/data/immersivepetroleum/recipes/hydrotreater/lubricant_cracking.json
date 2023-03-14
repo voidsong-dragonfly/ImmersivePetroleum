@@ -1,7 +1,7 @@
 {
   "type": "immersivepetroleum:hydrotreater",
   "time": 5,
-  "energy": 512,
+  "energy": 2560,
   "result": {
     "fluid": "immersivepetroleum:lubricant_cracked",
     "amount": 24

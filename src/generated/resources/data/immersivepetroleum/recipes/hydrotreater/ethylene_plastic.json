@@ -1,7 +1,7 @@
 {
   "type": "immersivepetroleum:hydrotreater",
   "time": 60,
-  "energy": 1024,
+  "energy": 61440,
   "result": {
     "fluid": "pneumaticcraft:plastic",
     "amount": 1000

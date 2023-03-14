@@ -158,7 +158,7 @@ public class IPRecipes extends RecipeProvider{
 		CokerUnitRecipeBuilder.builder(new ItemStack(IPContent.Items.PETCOKE.get(), 2), IPTags.Fluids.diesel_sulfur, 27)
 			.addInputItem(IPTags.Items.bitumen, 2)
 			.addInputFluid(FluidTags.WATER, 125)
-			.setTimeAndEnergy(30, 512)
+			.setTimeAndEnergy(30, 15360)
 			.build(this.out, rl("coking/petcoke"));
 		
 		// Petcoke Compression and Decompression
@@ -216,25 +216,25 @@ public class IPRecipes extends RecipeProvider{
 			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.05)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 512, 5)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 2560, 5)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 20))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
 			.build(out, rl("hydrotreater/naphtha_cracking"));
 		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.LUBRICANT_CRACKED.get(), 24), 512, 5)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.LUBRICANT_CRACKED.get(), 24), 2560, 5)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.lubricant, 24))
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
 			.addItemWithChance(new ItemStack(IPContent.Items.PARAFFIN_WAX.get()), 0.024)
 			.build(out, rl("hydrotreater/lubricant_cracking"));
 		
 		// PNC Compat
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 1024, 60)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 61440, 60)
 			.addCondition(new ModLoadedCondition("pneumaticcraft"))
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.ethylene, 100))
 			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.05)
 			.build(out, rl("hydrotreater/ethylene_plastic"));
 		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 2000), 1024, 60)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 2000), 61440, 60)
 			.addCondition(new ModLoadedCondition("pneumaticcraft"))
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.propylene, 100))
 			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.1)
