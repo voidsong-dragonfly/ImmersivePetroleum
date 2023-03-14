@@ -6,14 +6,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 
 /**
+ * Simple BoundingBox for ReservoirIslands
+ * 
  * @author TwistedGate
  */
-public class IslandAxisAlignedBB{
+public class AxisAlignedIslandBB{
 	final int minX, minZ;
 	final int maxX, maxZ;
 	final BlockPos center;
 	
-	public IslandAxisAlignedBB(int minX, int minZ, int maxX, int maxZ){
+	public AxisAlignedIslandBB(int minX, int minZ, int maxX, int maxZ){
 		this.minX = minX;
 		this.minZ = minZ;
 		this.maxX = maxX;
@@ -22,7 +24,7 @@ public class IslandAxisAlignedBB{
 		this.center = new BlockPos((this.minX + this.maxX) / 2, 0, (this.minZ + this.maxZ) / 2);
 	}
 	
-	public IslandAxisAlignedBB(CompoundTag nbt){
+	public AxisAlignedIslandBB(CompoundTag nbt){
 		this(
 			nbt.getInt("minX"),
 			nbt.getInt("minZ"),
@@ -78,10 +80,10 @@ public class IslandAxisAlignedBB{
 		if(this == obj){
 			return true;
 		}
-		if(!(obj instanceof IslandAxisAlignedBB)){
+		if(!(obj instanceof AxisAlignedIslandBB)){
 			return false;
 		}
-		IslandAxisAlignedBB other = (IslandAxisAlignedBB) obj;
+		AxisAlignedIslandBB other = (AxisAlignedIslandBB) obj;
 		return this.maxX == other.maxX && this.maxZ == other.maxZ && this.minX == other.minX && this.minZ == other.minZ;
 	}
 	
@@ -92,7 +94,7 @@ public class IslandAxisAlignedBB{
 	
 	/** @deprecated Use constructor instead. {@link #IslandAxisAlignedBB(CompoundTag)} */
 	@Deprecated(forRemoval = true)
-	public static IslandAxisAlignedBB readFromNBT(CompoundTag nbt){
-		return new IslandAxisAlignedBB(nbt);
+	public static AxisAlignedIslandBB readFromNBT(CompoundTag nbt){
+		return new AxisAlignedIslandBB(nbt);
 	}
 }

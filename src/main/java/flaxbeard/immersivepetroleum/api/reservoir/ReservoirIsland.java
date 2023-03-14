@@ -40,7 +40,7 @@ public class ReservoirIsland{
 	private ReservoirType reservoir;
 	@Nonnull
 	private List<ColumnPos> poly;
-	private IslandAxisAlignedBB islandAABB;
+	private AxisAlignedIslandBB islandAABB;
 	private long amount;
 	private long capacity;
 	
@@ -72,7 +72,7 @@ public class ReservoirIsland{
 			if(p.z > maxZ) maxZ = p.z;
 		}
 		
-		this.islandAABB = new IslandAxisAlignedBB(minX, minZ, maxX, maxZ);
+		this.islandAABB = new AxisAlignedIslandBB(minX, minZ, maxX, maxZ);
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public class ReservoirIsland{
 		return this.reservoir.getFluid();
 	}
 	
-	public IslandAxisAlignedBB getBoundingBox(){
+	public AxisAlignedIslandBB getBoundingBox(){
 		return this.islandAABB;
 	}
 	
@@ -260,7 +260,7 @@ public class ReservoirIsland{
 		nbt.putInt("capacity", (int) (this.getCapacity() & MAX_AMOUNT));
 		nbt.put("bounds", this.getBoundingBox().writeToNBT());
 		
-		final IslandAxisAlignedBB bounds = this.getBoundingBox();
+		final AxisAlignedIslandBB bounds = this.getBoundingBox();
 		final ListTag points = new ListTag();
 		this.poly.forEach(pos -> {
 			byte x = (byte) ((pos.x - bounds.minX) & 0xFF);
@@ -283,7 +283,7 @@ public class ReservoirIsland{
 			if(reservoir != null){
 				long amount = ((long) nbt.getInt("amount")) & MAX_AMOUNT;
 				long capacity = ((long) nbt.getInt("capacity")) & MAX_AMOUNT;
-				IslandAxisAlignedBB bounds = new IslandAxisAlignedBB(nbt.getCompound("bounds"));
+				AxisAlignedIslandBB bounds = new AxisAlignedIslandBB(nbt.getCompound("bounds"));
 				
 				final List<ColumnPos> points = new ArrayList<>();
 				final ListTag list = nbt.getList("points", Tag.TAG_COMPOUND);

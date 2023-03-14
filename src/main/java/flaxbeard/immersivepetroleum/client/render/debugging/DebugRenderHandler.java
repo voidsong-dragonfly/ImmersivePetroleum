@@ -16,7 +16,7 @@ import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBl
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.reservoir.IslandAxisAlignedBB;
+import flaxbeard.immersivepetroleum.api.reservoir.AxisAlignedIslandBB;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
@@ -331,7 +331,7 @@ public class DebugRenderHandler{
 									BlockPos center = island.getBoundingBox().getCenter();
 									
 									if(center.distSqr(p) <= radius){
-										IslandAxisAlignedBB bounds = island.getBoundingBox();
+										AxisAlignedIslandBB bounds = island.getBoundingBox();
 										matrix.pushPose();
 										{
 											float minX = bounds.minX() + 0.5F;

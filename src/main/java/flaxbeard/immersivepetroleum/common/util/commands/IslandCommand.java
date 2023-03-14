@@ -17,7 +17,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import flaxbeard.immersivepetroleum.api.reservoir.IslandAxisAlignedBB;
+import flaxbeard.immersivepetroleum.api.reservoir.AxisAlignedIslandBB;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
@@ -89,7 +89,7 @@ public class IslandCommand{
 		double smallestDistance = rangeSqr;
 		ColumnPos p = null;
 		for(ReservoirIsland island:nearby){
-			IslandAxisAlignedBB IAABB = island.getBoundingBox();
+			AxisAlignedIslandBB IAABB = island.getBoundingBox();
 			for(int z = IAABB.minZ() + 1;z < IAABB.maxZ();z++){
 				for(int x = IAABB.minX() + 1;x < IAABB.maxX();x++){
 					if(island.contains(x, z)){
@@ -113,7 +113,7 @@ public class IslandCommand{
 		
 		// Find the spot with the highest pressure
 		double hPressure = 0.0D;
-		IslandAxisAlignedBB IAABB = closestIsland.getBoundingBox();
+		AxisAlignedIslandBB IAABB = closestIsland.getBoundingBox();
 		for(int z = IAABB.minZ() + 1;z < IAABB.maxZ();z++){
 			for(int x = IAABB.minX() + 1;x < IAABB.maxX();x++){
 				double cPressure;
