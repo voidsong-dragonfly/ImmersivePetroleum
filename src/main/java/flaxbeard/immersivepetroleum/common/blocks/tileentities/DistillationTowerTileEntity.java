@@ -146,19 +146,16 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	
 	@Override
 	public void tickClient(){
-		if(isDummy()){
-			return;
-		}
-		
-		if(this.cooldownTicks > 0){
-			this.cooldownTicks--;
-		}
 	}
 	
 	@Override
 	public void tickServer(){
 		if(isDummy()){
 			return;
+		}
+		
+		if(this.cooldownTicks > 0){
+			this.cooldownTicks--;
 		}
 		
 		super.tickServer();
