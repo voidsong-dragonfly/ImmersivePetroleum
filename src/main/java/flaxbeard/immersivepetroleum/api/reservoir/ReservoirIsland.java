@@ -283,7 +283,7 @@ public class ReservoirIsland{
 			if(reservoir != null){
 				long amount = ((long) nbt.getInt("amount")) & MAX_AMOUNT;
 				long capacity = ((long) nbt.getInt("capacity")) & MAX_AMOUNT;
-				IslandAxisAlignedBB bounds = IslandAxisAlignedBB.readFromNBT(nbt.getCompound("bounds"));
+				IslandAxisAlignedBB bounds = new IslandAxisAlignedBB(nbt.getCompound("bounds"));
 				
 				final List<ColumnPos> points = new ArrayList<>();
 				final ListTag list = nbt.getList("points", Tag.TAG_COMPOUND);
