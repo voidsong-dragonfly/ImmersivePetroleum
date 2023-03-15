@@ -21,18 +21,9 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 			}
 		});
 		
-		slotCount = 1;
+		this.slotCount = 1;
 		
-		// Player Inventory
-		for(int i = 0;i < 3;i++){
-			for(int j = 0;j < 9;j++){
-				addSlot(new Slot(playerInventory, j + i * 9 + 9, 20 + j * 18, 82 + i * 18));
-			}
-		}
-		
-		// Player Hotbar
-		for(int i = 0;i < 9;i++){
-			addSlot(new Slot(playerInventory, i, 20 + i * 18, 140));
-		}
+		addPlayerInventorySlots(playerInventory, 20, 82);
+		addPlayerHotbarSlots(playerInventory, 20, 140);
 	}
 }

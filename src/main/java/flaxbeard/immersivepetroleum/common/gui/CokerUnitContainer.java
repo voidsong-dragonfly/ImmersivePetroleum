@@ -10,7 +10,6 @@ import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -44,16 +43,7 @@ public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTil
 		
 		this.slotCount = CokerUnitTileEntity.Inventory.values().length;
 		
-		// Player Inventory
-		for(int i = 0;i < 3;i++){
-			for(int j = 0;j < 9;j++){
-				addSlot(new Slot(playerInventory, j + i * 9 + 9, 20 + j * 18, 105 + i * 18));
-			}
-		}
-		
-		// Hotbar
-		for(int i = 0;i < 9;i++){
-			addSlot(new Slot(playerInventory, i, 20 + i * 18, 163));
-		}
+		addPlayerInventorySlots(playerInventory, 20, 105);
+		addPlayerHotbarSlots(playerInventory, 20, 163);
 	}
 }
