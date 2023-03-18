@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.commands;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +20,8 @@ import flaxbeard.immersivepetroleum.api.reservoir.AxisAlignedIslandBB;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
-import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -34,7 +34,9 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ColumnPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 
 public class IslandCommand{
@@ -70,13 +72,23 @@ public class IslandCommand{
 		int rangeSqr = range * range;
 		
 		Set<ReservoirIsland> nearby = new HashSet<>();
-		synchronized(ReservoirHandler.getReservoirIslandList()){
-			Collection<ReservoirIsland> list = ReservoirHandler.getReservoirIslandList().get(source.getLevel().dimension());
-			list.forEach(island -> {
-				if(island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr){
-					nearby.add(island);
+		
+		ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
+		final ColumnPos playerRegionPos = storage.toRegionCoords(pos);
+		final ResourceKey<Level> dimKey = source.getLevel().dimension();
+		for(int rz = -1;rz <= 1;rz++){
+			for(int rx = -1;rx <= 1;rx++){
+				RegionData rd = storage.getRegionData(new ColumnPos(playerRegionPos.x + rx, playerRegionPos.z + rz));
+				if(rd != null){
+					synchronized(rd.getReservoirIslandList()){
+						rd.getReservoirIslandList().get(dimKey).forEach(island -> {
+							if(island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr){
+								nearby.add(island);
+							}
+						});
+					}
 				}
-			});
+			}
 		}
 		
 		if(nearby.isEmpty()){
@@ -156,7 +168,7 @@ public class IslandCommand{
 	private static int setReservoirAmount(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		long amount = context.getArgument("amount", Long.class);
 		island.setAmount(amount);
-		IPSaveData.markInstanceAsDirty();
+		island.setDirty();
 		
 		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.amount.success", island.getAmount());
 		return Command.SINGLE_SUCCESS;
@@ -165,7 +177,7 @@ public class IslandCommand{
 	private static int setReservoirCapacity(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		long capacity = context.getArgument("capacity", Long.class);
 		island.setAmountAndCapacity(capacity, capacity);
-		IPSaveData.markInstanceAsDirty();
+		island.setDirty();
 		
 		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.capacity.success", island.getCapacity());
 		return Command.SINGLE_SUCCESS;
@@ -185,7 +197,7 @@ public class IslandCommand{
 		}
 		
 		island.setReservoirType(reservoir);
-		IPSaveData.markInstanceAsDirty();
+		island.setDirty();
 		
 		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.type.success", reservoir.name);
 		return Command.SINGLE_SUCCESS;

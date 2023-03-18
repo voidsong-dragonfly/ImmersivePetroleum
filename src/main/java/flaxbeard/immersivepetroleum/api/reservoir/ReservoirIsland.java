@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -35,6 +35,8 @@ public class ReservoirIsland{
 	
 	/** "Unsigned 32-Bit" */
 	public static final long MAX_AMOUNT = 0xFFFFFFFFL;
+	
+	private RegionData regionData;
 	
 	@Nonnull
 	private ReservoirType reservoir;
@@ -73,6 +75,11 @@ public class ReservoirIsland{
 		}
 		
 		this.islandAABB = new AxisAlignedIslandBB(minX, minZ, maxX, maxZ);
+	}
+	
+	public void setRegion(RegionData data){
+		if(this.regionData == null)
+			this.regionData = data;
 	}
 	
 	/**
@@ -136,6 +143,12 @@ public class ReservoirIsland{
 		return this.amount <= 0L;
 	}
 	
+	public void setDirty(){
+		if(this.regionData != null){
+			this.regionData.setDirty();
+		}
+	}
+	
 	@Nonnull
 	public ReservoirType getType(){
 		return this.reservoir;
@@ -193,7 +206,7 @@ public class ReservoirIsland{
 		
 		if(fluidAction == FluidAction.EXECUTE){
 			this.amount -= extracted;
-			IPSaveData.markInstanceAsDirty();
+			setDirty();
 		}
 		
 		return extracted;
@@ -211,7 +224,7 @@ public class ReservoirIsland{
 			int flow = (int) Math.min(getFlow(pressure), this.amount);
 			
 			this.amount -= flow;
-			IPSaveData.markInstanceAsDirty();
+			setDirty();
 			return flow;
 		}
 		

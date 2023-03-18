@@ -17,7 +17,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -37,6 +38,7 @@ import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
  * @author TwistedGate
  */
 public class ReservoirHandler{
+	@Deprecated(forRemoval = true)
 	private static final Multimap<ResourceKey<Level>, ReservoirIsland> RESERVOIR_ISLAND_LIST = ArrayListMultimap.create();
 	private static final Map<Pair<ResourceKey<Level>, ColumnPos>, ReservoirIsland> CACHE = new HashMap<>();
 	
@@ -52,6 +54,8 @@ public class ReservoirHandler{
 		ResourceKey<Level> dimensionKey = world.dimension();
 		ResourceLocation dimensionRL = dimensionKey.location();
 		
+		final ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
+		
 		for(int j = 0;j < 16;j++){
 			for(int i = 0;i < 16;i++){
 				int x = chunkX + i;
@@ -61,37 +65,35 @@ public class ReservoirHandler{
 					// Getting the biome now to prevent lockups
 					ResourceLocation biomeRL = world.getBiome(new BlockPos(x, 64, z)).value().getRegistryName();
 					
-					synchronized(RESERVOIR_ISLAND_LIST){
-						final ColumnPos current = new ColumnPos(x, z);
-						if(RESERVOIR_ISLAND_LIST.values().stream().anyMatch(island -> island.contains(current))){
-							continue;
-						}
-						
-						ReservoirType reservoir = null;
-						int totalWeight = getTotalWeight(dimensionRL, biomeRL);
-						if(totalWeight > 0){
-							int weight = Math.abs(random.nextInt() % totalWeight);
-							for(ReservoirType res:ReservoirType.map.values()){
-								if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
-									weight -= res.weight;
-									if(weight < 0){
-										reservoir = res;
-										break;
-									}
+					final ColumnPos current = new ColumnPos(x, z);
+					if(storage.existsAt(current)){
+						return;
+					}
+					
+					ReservoirType reservoir = null;
+					int totalWeight = getTotalWeight(dimensionRL, biomeRL);
+					if(totalWeight > 0){
+						int weight = Math.abs(random.nextInt() % totalWeight);
+						for(ReservoirType res:ReservoirType.map.values()){
+							if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
+								weight -= res.weight;
+								if(weight < 0){
+									reservoir = res;
+									break;
 								}
 							}
+						}
+						
+						if(reservoir != null){
+							Set<ColumnPos> pol = new HashSet<>();
+							next(world, pol, x, z);
+							List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
 							
-							if(reservoir != null){
-								Set<ColumnPos> pol = new HashSet<>();
-								next(world, pol, x, z);
-								List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
+							if(!poly.isEmpty()){
+								int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
 								
-								if(!poly.isEmpty()){
-									int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
-									ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
-									RESERVOIR_ISLAND_LIST.put(dimensionKey, island);
-									IPSaveData.markInstanceAsDirty();
-								}
+								ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
+								storage.addIsland(dimensionKey, island);
 							}
 						}
 					}
@@ -137,21 +139,15 @@ public class ReservoirHandler{
 			return null;
 		}
 		
-		// TODO Maybe do this better somehow? It'll do for testing, but not for real-world stuff probably
-		
 		ResourceKey<Level> dimension = world.dimension();
 		Pair<ResourceKey<Level>, ColumnPos> cacheKey = Pair.of(dimension, pos);
-		synchronized(RESERVOIR_ISLAND_LIST){
+		synchronized(CACHE){
 			ReservoirIsland ret = CACHE.get(cacheKey);
 			
 			if(ret == null){
-				for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
-					if(island.contains(pos)){
-						// There's no such thing as overlapping islands, so just return what was found directly (After putting it into the cache)
-						CACHE.put(cacheKey, island);
-						return island;
-					}
-				}
+				ReservoirIsland island = ReservoirRegionDataStorage.get().getIsland(world, pos);
+				CACHE.put(cacheKey, island);
+				return island;
 			}
 			
 			return ret;
@@ -169,17 +165,8 @@ public class ReservoirHandler{
 			return null;
 		}
 		
-		ResourceKey<Level> dimension = world.dimension();
-		synchronized(RESERVOIR_ISLAND_LIST){
-			for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
-				if(island.contains(pos)){
-					// There's no such thing as overlapping islands, so just return what was found directly
-					return island;
-				}
-			}
-		}
-		
-		return null;
+		ReservoirIsland island = ReservoirRegionDataStorage.get().getIsland(world, pos);
+		return island;
 	}
 	
 	/**
@@ -244,7 +231,7 @@ public class ReservoirHandler{
 	}
 	
 	public static void clearCache(){
-		synchronized(RESERVOIR_ISLAND_LIST){
+		synchronized(CACHE){
 			CACHE.clear();
 		}
 	}
@@ -257,7 +244,10 @@ public class ReservoirHandler{
 	 * {@link #clearCache()} Must be called after modifying the returned list!
 	 * 
 	 * @return {@link Multimap} of {@link ResourceKey<Level>}<{@link Level}>s to {@link ReservoirIsland}s
+	 * 
+	 * @deprecated<br>Use {@link RegionData#getReservoirIslandList()} from {@link ReservoirRegionDataStorage#getIsland(Level, BlockPos)}
 	 */
+	@Deprecated(forRemoval = true)
 	public static Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
 		return RESERVOIR_ISLAND_LIST;
 	}
