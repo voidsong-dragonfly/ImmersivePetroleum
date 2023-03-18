@@ -56,6 +56,7 @@ public class IPSaveData extends SavedData{
 				});
 				ImmersivePetroleum.log.debug("[ReservoirIslands]: Read {} islands for dim {}", list.size(), dimType.toString());
 			}
+			setDirty();
 		}
 	}
 	
