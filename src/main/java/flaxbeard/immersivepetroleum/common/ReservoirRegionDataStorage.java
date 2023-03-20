@@ -39,7 +39,6 @@ public class ReservoirRegionDataStorage extends SavedData{
 	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/RegionDataStorage");
 	
 	private static final String DATA_NAME = "ImmersivePetroleum-ReservoirRegions";
-	private static final String REGIONDATA_FOLDER = "ImmersivePetroleum-ReservoirRegions\\";
 	
 	private static ReservoirRegionDataStorage active_instance;
 	public static ReservoirRegionDataStorage get(){
@@ -216,7 +215,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	}
 	
 	private String getRegionFileName(ColumnPos regionPos){
-		return REGIONDATA_FOLDER + regionPos.x + "_" + regionPos.z;
+		return DATA_NAME + File.separatorChar + regionPos.x + "_" + regionPos.z;
 	}
 	
 	// -----------------------------------------------------------------------------
