@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.Multimap;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -65,28 +66,34 @@ public class IslandCommand{
 	
 	private static int locate(CommandContext<CommandSourceStack> command){
 		CommandSourceStack source = command.getSource();
-		BlockPos pos = source.getEntity().blockPosition();
-		double dx = pos.getX() + 0.5;
-		double dz = pos.getZ() + 0.5;
+		BlockPos srcPos = source.getEntity().blockPosition();
+		double dx = srcPos.getX() + 0.5;
+		double dz = srcPos.getZ() + 0.5;
 		int range = 64;
 		int rangeSqr = range * range;
 		
 		Set<ReservoirIsland> nearby = new HashSet<>();
 		
 		ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
-		final ColumnPos playerRegionPos = storage.toRegionCoords(pos);
+		
+		RegionData[] regions = {
+				storage.getRegionData(storage.toRegionCoords(srcPos.offset(256, 0, -256))),
+				storage.getRegionData(storage.toRegionCoords(srcPos.offset(256, 0, 256))),
+				storage.getRegionData(storage.toRegionCoords(srcPos.offset(-256, 0, -256))),
+				storage.getRegionData(storage.toRegionCoords(srcPos.offset(-256, 0, 256))),
+		};
+		
 		final ResourceKey<Level> dimKey = source.getLevel().dimension();
-		for(int rz = -1;rz <= 1;rz++){
-			for(int rx = -1;rx <= 1;rx++){
-				RegionData rd = storage.getRegionData(new ColumnPos(playerRegionPos.x + rx, playerRegionPos.z + rz));
-				if(rd != null){
-					synchronized(rd.getReservoirIslandList()){
-						rd.getReservoirIslandList().get(dimKey).forEach(island -> {
-							if(island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr){
-								nearby.add(island);
-							}
-						});
-					}
+		for(int i = 0;i < regions.length;i++){
+			RegionData rd = regions[i];
+			if(rd != null){
+				Multimap<ResourceKey<Level>, ReservoirIsland> islands = rd.getReservoirIslandList();
+				synchronized(islands){
+					islands.get(dimKey).forEach(island -> {
+						if(island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr){
+							nearby.add(island);
+						}
+					});
 				}
 			}
 		}
@@ -108,7 +115,7 @@ public class IslandCommand{
 						double xa = (x + 0.5) - dx;
 						double za = (z + 0.5) - dz;
 						double dst = xa * xa + za * za;
-						if((dst < range && dst < smallestDistance)){
+						if(dst < smallestDistance){
 							p = new ColumnPos(x, z);
 							smallestDistance = dst;
 							closestIsland = island;
@@ -119,7 +126,7 @@ public class IslandCommand{
 		}
 		
 		if(closestIsland == null){
-			CommandUtils.sendStringError(source, "Something bad happend");
+			CommandUtils.sendStringError(source, "List should not be empty. Please report this bug. (Immersive Petroleum)");
 			return Command.SINGLE_SUCCESS;
 		}
 		
