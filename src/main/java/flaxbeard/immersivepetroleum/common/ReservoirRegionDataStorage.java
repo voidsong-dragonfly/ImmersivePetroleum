@@ -320,7 +320,9 @@ public class ReservoirRegionDataStorage extends SavedData{
 		 * @return {@link ImmutableMultimap}<{@link ResourceKey}<{@link Level}>, {@link ReservoirIsland}>
 		 */
 		public Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
-			return ImmutableMultimap.copyOf(this.reservoirlist);
+			synchronized(this.reservoirlist){
+				return ImmutableMultimap.copyOf(this.reservoirlist);
+			}
 		}
 		
 		@Override
