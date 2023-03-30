@@ -69,7 +69,7 @@ public class IslandCommand{
 		BlockPos srcPos = source.getEntity().blockPosition();
 		double dx = srcPos.getX() + 0.5;
 		double dz = srcPos.getZ() + 0.5;
-		int range = 64;
+		int range = 128;
 		int rangeSqr = range * range;
 		
 		Set<ReservoirIsland> nearby = new HashSet<>();
