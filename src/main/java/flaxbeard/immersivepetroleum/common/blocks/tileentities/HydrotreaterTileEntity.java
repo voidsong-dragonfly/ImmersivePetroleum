@@ -226,7 +226,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 				if(this.tanks[TANK_INPUT_A].getFluidAmount() > 0 || this.tanks[TANK_INPUT_B].getFluidAmount() > 0){
 					HighPressureRefineryRecipe recipe = HighPressureRefineryRecipe.findRecipe(this.tanks[TANK_INPUT_A].getFluid(), this.tanks[TANK_INPUT_B].getFluid());
 					
-					if(recipe != null && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
+					if(recipe != null && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()/recipe.getTotalProcessTime()){
 						if(this.tanks[TANK_INPUT_A].getFluidAmount() >= recipe.getInputFluid().getAmount() && (recipe.getSecondaryInputFluid() == null || (this.tanks[TANK_INPUT_B].getFluidAmount() >= recipe.getSecondaryInputFluid().getAmount()))){
 							int[] inputs, inputAmounts;
 							

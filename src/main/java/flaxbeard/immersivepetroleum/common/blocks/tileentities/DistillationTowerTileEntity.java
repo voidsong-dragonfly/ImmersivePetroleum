@@ -165,7 +165,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 			if(this.energyStorage.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 				if(this.tanks[TANK_INPUT].getFluidAmount() > 0){
 					DistillationTowerRecipe recipe = DistillationTowerRecipe.findRecipe(this.tanks[TANK_INPUT].getFluid());
-					if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()){
+					if(recipe != null && this.tanks[TANK_INPUT].getFluidAmount() >= recipe.getInputFluid().getAmount() && this.energyStorage.getEnergyStored() >= recipe.getTotalProcessEnergy()/recipe.getTotalProcessTime()){
 						MultiblockProcessInMachine<DistillationTowerRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId).setInputTanks(TANK_INPUT);
 						if(addProcessToQueue(process, true)){
 							addProcessToQueue(process, false);
