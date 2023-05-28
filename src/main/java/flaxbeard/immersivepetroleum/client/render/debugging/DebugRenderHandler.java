@@ -57,7 +57,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -97,78 +100,88 @@ public class DebugRenderHandler{
 							BlockHitResult result = (BlockHitResult) rt;
 							Level world = player.level;
 							
-							List<Component> debugOut = new ArrayList<>();
-							BlockEntity te = world.getBlockEntity(result.getBlockPos());
+							BlockState blockState = world.getBlockState(result.getBlockPos());
 							
-							if(te instanceof GasGeneratorTileEntity gas){
-								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
+							List<Component> debugOut = new ArrayList<>();
+							
+							if(blockState.getBlock() instanceof EntityBlock){
+								BlockEntity te = world.getBlockEntity(result.getBlockPos());
 								
-							}else if(te instanceof IPTileEntityBase){
-								debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
-								
-								if(te instanceof AutoLubricatorTileEntity autolube){
-									FluidTank tank = autolube.tank;
-									FluidStack fs = tank.getFluid();
+								if(te instanceof GasGeneratorTileEntity gas){
+									debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
 									
-									debugOut.add(toText("isSlave").withStyle(autolube.isSlave ? ChatFormatting.GREEN : ChatFormatting.RED));
-									if(!autolube.isSlave){
-										debugOut.add(toText("Facing: " + autolube.facing.getName()));
-										debugOut.add(toText("Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+								}else if(te instanceof IPTileEntityBase){
+									debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
+									
+									if(te instanceof AutoLubricatorTileEntity autolube){
+										FluidTank tank = autolube.tank;
+										FluidStack fs = tank.getFluid();
+										
+										debugOut.add(toText("isSlave").withStyle(autolube.isSlave ? ChatFormatting.GREEN : ChatFormatting.RED));
+										if(!autolube.isSlave){
+											debugOut.add(toText("Facing: " + autolube.facing.getName()));
+											debugOut.add(toText("Tank: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
+										}
+										
+									}else if(te instanceof FlarestackTileEntity flare){
+									}else if(te instanceof WellTileEntity well){
+									}else if(te instanceof WellPipeTileEntity wellPipe){
 									}
 									
-								}else if(te instanceof FlarestackTileEntity flare){
-								}else if(te instanceof WellTileEntity well){
-								}else if(te instanceof WellPipeTileEntity wellPipe){
-								}
-								
-							}else if(te instanceof MultiblockPartBlockEntity<?> generic){
-								{
-									BlockPos tPos = generic.posInMultiblock;
-									if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
-										generic = generic.master();
-									}
-									Block block = generic.getBlockState().getBlock();
-									
-									debugOut.add(toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
-									
-									MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
-									
-									try{
-										name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
-									}catch(UnsupportedOperationException e){
-										// Don't care, skip if this is thrown
-									}
-									
-									if(generic instanceof PoweredMultiblockBlockEntity<?, ?> poweredGeneric){
-										name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
-										debugOut.add(toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
-									}
-									
-									synchronized(LubricatedHandler.lubricatedTiles){
-										for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
-											if(info.pos.equals(generic.getBlockPos())){
-												name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
+								}else if(te instanceof MultiblockPartBlockEntity<?> generic){
+									{
+										BlockPos tPos = generic.posInMultiblock;
+										if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
+											generic = generic.master();
+										}
+										Block block = generic.getBlockState().getBlock();
+										
+										debugOut.add(toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
+										
+										MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
+										
+										try{
+											name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
+										}catch(UnsupportedOperationException e){
+											// Don't care, skip if this is thrown
+										}
+										
+										if(generic instanceof PoweredMultiblockBlockEntity<?, ?> poweredGeneric){
+											name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
+											debugOut.add(toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
+										}
+										
+										synchronized(LubricatedHandler.lubricatedTiles){
+											for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
+												if(info.pos.equals(generic.getBlockPos())){
+													name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
+												}
 											}
 										}
+										
+										debugOut.add(name);
 									}
 									
-									debugOut.add(name);
+									if(te instanceof DistillationTowerTileEntity tower){
+										distillationtower(debugOut, tower);
+										
+									}else if(te instanceof CokerUnitTileEntity coker){
+										cokerunit(debugOut, coker);
+										
+									}else if(te instanceof HydrotreaterTileEntity treater){
+										hydrotreater(debugOut, treater);
+										
+									}else if(te instanceof OilTankTileEntity oiltank){
+										oiltank(debugOut, oiltank);
+										
+									}else if(te instanceof DerrickTileEntity derrick){
+										derrick(debugOut, derrick);
+									}
 								}
-								
-								if(te instanceof DistillationTowerTileEntity tower){
-									distillationtower(debugOut, tower);
-									
-								}else if(te instanceof CokerUnitTileEntity coker){
-									cokerunit(debugOut, coker);
-									
-								}else if(te instanceof HydrotreaterTileEntity treater){
-									hydrotreater(debugOut, treater);
-									
-								}else if(te instanceof OilTankTileEntity oiltank){
-									oiltank(debugOut, oiltank);
-									
-								}else if(te instanceof DerrickTileEntity derrick){
-									derrick(debugOut, derrick);
+							}else{
+								if(blockState.getBlock() instanceof RedStoneWireBlock){
+									debugOut.add(toText("Redstone Wire").withStyle(ChatFormatting.GOLD));
+									debugOut.add(toText("Power: " + blockState.getValue(RedStoneWireBlock.POWER)));
 								}
 							}
 							
