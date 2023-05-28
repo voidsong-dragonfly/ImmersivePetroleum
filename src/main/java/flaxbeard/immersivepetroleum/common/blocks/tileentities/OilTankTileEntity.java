@@ -383,10 +383,10 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 			() -> this.level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock()),
 			layer -> {
 				BlockPos masterPos = this.worldPosition.subtract(this.offsetToMaster);
-				for(int z = -1;z <= 1;z++){
-					for(int x = -1;x <= 1;x++){
-						BlockPos pos = masterPos.offset(x, layer + 1, z);
-						level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
+				for(int z = -2;z <= 2;z++){
+					for(int x = -2;x <= 2;x++){
+						BlockPos pos = masterPos.offset(x, layer, z);
+						this.level.updateNeighborsAt(pos, this.level.getBlockState(pos).getBlock());
 					}
 				}
 			});
