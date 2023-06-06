@@ -129,7 +129,7 @@ public class IPServerConfig{
 			builder.push("Generation");
 			
 			fuels = builder
-				.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_tick, flux_produced_per_tick")
+				.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_second, flux_produced_per_tick")
 				.defineList("generator_fuels",
 				    List.of("immersivepetroleum:naphtha, 9, 256",
 						    "immersivepetroleum:gasoline, 6, 256",
