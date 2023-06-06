@@ -921,7 +921,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			if(x == 2 && z == 1){
 				main.add(box(6, 0, 2 + off, 10, 16, 7 + off));
 			}else if(x == 2 && z == 3){
-				main.add(box(6, 0, 9 + off, 10, 16, 14 + off));
+				main.add(box(6, 0, 9 - off, 10, 16, 14 - off));
 			}else if(x == 3 && z == 2){
 				main.add(box(10 - off, 0, 6, 14, 16 - off, 10));
 			}
