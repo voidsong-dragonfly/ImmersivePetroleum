@@ -14,6 +14,9 @@
     "naphtha":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:naphtha_bucket"}]},
+    "bitumen":{"type":"item_display",
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:bitumen"}]},
     "naphtha_derivates":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:benzene_bucket"}, {"item":"immersivepetroleum:propylene_bucket"}, {"item":"immersivepetroleum:ethylene_bucket"}]},
@@ -25,5 +28,8 @@
         "items":[{"item":"immersivepetroleum:napalm_bucket"}]},
     "paraffin":{"type":"item_display",
         "type":"item_display",
-        "items":[{"item":"immersivepetroleum:paraffin_wax"}]}
+        "items":[{"item":"immersivepetroleum:paraffin_wax"}]},
+    "petroleum_coke":{"type":"item_display",
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:petcoke"}]}
 }
