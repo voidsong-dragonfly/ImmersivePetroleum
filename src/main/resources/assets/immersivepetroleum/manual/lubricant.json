@@ -1,4 +1,8 @@
 {
+	"lubricant0":{
+			"type":"item_display",
+			"items":[{"item":"immersivepetroleum:lubricant_bucket"}, {"item":"immersiveengineering:plantoil_bucket"}]
+	},
 	"lubricant1":{
 		"type": "crafting",
 		"recipe": "immersivepetroleum:oil_can"

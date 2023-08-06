@@ -28,8 +28,8 @@
         "items":[{"item":"immersivepetroleum:napalm_bucket"}]},
     "paraffin":{
         "type":"item_display",
-        "items":[{"item":"immersivepetroleum:paraffin_wax"}]},
+        "items":[{"item":"immersivepetroleum:paraffin_wax"}, {"item":"immersivepetroleum:paraffin_wax_block"}]},
     "petroleum_coke":{
         "type":"item_display",
-        "items":[{"item":"immersivepetroleum:petcoke"}]}
+        "items":[{"item":"immersivepetroleum:petcoke"}, {"item":"immersivepetroleum:petcoke_block"}]}
 }
