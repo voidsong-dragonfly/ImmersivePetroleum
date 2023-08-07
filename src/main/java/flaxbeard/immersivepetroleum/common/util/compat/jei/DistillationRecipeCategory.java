@@ -34,38 +34,28 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 	
 	@Override
 	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, DistillationTowerRecipe recipe, @Nonnull IFocusGroup focuses){
-		if(recipe.getInputFluid() != null){
-			int total = 0;
-			List<FluidStack> list = recipe.getInputFluid().getMatchingFluidStacks();
-			if(!list.isEmpty()){
-				for(FluidStack f:list){
-					total += f.getAmount();
-				}
-			}else{
-				total = 100;
+		int outputTotal = 0;
+		List<FluidStack> list = recipe.getFluidOutputs();
+		if(!list.isEmpty()){
+			for(FluidStack f:list){
+				outputTotal += f.getAmount();
 			}
-			
-			builder.addSlot(RecipeIngredientRole.INPUT, 9, 19)
-				.setFluidRenderer(total, false, 20, 51)
-				.setOverlay(this.tankOverlay, 0, 0)
-				.addIngredients(ForgeTypes.FLUID_STACK, list);
+
+			int currentHeight = 0;
+			for(FluidStack f:list){
+				builder.addSlot(RecipeIngredientRole.OUTPUT, 59, 21+currentHeight)
+					.setFluidRenderer(f.getAmount(), false, 20, (int)(50*(((float)f.getAmount())/outputTotal)))
+					.setOverlay(this.tankOverlay, 0, -(currentHeight+2))
+					.addIngredient(ForgeTypes.FLUID_STACK, f);
+				currentHeight += (int)(50*(((float)f.getAmount())/outputTotal));
+			}
 		}
-		
-		{
-			int total = 0;
-			List<FluidStack> list = recipe.getFluidOutputs();
-			if(!list.isEmpty()){
-				for(FluidStack f:list){
-					total += f.getAmount();
-				}
-			}else{
-				total = 100;
-			}
-			
-			builder.addSlot(RecipeIngredientRole.OUTPUT, 59, 19)
-				.setFluidRenderer(total, false, 20, 51)
+
+		if(recipe.getInputFluid() != null){
+			builder.addSlot(RecipeIngredientRole.INPUT, 9, 19)
+				.setFluidRenderer(outputTotal, false, 20, 51)
 				.setOverlay(this.tankOverlay, 0, 0)
-				.addIngredients(ForgeTypes.FLUID_STACK, list);
+				.addIngredients(ForgeTypes.FLUID_STACK, recipe.getInputFluid().getMatchingFluidStacks());
 		}
 	}
 	
