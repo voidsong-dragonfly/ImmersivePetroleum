@@ -129,6 +129,9 @@ public class IPContent{
 		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", e -> new IPFluid(e, 800, 900, false));
 		
 		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid();
+
+		public static final IPFluidEntry ETHANOL_SOLUTION = IPFluid.makeFluid("ethanol_solution", e -> new IPFluid(e, 850, 900, false));
+		public static final IPFluidEntry BIOCRUDE_SOLUTION = IPFluid.makeFluid("biocrude_solution", e -> new IPFluid(e, 850, 1200, false));
 		
 		private static void forceClassLoad(){
 		}

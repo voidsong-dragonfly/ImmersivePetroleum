@@ -1,0 +1,30 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:leaves",
+    "#minecraft:saplings",
+    "#minecraft:flowers",
+    "#forge:mushrooms",
+    "#forge:dusts/wood",
+    "minecraft:small_dripleaf",
+    "minecraft:big_dripleaf",
+    "minecraft:lily_pad",
+    "minecraft:seagrass",
+    "minecraft:dead_bush",
+    "minecraft:grass",
+    "minecraft:fern",
+    "minecraft:vine",
+    "minecraft:kelp",
+    "minecraft:hanging_roots",
+    "minecraft:moss_carpet",
+    "minecraft:bamboo",
+    "minecraft:stick",
+    "minecraft:twisting_vines",
+    "minecraft:weeping_vines",
+    "minecraft:warped_roots",
+    "minecraft:crimson_roots",
+    "minecraft:warped_fungus",
+    "minecraft:crimson_fungus",
+    "minecraft:nether_wart"
+  ]
+}

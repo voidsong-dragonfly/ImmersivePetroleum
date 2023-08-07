@@ -1,0 +1,21 @@
+{
+  "type": "immersivepetroleum:hydrotreater",
+  "time": 80,
+  "energy": 20480,
+  "result": {
+    "fluid": "immersivepetroleum:biocrude_solution",
+    "amount": 2000
+  },
+  "input": {
+    "tag": "forge:ethanol_solution",
+    "amount": 2000
+  },
+  "secondary_input": {
+    "tag": "minecraft:water",
+    "amount": 100
+  },
+  "secondary_result": {
+    "item": "immersivepetroleum:bitumen",
+    "chance": "0.45"
+  }
+}

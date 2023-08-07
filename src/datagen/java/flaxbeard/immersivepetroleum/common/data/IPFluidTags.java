@@ -80,5 +80,11 @@ public class IPFluidTags extends FluidTagsProvider{
 		
 		tag(IPTags.Fluids.gasoline_additives)
 			.add(IPContent.Fluids.GASOLINE_ADDITIVES.still().get());
+
+		tag(IPTags.Fluids.ethanol_solution)
+			.add(IPContent.Fluids.ETHANOL_SOLUTION.still().get());
+
+		tag(IPTags.Fluids.biocrude_solution)
+			.add(IPContent.Fluids.BIOCRUDE_SOLUTION.still().get());
 	}
 }

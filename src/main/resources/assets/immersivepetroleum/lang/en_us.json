@@ -41,6 +41,8 @@
 	"fluid.immersivepetroleum.lubricant_cracked": "Cracked Lubricant",
 	"fluid.immersivepetroleum.kerosene": "Kerosene",
 	"fluid.immersivepetroleum.gasoline_additives": "Gasoline Additives",
+	"fluid.immersivepetroleum.ethanol_solution": "Ethanol-Sludge Solution",
+	"fluid.immersivepetroleum.biocrude_solution": "Ethanol-Biocrude Solution",
 	
 	"_comment": "################## Items ##################",
 	
@@ -67,6 +69,8 @@
 	"item.immersivepetroleum.lubricant_cracked_bucket": "Bucket of Cracked Lubricant",
 	"item.immersivepetroleum.kerosene_bucket": "Bucket of Kerosene",
 	"item.immersivepetroleum.gasoline_additives_bucket": "Bucket of Gasoline Additives",
+	"item.immersivepetroleum.ethanol_solution_bucket": "Bucket of Ethanol-Sludge Solution",
+	"item.immersivepetroleum.biocrude_solution_bucket": "Bucket of Ethanol-Biocrude Solution",
 	"item.immersivepetroleum.paraffin_wax": "Paraffin Wax",
 
 	"item.immersivepetroleum.upgrade_reinforced_hull": "Reinforced Hull",

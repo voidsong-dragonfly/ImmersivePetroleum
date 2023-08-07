@@ -79,6 +79,12 @@ public class IPRecipes extends RecipeProvider{
 			.addInput(new IngredientWithSize(IETags.getTagsFor(EnumMetals.ALUMINUM).dust, 3))
 			.setEnergy(3200)
 			.build(this.out, rl("mixer/napalm"));
+
+		MixerRecipeBuilder.builder(new FluidStack(IPContent.Fluids.ETHANOL_SOLUTION.get(), 1000))
+			.addInput(new IngredientWithSize(IPTags.Items.biocrudeFeedstock, 2))
+			.addFluidTag(IETags.fluidEthanol, 1000)
+			.setEnergy(2400)
+			.build(out, rl("mixer/ethanol_solution"));
 		
 		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel, 322)
 			.build(this.out, rl("fuels/diesel"));
@@ -132,7 +138,17 @@ public class IPRecipes extends RecipeProvider{
 			.addInput(IPTags.Fluids.kerosene, 10)
 			.setTimeAndEnergy(1, 1024)
 			.build(this.out, rl("distillationtower/kerosene"));
-		
+
+		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
+				new FluidStack(IEFluids.ETHANOL.getStill(), 99),
+				new FluidStack(IPContent.Fluids.DIESEL.get(), 13),
+				new FluidStack(IPContent.Fluids.KEROSENE.get(), 10),
+			})
+			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
+			.addInput(IPTags.Fluids.biocrude_solution, 100)
+			.setTimeAndEnergy(1, 1024)
+			.build(this.out, rl("distillationtower/biocrude"));
+
 		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
 				new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
 				new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
@@ -226,6 +242,12 @@ public class IPRecipes extends RecipeProvider{
 			.addSecondaryInputFluid(FluidTags.WATER, 5)
 			.addItemWithChance(new ItemStack(IPContent.Items.PARAFFIN_WAX.get()), 0.024)
 			.build(out, rl("hydrotreater/lubricant_cracking"));
+
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.BIOCRUDE_SOLUTION.get(), 2000), 20480, 80)
+			.addInputFluid(new FluidTagInput(IPTags.Fluids.ethanol_solution, 2000))
+			.addSecondaryInputFluid(FluidTags.WATER, 100)
+			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.45)
+			.build(out, rl("hydrotreater/biocrude"));
 		
 		// PNC Compat
 		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 61440, 60)

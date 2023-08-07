@@ -36,6 +36,7 @@ public class IPTags{
 		public static final TagKey<Item> wax = createItemWrapper(ResourceUtils.forge("wax"));
 		public static final TagKey<Item> waxBlock = createItemWrapper(ResourceUtils.forge("storage_blocks/wax"));
 		public static final TagKey<Item> paraffinWaxBlock = createItemWrapper(ResourceUtils.forge("storage_blocks/wax/paraffin"));
+		public static final TagKey<Item> biocrudeFeedstock = createItemWrapper(ResourceUtils.ip("biocrude_feedstock"));
 	}
 	
 	public static class Fluids{
@@ -53,6 +54,8 @@ public class IPTags{
 		public static final TagKey<Fluid> lubricant_cracked = createFluidWrapper(ResourceUtils.forge("lubricant_cracked"));
 		public static final TagKey<Fluid> kerosene = createFluidWrapper(ResourceUtils.forge("kerosene"));
 		public static final TagKey<Fluid> gasoline_additives = createFluidWrapper(ResourceUtils.forge("gasoline_additives"));
+		public static final TagKey<Fluid> ethanol_solution = createFluidWrapper(ResourceUtils.forge("ethanol_solution"));
+		public static final TagKey<Fluid> biocrude_solution = createFluidWrapper(ResourceUtils.forge("biocrude_solution"));
 	}
 	
 	public static class Utility{
