@@ -41,19 +41,24 @@ public class HighPressureRefineryRecipeCategory extends IPRecipeCategory<HighPre
 	
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, HighPressureRefineryRecipe recipe, @Nonnull IFocusGroup focuses){
+		int primaryInputAmount = recipe.inputFluid.getAmount();
+		int secondaryInputAmount = recipe.inputFluidSecondary != null ? recipe.inputFluidSecondary.getAmount() : 0;
+		int outputAmount = recipe.output.getAmount();
+		int guiTankSize = Math.min(Math.max(Math.max(primaryInputAmount, secondaryInputAmount), outputAmount), 1000);
+
 		builder.addSlot(RecipeIngredientRole.INPUT, 25, 3)
-			.setFluidRenderer(1, false, 20, 51)
+			.setFluidRenderer(guiTankSize, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0)
 			.addIngredients(ForgeTypes.FLUID_STACK, recipe.inputFluid.getMatchingFluidStacks());
-		
+
 		IRecipeSlotBuilder secondary = builder.addSlot(RecipeIngredientRole.INPUT, 3, 3)
-			.setFluidRenderer(1, false, 20, 51)
+			.setFluidRenderer(guiTankSize, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0);
 		if(recipe.inputFluidSecondary != null)
 			secondary.addIngredients(ForgeTypes.FLUID_STACK, recipe.inputFluidSecondary.getMatchingFluidStacks());
 		
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 71, 3)
-			.setFluidRenderer(1, false, 20, 51)
+			.setFluidRenderer(guiTankSize, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0)
 			.addIngredient(ForgeTypes.FLUID_STACK, recipe.output);
 		
@@ -69,7 +74,7 @@ public class HighPressureRefineryRecipeCategory extends IPRecipeCategory<HighPre
 		Font font = MCUtil.getFont();
 		
 		int time = recipe.getTotalProcessTime();
-		int energy = recipe.getTotalProcessEnergy();
+		int energy = recipe.getTotalProcessEnergy()/recipe.getTotalProcessTime();
 		int chance = (int) (100 * recipe.chance);
 		
 		matrix.pushPose();

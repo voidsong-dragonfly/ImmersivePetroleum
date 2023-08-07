@@ -45,39 +45,19 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	
 	@Override
 	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, CokerUnitRecipe recipe, @Nonnull IFocusGroup focuses){
-		{
-			int total = 0;
-			List<FluidStack> list = recipe.inputFluid.getMatchingFluidStacks();
-			if(!list.isEmpty()){
-				for(FluidStack f:list){
-					total += f.getAmount();
-				}
-			}else{
-				total = 100;
-			}
-			
-			builder.addSlot(RecipeIngredientRole.INPUT, 2, 2)
-				.setFluidRenderer(total, false, 20, 51)
-				.setOverlay(this.tankOverlay, 0, 0)
-				.addIngredients(ForgeTypes.FLUID_STACK, list);
-		}
-		
-		{
-			int total = 0;
-			List<FluidStack> list = recipe.outputFluid.getMatchingFluidStacks();
-			if(!list.isEmpty()){
-				for(FluidStack f:list){
-					total += f.getAmount();
-				}
-			}else{
-				total = 100;
-			}
-			
-			builder.addSlot(RecipeIngredientRole.OUTPUT, 50, 2)
-				.setFluidRenderer(total, false, 20, 51)
-				.setOverlay(this.tankOverlay, 0, 0)
-				.addIngredients(ForgeTypes.FLUID_STACK, list);
-		}
+		int inputAmount = recipe.inputFluid.getAmount();
+		int outputAmount = recipe.outputFluid.getAmount();
+		int guiTankSize = Math.max(inputAmount, outputAmount);
+
+		builder.addSlot(RecipeIngredientRole.INPUT, 2, 2)
+			.setFluidRenderer(guiTankSize, false, 20, 51)
+			.setOverlay(this.tankOverlay, 0, 0)
+			.addIngredients(ForgeTypes.FLUID_STACK, recipe.inputFluid.getMatchingFluidStacks());
+
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 50, 2)
+			.setFluidRenderer(guiTankSize, false, 20, 51)
+			.setOverlay(this.tankOverlay, 0, 0)
+			.addIngredients(ForgeTypes.FLUID_STACK, recipe.outputFluid.getMatchingFluidStacks());
 		
 		builder.addSlot(RecipeIngredientRole.INPUT, 4, 58)
 			.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.inputItem.getMatchingStacks()));
@@ -94,7 +74,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 		Font font = MCUtil.getFont();
 		
 		int time = (recipe.getTotalProcessTime() + 2 + 5) * recipe.inputItem.getCount();
-		int energy = recipe.getTotalProcessEnergy();
+		int energy = recipe.getTotalProcessEnergy()/recipe.getTotalProcessTime();
 		
 		matrix.pushPose();
 		String text0 = I18n.get("desc.immersiveengineering.info.ift", Utils.fDecimal(energy));
