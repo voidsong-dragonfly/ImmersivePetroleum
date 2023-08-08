@@ -1,0 +1,6 @@
+{
+	"molotov":{
+		"type":"item_display",
+		"items":[{"item":"immersivepetroleum:gasoline_bottle"}, {"item":"immersivepetroleum:molotov"}]
+	}
+}
