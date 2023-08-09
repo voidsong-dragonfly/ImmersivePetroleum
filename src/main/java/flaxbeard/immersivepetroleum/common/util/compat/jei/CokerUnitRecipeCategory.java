@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +25,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 	public static final ResourceLocation ID = ResourceUtils.ip("cokerunit");
