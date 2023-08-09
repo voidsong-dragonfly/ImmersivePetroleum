@@ -275,5 +275,8 @@
 	"_comment": "################## Subtitles ##################",
 	
 	"subtitle.immersivepetroleum.projector": "Projector whirring",
-	"subtitle.immersivepetroleum.flarestack_fire":"Flarestack fire wooshing"
+	"subtitle.immersivepetroleum.flarestack_fire":"Flarestack fire wooshing",
+	
+	"_comment": "##################### JEI #####################",
+	"desc.immersivepetroleum.compat.jei.distillation.byproduct": "Secondary Output"
 }

@@ -32,6 +32,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
@@ -115,7 +116,11 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 				Tuple<Integer, Double> t;
 				if((t = this.map.get(stack.getItem().getRegistryName())) != null){
 					double chance = t.getB().doubleValue();
-					tooltip.add(0, new TextComponent("Secondary Output").withStyle(ChatFormatting.GOLD, ChatFormatting.UNDERLINE));
+					
+					Component text = new TranslatableComponent("desc.immersivepetroleum.compat.jei.distillation.byproduct")
+							.withStyle(ChatFormatting.GOLD, ChatFormatting.UNDERLINE);
+					
+					tooltip.add(0, text);
 					tooltip.add(2, toTextComponent(chance));
 				}
 			}
