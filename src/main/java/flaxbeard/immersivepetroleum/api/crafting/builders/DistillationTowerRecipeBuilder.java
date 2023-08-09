@@ -110,7 +110,6 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 	public static Tuple<ItemStack, Double> deserializeItemStackWithChance(JsonObject jsonObject){
 		if(jsonObject.has("chance") && jsonObject.has("item")){
 			double chance = jsonObject.get("chance").getAsDouble();
-			jsonObject.remove("chance");
 			ItemStack stack = ShapedRecipe.itemStackFromJson(jsonObject);
 			return new Tuple<>(stack, chance);
 		}
