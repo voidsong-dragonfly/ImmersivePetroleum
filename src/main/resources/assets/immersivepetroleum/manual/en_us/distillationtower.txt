@@ -4,7 +4,7 @@ Environmentally Unfriendly
 It consists of a heating unit and a fractionation column.<np>
 To form the structure, assemble it as shown on the previous page and use the Engineer's Hammer on the redstone engineering block.
 
-Energy is input to the plug at the top of the heating unit, and the fluid to be separated is input to the bottom the unit. Applying a redstone signal to the control panel will halt the machine's process, this behavior can be inverted by use of the Engineer's Screwdriver.
+Energy is input through the plug at the top of the heating unit, and the fluid to be separated is input to the bottom the unit. Applying a redstone signal to the control panel will halt the machine's process, this behavior can be inverted by use of the Engineer's Screwdriver.
 
 The produced fluid mix is output from the side hatch marked with an orange dot; the Bitumen through the front hatch.
 

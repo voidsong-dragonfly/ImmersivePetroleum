@@ -5,7 +5,7 @@ Crude oil is a sticky, black substance that seeps from <link;immersivepetroleum:
 
 Crude oil can be separated in the <link;immersivepetroleum:distillationtower;§n§oDistillation Tower§r> once it is extracted from reservoirs.
 <&lubricant>
-Lubricant is the heaviest fraction immediately distillable from <link;immersivepetroleum:fluids;§n§ocrude oil§r;crude>, and is best used to lubricate machines to high efficiency. It can be processed into <link;immersivepetroleum:fluids;§n§oparaffin wax§r;paraffin>
+Lubricant is the heaviest fraction immediately distillable from <link;immersivepetroleum:fluids;§n§ocrude oil§r;crude>, and is best used to increase the working speed of machines via lubrication. It can be processed into <link;immersivepetroleum:fluids;§n§oparaffin wax§r;paraffin>.
 
 It can be burned in the flare stack or cracked into <link;immersivepetroleum:fluids;§n§odiesel§r;diesel> and <link;immersivepetroleum:fluids;§n§okerosene§r;kerosene> if such activities are not useful.
 <&diesel>
@@ -29,7 +29,7 @@ Bitumen is created from the distillation of <link;immersivepetroleum:fluids;§n�
 <&naphtha_derivates>
 Benzene, propylene, and ethylene are not immediately distillable from crude oil, these lighter feedstocks must be distilled from <link;immersivepetroleum:plastics;§n§ocracked naphtha§r;plastics1>.
 
-Benzene, a liquid, can be used as light fuel, but propylene and ethylene cannot. All three are used as chemical feedstock for <link;immersiveengineering:plastic;§n§ophenolic resin§r>.
+Benzene, can be used as light fuel, but propylene and ethylene cannot. All three are used as chemical feedstock for <link;immersiveengineering:plastic;§n§ophenolic resin§r>.
 <&gasoline>
 Gasoline is a high-quality light fuel suitable for the <link;immersivepetroleum:portablegenerator;§n§oPortable Generator§r> or <link;immersivepetroleum:speedboat;§n§oMotorboat§r>, and can also be used in <link;immersivepetroleum:fluids;§n§onapalm§r;napalm>.
 

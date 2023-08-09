@@ -2,7 +2,7 @@ Lubrication
 Slip and Slide
 Lubricated bearings and gearboxes are present in almost every machine, but heavy-duty gearboxes and bearings benefit from their lubricant being regularly flushed and replaced.
 
-Machines with high mechanical loads, such as the <link;immersivepetroleum:pumpjack;§n§oPumpjack§r>, <link;excavator;§n§oExcavator§r>, and <link;crusher;§n§oCrusher§r>, can be actively lubricated to increase their speed by 25%.
+Machines with high mechanical loads — such as the <link;immersivepetroleum:pumpjack;§n§oPumpjack§r>, <link;excavator;§n§oExcavator§r>, and <link;crusher;§n§oCrusher§r> — can be actively lubricated to increase their speed by 25%.
 
 Iron Golems can be lubricated, temporarily increasing their speed and strength.<np>
 <&lubricant0>
