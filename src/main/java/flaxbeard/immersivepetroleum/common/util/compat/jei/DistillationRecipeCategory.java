@@ -34,7 +34,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -97,15 +96,14 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 	}
 	
 	private static class TooltipHandler implements IRecipeSlotTooltipCallback{
-		private final Map<ResourceLocation, Tuple<Integer, Double>> map = new HashMap<>();
+		private final Map<ResourceLocation, Double> map = new HashMap<>();
 		
 		public TooltipHandler(DistillationTowerRecipe recipe){
 			NonNullList<ItemStack> list = recipe.getItemOutputs();
 			for(int i = 0;i < list.size();i++){
 				ItemStack stack = list.get(i);
 				
-				Tuple<Integer, Double> t = new Tuple<>(stack.getCount(), recipe.chances()[i]);
-				this.map.put(stack.getItem().getRegistryName(), t);
+				this.map.put(stack.getItem().getRegistryName(), recipe.chances()[i]);
 			}
 		}
 		
@@ -113,9 +111,9 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 		public void onTooltip(IRecipeSlotView recipeSlotView, List<Component> tooltip){
 			ITypedIngredient<?> type = recipeSlotView.getDisplayedIngredient().orElse(null);
 			if(type != null && type.getIngredient() instanceof ItemStack stack){
-				Tuple<Integer, Double> t;
+				Double t;
 				if((t = this.map.get(stack.getItem().getRegistryName())) != null){
-					double chance = t.getB().doubleValue();
+					double chance = t.doubleValue();
 					
 					Component text = new TranslatableComponent("desc.immersivepetroleum.compat.jei.distillation.byproduct")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.UNDERLINE);
