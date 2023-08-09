@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
@@ -27,30 +28,35 @@ public class DistillationTowerRecipeSerializer extends IERecipeSerializer<Distil
 	public DistillationTowerRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
 		JsonArray fluidResults = GsonHelper.getAsJsonArray(json, "results");
-		JsonArray itemResults = GsonHelper.getAsJsonArray(json, "byproducts");
 		
 		FluidStack[] fluidOutput = new FluidStack[fluidResults.size()];
 		for(int i = 0;i < fluidOutput.length;i++)
 			fluidOutput[i] = ApiUtils.jsonDeserializeFluidStack(fluidResults.get(i).getAsJsonObject());
 		
-		List<ItemStack> byproducts = new ArrayList<>(0);
-		List<Double> chances = new ArrayList<>(0);
-		for(int i = 0;i < itemResults.size();i++){
-			Tuple<ItemStack, Double> chancedStack = DistillationTowerRecipeBuilder.deserializeItemStackWithChance(itemResults.get(i).getAsJsonObject());
+		ItemStack[] array0 = new ItemStack[0];
+		double[] array1 = new double[0];
+		if(json.has("byproducts")){
+			JsonArray itemResults = GsonHelper.getAsJsonArray(json, "byproducts");
 			
-			byproducts.add(chancedStack.getA());
-			chances.add(chancedStack.getB());
+			List<ItemStack> byproducts = new ArrayList<>(0);
+			List<Double> chances = new ArrayList<>(0);
+			for(int i = 0;i < itemResults.size();i++){
+				Tuple<ItemStack, Double> chancedStack = DistillationTowerRecipeBuilder.deserializeItemStackWithChance(itemResults.get(i).getAsJsonObject());
+				
+				byproducts.add(chancedStack.getA());
+				chances.add(chancedStack.getB());
+			}
+			
+			if(byproducts.size() != chances.size()){
+				int d = Math.abs(chances.size() - byproducts.size());
+				throw new JsonSyntaxException(d + " byproduct" + (d > 1 ? "s have" : " has") + " a missing value or too many.");
+			}
+			
+			array0 = byproducts.toArray(new ItemStack[0]);
+			array1 = new double[chances.size()];
+			for(int i = 0;i < chances.size();i++)
+				array1[i] = chances.get(i).doubleValue();
 		}
-		
-		if(byproducts.size() != chances.size()){
-			int d = Math.abs(chances.size() - byproducts.size());
-			throw new com.google.gson.JsonSyntaxException(d + " byproduct" + (d > 1 ? "s have" : " has") + " a missing value or too many.");
-		}
-		
-		ItemStack[] array0 = byproducts.toArray(new ItemStack[0]);
-		double[] array1 = new double[chances.size()];
-		for(int i = 0;i < chances.size();i++)
-			array1[i] = chances.get(i);
 		
 		int energy = GsonHelper.getAsInt(json, "energy");
 		int time = GsonHelper.getAsInt(json, "time");

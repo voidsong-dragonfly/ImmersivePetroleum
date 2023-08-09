@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -61,14 +62,14 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 	}
 	
 	/**
-	 * Can be called multiple times to add more byproducts to the recipe.
+	 * Can be called multiple times to add more byproducts to the recipe. Or never to not have any byproducts.
 	 * 
 	 * @param byproduct {@link ItemStack} to output as byproduct
 	 * @param chance    0.0 to 1.0 (clamped)
 	 * @return {@link DistillationTowerRecipeBuilder} self for chaining
 	 */
 	public DistillationTowerRecipeBuilder addByproduct(ItemStack byproduct, double chance){
-		this.byproducts.add(new Tuple<>(byproduct, Math.max(Math.min(chance, 1.0), 0.0)));
+		this.byproducts.add(new Tuple<>(byproduct, Mth.clamp(chance, 0.0, 1.0)));
 		return this;
 	}
 	
@@ -108,8 +109,11 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 	}
 	
 	public static Tuple<ItemStack, Double> deserializeItemStackWithChance(JsonObject jsonObject){
-		if(jsonObject.has("chance") && jsonObject.has("item")){
-			double chance = jsonObject.get("chance").getAsDouble();
+		if(jsonObject.has("item")){
+			double chance = 1.0;
+			if(jsonObject.has("chance")){
+				chance = jsonObject.get("chance").getAsDouble();
+			}
 			ItemStack stack = ShapedRecipe.itemStackFromJson(jsonObject);
 			return new Tuple<>(stack, chance);
 		}

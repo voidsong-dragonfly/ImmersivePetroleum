@@ -128,7 +128,6 @@ public class IPRecipes extends RecipeProvider{
 				new FluidStack(IPContent.Fluids.GASOLINE_ADDITIVES.get(), 3),
 				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 5),
 			})
-			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
 			.addInput(IPTags.Fluids.kerosene, 10)
 			.setTimeAndEnergy(1, 1024)
 			.build(this.out, rl("distillationtower/kerosene"));
@@ -138,7 +137,6 @@ public class IPRecipes extends RecipeProvider{
 				new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
 				new FluidStack(IPContent.Fluids.BENZENE.get(), 2),
 			})
-			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
 			.addInput(IPTags.Fluids.naphtha_cracked, 10)
 			.setTimeAndEnergy(1, 1024)
 			.build(this.out, rl("distillationtower/naphtha_cracking"));
@@ -147,7 +145,6 @@ public class IPRecipes extends RecipeProvider{
 				new FluidStack(IPContent.Fluids.KEROSENE.get(), 6),
 				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 10),
 			})
-			.addByproduct(new ItemStack(IPContent.Items.PETCOKEDUST.get()), 0.0)
 			.addInput(IPTags.Fluids.lubricant_cracked, 12)
 			.setTimeAndEnergy(1, 1024)
 			.build(this.out, rl("distillationtower/lubricant_cracking"));

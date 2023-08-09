@@ -70,13 +70,17 @@ public class DistillationTowerRecipe extends IPMultiblockRecipe{
 	
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(BlockEntity tile){
+		if(this.itemOutput.length == 0 && this.chances.length == 0)
+			return NonNullList.create();
+		
+		Level level = tile.getLevel();
 		NonNullList<ItemStack> output = NonNullList.create();
-		for(int i = 0;i < itemOutput.length;i++){
-			Level level = tile.getLevel();
-			if(level.random.nextFloat() <= chances[i]){
-				output.add(itemOutput[i]);
+		for(int i = 0;i < this.itemOutput.length;i++){
+			if(level.random.nextFloat() <= this.chances[i]){
+				output.add(this.itemOutput[i]);
 			}
 		}
+		
 		return output;
 	}
 	
