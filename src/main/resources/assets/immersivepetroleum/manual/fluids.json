@@ -14,16 +14,22 @@
     "naphtha":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:naphtha_bucket"}]},
+    "bitumen":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:bitumen"}]},
     "naphtha_derivates":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:benzene_bucket"}, {"item":"immersivepetroleum:propylene_bucket"}, {"item":"immersivepetroleum:ethylene_bucket"}]},
-    "gasoline":{"type":"item_display",
+    "gasoline":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:gasoline_bucket"}, {"item":"immersivepetroleum:gasoline_additives_bucket"}]},
-    "napalm":{"type":"item_display",
+    "napalm":{
         "type":"item_display",
         "items":[{"item":"immersivepetroleum:napalm_bucket"}]},
-    "paraffin":{"type":"item_display",
+    "paraffin":{
         "type":"item_display",
-        "items":[{"item":"immersivepetroleum:paraffin_wax"}]}
+        "items":[{"item":"immersivepetroleum:paraffin_wax"}, {"item":"immersivepetroleum:paraffin_wax_block"}]},
+    "petroleum_coke":{
+        "type":"item_display",
+        "items":[{"item":"immersivepetroleum:petcoke"}, {"item":"immersivepetroleum:petcoke_block"}]}
 }

@@ -1,7 +1,7 @@
 {
 	"plastics0":{
 		"type":"item_display",
-		"items":[{"item":"immersivepetroleum:naphtha_bucket"}]},
+		"items":[{"item":"immersiveengineering:phenolic_resin_bucket"}, {"item":"immersiveengineering:plate_duroplast"}, {"item":"immersiveengineering:duroplast"}]},
 	"plastics1":{
 		"type":"item_display",
 		"items":[{"item":"immersivepetroleum:naphtha_cracked_bucket"}]},
