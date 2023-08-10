@@ -55,7 +55,7 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 50, 2)
 			.setFluidRenderer(guiTankSize, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0)
-			.addIngredients(ForgeTypes.FLUID_STACK, recipe.outputFluid.getMatchingFluidStacks());
+			.addIngredient(ForgeTypes.FLUID_STACK, recipe.outputFluid);
 		
 		builder.addSlot(RecipeIngredientRole.INPUT, 4, 58)
 			.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.inputItem.getMatchingStacks()));

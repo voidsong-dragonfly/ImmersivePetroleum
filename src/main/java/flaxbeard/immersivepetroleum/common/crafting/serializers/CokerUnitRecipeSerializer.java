@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.google.gson.JsonObject;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
@@ -15,12 +16,13 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.fluids.FluidStack;
 
 public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecipe>{
 	
 	@Override
 	public CokerUnitRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
-		FluidTagInput outputFluid = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "resultfluid"));
+		FluidStack outputFluid = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "resultfluid"));
 		FluidTagInput inputFluid = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "inputfluid"));
 		
 		Lazy<ItemStack> outputItem = readOutput(json.get("result"));
@@ -38,7 +40,7 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 		ItemStack outputItem = buffer.readItem();
 		
 		FluidTagInput inputFluid = FluidTagInput.read(buffer);
-		FluidTagInput outputFluid = FluidTagInput.read(buffer);
+		FluidStack outputFluid = FluidStack.readFromPacket(buffer);
 		
 		int energy = buffer.readInt();
 		int time = buffer.readInt();
@@ -52,7 +54,7 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 		buffer.writeItem(recipe.outputItem.get());
 		
 		recipe.inputFluid.write(buffer);
-		recipe.outputFluid.write(buffer);
+		recipe.outputFluid.writeToPacket(buffer);
 		
 		buffer.writeInt(recipe.getTotalProcessEnergy());
 		buffer.writeInt(recipe.getTotalProcessTime());

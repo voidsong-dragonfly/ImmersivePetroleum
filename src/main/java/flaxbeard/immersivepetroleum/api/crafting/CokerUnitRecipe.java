@@ -82,12 +82,12 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	// Diesel Output -> Fluid Out
 	
 	public final Lazy<ItemStack> outputItem;
-	public final FluidTagInput outputFluid;
+	public final FluidStack outputFluid;
 	
 	public final IngredientWithSize inputItem;
 	public final FluidTagInput inputFluid;
 	
-	public CokerUnitRecipe(ResourceLocation id, Lazy<ItemStack> outputItem2, FluidTagInput outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
+	public CokerUnitRecipe(ResourceLocation id, Lazy<ItemStack> outputItem2, FluidStack outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
 		super(ItemStack.EMPTY, IPRecipeTypes.COKER, id);
 		this.inputFluid = inputFluid;
 		this.inputItem = inputItem;

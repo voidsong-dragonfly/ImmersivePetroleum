@@ -1097,7 +1097,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 							if(this.timer >= (this.recipe.getTotalProcessTime() * this.recipe.inputItem.getCount())){
 								this.timer = 0;
 								
-								this.tank.fill(Utils.copyFluidStackWithAmount(this.recipe.outputFluid.getMatchingFluidStacks().get(0), this.recipe.outputFluid.getAmount(), false), FluidAction.EXECUTE);
+								this.tank.fill(Utils.copyFluidStackWithAmount(this.recipe.outputFluid, this.recipe.outputFluid.getAmount(), false), FluidAction.EXECUTE);
 								this.inputAmount--;
 								this.outputAmount++;
 								

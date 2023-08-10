@@ -24,6 +24,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.fluids.FluidStack;
 
 @ZenRegister
 @Document("mods/immersivepetroleum/Coker")
@@ -61,7 +62,7 @@ public class CokerUnitRecipeTweaker implements IRecipeManager<CokerUnitRecipe>{
 	 */
 	@Method
 	public void remove(IFluidStack output){
-		CokerUnitRecipe.recipes.values().removeIf(recipe -> recipe.outputFluid.testIgnoringAmount(output.getInternal()));
+		CokerUnitRecipe.recipes.values().removeIf(recipe -> recipe.outputFluid.isFluidEqual(output.getInternal()));
 	}
 	
 	/**
@@ -81,11 +82,11 @@ public class CokerUnitRecipeTweaker implements IRecipeManager<CokerUnitRecipe>{
 	 * @docParam energy 1024
 	 */
 	@Method
-	public void addRecipe(String name, IItemStack inputItem, IItemStack outputItem, Many<KnownTag<Fluid>> inputFluid, Many<KnownTag<Fluid>> outputFluid, int energy){
+	public void addRecipe(String name, IItemStack inputItem, IItemStack outputItem, Many<KnownTag<Fluid>> inputFluid, IFluidStack outputFluid, int energy){
 		name = fixRecipeName(name);
 		
 		ResourceLocation id = ResourceUtils.ct("cokerunit/" + name);
-		FluidTagInput outFluid = new FluidTagInput(outputFluid.getData().getTagKey(), outputFluid.getAmount());
+		FluidStack outFluid = outputFluid.getInternal();
 		FluidTagInput inFluid = new FluidTagInput(inputFluid.getData().getTagKey(), inputFluid.getAmount());
 		
 		IngredientWithSize inStack = new IngredientWithSize(Ingredient.of(inputItem.getInternal()), inputItem.getAmount());
