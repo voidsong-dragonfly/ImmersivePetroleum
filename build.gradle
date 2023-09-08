@@ -19,7 +19,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 version = '4.2.0-22'
 group = 'flaxbeard.immersivepetroleum'
-archivesBaseName = 'ImmersivePetroleum-1.18.2'
+archivesBaseName = 'ImmersivePetroleum-${version_minecraft}'
 
 repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }		 // IE & CT Files
@@ -118,16 +118,16 @@ dependencies {
 	minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
 	
 	implementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}")
-	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145:api")
+	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:api")
 	datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
-	implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
-	implementation fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:3913972")
+	//implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
+	//implementation fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:3913972")
 
 	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${version_ct}")
 	
-	runtimeOnly fg.deobf("mezz.jei:jei-${version_minecraft}:${version_jei}")
-	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}:${version_jei}:api")
+	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}")
+	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
 	
     compileOnly fg.deobf("org.squiddev:cc-tweaked-${version_minecraft}:${version_cctweaked}")
 }
