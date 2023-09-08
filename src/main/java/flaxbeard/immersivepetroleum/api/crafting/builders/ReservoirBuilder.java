@@ -10,6 +10,7 @@ import com.google.gson.JsonPrimitive;
 
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
@@ -85,7 +86,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @return {@link ReservoirBuilder}
 	 */
 	public ReservoirBuilder setFluid(Fluid fluid){
-		this.fluid = fluid.getRegistryName().toString();
+		this.fluid = RegistryUtils.getRegistryNameOf(fluid).toString();
 		return this;
 	}
 	
