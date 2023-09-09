@@ -22,6 +22,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	
@@ -56,7 +57,7 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 			
 			matrix.translate(0.5, 0.0, 0.5);
 			matrix.mulPose(new Quaternion(Y_AXIS, rot, true));
-			List<BakedQuad> quads = f.apply(DERRICK_PIPE_RL).getQuads(null, null, null, EmptyModelData.INSTANCE); //Why's this passing null as the rand? It shouldn't be
+			List<BakedQuad> quads = f.apply(DERRICK_PIPE_RL).getQuads(null, null, null, ModelData.EMPTY); //Why's this passing null as the rand? It shouldn't be
 			Pose last = matrix.last();
 			VertexConsumer solid = buffer.getBuffer(RenderType.solid());
 			for(BakedQuad quad:quads){

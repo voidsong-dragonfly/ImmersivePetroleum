@@ -49,12 +49,14 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.model.EmptyModel;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -114,7 +116,7 @@ public class ClientEventHandler{
 													
 													BlockState state = IPContent.Blocks.AUTO_LUBRICATOR.get().defaultBlockState().setValue(AutoLubricatorBlock.FACING, targetFacing);
 													BakedModel model = blockDispatcher.getBlockModel(state);
-													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
 													
 												}
 												matrix.popPose();
@@ -240,7 +242,7 @@ public class ClientEventHandler{
 					VertexConsumer builder = ItemOverlayUtils.getHudElementsBuilder(buffer);
 					
 					int rightOffset = 0;
-					if(MCUtil.getOptions().showSubtitles)
+					if(MCUtil.getOptions().showSubtitles().get())
 						rightOffset += 100;
 					float dx = scaledWidth - rightOffset - 16;
 					float dy = scaledHeight + offset;
@@ -311,7 +313,7 @@ public class ClientEventHandler{
 	
 	@SubscribeEvent
 	public void handleFireRender(RenderPlayerEvent.Pre event){
-		Player entity = event.getPlayer();
+		Player entity = event.getEntity();
 		if(entity.isOnFire() && entity.getVehicle() instanceof MotorboatEntity boat){
 			if(boat.isFireproof){
 				entity.clearFire();

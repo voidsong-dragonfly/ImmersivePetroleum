@@ -31,8 +31,8 @@ import flaxbeard.immersivepetroleum.api.crafting.builders.HighPressureRefineryRe
 import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
-import me.desht.pneumaticcraft.common.core.ModFluids;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -48,9 +48,8 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 
 public class IPRecipes extends RecipeProvider{
 	private final Map<String, Integer> PATH_COUNT = new HashMap<>();
@@ -74,7 +73,7 @@ public class IPRecipes extends RecipeProvider{
 		refineryRecipes();
 		paraffinWaxRecipes();
 		
-		MixerRecipeBuilder.builder(IPContent.Fluids.NAPALM.still().get(), 500)
+		MixerRecipeBuilder.builder(IPContent.Fluids.NAPALM.source().get(), 500)
 			.addFluidTag(IPTags.Fluids.gasoline, 500)
 			.addInput(new IngredientWithSize(IETags.getTagsFor(EnumMetals.ALUMINUM).dust, 3))
 			.setEnergy(3200)
@@ -96,7 +95,7 @@ public class IPRecipes extends RecipeProvider{
 			.equilibrium(2000)
 			.build(this.out, rl("reservoirs/aquifer"));
 		
-		ReservoirBuilder.builder("oil", IPContent.Fluids.CRUDEOIL.still().get(), 2500.000, 32500.000, 0.006, 40)
+		ReservoirBuilder.builder("oil", IPContent.Fluids.CRUDEOIL.source().get(), 2500.000, 32500.000, 0.006, 40)
 			.setDimensions(true, new ResourceLocation[]{
 					Level.END.location()
 			})
@@ -224,7 +223,10 @@ public class IPRecipes extends RecipeProvider{
 			.addItemWithChance(new ItemStack(IPContent.Items.PARAFFIN_WAX.get()), 0.024)
 			.build(out, rl("hydrotreater/lubricant_cracking"));
 		
+		// Temporarly Disabled
 		// PNC Compat
+		// @formatter:off
+		/*
 		HighPressureRefineryRecipeBuilder.builder(new FluidStack(ModFluids.PLASTIC.get(), 1000), 61440, 60)
 			.addCondition(new ModLoadedCondition("pneumaticcraft"))
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.ethylene, 100))
@@ -236,6 +238,8 @@ public class IPRecipes extends RecipeProvider{
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.propylene, 100))
 			.addItemWithChance(new ItemStack(IPContent.Items.BITUMEN.get()), 0.1)
 			.build(out, rl("hydrotreater/propylene_plastic"));
+		*/
+		// @formatter:off
 	}
 	
 	private void refineryRecipes(){
@@ -312,7 +316,7 @@ public class IPRecipes extends RecipeProvider{
 			.define('C', IPContent.Items.BITUMEN.get())
 			.define('S', Tags.Items.SAND)
 			.define('G', Tags.Items.GRAVEL)
-			.define('B', new IngredientFluidStack(FluidTags.WATER, FluidAttributes.BUCKET_VOLUME))
+			.define('B', new IngredientFluidStack(FluidTags.WATER, FluidType.BUCKET_VOLUME))
 			.pattern("SCS")
 			.pattern("GBG")
 			.pattern("SCS")
@@ -438,7 +442,7 @@ public class IPRecipes extends RecipeProvider{
 			.pattern(" i ")
 			.pattern("ioi")
 			.pattern(" ip")
-			.define('o', new IngredientFluidStack(IPTags.Fluids.lubricant, FluidAttributes.BUCKET_VOLUME))
+			.define('o', new IngredientFluidStack(IPTags.Fluids.lubricant, FluidType.BUCKET_VOLUME))
 			.define('i', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('p', IEBlocks.MetalDevices.FLUID_PIPE)
 			.unlockedBy("has_drill", has(IEItems.Tools.DRILL))
@@ -607,7 +611,7 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private String toPath(ItemLike src){
-		return src.asItem().getRegistryName().getPath();
+		return RegistryUtils.getRegistryNameOf(src.asItem()).getPath();
 	}
 	
 }

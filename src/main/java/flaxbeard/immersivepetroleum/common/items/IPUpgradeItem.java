@@ -11,7 +11,6 @@ import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -29,7 +28,7 @@ public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, List<Component> tooltip, @Nonnull TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("desc.immersivepetroleum.flavour." + getRegistryName().getPath()));
+		tooltip.add(Component.translatable("desc.immersivepetroleum.flavour." + getRegistryName().getPath()));
 	}
 	
 	@Override

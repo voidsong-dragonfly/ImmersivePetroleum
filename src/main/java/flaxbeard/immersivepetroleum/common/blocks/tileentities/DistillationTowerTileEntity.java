@@ -46,14 +46,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -388,7 +387,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		
 		BlockEntity te = level.getBlockEntity(outputpos);
 		if(te != null){
-			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputdir.getOpposite()).orElse(null);
+			IItemHandler handler = te.getCapability(ForgeCapabilities.ITEM_HANDLER, outputdir.getOpposite()).orElse(null);
 			if(handler != null){
 				output = ItemHandlerHelper.insertItem(handler, output, false);
 			}
@@ -458,7 +457,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+		if(capability == ForgeCapabilities.FLUID_HANDLER){
 			if(this.posInMultiblock.equals(Fluid_IN)){
 				if(side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
 					return this.inputHandler.getAndCast();

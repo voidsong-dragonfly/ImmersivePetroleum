@@ -31,6 +31,8 @@ import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -55,11 +57,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -149,7 +151,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		nbt.putBoolean("spilling", this.spilling);
 		nbt.putInt("timer", this.timer);
 		
-		nbt.putString("spillingfluid", this.fluidSpilled.getRegistryName().toString());
+		nbt.putString("spillingfluid", RegistryUtils.getRegistryNameOf(this.fluidSpilled).toString());
 		nbt.putInt("flow", getReservoirFlow());
 		
 		nbt.put("tank", this.tank.writeToNBT(new CompoundTag()));
@@ -429,7 +431,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 					continue;
 				}
 				
-				extractedAmount += island.extractWithPressure(getLevelNonnull(), cPos.x, cPos.z);
+				extractedAmount += island.extractWithPressure(getLevelNonnull(), cPos.x(), cPos.z());
 			}
 		}
 		
@@ -473,7 +475,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			if(this.gridStorage != null){
 				transferGridDataToWell(this.wellCache);
 			}else{
-				this.wellCache.tappedIslands.add(new ColumnPos(this.worldPosition.getX(), this.worldPosition.getZ()));
+				this.wellCache.tappedIslands.add(Utils.toColumnPos(this.worldPosition));
 				this.wellCache.setChanged();
 			}
 		}
@@ -715,7 +717,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+		if(capability == ForgeCapabilities.FLUID_HANDLER){
 			if(posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
 				return fluidInputHandler.getAndCast();
 			}

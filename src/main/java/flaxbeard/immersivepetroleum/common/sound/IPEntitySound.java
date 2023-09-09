@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.common.items.EarmuffsItem;
 import blusunrize.immersiveengineering.common.register.IEItems;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
@@ -15,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +41,7 @@ public class IPEntitySound implements TickableSoundInstance{
 	public float volumeAjustment = 1;
 	
 	public IPEntitySound(SoundEvent event, float volume, float pitch, boolean repeat, int repeatDelay, Entity e, Attenuation attenuation, SoundSource category){
-		this(event.getRegistryName(), volume, pitch, repeat, repeatDelay, e, attenuation, category);
+		this(RegistryUtils.getRegistryNameOf(event), volume, pitch, repeat, repeatDelay, e, attenuation, category);
 	}
 	
 	public IPEntitySound(ResourceLocation sound, float volume, float pitch, boolean repeat, int repeatDelay, Entity e, Attenuation attenuation, SoundSource category){
@@ -72,7 +74,7 @@ public class IPEntitySound implements TickableSoundInstance{
 		if(this.soundEvent == null)
 			this.sound = SoundManager.EMPTY_SOUND;
 		else
-			this.sound = this.soundEvent.getSound();
+			this.sound = this.soundEvent.getSound(RandomSource.create());
 		return this.soundEvent;
 	}
 	

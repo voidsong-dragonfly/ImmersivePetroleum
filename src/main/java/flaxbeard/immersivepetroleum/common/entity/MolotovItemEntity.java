@@ -4,8 +4,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.IPRegisters;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,22 +28,26 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.RegistryObject;
 
 public class MolotovItemEntity extends ThrowableItemProjectile{
-	public static final EntityType<MolotovItemEntity> TYPE = createType();
+	public static final RegistryObject<EntityType<MolotovItemEntity>> TYPE = createType();
 	
-	private static EntityType<MolotovItemEntity> createType(){
-		EntityType<MolotovItemEntity> ret = EntityType.Builder.<MolotovItemEntity> of(MolotovItemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(ImmersivePetroleum.MODID + "molotov");
-		ret.setRegistryName(ImmersivePetroleum.MODID, "molotov");
-		return ret;
+	private static RegistryObject<EntityType<MolotovItemEntity>> createType(){
+		EntityType<MolotovItemEntity> ret = EntityType.Builder.<MolotovItemEntity> of(MolotovItemEntity::new, MobCategory.MISC)
+				.sized(0.25F, 0.25F)
+				.clientTrackingRange(4)
+				.updateInterval(10)
+				.build(ResourceUtils.ip("molotov").toString());
+		return IPRegisters.registerEntityType("molotov", () -> ret);
 	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living){
-		this(TYPE, world, living);
+		this(TYPE.get(), world, living);
 	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living, double x, double y, double z){
-		this(TYPE, world, living);
+		this(TYPE.get(), world, living);
 		setPos(x, y, z);
 		this.xo = x;
 		this.yo = y;

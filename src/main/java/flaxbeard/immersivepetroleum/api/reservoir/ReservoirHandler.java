@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -20,12 +19,14 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
@@ -48,7 +49,7 @@ public class ReservoirHandler{
 	private static long lastSeed;
 	private static PerlinSimplexNoise generator;
 	
-	public static void scanChunkForNewReservoirs(ServerLevel world, ChunkPos chunkPos, Random random){
+	public static void scanChunkForNewReservoirs(ServerLevel world, ChunkPos chunkPos, RandomSource randomSource){
 		int chunkX = chunkPos.getMinBlockX();
 		int chunkZ = chunkPos.getMinBlockZ();
 		
@@ -74,7 +75,7 @@ public class ReservoirHandler{
 					ReservoirType reservoir = null;
 					int totalWeight = getTotalWeight(dimensionRL, biomeRL);
 					if(totalWeight > 0){
-						int weight = Math.abs(random.nextInt() % totalWeight);
+						int weight = Math.abs(randomSource.nextInt() % totalWeight);
 						for(ReservoirType res:ReservoirType.map.values()){
 							if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
 								weight -= res.weight;
@@ -91,7 +92,7 @@ public class ReservoirHandler{
 							List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
 							
 							if(!poly.isEmpty()){
-								int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
+								int amount = (int) Mth.lerp(randomSource.nextFloat(), reservoir.minSize, reservoir.maxSize);
 								
 								ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
 								storage.addIsland(dimensionKey, island);
@@ -131,7 +132,7 @@ public class ReservoirHandler{
 	
 	/** May only be called on the server-side. Returns null on client-side. */
 	public static ReservoirIsland getIsland(Level world, BlockPos pos){
-		return getIsland(world, new ColumnPos(pos.getX(), pos.getZ()));
+		return getIsland(world, Utils.toColumnPos(pos));
 	}
 	
 	/** May only be called on the server-side. Returns null on client-side. */
@@ -157,7 +158,7 @@ public class ReservoirHandler{
 	
 	/** <i>This should not be called too much.</i> May only be called on the server-side, returns null on client-side. */
 	public static ReservoirIsland getIslandNoCache(Level world, BlockPos pos){
-		return getIslandNoCache(world, new ColumnPos(pos.getX(), pos.getZ()));
+		return getIslandNoCache(world, Utils.toColumnPos(pos));
 	}
 	
 	/** <i>This should not be called too much.</i> May only be called on the server-side, returns null on client-side. */

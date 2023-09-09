@@ -19,7 +19,6 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffe
 import flaxbeard.immersivepetroleum.client.particle.FlareFire;
 import flaxbeard.immersivepetroleum.client.particle.FluidSpill;
 import flaxbeard.immersivepetroleum.client.particle.IPParticleTypes;
-import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.CokerUnitBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DerrickBlock;
@@ -40,8 +39,6 @@ import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import flaxbeard.immersivepetroleum.common.entity.MolotovItemEntity;
-import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.CrudeOilFluid;
 import flaxbeard.immersivepetroleum.common.fluids.DieselFluid;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
@@ -67,9 +64,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
-import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -79,12 +74,12 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
@@ -119,17 +114,17 @@ public class IPContent{
 		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", CrudeOilFluid::new);
 		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new);
 		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new);
-		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000, false));
-		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", e -> new IPFluid(e, 789, 1200, false));
+		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", 925, 1000, false);
+		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", 789, 1200, false);
 		
-		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", e -> new IPFluid(e, 750, 750, false));
-		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", e -> new IPFluid(e, 750, 750, false));
-		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", e -> new IPFluid(e, 876, 700, false));
-		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", e -> new IPFluid(e, 2, 1, true));
-		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", e -> new IPFluid(e, 1, 1, true));
-		public static final IPFluidEntry LUBRICANT_CRACKED = IPFluid.makeFluid("lubricant_cracked", e -> new IPFluid(e, 925, 1000, false));
-		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", e -> new IPFluid(e, 810, 900, false));
-		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", e -> new IPFluid(e, 800, 900, false));
+		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", 750, 750, false);
+		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", 750, 750, false);
+		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", 876, 700, false);
+		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", 2, 1, true);
+		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", 1, 1, true);
+		public static final IPFluidEntry LUBRICANT_CRACKED = IPFluid.makeFluid("lubricant_cracked", 925, 1000, false);
+		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", 810, 900, false);
+		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", 800, 900, false);
 		
 		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid();
 		
@@ -265,34 +260,27 @@ public class IPContent{
 	}
 	
 	@SubscribeEvent
-	public static void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event){
-		try{
-			event.getRegistry().register(MotorboatEntity.TYPE);
-			event.getRegistry().register(MolotovItemEntity.TYPE);
-		}catch(Throwable e){
-			log.error("Failed to register Speedboat Entity. {}", e.getMessage());
-			throw e;
-		}
-	}
-	
-	@SubscribeEvent
-	public static void registerEffects(RegistryEvent.Register<MobEffect> event){
-		event.getRegistry().register(IPEffects.ANTI_DISMOUNT_FIRE.get());
+	public static void registerEntityTypes(RegisterEvent.RegisterHelper<EntityType<?>> event){
+//		try{
+//			event.register(ResourceUtils.ip("speedboat"), MotorboatEntity.TYPE);
+//			event.register(ResourceUtils.ip("molotov"), MolotovItemEntity.TYPE);
+//		}catch(Throwable e){
+//			log.error("Failed to register Speedboat Entity. {}", e.getMessage());
+//			throw e;
+//		}
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void registerParticles(RegistryEvent.Register<ParticleType<?>> event){
-		event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
-		event.getRegistry().register(IPParticleTypes.FLUID_SPILL);
+	public static void registerParticles(RegisterEvent.RegisterHelper<ParticleType<?>> event){
+		//event.register(IPParticleTypes.FLARE_FIRE);
+		//event.register(IPParticleTypes.FLUID_SPILL);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void registerParticleFactories(ParticleFactoryRegisterEvent event){
-		ParticleEngine manager = MCUtil.getParticleEngine();
-		
-		manager.register(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
-		manager.register(IPParticleTypes.FLUID_SPILL, new FluidSpill.Factory());
+	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
+		event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
+		event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
 	}
 }

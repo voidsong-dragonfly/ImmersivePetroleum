@@ -50,15 +50,14 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -208,9 +207,9 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	@Nonnull
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction facing){
-		if((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+		if((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == ForgeCapabilities.ITEM_HANDLER){
 			return this.insertionHandler.getAndCast();
-		}else if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+		}else if(capability == ForgeCapabilities.FLUID_HANDLER){
 			if(this.posInMultiblock.equals(Fluid_OUT) && (facing == null || facing == getFacing().getOpposite())){
 				return this.fluidOutHandler.getAndCast();
 			}else if(this.posInMultiblock.equals(Fluid_IN) && (facing == null || facing == getFacing().getOpposite())){

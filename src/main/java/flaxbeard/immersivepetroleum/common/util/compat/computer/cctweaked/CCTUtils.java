@@ -3,13 +3,14 @@ package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked;
 import java.util.HashMap;
 import java.util.Map;
 
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 public class CCTUtils{
 	public static Map<String, Object> itemToMap(ItemStack stack){
-		ResourceLocation rl = stack.getItem().getRegistryName();
+		ResourceLocation rl = RegistryUtils.getRegistryNameOf(stack.getItem());
 		String regName = rl == null ? null : rl.toString();
 		
 		Map<String, Object> outputMap = new HashMap<>();
@@ -19,7 +20,7 @@ public class CCTUtils{
 	}
 	
 	public static Map<String, Object> fluidToMap(FluidStack stack){
-		ResourceLocation rl = stack.getFluid().getRegistryName();
+		ResourceLocation rl = RegistryUtils.getRegistryNameOf(stack.getFluid());
 		String regName = rl == null ? null : rl.toString();
 		
 		Map<String, Object> outputMap = new HashMap<>();

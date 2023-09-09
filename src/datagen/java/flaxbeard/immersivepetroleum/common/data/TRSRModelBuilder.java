@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.common.data;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import com.google.common.io.CharStreams;
 import com.google.gson.JsonObject;
@@ -24,7 +23,7 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder>{
 		Resource transformFile;
 		try{
 			transformFile = existingFileHelper.getResource(source, PackType.CLIENT_RESOURCES, ".json", "transformations");
-			String jsonString = CharStreams.toString(new InputStreamReader(transformFile.getInputStream()));
+			String jsonString = CharStreams.toString(transformFile.openAsReader());
 			transforms.addFromJson(jsonString);
 			return this;
 		}catch(IOException e){

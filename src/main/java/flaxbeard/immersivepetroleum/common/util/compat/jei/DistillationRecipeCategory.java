@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import mezz.jei.api.forge.ForgeTypes;
@@ -31,8 +32,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -103,7 +102,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 			for(int i = 0;i < list.size();i++){
 				ItemStack stack = list.get(i);
 				
-				this.map.put(stack.getItem().getRegistryName(), recipe.chances()[i]);
+				this.map.put(RegistryUtils.getRegistryNameOf(stack.getItem()), recipe.chances()[i]);
 			}
 		}
 		
@@ -112,10 +111,10 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 			ITypedIngredient<?> type = recipeSlotView.getDisplayedIngredient().orElse(null);
 			if(type != null && type.getIngredient() instanceof ItemStack stack){
 				Double t;
-				if((t = this.map.get(stack.getItem().getRegistryName())) != null){
+				if((t = this.map.get(RegistryUtils.getRegistryNameOf(stack.getItem()))) != null){
 					double chance = t.doubleValue();
 					
-					Component text = new TranslatableComponent("desc.immersivepetroleum.compat.jei.distillation.byproduct")
+					Component text = Component.translatable("desc.immersivepetroleum.compat.jei.distillation.byproduct")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.UNDERLINE);
 					
 					tooltip.add(0, text);
@@ -125,7 +124,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 		}
 		
 		private Component toTextComponent(double chance){
-			return new TextComponent(String.format(Locale.ENGLISH, "%.2f%%", 100D * chance)).withStyle(ChatFormatting.GRAY);
+			return Component.literal(String.format(Locale.ENGLISH, "%.2f%%", 100D * chance)).withStyle(ChatFormatting.GRAY);
 		}
 	}
 	
@@ -150,17 +149,5 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 			font.draw(matrix, text1, bWidth / 2 - font.width(text1) / 2, bHeight - font.lineHeight, 0);
 		}
 		matrix.popPose();
-	}
-	
-	@Override
-	@Deprecated
-	public ResourceLocation getUid(){
-		return null;
-	}
-	
-	@Override
-	@Deprecated
-	public Class<? extends DistillationTowerRecipe> getRecipeClass(){
-		return null;
 	}
 }

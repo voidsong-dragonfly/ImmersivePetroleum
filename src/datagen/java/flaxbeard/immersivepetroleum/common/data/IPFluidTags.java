@@ -17,23 +17,23 @@ public class IPFluidTags extends FluidTagsProvider{
 	@Override
 	protected void addTags(){
 		tag(IPTags.Fluids.diesel)
-			.add(IPContent.Fluids.DIESEL.still().get())
-			.add(IPContent.Fluids.DIESEL_SULFUR.still().get());
+			.add(IPContent.Fluids.DIESEL.source().get())
+			.add(IPContent.Fluids.DIESEL_SULFUR.source().get());
 		
 		tag(IPTags.Fluids.diesel_sulfur)
-			.add(IPContent.Fluids.DIESEL_SULFUR.still().get());
+			.add(IPContent.Fluids.DIESEL_SULFUR.source().get());
 		
 		tag(IPTags.Fluids.gasoline)
-			.add(IPContent.Fluids.GASOLINE.still().get());
+			.add(IPContent.Fluids.GASOLINE.source().get());
 		
 		tag(IPTags.Fluids.lubricant)
-			.add(IPContent.Fluids.LUBRICANT.still().get());
+			.add(IPContent.Fluids.LUBRICANT.source().get());
 		
 		tag(IPTags.Fluids.napalm)
-			.add(IPContent.Fluids.NAPALM.still().get());
+			.add(IPContent.Fluids.NAPALM.source().get());
 		
 		tag(IPTags.Fluids.crudeOil)
-			.add(IPContent.Fluids.CRUDEOIL.still().get());
+			.add(IPContent.Fluids.CRUDEOIL.source().get());
 		
 		tag(IPTags.Utility.burnableInFlarestack)
 			.addTag(IPTags.Fluids.lubricant)
@@ -58,27 +58,27 @@ public class IPFluidTags extends FluidTagsProvider{
 			.addTag(IPTags.Fluids.diesel_sulfur);
 		
 		tag(IPTags.Fluids.naphtha)
-			.add(IPContent.Fluids.NAPHTHA.still().get());
+			.add(IPContent.Fluids.NAPHTHA.source().get());
 		
 		tag(IPTags.Fluids.naphtha_cracked)
-			.add(IPContent.Fluids.NAPHTHA_CRACKED.still().get());
+			.add(IPContent.Fluids.NAPHTHA_CRACKED.source().get());
 		
 		tag(IPTags.Fluids.benzene)
-			.add(IPContent.Fluids.BENZENE.still().get());
+			.add(IPContent.Fluids.BENZENE.source().get());
 		
 		tag(IPTags.Fluids.propylene)
-			.add(IPContent.Fluids.PROPYLENE.still().get());
+			.add(IPContent.Fluids.PROPYLENE.source().get());
 		
 		tag(IPTags.Fluids.ethylene)
-			.add(IPContent.Fluids.ETHYLENE.still().get());
+			.add(IPContent.Fluids.ETHYLENE.source().get());
 		
 		tag(IPTags.Fluids.lubricant_cracked)
-			.add(IPContent.Fluids.LUBRICANT_CRACKED.still().get());
+			.add(IPContent.Fluids.LUBRICANT_CRACKED.source().get());
 		
 		tag(IPTags.Fluids.kerosene)
-			.add(IPContent.Fluids.KEROSENE.still().get());
+			.add(IPContent.Fluids.KEROSENE.source().get());
 		
 		tag(IPTags.Fluids.gasoline_additives)
-			.add(IPContent.Fluids.GASOLINE_ADDITIVES.still().get());
+			.add(IPContent.Fluids.GASOLINE_ADDITIVES.source().get());
 	}
 }

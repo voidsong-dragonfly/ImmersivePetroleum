@@ -19,7 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,9 +33,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -140,7 +139,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 	@Override
 	@Nonnull
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
-		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+		if(cap == ForgeCapabilities.FLUID_HANDLER){
 			if(this.isSlave && (side == null || side == Direction.UP)){
 				AutoLubricatorTileEntity master = master();
 				if(master == null){
@@ -204,7 +203,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 				if(!master.tank.isEmpty()){
 					s = ((MutableComponent) master.tank.getFluid().getDisplayName()).append(": " + master.tank.getFluidAmount() + "mB");
 				}else{
-					s = new TranslatableComponent(Lib.GUI + "empty");
+					s = Component.translatable(Lib.GUI + "empty");
 				}
 				return new Component[]{s};
 			}

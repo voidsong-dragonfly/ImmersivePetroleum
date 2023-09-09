@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -100,7 +101,7 @@ public class IslandInfo implements ISurveyInfo{
 		tag.putInt("expected", this.expected);
 		
 		if(!this.fluidStack.isEmpty()){
-			tag.putString("fluid", this.fluidStack.getFluid().getRegistryName().toString());
+			tag.putString("fluid", RegistryUtils.getRegistryNameOf(this.fluidStack.getFluid()).toString());
 		}
 		
 		return tag;

@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import blusunrize.immersiveengineering.common.util.loot.DropInventoryLootEntry;
 import blusunrize.immersiveengineering.common.util.loot.MBOriginalBlockLootEntry;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.loot.IPTileDropLootEntry;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.resources.ResourceLocation;
@@ -90,7 +91,7 @@ public class IPBlockLoot implements Consumer<BiConsumer<ResourceLocation, LootTa
 	}
 	
 	private void register(Block b, LootTable.Builder table){
-		register(b.getRegistryName(), table);
+		register(RegistryUtils.getRegistryNameOf(b), table);
 	}
 	
 	private void register(ResourceLocation name, LootTable.Builder table){

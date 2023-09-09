@@ -45,8 +45,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
@@ -338,7 +336,7 @@ public class DebugRenderHandler{
 						final List<ReservoirIsland> islands = new ArrayList<>();
 						for(int z = -1;z <= 1;z++){
 							for(int x = -1;x <= 1;x++){
-								RegionData rd = storage.getRegionData(new ColumnPos(playerRegionPos.x + x, playerRegionPos.z + z));
+								RegionData rd = storage.getRegionData(new ColumnPos(playerRegionPos.x() + x, playerRegionPos.z() + z));
 								if(rd != null){
 									synchronized(rd.getReservoirIslandList()){
 										islands.addAll(rd.getReservoirIslandList().get(dimKey));
@@ -398,8 +396,8 @@ public class DebugRenderHandler{
 													ColumnPos b = poly.get(i);
 													float f = i / (float) poly.size();
 													
-													builder.vertex(mat, a.x + .5F, y, a.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
-													builder.vertex(mat, b.x + .5F, y, b.z + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													builder.vertex(mat, a.x() + .5F, y, a.z() + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
+													builder.vertex(mat, b.x() + .5F, y, b.z() + .5F).color(f, 0.0F, 1 - f, 0.5F).normal(nor, 0F, 1F, 0F).endVertex();
 													
 													j = i;
 												}
@@ -569,10 +567,10 @@ public class DebugRenderHandler{
 	}
 	
 	static MutableComponent toText(String string){
-		return new TextComponent(string);
+		return Component.literal(string);
 	}
 	
 	static MutableComponent toTranslation(String translationKey, Object... args){
-		return new TranslatableComponent(translationKey, args);
+		return Component.translatable(translationKey, args);
 	}
 }

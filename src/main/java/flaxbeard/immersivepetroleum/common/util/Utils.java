@@ -7,6 +7,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.ServerAdvancementManager;
+import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
@@ -14,7 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * General purpose Utilities
@@ -63,7 +64,7 @@ public class Utils{
 	public static boolean isFluidRelatedItemStack(ItemStack stack){
 		if(stack.isEmpty())
 			return false;
-		return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
+		return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
 	}
 	
 	public static void dropItem(Level level, BlockPos pos, ItemStack stack){
@@ -85,5 +86,12 @@ public class Utils{
 			func.accept(entity);
 			level.addFreshEntity(entity);
 		}
+	}
+	
+	public static ColumnPos toColumnPos(BlockPos pos){
+		return new ColumnPos(pos.getX(), pos.getZ());
+	}
+	
+	private Utils(){
 	}
 }

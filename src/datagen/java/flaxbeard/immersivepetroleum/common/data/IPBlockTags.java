@@ -1,11 +1,16 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import java.util.function.Supplier;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class IPBlockTags extends BlockTagsProvider{
@@ -66,5 +71,26 @@ public class IPBlockTags extends BlockTagsProvider{
 			IPContent.Blocks.FLARESTACK.get(),
 			IPContent.Blocks.SEISMIC_SURVEY.get()
 		);
+	}
+	
+	private void setMiningLevel(Supplier<? extends Block> block, Tiers tier){
+		TagKey<Block> with = switch(tier){
+			case WOOD -> BlockTags.MINEABLE_WITH_AXE;
+			case STONE, GOLD, IRON, DIAMOND, NETHERITE -> BlockTags.MINEABLE_WITH_PICKAXE;
+			default -> throw new IllegalArgumentException("Unexpected value: " + tier);
+		};
+		tag(with).add(block.get());
+		
+		if(tier == Tiers.WOOD)
+			return;
+		
+		TagKey<Block> type = switch(tier){
+			case STONE -> BlockTags.NEEDS_STONE_TOOL;
+			case IRON, GOLD -> BlockTags.NEEDS_IRON_TOOL;
+			case DIAMOND, NETHERITE -> BlockTags.NEEDS_DIAMOND_TOOL;
+			default -> throw new IllegalArgumentException("Unexpected value: " + tier);
+		};
+		
+		tag(type).add(block.get());
 	}
 }

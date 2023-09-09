@@ -13,6 +13,7 @@ import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -80,15 +81,15 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 		nbt.putBoolean("selfdestruct", this.selfDestruct);
 		nbt.putInt("selfdestructtimer", this.selfDestructTimer);
 		
-		nbt.putString("spillftype", this.spillFType.getRegistryName().toString());
+		nbt.putString("spillftype", RegistryUtils.getRegistryNameOf(this.spillFType).toString());
 		nbt.putInt("spillheight", this.spillHeight);
 		
 		if(!this.tappedIslands.isEmpty()){
 			final ListTag list = new ListTag();
 			this.tappedIslands.forEach(c -> {
 				CompoundTag pos = new CompoundTag();
-				pos.putInt("x", c.x);
-				pos.putInt("z", c.z);
+				pos.putInt("x", c.x());
+				pos.putInt("z", c.z());
 				list.add(pos);
 			});
 			nbt.put("tappedislands", list);
@@ -178,7 +179,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 								ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
 								
 								// One is enough to trigger spilling
-								if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
+								if(island != null && island.getPressure(getWorldNonnull(), cPos.x(), cPos.z()) > 0.0){
 									fType = island.getFluid();
 									height = result.getRight().getY();
 									spill = true;
@@ -191,7 +192,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 						ColumnPos cPos = this.tappedIslands.get(0);
 						ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
 						
-						if(island != null && island.getPressure(getWorldNonnull(), cPos.x, cPos.z) > 0.0){
+						if(island != null && island.getPressure(getWorldNonnull(), cPos.x(), cPos.z()) > 0.0){
 							spill = true;
 							fType = island.getFluid();
 							height = this.worldPosition.getY() + 1;
@@ -219,7 +220,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 						
 						if(island != null){
 							// Already unpressurized islands are left alone by default
-							island.extractWithPressure(getWorldNonnull(), cPos.x, cPos.z);
+							island.extractWithPressure(getWorldNonnull(), cPos.x(), cPos.z());
 						}
 					}
 				}

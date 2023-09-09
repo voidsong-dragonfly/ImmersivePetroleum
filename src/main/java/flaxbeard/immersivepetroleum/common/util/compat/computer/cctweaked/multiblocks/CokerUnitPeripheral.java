@@ -7,6 +7,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.CCTUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic.PoweredMultiblockPeripheral;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +40,7 @@ public class CokerUnitPeripheral extends PoweredMultiblockPeripheral{
 		Map<String, Object> map = new HashMap<>();
 		
 		{
-			ResourceLocation rl = chamber.getInputItem().getItem().getRegistryName();
+			ResourceLocation rl = RegistryUtils.getRegistryNameOf(chamber.getInputItem().getItem());
 			String regName = rl == null ? null : rl.toString();
 			
 			Map<String, Object> inputMap = new HashMap<>();
@@ -49,7 +50,7 @@ public class CokerUnitPeripheral extends PoweredMultiblockPeripheral{
 		}
 		
 		{
-			ResourceLocation rl = chamber.getOutputItem().getItem().getRegistryName();
+			ResourceLocation rl = RegistryUtils.getRegistryNameOf(chamber.getOutputItem().getItem());
 			String regName = rl == null ? null : rl.toString();
 			
 			Map<String, Object> outputMap = new HashMap<>();

@@ -55,7 +55,7 @@ public class BlockRenderLayers{
 	}
 	
 	private static void setRenderLayer(IPFluid.IPFluidEntry entry, RenderType types){
-		ItemBlockRenderTypes.setRenderLayer(entry.still().get(), types);
+		ItemBlockRenderTypes.setRenderLayer(entry.source().get(), types);
 		ItemBlockRenderTypes.setRenderLayer(entry.flowing().get(), types);
 	}
 	

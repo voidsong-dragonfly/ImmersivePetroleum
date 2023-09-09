@@ -9,6 +9,7 @@ import blusunrize.immersiveengineering.data.models.IEOBJBuilder;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
+import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.data.DataGenerator;
@@ -17,8 +18,8 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelProvider;
-import net.minecraftforge.client.model.generators.loaders.DynamicBucketModelBuilder;
-import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
+import net.minecraftforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
+import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -75,7 +76,7 @@ public class IPItemModels extends ModelProvider<TRSRModelBuilder>{
 		oiltankItem();
 		
 		for(IPFluid.IPFluidEntry f:IPFluid.FLUIDS)
-			createBucket(f.still().get());
+			createBucket(f.source().get());
 	}
 	
 	private void flarestackItem(){
@@ -257,13 +258,13 @@ public class IPItemModels extends ModelProvider<TRSRModelBuilder>{
 	}
 	
 	private TRSRModelBuilder obj(ItemLike item, String model){
-		return getBuilder(item.asItem().getRegistryName().toString())
-				.customLoader(OBJLoaderBuilder::begin)
+		return getBuilder(RegistryUtils.getRegistryNameOf(item.asItem()).toString())
+				.customLoader(ObjModelBuilder::begin)
 				.modelLocation(modLoc("models/" + model)).flipV(true).end();
 	}
 	
 	private IEOBJBuilder<TRSRModelBuilder> objIELoader(ItemLike item, String model){
-		return getBuilder(item.asItem().getRegistryName().toString())
+		return getBuilder(RegistryUtils.getRegistryNameOf(item.asItem()).toString())
 				.customLoader(IEOBJBuilder::begin)
 				.modelLocation(modLoc("models/" + model));
 	}
@@ -286,12 +287,12 @@ public class IPItemModels extends ModelProvider<TRSRModelBuilder>{
 	}
 	
 	private void createBucket(Fluid f){
-		withExistingParent(f.getBucket().asItem().getRegistryName().getPath(), ResourceUtils.forge("item/bucket"))
-			.customLoader(DynamicBucketModelBuilder::begin)
+		withExistingParent(RegistryUtils.getRegistryNameOf(f.getBucket().asItem()).getPath(), ResourceUtils.forge("item/bucket"))
+			.customLoader(DynamicFluidContainerModelBuilder::begin)
 			.fluid(f);
 	}
 	
 	private String name(ItemLike item){
-		return item.asItem().getRegistryName().getPath();
+		return RegistryUtils.getRegistryNameOf(item.asItem()).getPath();
 	}
 }
