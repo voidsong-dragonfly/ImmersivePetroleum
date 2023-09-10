@@ -48,14 +48,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.model.EmptyModel;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -136,7 +135,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void reservoirDebuggingOverlayText(RenderGameOverlayEvent.Post event){
+	public void reservoirDebuggingOverlayText(RenderGuiOverlayEvent.Post event){
 		if(ReservoirHandler.getGenerator() == null){
 			return;
 		}
@@ -154,7 +153,7 @@ public class ClientEventHandler{
 			List<Component> debugOut = new ArrayList<>();
 			
 			if(!debugOut.isEmpty()){
-				PoseStack matrix = event.getMatrixStack();
+				PoseStack matrix = event.getPoseStack();
 				matrix.pushPose();
 				MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 				for(int i = 0;i < debugOut.size();i++){
@@ -175,8 +174,8 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void renderInfoOverlays(RenderGameOverlayEvent.Post event){
-		if(MCUtil.getPlayer() != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+	public void renderInfoOverlays(RenderGuiOverlayEvent.Post event){
+		if(MCUtil.getPlayer() != null && event.getOverlay().id() == VanillaGuiOverlay.HOTBAR.id()){
 			Player player = MCUtil.getPlayer();
 			
 			if(MCUtil.getHitResult() != null){
@@ -194,7 +193,7 @@ public class ClientEventHandler{
 									if(text[i] != null){
 										int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
 										int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
-										font.drawShadow(event.getMatrixStack(), text[i], fx, fy, col);
+										font.drawShadow(event.getPoseStack(), text[i], fx, fy, col);
 									}
 								}
 							}
@@ -206,10 +205,10 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
-		if(MCUtil.getPlayer() != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+	public void onRenderOverlayPost(RenderGuiOverlayEvent.Post event){
+		if(MCUtil.getPlayer() != null && event.getOverlay().id() == VanillaGuiOverlay.HOTBAR.id()){
 			Player player = MCUtil.getPlayer();
-			PoseStack matrix = event.getMatrixStack();
+			PoseStack matrix = event.getPoseStack();
 			
 			if(player.getVehicle() instanceof MotorboatEntity motorboat){
 				int offset = 0;
@@ -302,7 +301,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void handleBoatImmunity(RenderBlockOverlayEvent event){
+	public void handleBoatImmunity(RenderBlockScreenEffectEvent event){
 		Player entity = event.getPlayer();
 		if(event.getOverlayType() == OverlayType.FIRE && entity.isOnFire() && entity.getVehicle() instanceof MotorboatEntity boat){
 			if(boat.isFireproof){

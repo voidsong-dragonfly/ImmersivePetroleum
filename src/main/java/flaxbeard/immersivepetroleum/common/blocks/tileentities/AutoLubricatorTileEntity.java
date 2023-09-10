@@ -10,6 +10,7 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockInterfaces;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.util.Utils;
@@ -24,6 +25,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -40,7 +42,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPCommonTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.IReadOnPlacement{
+public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPCommonTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IPBlockInterfaces.IPlacementReader{
 	public boolean isSlave;
 	public Direction facing = Direction.NORTH;
 	public FluidTank tank = new FluidTank(8000, fluid -> (fluid != null && LubricantHandler.isValidLube(fluid.getFluid())));
@@ -93,6 +95,10 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 		CompoundTag tankTag = this.tank.writeToNBT(new CompoundTag());
 		if(!toItem || write)
 			nbt.put("tank", tankTag);
+	}
+
+	@Override
+	public void onBEPlaced(BlockPlaceContext ctx){
 	}
 	
 	@Override

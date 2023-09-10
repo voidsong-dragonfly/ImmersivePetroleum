@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IReadOnPlacement;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
+import flaxbeard.immersivepetroleum.common.blocks.IPBlockInterfaces;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.core.BlockPos;
@@ -130,7 +130,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		if(!worldIn.isClientSide){
 			worldIn.setBlockAndUpdate(pos.offset(0, 1, 0), state.setValue(SLAVE, true));
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(te instanceof IReadOnPlacement read){
+			if(te instanceof IPBlockInterfaces.IPlacementReader read){
 				read.readOnPlacement(placer, stack);
 			}
 		}

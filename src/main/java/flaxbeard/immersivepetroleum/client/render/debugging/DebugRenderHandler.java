@@ -64,9 +64,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -84,10 +85,10 @@ public class DebugRenderHandler{
 	}
 	
 	@SubscribeEvent
-	public void renderDebuggingOverlay(RenderGameOverlayEvent.Post event){
+	public void renderDebuggingOverlay(RenderGuiOverlayEvent.Post event){
 		Minecraft mc = Minecraft.getInstance();
 		
-		if(mc.player != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+		if(mc.player != null && event.getOverlay().id() == VanillaGuiOverlay.DEBUG_TEXT.id()){
 			Player player = mc.player;
 			
 			if(isHoldingDebugItem(player)){
@@ -187,7 +188,7 @@ public class DebugRenderHandler{
 								BlockPos hit = result.getBlockPos();
 								debugOut.add(0, toText("World XYZ: " + hit.getX() + ", " + hit.getY() + ", " + hit.getZ()));
 								
-								renderOverlay(event.getMatrixStack(), debugOut);
+								renderOverlay(event.getPoseStack(), debugOut);
 							}
 						}
 						case ENTITY -> {
@@ -216,7 +217,7 @@ public class DebugRenderHandler{
 									}
 								}
 								
-								renderOverlay(event.getMatrixStack(), debugOut);
+								renderOverlay(event.getPoseStack(), debugOut);
 							}
 						}
 						default -> {

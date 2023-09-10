@@ -96,6 +96,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 	public ProjectorItem(){
@@ -860,8 +861,9 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt){
 		if(!stack.isEmpty()){
+			final ResourceLocation key = ForgeRegistries.ITEMS.getKey(this);
 			return new IPItemStackHandler(0){
-				private final LazyOptional<ShaderWrapper_Item> shaders = CapabilityUtils.constantOptional(new ShaderWrapper_Item(getRegistryName(), stack));
+				private final LazyOptional<ShaderWrapper_Item> shaders = CapabilityUtils.constantOptional(new ShaderWrapper_Item(key, stack));
 				
 				@Override
 				public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing){

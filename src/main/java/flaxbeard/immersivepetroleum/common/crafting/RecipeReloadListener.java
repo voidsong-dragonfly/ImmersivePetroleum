@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
@@ -20,11 +21,9 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.RegistryObject;
 
 public class RecipeReloadListener implements ResourceManagerReloadListener{
 	private final ReloadableServerResources dataPackRegistries;
@@ -67,7 +66,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		HighPressureRefineryRecipe.recipes = filterRecipes(recipes, HighPressureRefineryRecipe.class, IPRecipeTypes.HYDROTREATER);
 	}
 	
-	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<Recipe<?>> recipes, Class<R> recipeClass, RegistryObject<RecipeType<R>> recipeType){
+	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<Recipe<?>> recipes, Class<R> recipeClass, IERecipeTypes.TypeWithClass<R> recipeType){
 		return recipes.stream()
 				.filter(iRecipe -> iRecipe.getType() == recipeType.get())
 				.map(recipeClass::cast)

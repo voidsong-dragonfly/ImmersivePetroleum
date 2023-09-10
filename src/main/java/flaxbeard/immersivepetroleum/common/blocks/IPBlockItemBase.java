@@ -12,8 +12,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 
 public class IPBlockItemBase extends BlockItem{
@@ -45,5 +47,10 @@ public class IPBlockItemBase extends BlockItem{
 		}
 		
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	}
+	
+	@Override
+	protected boolean placeBlock(BlockPlaceContext pContext, BlockState pState){
+		return super.placeBlock(pContext, pState);
 	}
 }

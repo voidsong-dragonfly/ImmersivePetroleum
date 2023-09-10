@@ -7,13 +7,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Crusher;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Excavator;
-import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes.Pumpjack;
-import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
-import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -24,22 +18,16 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 public class IPModels{
 	
 	@SubscribeEvent
-	public static void registerModelLoaders(ModelRegistryEvent event){
-		DerrickRenderer.init();
-		SeismicSurveyBarrelRenderer.init();
-	}
-	
-	@SubscribeEvent
 	public static void init(FMLConstructModEvent event){
 		add(ModelPumpjack.ID, new ModelPumpjack());
 		
-		add(Crusher.ID, new Crusher());
+		add(ModelLubricantPipes.Crusher.ID, new ModelLubricantPipes.Crusher());
 		
-		add(Excavator.ID_NORMAL, new Excavator(false));
-		add(Excavator.ID_MIRRORED, new Excavator(true));
+		add(ModelLubricantPipes.Excavator.ID_NORMAL, new ModelLubricantPipes.Excavator(false));
+		add(ModelLubricantPipes.Excavator.ID_MIRRORED, new ModelLubricantPipes.Excavator(true));
 		
-		add(Pumpjack.ID_NORMAL, new Pumpjack(false));
-		add(Pumpjack.ID_MIRRORED, new Pumpjack(true));
+		add(ModelLubricantPipes.Pumpjack.ID_NORMAL, new ModelLubricantPipes.Pumpjack(false));
+		add(ModelLubricantPipes.Pumpjack.ID_MIRRORED, new ModelLubricantPipes.Pumpjack(true));
 	}
 	
 	private static final Map<String, IPModel> MODELS = new HashMap<>();

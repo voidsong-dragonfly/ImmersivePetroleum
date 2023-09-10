@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -26,7 +27,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)
 public class ClientModBusEventHandlers{
 	@SubscribeEvent
-	public static void registerRenders(RegisterRenderers ev){
+	public static void registerRenders(EntityRenderersEvent.RegisterRenderers ev){
 		registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
 		registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
 		registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
@@ -35,8 +36,11 @@ public class ClientModBusEventHandlers{
 		registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
 		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
 		
-		ev.registerEntityRenderer(MotorboatEntity.TYPE, MotorboatRenderer::new);
-		ev.registerEntityRenderer(MolotovItemEntity.TYPE, ThrownItemRenderer::new);
+		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
+		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
+		
+		ev.registerEntityRenderer(MotorboatEntity.TYPE.get(), MotorboatRenderer::new);
+		ev.registerEntityRenderer(MolotovItemEntity.TYPE.get(), ThrownItemRenderer::new);
 	}
 	
 	private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){

@@ -144,7 +144,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTi
 				float zPos = (this.worldPosition.getZ() + 0.50F) + (this.level.random.nextFloat() - 0.5F) * .4375F;
 				float yPos = (this.worldPosition.getY() + 1.875F) + (0.2F * this.level.random.nextFloat());
 				
-				this.level.addParticle(IPParticleTypes.FLARE_FIRE, xPos, yPos, zPos, 0.0, 0.0625F + (this.drained / (float) this.tank.getCapacity() * 0.125F), 0.0);
+				this.level.addParticle(IPParticleTypes.FLARE_FIRE.get(), xPos, yPos, zPos, 0.0, 0.0625F + (this.drained / (float) this.tank.getCapacity() * 0.125F), 0.0);
 			}
 			
 		}else if(this.level.getGameTime() % 5 == 0){
