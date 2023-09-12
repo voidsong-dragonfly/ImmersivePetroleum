@@ -1,10 +1,10 @@
 {
   "parent": "minecraft:block/block",
-  "textures": {
-    "texture": "immersivepetroleum:block/obj/seismic_survey_tool",
-    "particle": "immersivepetroleum:block/obj/seismic_survey_tool"
-  },
+  "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/block/obj/seismic_survey_tool.obj",
-  "flip-v": true
+  "textures": {
+    "particle": "immersivepetroleum:block/obj/seismic_survey_tool",
+    "texture": "immersivepetroleum:block/obj/seismic_survey_tool"
+  }
 }

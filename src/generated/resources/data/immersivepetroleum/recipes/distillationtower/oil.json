@@ -2,32 +2,32 @@
   "type": "immersivepetroleum:distillation",
   "byproducts": [
     {
-      "item": "immersivepetroleum:bitumen",
-      "chance": "0.07"
+      "chance": "0.07",
+      "item": "immersivepetroleum:bitumen"
     }
   ],
+  "energy": 1024,
+  "input": {
+    "amount": 50,
+    "tag": "forge:crude_oil"
+  },
   "results": [
     {
-      "fluid": "immersivepetroleum:naphtha",
-      "amount": 17
+      "amount": 17,
+      "fluid": "immersivepetroleum:naphtha"
     },
     {
-      "fluid": "immersivepetroleum:kerosene",
-      "amount": 18
+      "amount": 18,
+      "fluid": "immersivepetroleum:kerosene"
     },
     {
-      "fluid": "immersivepetroleum:diesel_sulfur",
-      "amount": 30
+      "amount": 30,
+      "fluid": "immersivepetroleum:diesel_sulfur"
     },
     {
-      "fluid": "immersivepetroleum:lubricant",
-      "amount": 12
+      "amount": 12,
+      "fluid": "immersivepetroleum:lubricant"
     }
   ],
-  "input": {
-    "tag": "forge:crude_oil",
-    "amount": 50
-  },
-  "time": 1,
-  "energy": 1024
+  "time": 1
 }

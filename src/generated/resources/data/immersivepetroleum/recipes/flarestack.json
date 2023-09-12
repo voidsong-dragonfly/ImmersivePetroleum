@@ -1,27 +1,27 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "immersiveengineering:fluid_placer"
+    },
+    "C": {
+      "item": "immersiveengineering:component_steel"
+    },
+    "F": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "I": {
+      "tag": "forge:plates/iron"
+    },
+    "P": {
+      "item": "immersiveengineering:fluid_pipe"
+    }
+  },
   "pattern": [
     "IFI",
     "CAC",
     "IPI"
   ],
-  "key": {
-    "I": {
-      "tag": "forge:plates/iron"
-    },
-    "C": {
-      "item": "immersiveengineering:component_steel"
-    },
-    "P": {
-      "item": "immersiveengineering:fluid_pipe"
-    },
-    "A": {
-      "item": "immersiveengineering:fluid_placer"
-    },
-    "F": {
-      "item": "minecraft:flint_and_steel"
-    }
-  },
   "result": {
     "item": "immersivepetroleum:flarestack"
   }

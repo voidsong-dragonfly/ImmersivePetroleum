@@ -1,31 +1,31 @@
 {
   "parent": "immersivepetroleum:main/mb_derrick",
-  "display": {
-    "icon": {
-      "item": "immersivepetroleum:pumpjack"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.mb_pumpjack"
-    },
-    "description": {
-      "translate": "advancement.immersivepetroleum.mb_pumpjack.desc"
-    },
-    "frame": "goal",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "criteria": {
     "pumpjack": {
-      "trigger": "immersiveengineering:multiblock_formed",
       "conditions": {
-        "multiblock": "immersivepetroleum:multiblocks/pumpjack",
         "item": {
           "items": [
             "immersiveengineering:hammer"
           ]
-        }
-      }
+        },
+        "multiblock": "immersivepetroleum:multiblocks/pumpjack"
+      },
+      "trigger": "immersiveengineering:multiblock_formed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.immersivepetroleum.mb_pumpjack.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:pumpjack"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.immersivepetroleum.mb_pumpjack"
     }
   },
   "requirements": [

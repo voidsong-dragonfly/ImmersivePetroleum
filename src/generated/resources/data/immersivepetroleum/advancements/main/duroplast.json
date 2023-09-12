@@ -1,23 +1,7 @@
 {
   "parent": "immersivepetroleum:main/naphtha_distillates",
-  "display": {
-    "icon": {
-      "item": "immersiveengineering:duroplast"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.duroplast"
-    },
-    "description": {
-      "translate": "advancement.immersivepetroleum.duroplast.desc"
-    },
-    "frame": "challenge",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "criteria": {
     "benzene": {
-      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
@@ -26,34 +10,10 @@
             ]
           }
         ]
-      }
-    },
-    "propylene": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "immersivepetroleum:propylene_bucket"
-            ]
-          }
-        ]
-      }
-    },
-    "ethylene": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "immersivepetroleum:ethylene_bucket"
-            ]
-          }
-        ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
     },
     "duroplast_block": {
-      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
@@ -62,7 +22,47 @@
             ]
           }
         ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "ethylene": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:ethylene_bucket"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "propylene": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:propylene_bucket"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.immersivepetroleum.duroplast.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "immersiveengineering:duroplast"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.immersivepetroleum.duroplast"
     }
   },
   "requirements": [

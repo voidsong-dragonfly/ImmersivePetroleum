@@ -1,23 +1,23 @@
 {
   "parent": "immersivepetroleum:main/mb_distillationtower",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "immersivepetroleum:auto_lubricator"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.auto_lubricator"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancement.immersivepetroleum.auto_lubricator.desc"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:auto_lubricator"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "code_trigger": {
-      "trigger": "minecraft:impossible"
+    "title": {
+      "translate": "advancement.immersivepetroleum.auto_lubricator"
     }
   },
   "requirements": [

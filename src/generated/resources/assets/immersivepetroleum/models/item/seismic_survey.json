@@ -14,40 +14,28 @@
         0.2
       ]
     },
-    "thirdperson_lefthand": {
+    "fixed": {
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ],
       "translation": [
         0,
-        -2,
+        -4,
         0
-      ],
+      ]
+    },
+    "ground": {
       "scale": [
         0.2,
         0.2,
         0.2
-      ]
-    },
-    "thirdperson_righthand": {
+      ],
       "translation": [
         0,
-        -2,
+        3,
         0
-      ],
-      "scale": [
-        0.2,
-        0.2,
-        0.2
-      ]
-    },
-    "head": {
-      "translation": [
-        0,
-        12,
-        0
-      ],
-      "scale": [
-        0.75,
-        0.75,
-        0.75
       ]
     },
     "gui": {
@@ -56,46 +44,58 @@
         225,
         0
       ],
-      "translation": [
-        0,
-        -4,
-        0
-      ],
       "scale": [
         0.3,
         0.3,
         0.3
-      ]
-    },
-    "ground": {
+      ],
       "translation": [
         0,
-        3,
+        -4,
         0
+      ]
+    },
+    "head": {
+      "scale": [
+        0.75,
+        0.75,
+        0.75
       ],
+      "translation": [
+        0,
+        12,
+        0
+      ]
+    },
+    "thirdperson_lefthand": {
       "scale": [
         0.2,
         0.2,
         0.2
-      ]
-    },
-    "fixed": {
+      ],
       "translation": [
         0,
-        -4,
+        -2,
         0
-      ],
+      ]
+    },
+    "thirdperson_righthand": {
       "scale": [
-        0.3,
-        0.3,
-        0.3
+        0.2,
+        0.2,
+        0.2
+      ],
+      "translation": [
+        0,
+        -2,
+        0
       ]
     }
   },
-  "textures": {
-    "texture": "immersivepetroleum:block/obj/seismic_survey_tool"
-  },
+  "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/block/obj/seismic_survey_tool.obj",
-  "flip-v": true
+  "textures": {
+    "texture": "immersivepetroleum:block/obj/seismic_survey_tool"
+  }
 }

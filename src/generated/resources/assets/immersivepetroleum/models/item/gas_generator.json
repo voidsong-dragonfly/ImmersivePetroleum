@@ -6,15 +6,15 @@
         225,
         0
       ],
-      "translation": [
-        0,
-        2,
-        0
-      ],
       "scale": [
         0.4,
         0.4,
         0.4
+      ],
+      "translation": [
+        0,
+        2,
+        0
       ]
     },
     "firstperson_righthand": {
@@ -23,61 +23,34 @@
         45,
         0
       ],
-      "translation": [
-        0,
-        2,
-        0
-      ],
       "scale": [
         0.4,
         0.4,
         0.4
-      ]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [
-        75,
-        225,
-        0
       ],
       "translation": [
         0,
-        2.5,
+        2,
         0
-      ],
-      "scale": [
-        0.375,
-        0.375,
-        0.375
       ]
     },
-    "thirdperson_righthand": {
-      "rotation": [
-        75,
-        45,
-        0
+    "fixed": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.25,
+        0.25,
+        0.25
       ],
       "translation": [
         0,
-        2.5,
+        3,
         0
-      ],
-      "scale": [
-        0.375,
-        0.375,
-        0.375
-      ]
-    },
-    "head": {
-      "translation": [
-        0,
-        13,
-        0
-      ],
-      "scale": [
-        0.8,
-        0.8,
-        0.8
       ]
     },
     "gui": {
@@ -92,30 +65,57 @@
         0.625
       ]
     },
-    "ground": {
+    "head": {
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ],
       "translation": [
         0,
-        3,
+        13,
+        0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        225,
         0
       ],
       "scale": [
-        0.25,
-        0.25,
-        0.25
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
       ]
     },
-    "fixed": {
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
       "scale": [
-        0.5,
-        0.5,
-        0.5
+        0.375,
+        0.375,
+        0.375
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
       ]
     }
   },
-  "textures": {
-    "texture": "immersivepetroleum:block/obj/generator"
-  },
+  "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/block/obj/generator.obj",
-  "flip-v": true
+  "textures": {
+    "texture": "immersivepetroleum:block/obj/generator"
+  }
 }

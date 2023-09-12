@@ -1,23 +1,23 @@
 {
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "immersivepetroleum:seismic_survey"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.root"
-    },
+    "announce_to_chat": true,
+    "background": "immersivepetroleum:textures/block/asphalt.png",
     "description": {
       "translate": "advancement.immersivepetroleum.root.desc"
     },
     "frame": "task",
-    "show_toast": true,
-    "announce_to_chat": true,
     "hidden": false,
-    "background": "immersivepetroleum:textures/block/asphalt.png"
-  },
-  "criteria": {
-    "code_trigger": {
-      "trigger": "minecraft:impossible"
+    "icon": {
+      "item": "immersivepetroleum:seismic_survey"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.immersivepetroleum.root"
     }
   },
   "requirements": [

@@ -1,23 +1,23 @@
 {
   "type": "immersivepetroleum:distillation",
+  "energy": 1024,
+  "input": {
+    "amount": 10,
+    "tag": "forge:kerosene"
+  },
   "results": [
     {
-      "fluid": "immersivepetroleum:naphtha",
-      "amount": 2
+      "amount": 2,
+      "fluid": "immersivepetroleum:naphtha"
     },
     {
-      "fluid": "immersivepetroleum:gasoline_additives",
-      "amount": 3
+      "amount": 3,
+      "fluid": "immersivepetroleum:gasoline_additives"
     },
     {
-      "fluid": "immersivepetroleum:diesel_sulfur",
-      "amount": 5
+      "amount": 5,
+      "fluid": "immersivepetroleum:diesel_sulfur"
     }
   ],
-  "input": {
-    "tag": "forge:kerosene",
-    "amount": 10
-  },
-  "time": 1,
-  "energy": 1024
+  "time": 1
 }

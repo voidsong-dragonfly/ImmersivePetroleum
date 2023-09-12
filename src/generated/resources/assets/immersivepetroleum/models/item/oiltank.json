@@ -14,6 +14,69 @@
         0.0625
       ]
     },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "translation": [
+        0,
+        -1,
+        0
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "translation": [
+        0,
+        1,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        45,
+        0
+      ],
+      "scale": [
+        0.125,
+        0.125,
+        0.125
+      ],
+      "translation": [
+        0,
+        -2,
+        0
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        0.15625,
+        0.15625,
+        0.15625
+      ],
+      "translation": [
+        0,
+        7.6,
+        0
+      ]
+    },
     "thirdperson_lefthand": {
       "scale": [
         0.0625,
@@ -27,75 +90,12 @@
         0.0625,
         0.0625
       ]
-    },
-    "head": {
-      "rotation": [
-        0,
-        180,
-        0
-      ],
-      "translation": [
-        0,
-        7.6,
-        0
-      ],
-      "scale": [
-        0.15625,
-        0.15625,
-        0.15625
-      ]
-    },
-    "gui": {
-      "rotation": [
-        30,
-        45,
-        0
-      ],
-      "translation": [
-        0,
-        -2,
-        0
-      ],
-      "scale": [
-        0.125,
-        0.125,
-        0.125
-      ]
-    },
-    "ground": {
-      "translation": [
-        0,
-        1,
-        0
-      ],
-      "scale": [
-        0.0625,
-        0.0625,
-        0.0625
-      ]
-    },
-    "fixed": {
-      "rotation": [
-        0,
-        180,
-        0
-      ],
-      "translation": [
-        0,
-        -1,
-        0
-      ],
-      "scale": [
-        0.0625,
-        0.0625,
-        0.0625
-      ]
     }
   },
-  "textures": {
-    "texture": "immersivepetroleum:multiblock/oiltank"
-  },
+  "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/multiblock/obj/oiltank.obj",
-  "flip-v": true
+  "textures": {
+    "texture": "immersivepetroleum:multiblock/oiltank"
+  }
 }

@@ -1,10 +1,10 @@
 {
   "parent": "minecraft:block/block",
-  "textures": {
-    "texture": "immersivepetroleum:models/lubricator",
-    "particle": "immersivepetroleum:models/lubricator"
-  },
+  "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/block/obj/autolubricator.obj",
-  "flip-v": true
+  "textures": {
+    "particle": "immersivepetroleum:models/lubricator",
+    "texture": "immersivepetroleum:models/lubricator"
+  }
 }

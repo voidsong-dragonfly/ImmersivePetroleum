@@ -1,23 +1,23 @@
 {
   "parent": "immersivepetroleum:main/mb_distillationtower",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "immersivepetroleum:gas_generator"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.gas_generator"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancement.immersivepetroleum.gas_generator.desc"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:gas_generator"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "code_trigger": {
-      "trigger": "minecraft:impossible"
+    "title": {
+      "translate": "advancement.immersivepetroleum.gas_generator"
     }
   },
   "requirements": [

@@ -1,5 +1,5 @@
 {
   "parent": "forge:item/bucket",
-  "loader": "forge:bucket",
-  "fluid": "immersivepetroleum:naphtha_cracked"
+  "fluid": "immersivepetroleum:naphtha_cracked",
+  "loader": "forge:fluid_container"
 }

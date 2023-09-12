@@ -1,78 +1,28 @@
 {
   "parent": "minecraft:block/block",
-  "loader": "immersiveengineering:basic_split",
   "dynamic": false,
   "inner_model": {
     "parent": "minecraft:block/block",
-    "textures": {
-      "texture": "immersivepetroleum:multiblock/derrick",
-      "particle": "immersivepetroleum:multiblock/derrick"
-    },
+    "automatic_culling": false,
+    "flip_v": true,
     "loader": "forge:obj",
     "model": "immersivepetroleum:models/multiblock/obj/derrick.obj",
-    "detectCullableFaces": false,
-    "flip-v": true
+    "textures": {
+      "particle": "immersivepetroleum:multiblock/derrick",
+      "texture": "immersivepetroleum:multiblock/derrick"
+    }
   },
+  "loader": "immersiveengineering:basic_split",
   "split_parts": [
     [
-      -2,
-      0,
-      -2
-    ],
-    [
-      -2,
-      0,
-      -1
-    ],
-    [
-      -2,
-      0,
-      0
-    ],
-    [
-      -2,
-      0,
-      1
-    ],
-    [
-      -2,
-      0,
-      2
-    ],
-    [
       -1,
       0,
       -2
     ],
     [
-      -1,
-      0,
-      -1
-    ],
-    [
-      -1,
-      0,
-      0
-    ],
-    [
-      -1,
-      0,
-      1
-    ],
-    [
-      -1,
-      0,
-      2
-    ],
-    [
       0,
       0,
       -2
-    ],
-    [
-      0,
-      0,
-      -1
     ],
     [
       0,
@@ -88,6 +38,86 @@
       1,
       0,
       -2
+    ],
+    [
+      -2,
+      1,
+      -1
+    ],
+    [
+      -1,
+      1,
+      -2
+    ],
+    [
+      0,
+      1,
+      -2
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      1,
+      1,
+      -2
+    ],
+    [
+      -2,
+      0,
+      -2
+    ],
+    [
+      -2,
+      0,
+      -1
+    ],
+    [
+      -2,
+      0,
+      0
+    ],
+    [
+      -2,
+      0,
+      1
+    ],
+    [
+      -2,
+      0,
+      2
+    ],
+    [
+      -1,
+      0,
+      -1
+    ],
+    [
+      -1,
+      0,
+      0
+    ],
+    [
+      -1,
+      0,
+      1
+    ],
+    [
+      -1,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      -1
     ],
     [
       1,
@@ -132,42 +162,12 @@
     [
       -2,
       1,
-      -1
-    ],
-    [
-      -2,
-      1,
       0
     ],
     [
       -2,
       1,
       2
-    ],
-    [
-      -1,
-      1,
-      -2
-    ],
-    [
-      0,
-      1,
-      -2
-    ],
-    [
-      0,
-      1,
-      0
-    ],
-    [
-      0,
-      1,
-      2
-    ],
-    [
-      1,
-      1,
-      -2
     ],
     [
       2,

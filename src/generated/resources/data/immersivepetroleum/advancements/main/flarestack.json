@@ -1,23 +1,23 @@
 {
   "parent": "immersivepetroleum:main/root",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "immersivepetroleum:flarestack"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.flarestack"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancement.immersivepetroleum.flarestack.desc"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:flarestack"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "code_trigger": {
-      "trigger": "minecraft:impossible"
+    "title": {
+      "translate": "advancement.immersivepetroleum.flarestack"
     }
   },
   "requirements": [

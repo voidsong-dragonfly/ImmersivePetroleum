@@ -1,8 +1,8 @@
 {
   "type": "minecraft:stonecutting",
+  "count": 1,
   "ingredient": {
     "item": "immersivepetroleum:asphalt"
   },
-  "result": "immersivepetroleum:asphalt_stair",
-  "count": 1
+  "result": "immersivepetroleum:asphalt_stair"
 }

@@ -1,23 +1,23 @@
 {
   "parent": "immersivepetroleum:main/mb_distillationtower",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "immersivepetroleum:oil_can"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.oil_can"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancement.immersivepetroleum.oil_can.desc"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:oil_can"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "code_trigger": {
-      "trigger": "minecraft:impossible"
+    "title": {
+      "translate": "advancement.immersivepetroleum.oil_can"
     }
   },
   "requirements": [

@@ -1,31 +1,31 @@
 {
   "parent": "immersivepetroleum:main/root",
-  "display": {
-    "icon": {
-      "item": "immersivepetroleum:derrick"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.mb_derrick"
-    },
-    "description": {
-      "translate": "advancement.immersivepetroleum.mb_derrick.desc"
-    },
-    "frame": "goal",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "criteria": {
     "derrick": {
-      "trigger": "immersiveengineering:multiblock_formed",
       "conditions": {
-        "multiblock": "immersivepetroleum:multiblocks/derrick",
         "item": {
           "items": [
             "immersiveengineering:hammer"
           ]
-        }
-      }
+        },
+        "multiblock": "immersivepetroleum:multiblocks/derrick"
+      },
+      "trigger": "immersiveengineering:multiblock_formed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.immersivepetroleum.mb_derrick.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:derrick"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.immersivepetroleum.mb_derrick"
     }
   },
   "requirements": [

@@ -1,68 +1,57 @@
 {
+  "callbacks": "immersiveengineering:default",
   "display": {
     "firstperson_lefthand": {
-      "translation": [
-        0,
-        4,
-        -2
-      ],
       "scale": [
         0.75,
         0.75,
         0.75
+      ],
+      "translation": [
+        0,
+        4,
+        -2
       ]
     },
     "firstperson_righthand": {
+      "scale": [
+        0.75,
+        0.75,
+        0.75
+      ],
       "translation": [
         12,
         4,
         -2
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        -90,
+        0
       ],
       "scale": [
         0.75,
         0.75,
         0.75
-      ]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [
-        90,
-        0,
-        0
       ],
       "translation": [
         -6,
-        -4,
-        4.225
-      ],
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    },
-    "thirdperson_righthand": {
-      "rotation": [
-        90,
-        0,
-        0
-      ],
-      "translation": [
         6,
-        -4,
-        4.225
-      ],
-      "scale": [
-        0.75,
-        0.75,
-        0.75
+        5
       ]
     },
-    "head": {
+    "ground": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
       "translation": [
+        4,
         8,
-        18.25,
-        8
+        4
       ]
     },
     "gui": {
@@ -77,40 +66,51 @@
         0
       ]
     },
-    "ground": {
+    "head": {
       "translation": [
-        4,
         8,
-        4
-      ],
-      "scale": [
-        0.5,
-        0.5,
-        0.5
+        18.25,
+        8
       ]
     },
-    "fixed": {
+    "thirdperson_lefthand": {
       "rotation": [
+        90,
         0,
-        -90,
         0
-      ],
-      "translation": [
-        -6,
-        6,
-        5
       ],
       "scale": [
         0.75,
         0.75,
         0.75
+      ],
+      "translation": [
+        -6,
+        -4,
+        4.225
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "scale": [
+        0.75,
+        0.75,
+        0.75
+      ],
+      "translation": [
+        6,
+        -4,
+        4.225
       ]
     }
   },
-  "textures": {
-    "texture": "immersivepetroleum:projectors/projector"
-  },
   "loader": "immersiveengineering:ie_obj",
   "model": "immersivepetroleum:models/item/obj/projector.obj",
-  "callbacks": "immersiveengineering:default"
+  "textures": {
+    "texture": "immersivepetroleum:projectors/projector"
+  }
 }

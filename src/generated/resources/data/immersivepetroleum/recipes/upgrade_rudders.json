@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " RR",
-    "PPP",
-    "PPP"
-  ],
   "key": {
     "P": {
       "tag": "forge:plates/iron"
@@ -13,6 +8,11 @@
       "tag": "forge:rods/iron"
     }
   },
+  "pattern": [
+    " RR",
+    "PPP",
+    "PPP"
+  ],
   "result": {
     "item": "immersivepetroleum:upgrade_rudders"
   }

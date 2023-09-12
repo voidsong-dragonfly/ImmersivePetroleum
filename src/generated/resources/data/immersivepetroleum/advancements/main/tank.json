@@ -1,23 +1,23 @@
 {
   "parent": "immersivepetroleum:main/motorboat",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "immersivepetroleum:upgrade_tank"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.tank"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancement.immersivepetroleum.tank.desc"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:upgrade_tank"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "code_trigger": {
-      "trigger": "minecraft:impossible"
+    "title": {
+      "translate": "advancement.immersivepetroleum.tank"
     }
   },
   "requirements": [

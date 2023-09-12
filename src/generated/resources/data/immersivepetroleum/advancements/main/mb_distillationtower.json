@@ -1,31 +1,31 @@
 {
   "parent": "immersivepetroleum:main/mb_pumpjack",
-  "display": {
-    "icon": {
-      "item": "immersivepetroleum:distillation_tower"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.mb_distillationtower"
-    },
-    "description": {
-      "translate": "advancement.immersivepetroleum.mb_distillationtower.desc"
-    },
-    "frame": "goal",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "criteria": {
     "distillationtower": {
-      "trigger": "immersiveengineering:multiblock_formed",
       "conditions": {
-        "multiblock": "immersivepetroleum:multiblocks/distillationtower",
         "item": {
           "items": [
             "immersiveengineering:hammer"
           ]
-        }
-      }
+        },
+        "multiblock": "immersivepetroleum:multiblocks/distillationtower"
+      },
+      "trigger": "immersiveengineering:multiblock_formed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.immersivepetroleum.mb_distillationtower.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:distillation_tower"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.immersivepetroleum.mb_distillationtower"
     }
   },
   "requirements": [

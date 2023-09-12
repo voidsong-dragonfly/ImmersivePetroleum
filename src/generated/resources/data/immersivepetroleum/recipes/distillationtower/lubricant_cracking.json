@@ -1,19 +1,19 @@
 {
   "type": "immersivepetroleum:distillation",
+  "energy": 1024,
+  "input": {
+    "amount": 12,
+    "tag": "forge:lubricant_cracked"
+  },
   "results": [
     {
-      "fluid": "immersivepetroleum:kerosene",
-      "amount": 6
+      "amount": 6,
+      "fluid": "immersivepetroleum:kerosene"
     },
     {
-      "fluid": "immersivepetroleum:diesel_sulfur",
-      "amount": 10
+      "amount": 10,
+      "fluid": "immersivepetroleum:diesel_sulfur"
     }
   ],
-  "input": {
-    "tag": "forge:lubricant_cracked",
-    "amount": 12
-  },
-  "time": 1,
-  "energy": 1024
+  "time": 1
 }

@@ -1,13 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "SBH",
-    "SBS",
-    "MLM"
-  ],
   "key": {
-    "S": {
-      "item": "immersiveengineering:steel_scaffolding_standard"
+    "B": {
+      "item": "immersiveengineering:gunpart_barrel"
+    },
+    "H": {
+      "item": "immersiveengineering:gunpart_hammer"
     },
     "L": {
       "item": "immersiveengineering:light_engineering"
@@ -15,13 +13,15 @@
     "M": {
       "item": "immersiveengineering:component_iron"
     },
-    "H": {
-      "item": "immersiveengineering:gunpart_hammer"
-    },
-    "B": {
-      "item": "immersiveengineering:gunpart_barrel"
+    "S": {
+      "item": "immersiveengineering:steel_scaffolding_standard"
     }
   },
+  "pattern": [
+    "SBH",
+    "SBS",
+    "MLM"
+  ],
   "result": {
     "item": "immersivepetroleum:seismic_survey"
   }

@@ -1,23 +1,23 @@
 {
   "type": "immersiveengineering:shaped_fluid",
-  "pattern": [
-    " i ",
-    "ioi",
-    " ip"
-  ],
   "key": {
-    "o": {
-      "tag": "forge:lubricant",
-      "amount": 1000,
-      "type": "immersiveengineering:fluid"
-    },
     "i": {
       "tag": "forge:plates/iron"
+    },
+    "o": {
+      "type": "immersiveengineering:fluid",
+      "amount": 1000,
+      "tag": "forge:lubricant"
     },
     "p": {
       "item": "immersiveengineering:fluid_pipe"
     }
   },
+  "pattern": [
+    " i ",
+    "ioi",
+    " ip"
+  ],
   "result": {
     "item": "immersiveengineering:toolupgrade_drill_lube"
   }

@@ -1,20 +1,20 @@
 {
   "type": "immersivepetroleum:reservoirs",
-  "fluid": "minecraft:water",
-  "fluidminimum": 5000000,
-  "fluidcapacity": 10000000,
-  "fluidtrace": 25,
-  "weight": 30,
-  "equilibrium": 2000000,
+  "biomes": {
+    "isBlacklist": false,
+    "list": []
+  },
   "dimensions": {
     "isBlacklist": false,
     "list": [
       "minecraft:overworld"
     ]
   },
-  "biomes": {
-    "isBlacklist": false,
-    "list": []
-  },
-  "name": "aquifer"
+  "equilibrium": 2000000,
+  "fluid": "minecraft:water",
+  "fluidcapacity": 10000000,
+  "fluidminimum": 5000000,
+  "fluidtrace": 25,
+  "name": "aquifer",
+  "weight": 30
 }

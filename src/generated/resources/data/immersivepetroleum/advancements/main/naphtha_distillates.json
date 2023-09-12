@@ -1,23 +1,7 @@
 {
   "parent": "immersivepetroleum:main/cracking",
-  "display": {
-    "icon": {
-      "item": "immersivepetroleum:benzene_bucket"
-    },
-    "title": {
-      "translate": "advancement.immersivepetroleum.naphtha_distillates"
-    },
-    "description": {
-      "translate": "advancement.immersivepetroleum.naphtha_distillates.desc"
-    },
-    "frame": "goal",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "criteria": {
     "benzene": {
-      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
@@ -26,22 +10,10 @@
             ]
           }
         ]
-      }
-    },
-    "propylene": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "immersivepetroleum:propylene_bucket"
-            ]
-          }
-        ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
     },
     "ethylene": {
-      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
@@ -50,7 +22,35 @@
             ]
           }
         ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "propylene": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "immersivepetroleum:propylene_bucket"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.immersivepetroleum.naphtha_distillates.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "immersivepetroleum:benzene_bucket"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.immersivepetroleum.naphtha_distillates"
     }
   },
   "requirements": [
