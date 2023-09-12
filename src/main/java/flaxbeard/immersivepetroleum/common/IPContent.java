@@ -43,7 +43,7 @@ import flaxbeard.immersivepetroleum.common.fluids.CrudeOilFluid;
 import flaxbeard.immersivepetroleum.common.fluids.DieselFluid;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid.IPFluidEntry;
-import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;
+import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid.NapalmFluidBlock;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
 import flaxbeard.immersivepetroleum.common.items.IPItemBase;
@@ -64,8 +64,6 @@ import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -79,7 +77,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
-import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
@@ -111,9 +108,9 @@ public class IPContent{
 	}
 	
 	public static class Fluids{
-		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", CrudeOilFluid::new);
-		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new);
-		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new);
+		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluidF("crudeoil", 1000, 2250, false, CrudeOilFluid::new);
+		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluidF("diesel_sulfur", 789, 1750, false, DieselFluid::new);
+		public static final IPFluidEntry DIESEL = IPFluid.makeFluidF("diesel", 789, 1750, false, DieselFluid::new);
 		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", 925, 1000, false);
 		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", 789, 1200, false);
 		
@@ -126,7 +123,7 @@ public class IPContent{
 		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", 810, 900, false);
 		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", 800, 900, false);
 		
-		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid();
+		public static final IPFluidEntry NAPALM = IPFluid.makeFluid("napalm", 1000, 4000, false, NapalmFluidBlock::new);
 		
 		private static void forceClassLoad(){
 		}
@@ -259,6 +256,7 @@ public class IPContent{
 		LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
 	}
 	
+	/*
 	@SubscribeEvent
 	public static void registerEntityTypes(RegisterEvent.RegisterHelper<EntityType<?>> event){
 //		try{
@@ -269,18 +267,21 @@ public class IPContent{
 //			throw e;
 //		}
 	}
+	*/
 	
+	/*
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticles(RegisterEvent.RegisterHelper<ParticleType<?>> event){
 		//event.register(IPParticleTypes.FLARE_FIRE);
 		//event.register(IPParticleTypes.FLUID_SPILL);
-	}
+	}*/
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
-		event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
-		event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
+		// FIXME Guess this aint the place for these
+		//event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
+		//event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
 	}
 }

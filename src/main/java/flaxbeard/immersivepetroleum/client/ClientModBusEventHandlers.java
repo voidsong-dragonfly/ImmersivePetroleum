@@ -39,8 +39,9 @@ public class ClientModBusEventHandlers{
 		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
 		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
 		
-		ev.registerEntityRenderer(MotorboatEntity.TYPE.get(), MotorboatRenderer::new);
-		ev.registerEntityRenderer(MolotovItemEntity.TYPE.get(), ThrownItemRenderer::new);
+		// FIXME Guess this is not the place for these..
+		//ev.registerEntityRenderer(MotorboatEntity.TYPE.get(), MotorboatRenderer::new);
+		//ev.registerEntityRenderer(MolotovItemEntity.TYPE.get(), ThrownItemRenderer::new);
 	}
 	
 	private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){

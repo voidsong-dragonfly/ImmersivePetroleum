@@ -62,13 +62,14 @@ public class IPFluid extends FlowingFluid{
 		return entry;
 	}
 	
-	public static IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, BiFunction<IPFluidEntry, Block.Properties, IPFluidBlock> blockFactory){
+	public static <B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
 		IPFluidEntry entry = IPFluidEntry.make(name, blockFactory, builder(density, viscosity, isGas));
 		return entry;
 	}
 	
-	public static IPFluidEntry makeFluid(String name, Function<String, IPFluid> factory){
-		return factory.apply(name).entry;
+	public static <S extends IPFluid> IPFluidEntry makeFluidF(String name, int density, int viscosity, boolean isGas, Function<IPFluidEntry, S> fluidFactory){
+		IPFluidEntry entry = IPFluidEntry.make(name, fluidFactory, builder(density, viscosity, isGas));
+		return entry;
 	}
 	
 	private static IPFluidEntry staticEntry;
@@ -80,11 +81,6 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	protected final IPFluidEntry entry;
-	
-	protected IPFluid(String name, int density, int viscosity, boolean isGas){
-		this(makeFluid(name, density, viscosity, isGas));
-	}
-	
 	protected IPFluid(IPFluidEntry entry){
 		this.entry = entry;
 	}
@@ -122,6 +118,11 @@ public class IPFluid extends FlowingFluid{
 	@Nonnull
 	public Item getBucket(){
 		return this.entry.bucket.get();
+	}
+	
+	@Override
+	public FluidType getFluidType(){
+		return this.entry.type.get();
 	}
 	
 	@Override
@@ -186,26 +187,26 @@ public class IPFluid extends FlowingFluid{
 			return make(name, 0, null);
 		}
 		
-		protected static IPFluidEntry make(String name, Consumer<FluidType.Properties> buildAttributes){
+		protected static IPFluidEntry make(String name, @Nullable Consumer<FluidType.Properties> buildAttributes){
 			return make(name, 0, IPFluid::new, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, buildAttributes, ImmutableList.of());
 		}
 		
-		protected static IPFluidEntry make(String name, int burnTime, Consumer<FluidType.Properties> buildAttributes){
+		protected static IPFluidEntry make(String name, int burnTime, @Nullable Consumer<FluidType.Properties> buildAttributes){
 			return make(name, burnTime, IPFluid::new, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, buildAttributes, ImmutableList.of());
 		}
 		
-		protected static <B extends IPFluidBlock> IPFluidEntry make(String name, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock, Consumer<FluidType.Properties> buildAttributes){
-			return make(name, 0, IPFluid::new, IPFluid.Flowing::new, makeBlock, buildAttributes, ImmutableList.of());
+		protected static <B extends IPFluidBlock> IPFluidEntry make(String name, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock, @Nullable Consumer<FluidType.Properties> buildAttributes){
+			return make(name, IPFluid::new, IPFluid.Flowing::new, makeBlock, buildAttributes, ImmutableList.of());
 		}
 		
-		protected static <B extends IPFluidBlock> IPFluidEntry make(String name, int burnTime, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock, Consumer<FluidType.Properties> buildAttributes){
-			return make(name, burnTime, IPFluid::new, IPFluid.Flowing::new, makeBlock, buildAttributes, ImmutableList.of());
+		protected static <S extends IPFluid> IPFluidEntry make(String name, Function<IPFluidEntry, S> makeSource, @Nullable Consumer<FluidType.Properties> buildAttributes){
+			return make(name, makeSource, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, buildAttributes, ImmutableList.of());
 		}
 		
 		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(
 			String name,
 			Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock,
-			Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties
+			@Nullable Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties
 		){
 			return make(name, 0, makeSource, makeFlowing, makeBlock, buildAttributes, properties);
 		}
@@ -213,7 +214,7 @@ public class IPFluid extends FlowingFluid{
 		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(
 			String name, int burnTime,
 			Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock,
-			Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties
+			@Nullable Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties
 		){
 			FluidType.Properties builder = FluidType.Properties.create();
 			if(buildAttributes != null){
@@ -341,13 +342,6 @@ public class IPFluid extends FlowingFluid{
 		protected void createFluidStateDefinition(@Nonnull Builder<Fluid, FluidState> builder){
 			super.createFluidStateDefinition(builder);
 			builder.add(LEVEL);
-		}
-	}
-	
-	@Deprecated
-	public record IPFluidEntryOld(String name, RegistryObject<IPFluid> still, RegistryObject<IPFluid> flowing, RegistryObject<Block> block, RegistryObject<Item> bucket){
-		public Fluid get(){
-			return still().get();
 		}
 	}
 }

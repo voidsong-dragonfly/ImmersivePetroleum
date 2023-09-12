@@ -58,6 +58,7 @@ public class IPRegisters{
 		MOB_EFFECT.register(eventBus);
 		SOUND_EVENT.register(eventBus);
 		PARTICLE_TYPE.register(eventBus);
+		ENTITY_TYPE.register(eventBus);
 		FLUID_TYPE.register(eventBus);
 	}
 	
