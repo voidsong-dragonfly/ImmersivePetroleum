@@ -290,7 +290,7 @@ public class IPFluid extends FlowingFluid{
 		public FluidState getFluidState(BlockState pState){
 			FluidState state = super.getFluidState(pState);
 			for(Property<?> prop:state.getProperties()){
-				if(state.hasProperty(prop))
+				if(pState.hasProperty(prop))
 					state = copyValue(prop, state, pState);
 			}
 			return state;
