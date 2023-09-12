@@ -124,7 +124,7 @@ dependencies {
 	//implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
 	//implementation fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:3913972")
 
-	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${version_ct}")
+	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${version_ct}")
 	
 	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}")
 	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
