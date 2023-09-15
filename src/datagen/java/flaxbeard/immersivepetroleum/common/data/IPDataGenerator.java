@@ -31,11 +31,11 @@ public class IPDataGenerator{
 			generator.addProvider(true, new IPLootGenerator(generator));
 			generator.addProvider(true, new IPRecipes(generator));
 			generator.addProvider(true, new IPAdvancements(generator, exhelper));
-		}
-		
-		if(event.includeClient()){
+			
 			generator.addProvider(true, new IPBlockStates(generator, exhelper));
 			generator.addProvider(true, new IPItemModels(generator, exhelper));
+			
+			IPBiomeModifierProvider.method(generator, exhelper, d -> generator.addProvider(true, d));
 		}
 	}
 }

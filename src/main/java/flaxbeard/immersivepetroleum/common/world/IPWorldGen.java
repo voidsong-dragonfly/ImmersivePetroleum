@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -22,17 +21,17 @@ import net.minecraftforge.registries.RegistryObject;
 public class IPWorldGen{
 	public static Map<String, Holder<PlacedFeature>> features = new HashMap<>();
 	
-	private static DeferredRegister<Feature<?>> FEATURE_REGISTER = DeferredRegister.create(ForgeRegistries.FEATURES, ImmersivePetroleum.MODID);
+	private static final DeferredRegister<Feature<?>> FEATURE_REGISTER = DeferredRegister.create(ForgeRegistries.FEATURES, ImmersivePetroleum.MODID);
 	
-	private static RegistryObject<FeatureReservoir> RESERVOIR_FEATURE = FEATURE_REGISTER.register("reservoir", FeatureReservoir::new);
+	private static final RegistryObject<FeatureReservoir> RESERVOIR_FEATURE = FEATURE_REGISTER.register("reservoir", FeatureReservoir::new);
 	
 	public static void init(IEventBus eBus){
 		FEATURE_REGISTER.register(eBus);
 	}
 	
 	public static void registerReservoirGen(){
-		Holder<PlacedFeature> reservoirFeature = register(ResourceUtils.ip("reservoir"), RESERVOIR_FEATURE, new NoneFeatureConfiguration());
-		features.put("reservoirs", reservoirFeature);
+		Holder<PlacedFeature> reservoirFeature = register(RESERVOIR_FEATURE.getId(), RESERVOIR_FEATURE, new NoneFeatureConfiguration());
+		features.put(RESERVOIR_FEATURE.getId().getPath(), reservoirFeature);
 	}
 	
 	/*
