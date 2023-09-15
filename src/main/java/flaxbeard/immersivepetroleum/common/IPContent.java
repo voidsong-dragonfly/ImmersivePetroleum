@@ -36,6 +36,7 @@ import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
+import flaxbeard.immersivepetroleum.common.entity.IPEntityTypes;
 import flaxbeard.immersivepetroleum.common.fluids.CrudeOilFluid;
 import flaxbeard.immersivepetroleum.common.fluids.DieselFluid;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
@@ -207,6 +208,7 @@ public class IPContent{
 		IPMenuTypes.forceClassLoad();
 		Serializers.forceClassLoad();
 		IPEffects.forceClassLoad();
+		IPEntityTypes.forceClassLoad();
 	}
 	
 	public static void preInit(){

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPRegisters;
-import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,7 +13,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
@@ -28,38 +25,27 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.RegistryObject;
 
 public class MolotovItemEntity extends ThrowableItemProjectile{
-	public static final RegistryObject<EntityType<MolotovItemEntity>> TYPE = createType();
-	
-	private static RegistryObject<EntityType<MolotovItemEntity>> createType(){
-		EntityType<MolotovItemEntity> ret = EntityType.Builder.<MolotovItemEntity> of(MolotovItemEntity::new, MobCategory.MISC)
-				.sized(0.25F, 0.25F)
-				.clientTrackingRange(4)
-				.updateInterval(10)
-				.build(ResourceUtils.ip("molotov").toString());
-		return IPRegisters.registerEntityType("molotov", () -> ret);
-	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living){
-		this(TYPE.get(), world, living);
+		this(IPEntityTypes.MOLOTOV.get(), world, living);
 	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living, double x, double y, double z){
-		this(TYPE.get(), world, living);
+		this(IPEntityTypes.MOLOTOV.get(), world, living);
 		setPos(x, y, z);
 		this.xo = x;
 		this.yo = y;
 		this.zo = z;
 	}
 	
-	private MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world){
+	public MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world){
 		super(type, world);
 		this.blocksBuilding = true;
 	}
 	
-	private MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world, LivingEntity living){
+	public MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world, LivingEntity living){
 		super(type, living, world);
 		this.blocksBuilding = true;
 	}

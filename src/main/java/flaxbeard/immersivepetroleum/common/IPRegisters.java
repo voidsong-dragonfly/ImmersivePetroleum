@@ -15,6 +15,7 @@ import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.util.IPEffects.IPEffect;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -122,12 +123,12 @@ public class IPRegisters{
 		return SOUND_EVENT.register(name, () -> new SoundEvent(ResourceUtils.ip(name)));
 	}
 	
-	public static <T extends ParticleType<?>> RegistryObject<T> registerParticleType(String name, Supplier<T> particleType){
+	public static <PType extends ParticleType<?>> RegistryObject<PType> registerParticleType(String name, Supplier<PType> particleType){
 		return PARTICLE_TYPE.register(name, particleType);
 	}
 	
-	public static <T extends EntityType<?>> RegistryObject<T> registerEntityType(String name, Supplier<T> entityType){
-		return ENTITY_TYPE.register(name, entityType);
+	public static <EType extends EntityType<?>> RegistryObject<EType> registerEntityType(String name, Function<ResourceLocation, EType> entityType){
+		return ENTITY_TYPE.register(name, () -> entityType.apply(ResourceUtils.ip(name)));
 	}
 	
 	private IPRegisters(){
