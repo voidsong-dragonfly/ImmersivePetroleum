@@ -17,6 +17,9 @@ public class IPParticleTypes{
 	public static final RegistryObject<SimpleParticleType> FLARE_FIRE = createBasicParticle("flare_fire", false);
 	public static final RegistryObject<ParticleType<FluidParticleData>> FLUID_SPILL = createParticleWithData("fluid_spill", FluidParticleData.DESERIALIZER, FluidParticleData.CODEC);
 	
+	public static void forceClassLoad(){
+	}
+	
 	private static RegistryObject<SimpleParticleType> createBasicParticle(String name, boolean alwaysShow){
 		return IPRegisters.registerParticleType(name, () -> new SimpleParticleType(alwaysShow));
 	}

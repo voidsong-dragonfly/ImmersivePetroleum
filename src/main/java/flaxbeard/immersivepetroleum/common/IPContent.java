@@ -16,6 +16,9 @@ import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
+import flaxbeard.immersivepetroleum.client.particle.FlareFire;
+import flaxbeard.immersivepetroleum.client.particle.FluidSpill;
+import flaxbeard.immersivepetroleum.client.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.CokerUnitBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.DerrickBlock;
@@ -61,6 +64,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -209,6 +213,8 @@ public class IPContent{
 		Serializers.forceClassLoad();
 		IPEffects.forceClassLoad();
 		IPEntityTypes.forceClassLoad();
+		IPParticleTypes.forceClassLoad();
+		IPSounds.forceClassLoad();
 	}
 	
 	public static void preInit(){
@@ -255,32 +261,10 @@ public class IPContent{
 		LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
 	}
 	
-	/*
-	@SubscribeEvent
-	public static void registerEntityTypes(RegisterEvent.RegisterHelper<EntityType<?>> event){
-//		try{
-//			event.register(ResourceUtils.ip("speedboat"), MotorboatEntity.TYPE);
-//			event.register(ResourceUtils.ip("molotov"), MolotovItemEntity.TYPE);
-//		}catch(Throwable e){
-//			log.error("Failed to register Speedboat Entity. {}", e.getMessage());
-//			throw e;
-//		}
-	}
-	*/
-	
-	/*
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void registerParticles(RegisterEvent.RegisterHelper<ParticleType<?>> event){
-		//event.register(IPParticleTypes.FLARE_FIRE);
-		//event.register(IPParticleTypes.FLUID_SPILL);
-	}*/
-	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
-		// FIXME Guess this aint the place for these
-		//event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
-		//event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
+		event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
+		event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
 	}
 }

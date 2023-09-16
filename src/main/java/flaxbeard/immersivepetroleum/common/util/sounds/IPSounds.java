@@ -7,4 +7,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class IPSounds{
 	public final static RegistryObject<SoundEvent> FLARESTACK = IPRegisters.registerSoundEvent("flarestack_fire");
 	public final static RegistryObject<SoundEvent> PROJECTOR = IPRegisters.registerSoundEvent("projector");
+	
+	public static void forceClassLoad(){
+	}
 }
