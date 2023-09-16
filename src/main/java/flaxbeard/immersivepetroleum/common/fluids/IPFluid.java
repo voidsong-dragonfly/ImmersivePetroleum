@@ -183,8 +183,8 @@ public class IPFluid extends FlowingFluid{
 			return source().get();
 		}
 		
-		protected static IPFluidEntry make(String name){
-			return make(name, 0, null);
+		public void setEffect(MobEffect effect, int duration, int level){
+			block().get().setEffect(effect, duration, level);
 		}
 		
 		protected static IPFluidEntry make(String name, @Nullable Consumer<FluidType.Properties> buildAttributes){

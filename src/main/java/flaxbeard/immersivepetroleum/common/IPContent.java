@@ -223,10 +223,15 @@ public class IPContent{
 	public static void init(ParallelDispatchEvent event){
 		event.enqueueWork(IPWorldGen::registerReservoirGen);
 		
-		//blockFluidCrudeOil.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));
-		//blockFluidDiesel.setPotionEffects(new PotionEffect(IEPotions.flammable, 100, 1));
-		//blockFluidLubricant.setPotionEffects(new PotionEffect(IEPotions.slippery, 100, 1));
-		//blockFluidNapalm.setPotionEffects(new PotionEffect(IEPotions.flammable, 140, 2));
+		Fluids.CRUDEOIL.setEffect(IEPotions.FLAMMABLE.get(), 100, 1);
+		Fluids.DIESEL.setEffect(IEPotions.FLAMMABLE.get(), 40, 1); // Realisticly diesel can not be ignited with an open flame..
+		Fluids.DIESEL_SULFUR.setEffect(IEPotions.FLAMMABLE.get(), 40, 1);
+		Fluids.GASOLINE.setEffect(IEPotions.FLAMMABLE.get(), 120, 2);
+		Fluids.KEROSENE.setEffect(IEPotions.FLAMMABLE.get(), 120, 2);
+		Fluids.NAPHTHA.setEffect(IEPotions.FLAMMABLE.get(), 120, 2);
+		Fluids.NAPALM.setEffect(IEPotions.FLAMMABLE.get(), 140, 2);
+		
+		Fluids.LUBRICANT.setEffect(IEPotions.SLIPPERY.get(), 100, 1);
 		
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new LubricantEffect());
 		ChemthrowerHandler.registerEffect(IPTags.Fluids.lubricant, new ChemthrowerEffect_Potion(null, 0, IEPotions.SLIPPERY.get(), 60, 1));
