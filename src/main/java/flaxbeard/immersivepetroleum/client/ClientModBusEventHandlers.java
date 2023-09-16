@@ -41,7 +41,6 @@ public class ClientModBusEventHandlers{
 		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
 		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
 		
-		// FIXME Guess this is not the place for these..
 		registerEntityRenderingHandler(ev, IPEntityTypes.MOTORBOAT, MotorboatRenderer::new);
 		registerEntityRenderingHandler(ev, IPEntityTypes.MOLOTOV, ThrownItemRenderer::new);
 	}
