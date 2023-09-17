@@ -110,22 +110,22 @@ public class IPContent{
 	}
 	
 	public static class Fluids{
-		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", 1000, 2250, false, CrudeOilFluid::new, CrudeOilFluid.CrudeOilBlock::new);
-		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", 789, 1750, false, DieselFluid::new);
-		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", 789, 1750, false, DieselFluid::new);
-		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", 925, 1000, false);
-		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", 789, 1200, false);
+		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", 1000, 2250, 0.007, CrudeOilFluid::new, CrudeOilFluid.CrudeOilBlock::new);
+		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", 789, 1750, DieselFluid::new);
+		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", 789, 1750, DieselFluid::new);
+		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", 925, 1000);
+		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", 789, 1200);
 		
-		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", 750, 750, false);
-		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", 750, 750, false);
-		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", 876, 700, false);
-		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", 2, 1, true);
-		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", 1, 1, true);
-		public static final IPFluidEntry LUBRICANT_CRACKED = IPFluid.makeFluid("lubricant_cracked", 925, 1000, false);
-		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", 810, 900, false);
-		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", 800, 900, false);
+		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", 750, 750);
+		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", 750, 750);
+		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", 876, 700);
+		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", 2, 1);
+		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", 1, 1);
+		public static final IPFluidEntry LUBRICANT_CRACKED = IPFluid.makeFluid("lubricant_cracked", 925, 1000);
+		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", 810, 900);
+		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", 800, 900);
 		
-		public static final IPFluidEntry NAPALM = IPFluid.makeFluid("napalm", 1000, 4000, false, NapalmFluidBlock::new);
+		public static final IPFluidEntry NAPALM = IPFluid.makeFluid("napalm", 1000, 4000, 0.0105, NapalmFluidBlock::new);
 		
 		private static void forceClassLoad(){
 		}

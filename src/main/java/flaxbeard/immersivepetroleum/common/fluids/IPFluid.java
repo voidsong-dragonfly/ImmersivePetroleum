@@ -63,40 +63,40 @@ import net.minecraftforge.registries.RegistryObject;
 public class IPFluid extends FlowingFluid{
 	public static final List<IPFluidEntry> FLUIDS = new ArrayList<>();
 	
-	public static IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas){
-		return makeFluid(name, density, viscosity, 0.014D, isGas);
+	public static IPFluidEntry makeFluid(String name, int density, int viscosity){
+		return makeFluid(name, density, viscosity, 0.014D);
 	}
 	
-	public static <B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
-		return makeFluid(name, density, viscosity, 0.014D, isGas, blockFactory);
+	public static <B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
+		return makeFluid(name, density, viscosity, 0.014D, blockFactory);
 	}
 	
-	public static <S extends IPFluid> IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, Function<IPFluidEntry, S> sourceFactory){
-		return makeFluid(name, density, viscosity, 0.014D, isGas, sourceFactory);
+	public static <S extends IPFluid> IPFluidEntry makeFluid(String name, int density, int viscosity, Function<IPFluidEntry, S> sourceFactory){
+		return makeFluid(name, density, viscosity, 0.014D, sourceFactory);
 	}
 	
-	public static <S extends IPFluid, B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, Function<IPFluidEntry, S> sourceFactory, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
-		return makeFluid(name, density, viscosity, 0.014D, isGas, sourceFactory, blockFactory);
+	public static <S extends IPFluid, B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, Function<IPFluidEntry, S> sourceFactory, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
+		return makeFluid(name, density, viscosity, 0.014D, sourceFactory, blockFactory);
 	}
 	
 	
-	public static IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas){
-		IPFluidEntry entry = IPFluidEntry.make(name, IPFluid::new, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, builder(density, viscosity, motionScale, isGas));
+	public static IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale){
+		IPFluidEntry entry = IPFluidEntry.make(name, IPFluid::new, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, builder(density, viscosity, motionScale));
 		return entry;
 	}
 	
-	public static <B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
-		IPFluidEntry entry = IPFluidEntry.make(name, IPFluid::new, IPFluid.Flowing::new, blockFactory, builder(density, viscosity, motionScale, isGas));
+	public static <B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
+		IPFluidEntry entry = IPFluidEntry.make(name, IPFluid::new, IPFluid.Flowing::new, blockFactory, builder(density, viscosity, motionScale));
 		return entry;
 	}
 	
-	public static <S extends IPFluid> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas, Function<IPFluidEntry, S> sourceFactory){
-		IPFluidEntry entry = IPFluidEntry.make(name, sourceFactory, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, builder(density, viscosity, motionScale, isGas));
+	public static <S extends IPFluid> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, Function<IPFluidEntry, S> sourceFactory){
+		IPFluidEntry entry = IPFluidEntry.make(name, sourceFactory, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, builder(density, viscosity, motionScale));
 		return entry;
 	}
 	
-	public static <S extends IPFluid, B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas, Function<IPFluidEntry, S> sourceFactory, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
-		IPFluidEntry entry = IPFluidEntry.make(name, sourceFactory, IPFluid.Flowing::new, blockFactory, builder(density, viscosity, motionScale, isGas));
+	public static <S extends IPFluid, B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, Function<IPFluidEntry, S> sourceFactory, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
+		IPFluidEntry entry = IPFluidEntry.make(name, sourceFactory, IPFluid.Flowing::new, blockFactory, builder(density, viscosity, motionScale));
 		return entry;
 	}
 	
@@ -211,9 +211,7 @@ public class IPFluid extends FlowingFluid{
 		return fluidIn == getSource() || fluidIn == getFlowing();
 	}
 	
-	private static Consumer<FluidType.Properties> builder(int density, int viscosity, double motionScale, boolean isGas){
-		// Apparently the gaseous stuff aint there anymore. RIP :(
-		// Keeping it anyway for future reference
+	private static Consumer<FluidType.Properties> builder(int density, int viscosity, double motionScale){
 		return builder -> builder.viscosity(viscosity).density(density).motionScale(motionScale);
 	}
 	

@@ -6,6 +6,7 @@ import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.FluidTagsProvider;
+import net.minecraftforge.common.Tags.Fluids;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class IPFluidTags extends FluidTagsProvider{
@@ -16,24 +17,28 @@ public class IPFluidTags extends FluidTagsProvider{
 	
 	@Override
 	protected void addTags(){
+		tag(IPTags.Fluids.crudeOil).add(IPContent.Fluids.CRUDEOIL.get());
+		
 		tag(IPTags.Fluids.diesel)
-			.add(IPContent.Fluids.DIESEL.source().get())
-			.add(IPContent.Fluids.DIESEL_SULFUR.source().get());
+			.add(IPContent.Fluids.DIESEL.get())
+			.add(IPContent.Fluids.DIESEL_SULFUR.get());
+		tag(IPTags.Fluids.diesel_sulfur).add(IPContent.Fluids.DIESEL_SULFUR.get());
 		
-		tag(IPTags.Fluids.diesel_sulfur)
-			.add(IPContent.Fluids.DIESEL_SULFUR.source().get());
+		tag(IPTags.Fluids.gasoline).add(IPContent.Fluids.GASOLINE.get());
+		tag(IPTags.Fluids.gasoline_additives).add(IPContent.Fluids.GASOLINE_ADDITIVES.get());
 		
-		tag(IPTags.Fluids.gasoline)
-			.add(IPContent.Fluids.GASOLINE.source().get());
+		tag(IPTags.Fluids.lubricant).add(IPContent.Fluids.LUBRICANT.get());
+		tag(IPTags.Fluids.lubricant_cracked).add(IPContent.Fluids.LUBRICANT_CRACKED.get());
 		
-		tag(IPTags.Fluids.lubricant)
-			.add(IPContent.Fluids.LUBRICANT.source().get());
+		tag(IPTags.Fluids.naphtha).add(IPContent.Fluids.NAPHTHA.get());
+		tag(IPTags.Fluids.naphtha_cracked).add(IPContent.Fluids.NAPHTHA_CRACKED.get());
 		
-		tag(IPTags.Fluids.napalm)
-			.add(IPContent.Fluids.NAPALM.source().get());
+		tag(IPTags.Fluids.benzene).add(IPContent.Fluids.BENZENE.get());
+		tag(IPTags.Fluids.propylene).add(IPContent.Fluids.PROPYLENE.get());
+		tag(IPTags.Fluids.ethylene).add(IPContent.Fluids.ETHYLENE.get());
+		tag(IPTags.Fluids.kerosene).add(IPContent.Fluids.KEROSENE.get());
 		
-		tag(IPTags.Fluids.crudeOil)
-			.add(IPContent.Fluids.CRUDEOIL.source().get());
+		tag(IPTags.Fluids.napalm).add(IPContent.Fluids.NAPALM.get());
 		
 		tag(IPTags.Utility.burnableInFlarestack)
 			.addTag(IPTags.Fluids.lubricant)
@@ -57,28 +62,8 @@ public class IPFluidTags extends FluidTagsProvider{
 			.addTag(IPTags.Fluids.kerosene)
 			.addTag(IPTags.Fluids.diesel_sulfur);
 		
-		tag(IPTags.Fluids.naphtha)
-			.add(IPContent.Fluids.NAPHTHA.source().get());
-		
-		tag(IPTags.Fluids.naphtha_cracked)
-			.add(IPContent.Fluids.NAPHTHA_CRACKED.source().get());
-		
-		tag(IPTags.Fluids.benzene)
-			.add(IPContent.Fluids.BENZENE.source().get());
-		
-		tag(IPTags.Fluids.propylene)
-			.add(IPContent.Fluids.PROPYLENE.source().get());
-		
-		tag(IPTags.Fluids.ethylene)
-			.add(IPContent.Fluids.ETHYLENE.source().get());
-		
-		tag(IPTags.Fluids.lubricant_cracked)
-			.add(IPContent.Fluids.LUBRICANT_CRACKED.source().get());
-		
-		tag(IPTags.Fluids.kerosene)
-			.add(IPContent.Fluids.KEROSENE.source().get());
-		
-		tag(IPTags.Fluids.gasoline_additives)
-			.add(IPContent.Fluids.GASOLINE_ADDITIVES.source().get());
+		tag(Fluids.GASEOUS)
+			.add(IPContent.Fluids.PROPYLENE.get())
+			.add(IPContent.Fluids.ETHYLENE.get());
 	}
 }
