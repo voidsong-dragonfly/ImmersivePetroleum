@@ -18,10 +18,6 @@ import net.minecraft.world.level.material.Material;
 
 public class NapalmFluid extends IPFluid{
 	
-	public static IPFluidEntry makeFluid(){
-		return makeFluid("napalm", 1000, 4000, false, NapalmFluidBlock::new);
-	}
-	
 	public NapalmFluid(IPFluidEntry entry){
 		super(entry);
 	}
@@ -29,6 +25,16 @@ public class NapalmFluid extends IPFluid{
 	@Override
 	public int getTickDelay(@Nonnull LevelReader p_205569_1_){
 		return 10;
+	}
+	
+	@Override
+	public boolean hasCustomSlowdown(){
+		return true;
+	}
+	
+	@Override
+	public double getEntitySlowdown(){
+		return 0.7;
 	}
 	
 	public static void processFire(IPFluidEntry entry, Level world, BlockPos pos){

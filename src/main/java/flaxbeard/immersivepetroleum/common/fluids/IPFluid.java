@@ -27,6 +27,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +49,12 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
@@ -58,18 +64,45 @@ public class IPFluid extends FlowingFluid{
 	public static final List<IPFluidEntry> FLUIDS = new ArrayList<>();
 	
 	public static IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas){
-		IPFluidEntry entry = IPFluidEntry.make(name, builder(density, viscosity, isGas));
-		return entry;
+		return makeFluid(name, density, viscosity, 0.014D, isGas);
 	}
 	
 	public static <B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
-		IPFluidEntry entry = IPFluidEntry.make(name, blockFactory, builder(density, viscosity, isGas));
+		return makeFluid(name, density, viscosity, 0.014D, isGas, blockFactory);
+	}
+	
+	public static <S extends IPFluid> IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, Function<IPFluidEntry, S> sourceFactory){
+		return makeFluid(name, density, viscosity, 0.014D, isGas, sourceFactory);
+	}
+	
+	public static <S extends IPFluid, B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, boolean isGas, Function<IPFluidEntry, S> sourceFactory, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
+		return makeFluid(name, density, viscosity, 0.014D, isGas, sourceFactory, blockFactory);
+	}
+	
+	
+	public static IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas){
+		IPFluidEntry entry = IPFluidEntry.make(name, IPFluid::new, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, builder(density, viscosity, motionScale, isGas));
 		return entry;
 	}
 	
-	public static <S extends IPFluid> IPFluidEntry makeFluidF(String name, int density, int viscosity, boolean isGas, Function<IPFluidEntry, S> fluidFactory){
-		IPFluidEntry entry = IPFluidEntry.make(name, fluidFactory, builder(density, viscosity, isGas));
+	public static <B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
+		IPFluidEntry entry = IPFluidEntry.make(name, IPFluid::new, IPFluid.Flowing::new, blockFactory, builder(density, viscosity, motionScale, isGas));
 		return entry;
+	}
+	
+	public static <S extends IPFluid> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas, Function<IPFluidEntry, S> sourceFactory){
+		IPFluidEntry entry = IPFluidEntry.make(name, sourceFactory, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, builder(density, viscosity, motionScale, isGas));
+		return entry;
+	}
+	
+	public static <S extends IPFluid, B extends IPFluidBlock> IPFluidEntry makeFluid(String name, int density, int viscosity, double motionScale, boolean isGas, Function<IPFluidEntry, S> sourceFactory, BiFunction<IPFluidEntry, Block.Properties, B> blockFactory){
+		IPFluidEntry entry = IPFluidEntry.make(name, sourceFactory, IPFluid.Flowing::new, blockFactory, builder(density, viscosity, motionScale, isGas));
+		return entry;
+	}
+	
+	
+	protected static Material createMaterial(MaterialColor color){
+		return new Material(color, true, false, false, false, false, true, PushReaction.DESTROY);
 	}
 	
 	private static IPFluidEntry staticEntry;
@@ -100,6 +133,14 @@ public class IPFluid extends FlowingFluid{
 	@Override
 	protected boolean canConvertToSource(){
 		return false;
+	}
+	
+	public boolean hasCustomSlowdown(){
+		return false;
+	}
+	
+	public double getEntitySlowdown(){
+		return 0.8;
 	}
 	
 	@Override
@@ -170,9 +211,10 @@ public class IPFluid extends FlowingFluid{
 		return fluidIn == getSource() || fluidIn == getFlowing();
 	}
 	
-	private static Consumer<FluidType.Properties> builder(int density, int viscosity, boolean isGas){
+	private static Consumer<FluidType.Properties> builder(int density, int viscosity, double motionScale, boolean isGas){
 		// Apparently the gaseous stuff aint there anymore. RIP :(
-		return builder -> builder.viscosity(viscosity).density(density);
+		// Keeping it anyway for future reference
+		return builder -> builder.viscosity(viscosity).density(density).motionScale(motionScale);
 	}
 	
 	// STATIC CLASSES
@@ -187,20 +229,12 @@ public class IPFluid extends FlowingFluid{
 			block().get().setEffect(effect, duration, level);
 		}
 		
-		protected static IPFluidEntry make(String name, @Nullable Consumer<FluidType.Properties> buildAttributes){
-			return make(name, 0, IPFluid::new, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, buildAttributes, ImmutableList.of());
-		}
-		
-		protected static IPFluidEntry make(String name, int burnTime, @Nullable Consumer<FluidType.Properties> buildAttributes){
-			return make(name, burnTime, IPFluid::new, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, buildAttributes, ImmutableList.of());
-		}
-		
-		protected static <B extends IPFluidBlock> IPFluidEntry make(String name, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock, @Nullable Consumer<FluidType.Properties> buildAttributes){
-			return make(name, IPFluid::new, IPFluid.Flowing::new, makeBlock, buildAttributes, ImmutableList.of());
-		}
-		
-		protected static <S extends IPFluid> IPFluidEntry make(String name, Function<IPFluidEntry, S> makeSource, @Nullable Consumer<FluidType.Properties> buildAttributes){
-			return make(name, makeSource, IPFluid.Flowing::new, IPFluid.IPFluidBlock::new, buildAttributes, ImmutableList.of());
+		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(
+			String name,
+			Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock,
+			@Nullable Consumer<FluidType.Properties> buildAttributes
+		){
+			return make(name, 0, makeSource, makeFlowing, makeBlock, buildAttributes, ImmutableList.of());
 		}
 		
 		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(
@@ -221,7 +255,7 @@ public class IPFluid extends FlowingFluid{
 				buildAttributes.accept(builder);
 			}
 			
-			RegistryObject<FluidType> type = IPRegisters.FLUID_TYPE.register(name, () -> typeWithTexture(builder, name));
+			RegistryObject<FluidType> type = IPRegisters.FLUID_TYPE.register(name, () -> new CustomFluidType(name, builder));
 			
 			Mutable<IPFluidEntry> thisMutable = new MutableObject<>();
 			
@@ -235,27 +269,64 @@ public class IPFluid extends FlowingFluid{
 			FLUIDS.add(entry);
 			return entry;
 		}
+	}
+	
+	private static class CustomFluidType extends FluidType{
+		final ResourceLocation stillTexture, flowTexture;
+		public CustomFluidType(String name, Properties properties){
+			super(properties);
+			this.stillTexture = ResourceUtils.ip("block/fluid/" + name + "_still");
+			this.flowTexture = ResourceUtils.ip("block/fluid/" + name + "_flow");
+		}
 		
-		private static FluidType typeWithTexture(FluidType.Properties builder, String name){
-			final ResourceLocation stillTexture = ResourceUtils.ip("block/fluid/" + name + "_still");
-			final ResourceLocation flowTexture = ResourceUtils.ip("block/fluid/" + name + "_flow");
-			
-			return new FluidType(builder){
+		@Override
+		public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer){
+			consumer.accept(new IClientFluidTypeExtensions(){
 				@Override
-				public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer){
-					consumer.accept(new IClientFluidTypeExtensions(){
-						@Override
-						public ResourceLocation getStillTexture(){
-							return stillTexture;
-						}
-						
-						@Override
-						public ResourceLocation getFlowingTexture(){
-							return flowTexture;
-						}
-					});
+				public ResourceLocation getStillTexture(){
+					return stillTexture;
 				}
-			};
+				
+				@Override
+				public ResourceLocation getFlowingTexture(){
+					return flowTexture;
+				}
+			});
+		}
+		
+		@Override
+		public boolean move(FluidState state, LivingEntity entity, Vec3 movementVector, double gravity){
+			if(!(state.getType() instanceof IPFluid)){
+				return false;
+			}
+			
+			IPFluid ipFluid = (IPFluid) state.getType();
+			if(!ipFluid.hasCustomSlowdown()){
+				return false;
+			}
+			
+			double drag = ipFluid.getEntitySlowdown();
+			boolean isFalling = entity.getDeltaMovement().y <= 0.0D;
+			double y = entity.getY();
+			double walkSpeed = entity.isSprinting() ? drag * 1.125F : drag;
+			double swimSpeed = 0.02F;
+			
+			swimSpeed *= entity.getAttribute(ForgeMod.SWIM_SPEED.get()).getValue();
+			entity.moveRelative((float) swimSpeed, movementVector);
+			entity.move(MoverType.SELF, entity.getDeltaMovement());
+			Vec3 deltaMovment = entity.getDeltaMovement();
+			if(entity.horizontalCollision && entity.onClimbable()){
+				deltaMovment = new Vec3(deltaMovment.x, 0.2D, deltaMovment.z);
+			}
+			
+			entity.setDeltaMovement(deltaMovment.multiply(walkSpeed, drag, walkSpeed));
+			Vec3 vec32 = entity.getFluidFallingAdjustedMovement(gravity, isFalling, entity.getDeltaMovement());
+			entity.setDeltaMovement(vec32);
+			if(entity.horizontalCollision && entity.isFree(vec32.x, vec32.y + 0.6 - entity.getY() + y, vec32.z)){
+				entity.setDeltaMovement(vec32.x, 0.3, vec32.z);
+			}
+			
+			return true;
 		}
 	}
 	

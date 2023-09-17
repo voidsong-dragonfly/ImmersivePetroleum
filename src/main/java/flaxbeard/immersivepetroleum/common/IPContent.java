@@ -110,9 +110,9 @@ public class IPContent{
 	}
 	
 	public static class Fluids{
-		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluidF("crudeoil", 1000, 2250, false, CrudeOilFluid::new);
-		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluidF("diesel_sulfur", 789, 1750, false, DieselFluid::new);
-		public static final IPFluidEntry DIESEL = IPFluid.makeFluidF("diesel", 789, 1750, false, DieselFluid::new);
+		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", 1000, 2250, false, CrudeOilFluid::new, CrudeOilFluid.CrudeOilBlock::new);
+		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", 789, 1750, false, DieselFluid::new);
+		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", 789, 1750, false, DieselFluid::new);
 		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", 925, 1000, false);
 		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", 789, 1200, false);
 		
