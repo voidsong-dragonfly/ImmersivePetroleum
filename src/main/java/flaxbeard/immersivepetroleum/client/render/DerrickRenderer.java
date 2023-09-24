@@ -27,9 +27,9 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
 	static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);
 	
-	public static final ResourceLocation DRILL = ResourceUtils.ip("multiblock/dyn/derricknew_drill");
-	public static final ResourceLocation PIPE_SEGMENT = ResourceUtils.ip("multiblock/dyn/derricknew_pipe_segment");
-	public static final ResourceLocation PIPE_TOP = ResourceUtils.ip("multiblock/dyn/derricknew_pipe_top");
+	public static final ResourceLocation DRILL = ResourceUtils.ip("multiblock/dyn/derrick_drill");
+	public static final ResourceLocation PIPE_SEGMENT = ResourceUtils.ip("multiblock/dyn/derrick_pipe_segment");
+	public static final ResourceLocation PIPE_TOP = ResourceUtils.ip("multiblock/dyn/derrick_pipe_top");
 	
 	@Override
 	public boolean shouldRenderOffScreen(@Nonnull DerrickTileEntity te){
