@@ -15,8 +15,8 @@ public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTil
 	public CokerUnitContainer(MenuType<?> type, int id, Inventory playerInventory, final CokerUnitTileEntity tile){
 		super(type, tile, id, CokerUnitMultiblock.INSTANCE);
 		
-		addSlot(new IPSlot.CokerInput(this, this.inv, CokerUnitTileEntity.Inventory.INPUT.id(), 20, 71));
-		addSlot(new IPSlot(this.inv, CokerUnitTileEntity.Inventory.INPUT_FILLED.id(), 9, 14, stack -> {
+		addSlot(new IPSlot.CokerInput(this, getInv(), CokerUnitTileEntity.Inventory.INPUT.id(), 20, 71));
+		addSlot(new IPSlot(getInv(), CokerUnitTileEntity.Inventory.INPUT_FILLED.id(), 9, 14, stack -> {
 			return FluidUtil.getFluidHandler(stack).map(h -> {
 				if(h.getTanks() <= 0 || h.getFluidInTank(0).isEmpty()){
 					return false;
@@ -30,10 +30,10 @@ public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTil
 				return CokerUnitRecipe.hasRecipeWithInput(fs, true);
 			}).orElse(false);
 		}));
-		addSlot(new IPSlot.ItemOutput(this.inv, CokerUnitTileEntity.Inventory.INPUT_EMPTY.id(), 9, 45));
+		addSlot(new IPSlot.ItemOutput(getInv(), CokerUnitTileEntity.Inventory.INPUT_EMPTY.id(), 9, 45));
 		
-		addSlot(new IPSlot.FluidContainer(this.inv, CokerUnitTileEntity.Inventory.OUTPUT_EMPTY.id(), 175, 14, FluidFilter.EMPTY));
-		addSlot(new IPSlot.ItemOutput(this.inv, CokerUnitTileEntity.Inventory.OUTPUT_FILLED.id(), 175, 45));
+		addSlot(new IPSlot.FluidContainer(getInv(), CokerUnitTileEntity.Inventory.OUTPUT_EMPTY.id(), 175, 14, FluidFilter.EMPTY));
+		addSlot(new IPSlot.ItemOutput(getInv(), CokerUnitTileEntity.Inventory.OUTPUT_FILLED.id(), 175, 45));
 		
 		this.ownSlotCount = CokerUnitTileEntity.Inventory.values().length;
 		

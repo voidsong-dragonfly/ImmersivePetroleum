@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMulti
 import blusunrize.immersiveengineering.common.gui.IEBaseContainerOld;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
@@ -25,7 +26,19 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
 	public MultiblockAwareGuiContainer(MenuType<?> type, T tile, int id, IETemplateMultiblock template){
 		super(type, tile, id);
 		
-		this.templateSize = new BlockPos(template.getSize(this.tile.getLevelNonnull())).subtract(ONE);
+		this.templateSize = new BlockPos(template.getSize(getTile().getLevelNonnull())).subtract(ONE);
+	}
+	
+	// TODO This is only Temporary until i've replaced IEBaseContainerOld
+	/** Only exists to keep the Deprecation warning at bay and will then be removed/replace */
+	public Container getInv(){
+		return this.inv;
+	}
+	
+	// TODO This is only Temporary until i've replaced IEBaseContainerOld
+	/** Only exists to keep the Deprecation warning at bay and will then be removed/replace */
+	public T getTile(){
+		return this.tile;
 	}
 	
 	/**
@@ -37,9 +50,9 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
 	
 	@Override
 	public boolean stillValid(@Nonnull Player player){
-		if(this.inv != null){
-			BlockPos min = this.tile.getBlockPosForPos(BlockPos.ZERO);
-			BlockPos max = this.tile.getBlockPosForPos(this.templateSize);
+		if(getInv() != null){
+			BlockPos min = getTile().getBlockPosForPos(BlockPos.ZERO);
+			BlockPos max = getTile().getBlockPosForPos(this.templateSize);
 			
 			AABB box = new AABB(min, max).inflate(getMaxDistance());
 			

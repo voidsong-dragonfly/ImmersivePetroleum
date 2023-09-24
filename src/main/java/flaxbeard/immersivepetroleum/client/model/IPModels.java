@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
+import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -28,6 +31,14 @@ public class IPModels{
 		
 		add(ModelLubricantPipes.Pumpjack.ID_NORMAL, new ModelLubricantPipes.Pumpjack(false));
 		add(ModelLubricantPipes.Pumpjack.ID_MIRRORED, new ModelLubricantPipes.Pumpjack(true));
+	}
+	
+	@SubscribeEvent
+	public static void registerDynamicOBJModels(ModelEvent.RegisterAdditional event){
+		event.register(SeismicSurveyBarrelRenderer.BARREL);
+		event.register(DerrickRenderer.DRILL);
+		event.register(DerrickRenderer.PIPE_SEGMENT);
+		event.register(DerrickRenderer.PIPE_TOP);
 	}
 	
 	private static final Map<String, IPModel> MODELS = new HashMap<>();

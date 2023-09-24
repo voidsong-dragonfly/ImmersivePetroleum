@@ -64,45 +64,6 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 	}
 	
 	@Override
-	protected void writeCustom(CompoundTag nbt){
-		nbt.putBoolean("spill", this.spill);
-		nbt.putInt("flow", ReservoirHandler.getIsland(getWorldNonnull(), getBlockPos()) == null ? 0 :
-			ReservoirIsland.getFlow(ReservoirHandler.getIsland(getWorldNonnull(),
-				getBlockPos()).getPressure(getWorldNonnull(),
-				getBlockPos().getX(), getBlockPos().getZ())));
-		
-		nbt.putBoolean("drillingcompleted", this.drillingCompleted);
-		nbt.putBoolean("pastphyiscalpart", this.pastPhysicalPart);
-		
-		nbt.putInt("pipes", this.pipes);
-		nbt.putInt("wellpipelength", this.wellPipeLength);
-		nbt.putInt("additionalpipes", this.additionalPipes);
-		
-		nbt.putBoolean("selfdestruct", this.selfDestruct);
-		nbt.putInt("selfdestructtimer", this.selfDestructTimer);
-		
-		nbt.putString("spillftype", RegistryUtils.getRegistryNameOf(this.spillFType).toString());
-		nbt.putInt("spillheight", this.spillHeight);
-		
-		if(!this.tappedIslands.isEmpty()){
-			final ListTag list = new ListTag();
-			this.tappedIslands.forEach(c -> {
-				CompoundTag pos = new CompoundTag();
-				pos.putInt("x", c.x());
-				pos.putInt("z", c.z());
-				list.add(pos);
-			});
-			nbt.put("tappedislands", list);
-		}
-		
-		if(!this.phyiscalPipesList.isEmpty()){
-			final ListTag list = new ListTag();
-			this.phyiscalPipesList.forEach(i -> list.add(IntTag.valueOf(i)));
-			nbt.put("pipeLoc", list);
-		}
-	}
-	
-	@Override
 	protected void readCustom(CompoundTag nbt){
 		this.spill = nbt.getBoolean("spill");
 		this.clientFlow = nbt.getInt("flow");
@@ -142,6 +103,50 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 			this.phyiscalPipesList.clear();
 			this.phyiscalPipesList.addAll(ints);
 		}
+	}
+	
+	@Override
+	protected void writeCustom(CompoundTag nbt){
+		nbt.putBoolean("spill", this.spill);
+		nbt.putInt("flow", getFlow());
+		
+		nbt.putBoolean("drillingcompleted", this.drillingCompleted);
+		nbt.putBoolean("pastphyiscalpart", this.pastPhysicalPart);
+		
+		nbt.putInt("pipes", this.pipes);
+		nbt.putInt("wellpipelength", this.wellPipeLength);
+		nbt.putInt("additionalpipes", this.additionalPipes);
+		
+		nbt.putBoolean("selfdestruct", this.selfDestruct);
+		nbt.putInt("selfdestructtimer", this.selfDestructTimer);
+		
+		nbt.putString("spillftype", RegistryUtils.getRegistryNameOf(this.spillFType).toString());
+		nbt.putInt("spillheight", this.spillHeight);
+		
+		if(!this.tappedIslands.isEmpty()){
+			final ListTag list = new ListTag();
+			this.tappedIslands.forEach(c -> {
+				CompoundTag pos = new CompoundTag();
+				pos.putInt("x", c.x());
+				pos.putInt("z", c.z());
+				list.add(pos);
+			});
+			nbt.put("tappedislands", list);
+		}
+		
+		if(!this.phyiscalPipesList.isEmpty()){
+			final ListTag list = new ListTag();
+			this.phyiscalPipesList.forEach(i -> list.add(IntTag.valueOf(i)));
+			nbt.put("pipeLoc", list);
+		}
+	}
+	
+	private int getFlow(){
+		ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), getBlockPos());
+		if(island == null)
+			return 0;
+		
+		return island.getFlowFromPressure(getWorldNonnull(), getBlockPos());
 	}
 	
 	@Override

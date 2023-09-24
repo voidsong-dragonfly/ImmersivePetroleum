@@ -24,7 +24,7 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 	HydrotreaterTileEntity tile;
 	public HydrotreaterScreen(HydrotreaterContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title, GUI_TEXTURE);
-		this.tile = this.menu.tile;
+		this.tile = this.menu.getTile();
 		
 		this.imageWidth = 140;
 		this.imageHeight = 69;

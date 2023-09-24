@@ -5,5 +5,5 @@
       "texture": "immersivepetroleum:block/obj/seismic_survey_tool",
       "particle": "immersivepetroleum:block/obj/seismic_survey_tool"
     },
-	"flip-v": true
+	"flip_v": true
 }

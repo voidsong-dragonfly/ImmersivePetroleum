@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -217,7 +218,7 @@ public class ReservoirIsland{
 	 * @param z z-coordinate to extract from
 	 * @return How much was extracted
 	 */
-	public int extractWithPressure(Level world, int x, int z){
+	public int extractWithPressure(@Nonnull Level world, int x, int z){
 		float pressure = getPressure(world, x, z);
 		
 		if(pressure > 0.0 && this.amount > 0){
@@ -229,6 +230,18 @@ public class ReservoirIsland{
 		}
 		
 		return 0;
+	}
+	
+	/**
+	 * <i>Only call on server side!</i>
+	 * 
+	 * @param level
+	 * @param pos
+	 * @return the Flowrate in mB for the position.
+	 */
+	public int getFlowFromPressure(@Nonnull Level level, BlockPos pos){
+		float pressure = getPressure(level, pos.getX(), pos.getZ());
+		return getFlow(pressure);
 	}
 	
 	/**
@@ -247,7 +260,7 @@ public class ReservoirIsland{
 	 * @param z     z-coordinate to query
 	 * @return Pressure float
 	 */
-	public float getPressure(Level level, int x, int z){
+	public float getPressure(@Nonnull Level level, int x, int z){
 		// prevents outside use
 		double noise = ReservoirHandler.getValueOf(level, x, z);
 		

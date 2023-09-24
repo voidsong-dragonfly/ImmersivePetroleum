@@ -30,7 +30,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	CokerUnitTileEntity tile;
 	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title, GUI_TEXTURE);
-		this.tile = menu.tile;
+		this.tile = menu.getTile();
 		
 		this.imageWidth = 200;
 		this.imageHeight = 187;

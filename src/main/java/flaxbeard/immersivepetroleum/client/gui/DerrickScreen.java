@@ -40,7 +40,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	
 	public DerrickScreen(DerrickContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title);
-		this.tile = menu.tile;
+		this.tile = menu.getTile();
 		
 		// TODO GUI may either get bigger or smaller as i figure this out
 		this.imageWidth = 200;

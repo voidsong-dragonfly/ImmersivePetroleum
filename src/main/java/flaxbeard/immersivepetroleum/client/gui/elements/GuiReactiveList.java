@@ -8,7 +8,6 @@
 
 package flaxbeard.immersivepetroleum.client.gui.elements;
 
-import java.awt.TextComponent;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;

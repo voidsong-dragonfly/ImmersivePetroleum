@@ -1,0 +1,10 @@
+{
+	"loader": "forge:obj",
+	"render_type": "cutout",
+	"model": "immersivepetroleum:models/multiblock/obj/derrick_pipe_top.obj",
+    "textures": {
+      "texture": "immersivepetroleum:multiblock/derrick",
+      "particle": "immersivepetroleum:multiblock/derrick"
+    },
+	"flip_v": true
+}

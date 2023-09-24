@@ -25,6 +25,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
+import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
@@ -528,7 +529,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	
 	@Nonnull
 	@Override
-	public BEContainerIP<? super CokerUnitTileEntity, ?> getContainerTypeIP(){
+	public BEContainerIP<CokerUnitTileEntity, CokerUnitContainer> getContainerType(){
 		return IPMenuTypes.COKER;
 	}
 	

@@ -22,7 +22,7 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer<Dist
 	public DistillationTowerContainer(MenuType<?> type, int id, Inventory playerInventory, final DistillationTowerTileEntity tile){
 		super(type, tile, id, DistillationTowerMultiblock.INSTANCE);
 		
-		addSlot(new IPSlot(this.inv, INV_0, 12, 17){
+		addSlot(new IPSlot(getInv(), INV_0, 12, 17){
 			@Override
 			public boolean mayPlace(@Nonnull ItemStack stack){
 				return FluidUtil.getFluidHandler(stack).map(h -> {
@@ -40,10 +40,10 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer<Dist
 				}).orElse(false);
 			}
 		});
-		addSlot(new IPSlot.ItemOutput(this.inv, INV_1, 12, 53));
+		addSlot(new IPSlot.ItemOutput(getInv(), INV_1, 12, 53));
 		
-		addSlot(new IPSlot.FluidContainer(this.inv, INV_2, 134, 17, FluidFilter.EMPTY));
-		addSlot(new IPSlot.ItemOutput(this.inv, INV_3, 134, 53));
+		addSlot(new IPSlot.FluidContainer(getInv(), INV_2, 134, 17, FluidFilter.EMPTY));
+		addSlot(new IPSlot.ItemOutput(getInv(), INV_3, 134, 53));
 		
 		this.ownSlotCount = 4;
 		

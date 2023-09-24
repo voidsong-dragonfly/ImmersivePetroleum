@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
-import javax.annotation.Nonnull;
-
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
@@ -22,22 +20,20 @@ public class DerrickBlock extends IPMetalMultiblock<DerrickTileEntity>{
 	}
 	
 	@Override
-	@Nonnull
-	public InteractionResult use(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit){
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
 		if(!player.getItemInHand(hand).isEmpty()){
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof DerrickTileEntity derrick && derrick.skipGui(hit)){
+			if(te instanceof DerrickTileEntity derricknew && derricknew.skipGui(hit)){
 				return InteractionResult.FAIL;
 			}
 		}
-		
 		return super.use(state, world, pos, player, hand, hit);
 	}
 	
 	@Override
 	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity){
 		BlockEntity te = world.getBlockEntity(pos);
-		if(te instanceof DerrickTileEntity derrick && derrick.isLadder()){
+		if(te instanceof DerrickTileEntity derricknew && derricknew.isLadder()){
 			return true;
 		}
 		return false;

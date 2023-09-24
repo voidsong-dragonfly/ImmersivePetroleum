@@ -24,9 +24,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.data.ModelData;
 
 public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
-	
-	static final ResourceLocation DERRICK_PIPE_RL = ResourceUtils.ip("multiblock/dyn/derrick_pipe");
 	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
+	static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);
+	
+	public static final ResourceLocation DRILL = ResourceUtils.ip("multiblock/dyn/derricknew_drill");
+	public static final ResourceLocation PIPE_SEGMENT = ResourceUtils.ip("multiblock/dyn/derricknew_pipe_segment");
+	public static final ResourceLocation PIPE_TOP = ResourceUtils.ip("multiblock/dyn/derricknew_pipe_top");
 	
 	@Override
 	public boolean shouldRenderOffScreen(@Nonnull DerrickTileEntity te){
@@ -40,24 +43,39 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 			return;
 		}
 		
-		renderPipe(matrix, bufferIn, te, partialTicks, combinedLightIn, combinedOverlayIn);
-	}
-	
-	static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);
-	private void renderPipe(PoseStack matrix, MultiBufferSource buffer, DerrickTileEntity te, float partialTicks, int light, int overlay){
 		matrix.pushPose();
 		{
-			float rot = te.rotation + (te.drilling ? 9 * partialTicks : 0);
+			float rot = te.rotation + (te.drilling? 10 * partialTicks : 0);
 			
-			matrix.translate(0.5, 0.0, 0.5);
+			matrix.translate(0.5, 1.0, 0.5);
 			matrix.mulPose(new Quaternion(Y_AXIS, rot, true));
-			List<BakedQuad> quads = f.apply(DERRICK_PIPE_RL).getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
-			Pose last = matrix.last();
-			VertexConsumer solid = buffer.getBuffer(RenderType.solid());
-			for(BakedQuad quad:quads){
-				solid.putBulkData(last, quad, 1.0F, 1.0F, 1.0F, light, overlay);
+			renderObj(DRILL, bufferIn, matrix, combinedLightIn, combinedOverlayIn);
+			
+			float pipeHeight = -(rot / 360F);
+			
+			int i = 0;
+			for(;i < 6;i++){
+				float y = pipeHeight + i;
+				if(y > -1.0){
+					matrix.pushPose();
+					{
+						matrix.translate(0, y + 0.75, 0);
+						renderObj(i < 5 ? PIPE_SEGMENT : PIPE_TOP, bufferIn, matrix, combinedLightIn, combinedOverlayIn);
+					}
+					matrix.popPose();
+				}
 			}
+			
 		}
 		matrix.popPose();
+	}
+	
+	private void renderObj(ResourceLocation modelRL, @Nonnull MultiBufferSource bufferIn, @Nonnull PoseStack matrix, int light, int overlay){
+		List<BakedQuad> quads = f.apply(modelRL).getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
+		Pose last = matrix.last();
+		VertexConsumer solid = bufferIn.getBuffer(RenderType.solid());
+		for(BakedQuad quad:quads){
+			solid.putBulkData(last, quad, 1.0F, 1.0F, 1.0F, light, overlay);
+		}
 	}
 }
