@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client.render;
 
 import java.util.List;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -17,14 +16,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.data.ModelData;
 
 public class SeismicSurveyBarrelRenderer implements BlockEntityRenderer<SeismicSurveyTileEntity>{
 	
 	public static final ResourceLocation BARREL = ResourceUtils.ip("block/dyn/seismic_survey_tool_barrel");
-	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
 	
 	@Override
 	public boolean shouldRenderOffScreen(@Nonnull SeismicSurveyTileEntity pBlockEntity){
@@ -44,7 +41,7 @@ public class SeismicSurveyBarrelRenderer implements BlockEntityRenderer<SeismicS
 			
 			matrix.translate(0, -0.125 * (1 - d), 0);
 			
-			List<BakedQuad> quads = f.apply(BARREL).getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
+			List<BakedQuad> quads = MCUtil.getModel(BARREL).getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
 			Pose last = matrix.last();
 			VertexConsumer solid = buffer.getBuffer(RenderType.solid());
 			for(BakedQuad quad:quads){

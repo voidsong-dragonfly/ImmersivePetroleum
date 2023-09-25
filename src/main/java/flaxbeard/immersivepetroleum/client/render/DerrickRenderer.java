@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client.render;
 
 import java.util.List;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -19,12 +18,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.data.ModelData;
 
 public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
-	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
 	static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);
 	
 	public static final ResourceLocation DRILL = ResourceUtils.ip("multiblock/dyn/derrick_drill");
@@ -53,8 +50,7 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 			
 			float pipeHeight = -(rot / 360F);
 			
-			int i = 0;
-			for(;i < 6;i++){
+			for(int i = 0;i < 6;i++){
 				float y = pipeHeight + i;
 				if(y > -1.0){
 					matrix.pushPose();
@@ -71,7 +67,7 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	}
 	
 	private void renderObj(ResourceLocation modelRL, @Nonnull MultiBufferSource bufferIn, @Nonnull PoseStack matrix, int light, int overlay){
-		List<BakedQuad> quads = f.apply(modelRL).getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
+		List<BakedQuad> quads = MCUtil.getModel(modelRL).getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
 		Pose last = matrix.last();
 		VertexConsumer solid = bufferIn.getBuffer(RenderType.solid());
 		for(BakedQuad quad:quads){
