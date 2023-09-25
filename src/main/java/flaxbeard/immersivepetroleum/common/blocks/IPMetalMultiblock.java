@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -53,11 +54,11 @@ public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & IPCommon
 					interaction = interaction.getGuiMaster();
 					if(interaction != null && interaction.canUseGui(player)){
 						
-						// Between these lines is a direct copy-paste from IEEntityBlock
+						// Between these lines is basicly a direct copy-paste from IEEntityBlock
 						/** ---------------------------------------------------------------------------- */
 						
 						// This can be removed once IEBaseContainerOld is gone
-						var tempMenu = interaction.createMenu(0, player.getInventory(), player);
+						AbstractContainerMenu tempMenu = interaction.createMenu(0, player.getInventory(), player);
 						if(tempMenu instanceof IEBaseContainerOld<?>)
 							NetworkHooks.openScreen(serverPlayer, interaction, ((BlockEntity) interaction).getBlockPos());
 						else
