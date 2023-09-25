@@ -112,7 +112,6 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	
 	public DerrickTileEntity(BlockEntityType<? extends DerrickTileEntity> type, BlockPos pos, BlockState state){
 		super(DerrickMultiblock.INSTANCE, 16000, true, type, pos, state);
-		this.redstoneControlInverted = true;
 	}
 	
 	@Override
