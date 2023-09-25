@@ -829,9 +829,18 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			}
 		}
 		
+		// Redstone Controller
+		if(x == 0 && z == 1){
+			if(y == 0){
+				main.add(box(2, 0, 2, 6, 16, 4));
+				main.add(box(2, 0, 12, 6, 16, 14));
+			}
+			if(y == 1) main.add(box(0, 0, 0, 8, 16, 16));
+		}
+			
 		// Use default cube shape if nessesary
 		if(main.isEmpty()){
-			main.add(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0));
+			main.add(box(0, 0, 0, 16, 16, 16));
 		}
 		return main;
 	}
