@@ -23,7 +23,7 @@ public class DerrickBlock extends IPMetalMultiblock<DerrickTileEntity>{
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
 		if(!player.getItemInHand(hand).isEmpty()){
 			BlockEntity te = world.getBlockEntity(pos);
-			if(te instanceof DerrickTileEntity derricknew && derricknew.skipGui(hit)){
+			if(te instanceof DerrickTileEntity derrick && derrick.skipGui(hit)){
 				return InteractionResult.FAIL;
 			}
 		}
@@ -33,7 +33,7 @@ public class DerrickBlock extends IPMetalMultiblock<DerrickTileEntity>{
 	@Override
 	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity){
 		BlockEntity te = world.getBlockEntity(pos);
-		if(te instanceof DerrickTileEntity derricknew && derricknew.isLadder()){
+		if(te instanceof DerrickTileEntity derrick && derrick.isLadder()){
 			return true;
 		}
 		return false;
