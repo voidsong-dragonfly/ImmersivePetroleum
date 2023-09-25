@@ -22,7 +22,7 @@ public class SneakScrollHandler{
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event){
 		if(event.side == LogicalSide.CLIENT && event.player != null && event.player == Minecraft.getInstance().getCameraEntity()){
 			if(event.phase == Phase.END){
-				sneaking = event.player.isCrouching();
+				sneaking = event.player.isShiftKeyDown();
 			}
 		}
 	}
