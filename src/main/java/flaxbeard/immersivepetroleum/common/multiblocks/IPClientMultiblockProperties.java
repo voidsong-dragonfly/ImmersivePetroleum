@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
+import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -41,39 +41,61 @@ public class IPClientMultiblockProperties implements ClientMultiblocks.Multibloc
 		this(multiblock, null);
 	}
 	
+	/** Skipping normal rendering behaviour */
+	protected boolean usingCustomRendering(){
+		return false;
+	}
+	
 	@Override
 	public NonNullList<ItemStack> getTotalMaterials(){
 		// TODO (malte): Add helper for this to IE API
-		if(materials == null){
-			List<StructureTemplate.StructureBlockInfo> structure = multiblock.getStructure(null);
-			materials = NonNullList.create();
+		if(this.materials == null){
+			List<StructureTemplate.StructureBlockInfo> structure = this.multiblock.getStructure(null);
+			this.materials = NonNullList.create();
 			for(StructureTemplate.StructureBlockInfo info:structure){
 				ItemStack picked = Utils.getPickBlock(info.state);
 				boolean added = false;
-				for(ItemStack existing:materials)
+				for(ItemStack existing:this.materials)
 					if(ItemStack.isSame(existing, picked)){
 						existing.grow(1);
 						added = true;
 						break;
 					}
 				if(!added)
-					materials.add(picked.copy());
+					this.materials.add(picked.copy());
 			}
 		}
-		return materials;
+		return this.materials;
 	}
 	
 	@Override
 	public boolean canRenderFormedStructure(){
-		return renderOffset != null;
+		return this.renderOffset != null;
+	}
+	
+	/** Allowing custom accessories to be rendered. Unused if {@link #usingCustomRendering()} returns true */
+	public void renderExtras(PoseStack matrix, MultiBufferSource buffer){
+	}
+	
+	/** Only used when {@link #usingCustomRendering()} returns true */
+	public void renderCustomFormedStructure(PoseStack matrix, MultiBufferSource buffer){
 	}
 	
 	@Override
-	public void renderFormedStructure(PoseStack transform, MultiBufferSource buffer){
-		Objects.requireNonNull(renderOffset);
-		transform.translate(renderOffset.x, renderOffset.y, renderOffset.z);
-		ClientUtils.mc().getItemRenderer().renderStatic(
-				renderStack, TransformType.NONE, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, transform, buffer, 0
-		);
+	public final void renderFormedStructure(PoseStack matrix, MultiBufferSource buffer){
+		Objects.requireNonNull(this.renderOffset);
+		
+		if(usingCustomRendering()){
+			renderCustomFormedStructure(matrix, buffer);
+			return;
+		}
+		
+		matrix.translate(this.renderOffset.x, this.renderOffset.y, this.renderOffset.z);
+		MCUtil.getItemRenderer().renderStatic(this.renderStack, TransformType.NONE, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
+		matrix.pushPose();
+		{
+			renderExtras(matrix, buffer);
+		}
+		matrix.popPose();
 	}
 }
