@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
+import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks.MultiblockManualData;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
@@ -235,7 +236,7 @@ public class ProjectorScreen extends Screen{
 					matrix.mulPose(new Quaternion(0, (int) (45 - this.rotation), 0, true));
 					matrix.translate(size.getX() / -2F, size.getY() / -2F, size.getZ() / -2F);
 					
-					var mbClientData = ClientMultiblocks.get(mb);
+					MultiblockManualData mbClientData = ClientMultiblocks.get(mb);
 					boolean tempDisable = true;
 					if(tempDisable && mbClientData.canRenderFormedStructure()){
 						matrix.pushPose();
