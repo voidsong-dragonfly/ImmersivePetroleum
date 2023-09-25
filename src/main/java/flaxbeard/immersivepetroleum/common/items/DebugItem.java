@@ -5,16 +5,12 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
-import org.lwjgl.glfw.GLFW;
-
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType.BWList;
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
-import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
@@ -41,9 +37,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Mod;
 
 public class DebugItem extends IPItemBase{
 	public enum Modes{
@@ -306,53 +300,30 @@ public class DebugItem extends IPItemBase{
 		return stack.getOrCreateTagElement("settings");
 	}
 	
-	@OnlyIn(Dist.CLIENT)
-	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
-		static boolean shiftHeld = false;
 		
-		@SubscribeEvent
-		public static void handleScroll(InputEvent.MouseScrollingEvent event){
-			double delta = event.getScrollDelta();
+		public static void onSneakScrolling(InputEvent.MouseScrollingEvent event, Player player, double scrollDelta, boolean isSneaking){
+			ItemStack mainItem = player.getMainHandItem();
+			ItemStack secondItem = player.getOffhandItem();
+			boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.DEBUGITEM.get();
+			boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.DEBUGITEM.get();
 			
-			if(shiftHeld && delta != 0.0){
-				Player player = MCUtil.getPlayer();
-				ItemStack mainItem = player.getMainHandItem();
-				ItemStack secondItem = player.getOffhandItem();
-				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.DEBUGITEM.get();
-				boolean off = !secondItem.isEmpty() && secondItem.getItem() == IPContent.DEBUGITEM.get();
+			if(main || off){
+				ItemStack target = main ? mainItem : secondItem;
 				
-				if(main || off){
-					ItemStack target = main ? mainItem : secondItem;
-					
-					Modes mode = DebugItem.getMode(target);
-					int id = mode.ordinal() + (int) delta;
-					if(id < 0){
-						id = Modes.values().length - 1;
-					}
-					if(id >= Modes.values().length){
-						id = 0;
-					}
-					mode = Modes.values()[id];
-					
-					DebugItem.setModeClient(target, mode);
-					player.displayClientMessage(Component.literal(mode.display), true);
-					event.setCanceled(true);
+				Modes mode = DebugItem.getMode(target);
+				int id = mode.ordinal() + (int) scrollDelta;
+				if(id < 0){
+					id = Modes.values().length - 1;
 				}
-			}
-		}
-		
-		@SubscribeEvent
-		public static void handleKey(InputEvent.Key event){
-			if(event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT){
-				switch(event.getAction()){
-					case GLFW.GLFW_PRESS -> {
-						shiftHeld = true;
-					}
-					case GLFW.GLFW_RELEASE -> {
-						shiftHeld = false;
-					}
+				if(id >= Modes.values().length){
+					id = 0;
 				}
+				mode = Modes.values()[id];
+				
+				DebugItem.setModeClient(target, mode);
+				player.displayClientMessage(Component.literal(mode.display), true);
+				event.setCanceled(true);
 			}
 		}
 	}

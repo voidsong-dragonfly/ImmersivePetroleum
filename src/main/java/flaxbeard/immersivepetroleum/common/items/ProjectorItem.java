@@ -37,6 +37,7 @@ import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings.Mode;
@@ -371,10 +372,6 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 		}
 	}
 	
-	public static boolean hasKey(ItemStack stack, String key, int tagId){
-		return stack.hasTag() && stack.getTag().contains(key, tagId);
-	}
-	
 	// STATIC SUPPORT CLASSES
 	
 	/** Client Rendering Stuff */
@@ -400,11 +397,11 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
 					ItemStack secondItem = mc.player.getOffhandItem();
-					boolean off = secondItem.is(Items.PROJECTOR.get()) && hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
+					boolean off = secondItem.is(Items.PROJECTOR.get()) && Utils.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
 					
 					for(int i = 0;i <= 10;i++){
 						ItemStack stack = (i == 10 ? secondItem : mc.player.getInventory().getItem(i));
-						if(stack.is(Items.PROJECTOR.get()) && hasKey(stack, "settings", Tag.TAG_COMPOUND)){
+						if(stack.is(Items.PROJECTOR.get()) && Utils.hasKey(stack, "settings", Tag.TAG_COMPOUND)){
 							Settings settings = getSettings(stack);
 							matrix.pushPose();
 							{
@@ -739,53 +736,31 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 			}
 		}
 		
-		@SubscribeEvent
-		public static void handleScroll(InputEvent.MouseScrollingEvent event){
-			double delta = event.getScrollDelta();
+		public static void onSneakScrolling(InputEvent.MouseScrollingEvent event, Player player, double scrollDelta, boolean isSneaking){
+			ItemStack mainItem = player.getMainHandItem();
+			ItemStack secondItem = player.getOffhandItem();
 			
-			if(shiftHeld && delta != 0.0){
-				Player player = MCUtil.getPlayer();
-				ItemStack mainItem = player.getMainHandItem();
-				ItemStack secondItem = player.getOffhandItem();
+			boolean main = mainItem.is(Items.PROJECTOR.get()) && Utils.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
+			boolean off = secondItem.is(Items.PROJECTOR.get()) && Utils.hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
+			
+			if(main || off){
+				ItemStack target = main ? mainItem : secondItem;
 				
-				boolean main = mainItem.is(Items.PROJECTOR.get()) && hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
-				boolean off = secondItem.is(Items.PROJECTOR.get()) && hasKey(secondItem, "settings", Tag.TAG_COMPOUND);
+				Settings settings = getSettings(target);
 				
-				if(main || off){
-					ItemStack target = main ? mainItem : secondItem;
-					
-					if(shiftHeld){
-						Settings settings = getSettings(target);
-						
-						if(delta > 0){
-							settings.rotateCCW();
-						}else{
-							settings.rotateCW();
-						}
-						
-						settings.applyTo(target);
-						settings.sendPacketToServer(main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
-						
-						Direction facing = Direction.from2DDataValue(settings.getRotation().ordinal());
-						player.displayClientMessage(Component.translatable("desc.immersivepetroleum.info.projector.rotated." + facing), true);
-						
-						event.setCanceled(true);
-					}
+				if(scrollDelta > 0){
+					settings.rotateCCW();
+				}else{
+					settings.rotateCW();
 				}
-			}
-		}
-		
-		@SubscribeEvent
-		public static void handleKey(InputEvent.Key event){
-			if(event.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT || event.getKey() == GLFW.GLFW_KEY_LEFT_SHIFT){
-				switch(event.getAction()){
-					case GLFW.GLFW_PRESS -> {
-						shiftHeld = true;
-					}
-					case GLFW.GLFW_RELEASE -> {
-						shiftHeld = false;
-					}
-				}
+				
+				settings.applyTo(target);
+				settings.sendPacketToServer(main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+				
+				Direction facing = Direction.from2DDataValue(settings.getRotation().ordinal());
+				player.displayClientMessage(Component.translatable("desc.immersivepetroleum.info.projector.rotated." + facing), true);
+				
+				event.setCanceled(true);
 			}
 		}
 		
@@ -794,8 +769,8 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 			ItemStack mainItem = player.getMainHandItem();
 			ItemStack secondItem = player.getOffhandItem();
 			
-			boolean main = mainItem.is(Items.PROJECTOR.get()) && hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
-			boolean off = secondItem.is(Items.PROJECTOR.get()) && hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
+			boolean main = mainItem.is(Items.PROJECTOR.get()) && Utils.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
+			boolean off = secondItem.is(Items.PROJECTOR.get()) && Utils.hasKey(mainItem, "settings", Tag.TAG_COMPOUND);
 			ItemStack target = main ? mainItem : secondItem;
 			
 			if(main || off){

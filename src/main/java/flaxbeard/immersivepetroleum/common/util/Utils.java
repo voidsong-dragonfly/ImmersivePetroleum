@@ -92,6 +92,10 @@ public class Utils{
 		return new ColumnPos(pos.getX(), pos.getZ());
 	}
 	
+	public static boolean hasKey(ItemStack stack, String key, int tagId){
+		return stack.hasTag() && stack.getTag().contains(key, tagId);
+	}
+	
 	private Utils(){
 	}
 }
