@@ -616,7 +616,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	
 	@Override
 	public DerrickTileEntity getGuiMaster(){
-		return null;
+		return master();
 	}
 	
 	@Override
