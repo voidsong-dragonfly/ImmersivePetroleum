@@ -177,6 +177,7 @@ public class ProjectorScreen extends Screen{
 	private String getMBName(String str){
 		return getMBName(Integer.parseInt(str));
 	}
+	
 	private String getMBName(int index){
 		IMultiblock mb = this.multiblocks.get().get(index);
 		return mb.getDisplayName().getString();
@@ -215,19 +216,7 @@ public class ProjectorScreen extends Screen{
 			}
 		}
 		
-		{ // Direction Display (N-S-E-W)
-			int x = this.guiLeft + 115;
-			int y = this.guiTop + 82;
-			
-			Direction dir = Direction.from2DDataValue(this.settings.getRotation().ordinal());
-			Component dirText = Component.literal(dir.toString().toUpperCase().substring(0, 1));
-			drawCenteredString(matrix, this.font, dirText, x + 5, y + 1, -1);
-			
-			if(mouseX > x && mouseX < x + 10 && mouseY > y && mouseY < y + 10){
-				Component rotText = Component.translatable("desc.immersivepetroleum.info.projector.rotated." + dir);
-				renderTooltip(matrix, rotText, mouseX, mouseY);
-			}
-		}
+		renderDirectionDisplay(matrix, mouseX, mouseY);
 		
 		if(this.settings.getMultiblock() != null){
 			IMultiblock mb = this.settings.getMultiblock();
@@ -284,6 +273,21 @@ public class ProjectorScreen extends Screen{
 				e.printStackTrace();
 			}
 			buffer.endBatch();
+		}
+	}
+	
+	private void renderDirectionDisplay(@Nonnull PoseStack matrix, int mouseX, int mouseY){
+		int x = this.guiLeft + 115;
+		int y = this.guiTop + 82;
+		
+		// Idealy it'd be: N-S-E-W
+		Direction dir = Direction.from2DDataValue(this.settings.getRotation().ordinal());
+		Component dirText = Component.literal(dir.toString().toUpperCase().substring(0, 1));
+		drawCenteredString(matrix, this.font, dirText, x + 5, y + 1, -1);
+		
+		if(mouseX > x && mouseX < x + 10 && mouseY > y && mouseY < y + 10){
+			Component rotText = Component.translatable("desc.immersivepetroleum.info.projector.rotated." + dir);
+			renderTooltip(matrix, rotText, mouseX, mouseY);
 		}
 	}
 	
