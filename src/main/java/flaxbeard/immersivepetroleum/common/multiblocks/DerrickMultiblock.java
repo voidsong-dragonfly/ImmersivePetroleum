@@ -17,11 +17,11 @@ public class DerrickMultiblock extends IPTemplateMultiblock{
 	
 	@Override
 	public float getManualScale(){
-		return 15.0F;
+		return 10.0F;
 	}
 	
 	@Override
 	public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer){
-		consumer.accept(new IPClientMultiblockProperties(this, 2.5, 2.5, 2.5));
+		consumer.accept(new IPClientMultiblockProperties(this, 2.5, 0.5, 2.5));
 	}
 }
