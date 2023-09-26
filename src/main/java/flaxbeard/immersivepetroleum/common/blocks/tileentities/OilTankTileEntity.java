@@ -398,7 +398,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		return 0;
 	}
 	
-	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
+	private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(OilTankTileEntity::getShape);
 	@Override
 	@Nonnull
 	public VoxelShape getBlockBounds(CollisionContext ctx){

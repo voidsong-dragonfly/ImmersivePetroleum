@@ -728,7 +728,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		return y >= 0 && y <= 2 && x == 0 && z == 2;
 	}
 	
-	private static CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DerrickTileEntity::getShape);
+	private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(DerrickTileEntity::getShape);
 	@Override
 	public VoxelShape getBlockBounds(CollisionContext ctx){
 		return SHAPES.get(this.posInMultiblock, Pair.of(getFacing(), getIsMirrored()));
