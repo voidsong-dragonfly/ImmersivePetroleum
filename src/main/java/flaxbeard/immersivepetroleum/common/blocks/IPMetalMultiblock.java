@@ -37,6 +37,7 @@ public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & IPCommon
 				.requiresCorrectToolForDrops()
 				.isViewBlocking((state, blockReader, pos) -> false)
 				.noOcclusion()
+				.dynamicShape()
 		);
 		this.multiblockBEType = te;
 	}
