@@ -26,6 +26,7 @@ import flaxbeard.immersivepetroleum.client.ClientProxy;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.ICanSkipGUI;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
@@ -55,7 +56,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -69,7 +69,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPCommonTickableTile, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
 	public static final int REQUIRED_WATER_AMOUNT = 125;
 	public static final int REQUIRED_CONCRETE_AMOUNT = 125;
 	
@@ -588,17 +588,25 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		return super.getCapability(capability, side);
 	}
 	
-	/** Locations that don't require sneaking to avoid the GUI */
-	public boolean skipGui(BlockHitResult hit){
+	@Override
+	public boolean skipGui(Direction hitFace){
 		Direction facing = getFacing();
 		
 		// Power input
-		if(Energy_IN.stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == Direction.UP){
+		if(getEnergyPos().stream().anyMatch((t) -> t.posInMultiblock().equals(this.posInMultiblock)) && hitFace == Direction.UP){
 			return true;
 		}
 		
 		// Redstone controller input
-		if(Redstone_IN.contains(posInMultiblock) && (getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
+		if(getRedstonePos().contains(this.posInMultiblock) && hitFace == (getIsMirrored() ? facing.getClockWise() : facing.getCounterClockWise())){
+			return true;
+		}
+		
+		// Fluid I/O Ports
+		if(this.posInMultiblock.equals(Fluid_IN) && hitFace == getFacing().getOpposite()){
+			return true;
+		}
+		if(this.posInMultiblock.equals(Fluid_OUT) && hitFace == (getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise())){
 			return true;
 		}
 		

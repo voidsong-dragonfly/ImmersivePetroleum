@@ -24,6 +24,7 @@ import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.ICanSkipGUI;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
@@ -46,7 +47,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -62,7 +62,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IPCommonTickableTile, IPMenuProvider<CokerUnitTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<CokerUnitTileEntity>, IEBlockInterfaces.IBlockBounds{
 	
 	public enum Inventory{
 		/** Inventory Item Input */
@@ -495,32 +495,27 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 		return this.formed;
 	}
 	
-	/** Locations that don't require sneaking to avoid the GUI */
-	public boolean skipGui(BlockHitResult hit){
+	@Override
+	public boolean skipGui(Direction hitFace){
 		Direction facing = getFacing();
 		
-		// Conveyor locations
-		if(this.posInMultiblock.getY() == 0 && this.posInMultiblock.getZ() == 2 && hit.getDirection() == Direction.UP){
-			return true;
-		}
-		
-		// All power input sockets
-		if(this.getEnergyPos().stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == facing){
+		// Power input
+		if(getEnergyPos().stream().anyMatch((t) -> t.posInMultiblock().equals(this.posInMultiblock)) && hitFace == facing){
 			return true;
 		}
 		
 		// Redstone controller input
-		if(this.getRedstonePos().contains(this.posInMultiblock) && hit.getDirection() == facing.getOpposite()){
+		if(getRedstonePos().contains(this.posInMultiblock) && hitFace == facing.getOpposite()){
 			return true;
 		}
 		
 		// Fluid I/O Ports
-		if(this.posInMultiblock.equals(CokerUnitTileEntity.Fluid_IN) || this.posInMultiblock.equals(CokerUnitTileEntity.Fluid_OUT)){
+		if(this.posInMultiblock.equals(Fluid_IN) || this.posInMultiblock.equals(Fluid_OUT)){
 			return true;
 		}
 		
 		// Item input port
-		if(this.posInMultiblock.equals(CokerUnitTileEntity.Item_IN)){
+		if(this.posInMultiblock.equals(Item_IN)){
 			return true;
 		}
 		

@@ -19,6 +19,7 @@ import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.ICanSkipGUI;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
@@ -50,7 +51,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, HighPressureRefineryRecipe> implements IPCommonTickableTile, IPMenuProvider<HydrotreaterTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, HighPressureRefineryRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<HydrotreaterTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -339,6 +340,39 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	@Override
 	public boolean canUseGui(@Nonnull Player player){
 		return this.formed;
+	}
+	
+	@Override
+	public boolean skipGui(Direction hitFace){
+		Direction facing = getFacing();
+		
+		// Power input
+		if(getEnergyPos().stream().anyMatch((t) -> t.posInMultiblock().equals(this.posInMultiblock)) && hitFace == Direction.UP){
+			return true;
+		}
+		
+		// Redstone controller input
+		if(getRedstonePos().contains(this.posInMultiblock) && hitFace == facing.getOpposite()){
+			return true;
+		}
+		
+		// Fluid I/O Ports
+		if(this.posInMultiblock.equals(Fluid_IN_A) && hitFace == facing.getOpposite()){
+			return true;
+		}
+		if(this.posInMultiblock.equals(Fluid_IN_B) && hitFace == Direction.UP){
+			return true;
+		}
+		if(this.posInMultiblock.equals(Fluid_OUT) && hitFace == Direction.UP){
+			return true;
+		}
+		
+		// Item output port
+		if(this.posInMultiblock.equals(Item_OUT) && hitFace == (getIsMirrored() ? facing.getClockWise() : facing.getCounterClockWise())){
+			return true;
+		}
+		
+		return false;
 	}
 	
 	private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(HydrotreaterTileEntity::getShape);

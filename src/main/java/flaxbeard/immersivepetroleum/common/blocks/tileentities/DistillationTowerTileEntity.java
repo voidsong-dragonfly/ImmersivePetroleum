@@ -23,6 +23,7 @@ import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.ICanSkipGUI;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
@@ -42,7 +43,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -56,7 +56,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationTowerRecipe> implements IPCommonTickableTile, IPMenuProvider<DistillationTowerTileEntity>, IEBlockInterfaces.IBlockBounds{
+public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationTowerRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<DistillationTowerTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;
 	
@@ -307,28 +307,30 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		return this.formed;
 	}
 	
-	/** Locations that don't require sneaking to avoid the GUI */
-	public boolean skipGui(BlockHitResult hit){
+	@Override
+	public boolean skipGui(Direction hitFace){
 		Direction facing = getFacing();
 		
 		// Power input
-		if(DistillationTowerTileEntity.Energy_IN.stream().anyMatch((t) -> t.posInMultiblock() == this.posInMultiblock) && hit.getDirection() == Direction.UP){
+		if(getEnergyPos().stream().anyMatch((t) -> t.posInMultiblock().equals(this.posInMultiblock)) && hitFace == Direction.UP){
 			return true;
 		}
 		
 		// Redstone controller input
-		if(DistillationTowerTileEntity.Redstone_IN.contains(this.posInMultiblock) && (getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
+		if(getRedstonePos().contains(this.posInMultiblock) && hitFace == (getIsMirrored() ? facing.getClockWise() : facing.getCounterClockWise())){
 			return true;
 		}
 		
 		// Fluid I/O Ports
-		if((this.posInMultiblock.equals(DistillationTowerTileEntity.Fluid_IN) && (getIsMirrored() ? hit.getDirection() == facing.getCounterClockWise() : hit.getDirection() == facing.getClockWise()))
-		|| (this.posInMultiblock.equals(DistillationTowerTileEntity.Fluid_OUT) && hit.getDirection() == facing.getOpposite())){
+		if(this.posInMultiblock.equals(Fluid_IN) && hitFace == (getIsMirrored() ? facing.getCounterClockWise() : facing.getClockWise())){
+			return true;
+		}
+		if(this.posInMultiblock.equals(Fluid_OUT) && hitFace == facing.getOpposite()){
 			return true;
 		}
 		
 		// Item output port
-		if(this.posInMultiblock.equals(DistillationTowerTileEntity.Item_OUT) && (getIsMirrored() ? hit.getDirection() == facing.getClockWise() : hit.getDirection() == facing.getCounterClockWise())){
+		if(this.posInMultiblock.equals(Item_OUT) && hitFace == (getIsMirrored() ? facing.getClockWise() : facing.getCounterClockWise())){
 			return true;
 		}
 		
