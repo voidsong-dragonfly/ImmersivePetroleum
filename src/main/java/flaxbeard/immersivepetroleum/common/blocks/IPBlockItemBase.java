@@ -40,8 +40,7 @@ public class IPBlockItemBase extends BlockItem{
 			
 			// Display Stored Energy Information
 			if(stack.getTag().contains("energy")){
-				CompoundTag energy = stack.getTag().getCompound("energy");
-				int flux = energy.getInt("ifluxEnergy");
+				int flux = stack.getTag().getInt("energy");
 				tooltip.add(Component.literal(flux + "RF").withStyle(ChatFormatting.GRAY));
 			}
 		}

@@ -8,18 +8,13 @@ import javax.annotation.Nullable;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
-import flaxbeard.immersivepetroleum.common.blocks.IPBlockInterfaces;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -36,7 +31,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -111,29 +105,6 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 		}
 		
 		super.playerWillDestroy(worldIn, pos, state, player);
-	}
-	
-	@Override
-	@Nonnull
-	public InteractionResult use(@Nonnull BlockState state, Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand handIn, @Nonnull BlockHitResult hit){
-		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof AutoLubricatorTileEntity autolube && (autolube = autolube.master()) != null){
-			if(autolube.interact(hit.getDirection(), player, handIn, player.getItemInHand(handIn), (float) hit.getLocation().x, (float) hit.getLocation().y, (float) hit.getLocation().z)){
-				return InteractionResult.SUCCESS;
-			}
-		}
-		return InteractionResult.FAIL;
-	}
-	
-	@Override
-	public void setPlacedBy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack){
-		if(!worldIn.isClientSide){
-			worldIn.setBlockAndUpdate(pos.offset(0, 1, 0), state.setValue(SLAVE, true));
-			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(te instanceof IPBlockInterfaces.IPlacementReader read){
-				read.readOnPlacement(placer, stack);
-			}
-		}
 	}
 	
 	static final VoxelShape SHAPE_SLAVE = Shapes.box(.1875F, 0, .1875F, .8125f, 1, .8125f);

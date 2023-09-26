@@ -5,15 +5,28 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlacementReader;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlayerInteraction;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPServerTickableTile;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.RegistryObject;
 
 public class IPBlockBase extends Block{
@@ -23,6 +36,28 @@ public class IPBlockBase extends Block{
 	
 	public Supplier<BlockItem> blockItemSupplier(){
 		return () -> new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
+	}
+	
+	private final boolean isEntityBlock = this instanceof EntityBlock;
+	
+	@Override
+	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit){
+		if(this.isEntityBlock){
+			if(pLevel.getBlockEntity(pPos) instanceof IPlayerInteraction inst){
+				Vec3 loc = pHit.getLocation();
+				return inst.interact(pHit.getDirection(), pPlayer, pHand, pPlayer.getItemInHand(pHand), (float) loc.x, (float) loc.y, (float) loc.z);
+			}
+		}
+		return InteractionResult.FAIL;
+	}
+	
+	@Override
+	public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, LivingEntity pPlacer, ItemStack pStack){
+		if(!pLevel.isClientSide && this.isEntityBlock){
+			if(pLevel.getBlockEntity(pPos) instanceof IPlacementReader read){
+				read.readOnPlacement(pPlacer, pStack);
+			}
+		}
 	}
 	
 	@Nullable

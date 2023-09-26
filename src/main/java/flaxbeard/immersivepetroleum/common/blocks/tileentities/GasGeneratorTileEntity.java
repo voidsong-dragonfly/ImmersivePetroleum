@@ -24,11 +24,13 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import blusunrize.immersiveengineering.common.util.IESounds;
-import blusunrize.immersiveengineering.common.util.Utils;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
-import flaxbeard.immersivepetroleum.common.blocks.IPBlockInterfaces;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IBlockEntityDrop;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlacementReader;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlayerInteraction;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -40,15 +42,14 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
@@ -61,7 +62,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IPCommonTickableTile, IEBlockInterfaces.IDirectionalBE, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockEntityDrop, IEBlockInterfaces.ISoundBE, EnergyTransferHandler.EnergyConnector, IPBlockInterfaces.IPlacementReader{
+public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity implements IPCommonTickableTile, IPlacementReader, IPlayerInteraction, IBlockEntityDrop, IEBlockInterfaces.IDirectionalBE, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.ISoundBE, EnergyTransferHandler.EnergyConnector{
 	public static final int FUEL_CAPACITY = 8000;
 	
 	protected WireType wireType;
@@ -135,11 +136,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			load(pkt.getTag());
 		}
 	}
-
-	@Override
-	public void onBEPlaced(BlockPlaceContext ctx){
-		// May need to call readOnPlacement here
-	}
 	
 	@Override
 	public void readOnPlacement(LivingEntity placer, ItemStack stack){
@@ -158,33 +154,6 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		BlockState state = level.getBlockState(worldPosition);
 		level.sendBlockUpdated(worldPosition, state, state, 3);
 		level.updateNeighborsAt(worldPosition, state.getBlock());
-	}
-	
-	@Override
-	@Nonnull
-	public List<ItemStack> getBlockEntityDrop(@Nullable LootContext context){
-		ItemStack stack;
-		if(context != null){
-			stack = new ItemStack(context.getParamOrNull(LootContextParams.BLOCK_STATE).getBlock());
-		}else{
-			stack = new ItemStack(getBlockState().getBlock());
-		}
-		
-		CompoundTag nbt = new CompoundTag();
-		
-		if(this.tank.getFluidAmount() > 0){
-			CompoundTag tankNbt = this.tank.writeToNBT(new CompoundTag());
-			nbt.put("tank", tankNbt);
-		}
-		
-		if(this.energyStorage.getEnergyStored() > 0){
-			Tag energyNbt = this.energyStorage.serializeNBT();
-			nbt.put("energy", energyNbt);
-		}
-		
-		if(!nbt.isEmpty())
-			stack.setTag(nbt);
-		return ImmutableList.of(stack);
 	}
 	
 	@Override
@@ -250,26 +219,48 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	}
 	
 	@Override
-	public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ){
+	public InteractionResult interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ){
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)){
 			setChanged();
-			flaxbeard.immersivepetroleum.common.util.Utils.unlockIPAdvancement(player, "main/gas_generator");
-			return true;
+			Utils.unlockIPAdvancement(player, "main/gas_generator");
+			return InteractionResult.SUCCESS;
 		}else if(player.isShiftKeyDown()){
 			boolean added = false;
 			if(player.getInventory().getSelected().isEmpty()){
 				added = true;
-				player.getInventory().setItem(player.getInventory().selected, getBlockEntityDrop(null).get(0));
+				player.getInventory().setItem(player.getInventory().selected, getFirstBlockEntityDrop());
 			}else{
-				added = player.getInventory().add(getBlockEntityDrop(null).get(0));
+				added = player.getInventory().add(getFirstBlockEntityDrop());
 			}
 			
 			if(added){
-				level.setBlockAndUpdate(worldPosition, Blocks.AIR.defaultBlockState());
+				this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
 			}
-			return true;
+			return InteractionResult.SUCCESS;
 		}
-		return false;
+		
+		return InteractionResult.FAIL;
+	}
+	
+	@Nonnull
+	public List<ItemStack> getBlockEntityDrop(LootContext context){
+		ItemStack stack = new ItemStack(getBlockState().getBlock());
+		
+		CompoundTag nbt = new CompoundTag();
+		
+		if(this.tank.getFluidAmount() > 0){
+			CompoundTag tankNbt = this.tank.writeToNBT(new CompoundTag());
+			nbt.put("tank", tankNbt);
+		}
+		
+		if(this.energyStorage.getEnergyStored() > 0){
+			Tag energyNbt = this.energyStorage.serializeNBT();
+			nbt.put("energy", energyNbt);
+		}
+		
+		if(!nbt.isEmpty())
+			stack.setTag(nbt);
+		return ImmutableList.of(stack);
 	}
 	
 	@Override

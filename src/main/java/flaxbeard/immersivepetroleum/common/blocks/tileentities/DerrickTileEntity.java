@@ -554,7 +554,6 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Override
 	public void disassemble(){
 		if(this.formed && !this.level.isClientSide && this.offsetToMaster.equals(Vec3i.ZERO)){
-			// TODO Lets see if this just works just like the old one
 			WellTileEntity well = getWell();
 			if(well != null && !well.drillingCompleted){
 				if(well.wellPipeLength > 0){

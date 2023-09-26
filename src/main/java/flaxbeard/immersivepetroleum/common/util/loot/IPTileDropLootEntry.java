@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IBlockEntityDrop;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +30,7 @@ public class IPTileDropLootEntry extends LootPoolSingletonContainer{
 	protected void createItemStack(@Nonnull Consumer<ItemStack> stackConsumer, LootContext context){
 		if(context.hasParam(LootContextParams.BLOCK_ENTITY)){
 			BlockEntity te = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
-			if(te instanceof IEBlockInterfaces.IBlockEntityDrop dropTe){
+			if(te instanceof IBlockEntityDrop dropTe){
 				dropTe.getBlockEntityDrop(context).forEach(stackConsumer);
 			}
 		}

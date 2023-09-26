@@ -3,10 +3,10 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
-import flaxbeard.immersivepetroleum.common.blocks.IPBlockInterfaces;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlacementReader;
+import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlayerInteraction;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -87,9 +87,7 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	public InteractionResult use(@Nonnull BlockState state, Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand handIn, @Nonnull BlockHitResult hit){
 		BlockEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof IPlayerInteraction inst){
-			if(inst.interact(hit.getDirection(), player, handIn, player.getItemInHand(handIn), (float) hit.getLocation().x, (float) hit.getLocation().y, (float) hit.getLocation().z)){
-				return InteractionResult.SUCCESS;
-			}
+			return inst.interact(hit.getDirection(), player, handIn, player.getItemInHand(handIn), (float) hit.getLocation().x, (float) hit.getLocation().y, (float) hit.getLocation().z);
 		}
 		return InteractionResult.FAIL;
 	}
@@ -98,7 +96,7 @@ public class GasGeneratorBlock extends IPBlockBase implements EntityBlock{
 	public void setPlacedBy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, @Nonnull ItemStack stack){
 		if(!worldIn.isClientSide){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(te instanceof IPBlockInterfaces.IPlacementReader read){
+			if(te instanceof IPlacementReader read){
 				read.readOnPlacement(placer, stack);
 			}
 		}
