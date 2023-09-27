@@ -11,13 +11,10 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
-import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -40,8 +37,6 @@ import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
  * @author TwistedGate
  */
 public class ReservoirHandler{
-	@Deprecated(forRemoval = true)
-	private static final Multimap<ResourceKey<Level>, ReservoirIsland> RESERVOIR_ISLAND_LIST = ArrayListMultimap.create();
 	private static final Map<Pair<ResourceKey<Level>, ColumnPos>, ReservoirIsland> CACHE = new HashMap<>();
 	
 	private static Map<ResourceLocation, Map<ResourceLocation, Integer>> totalWeightMap = new HashMap<>();
@@ -240,18 +235,6 @@ public class ReservoirHandler{
 	
 	public static void recalculateChances(){
 		totalWeightMap.clear();
-	}
-	
-	/**
-	 * {@link #clearCache()} Must be called after modifying the returned list!
-	 * 
-	 * @return {@link Multimap} of {@link ResourceKey<Level>}<{@link Level}>s to {@link ReservoirIsland}s
-	 * 
-	 * @deprecated<br>Use {@link RegionData#getReservoirIslandList()} from {@link ReservoirRegionDataStorage#getIsland(Level, BlockPos)}
-	 */
-	@Deprecated(forRemoval = true)
-	public static Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
-		return RESERVOIR_ISLAND_LIST;
 	}
 	
 	// ####################################################
