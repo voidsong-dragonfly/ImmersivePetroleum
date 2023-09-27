@@ -58,40 +58,43 @@ public class ReservoirHandler{
 				int x = chunkX + i;
 				int z = chunkZ + j;
 				
-				if(ReservoirHandler.getValueOf(world, x, z) > -1){
-					// Getting the biome now to prevent lockups
-					ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(new BlockPos(x, 64, z)).value());
-					
-					final ColumnPos current = new ColumnPos(x, z);
-					if(storage.existsAt(current)){
-						return;
-					}
-					
-					ReservoirType reservoir = null;
-					int totalWeight = getTotalWeight(dimensionRL, biomeRL);
-					if(totalWeight > 0){
-						int weight = Math.abs(randomSource.nextInt() % totalWeight);
-						for(ReservoirType res:ReservoirType.map.values()){
-							if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
-								weight -= res.weight;
-								if(weight < 0){
-									reservoir = res;
-									break;
-								}
+				// This is visually more pleasing to me
+				if(ReservoirHandler.getValueOf(world, x, z) <= -1)
+					continue;
+				
+				
+				// Getting the biome now to prevent lockups
+				ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(new BlockPos(x, 64, z)).value());
+				
+				final ColumnPos current = new ColumnPos(x, z);
+				if(storage.existsAt(current)){
+					return;
+				}
+				
+				ReservoirType reservoir = null;
+				int totalWeight = getTotalWeight(dimensionRL, biomeRL);
+				if(totalWeight > 0){
+					int weight = Math.abs(randomSource.nextInt() % totalWeight);
+					for(ReservoirType res:ReservoirType.map.values()){
+						if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
+							weight -= res.weight;
+							if(weight < 0){
+								reservoir = res;
+								break;
 							}
 						}
+					}
+					
+					if(reservoir != null){
+						Set<ColumnPos> pol = new HashSet<>();
+						next(world, pol, x, z);
+						List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
 						
-						if(reservoir != null){
-							Set<ColumnPos> pol = new HashSet<>();
-							next(world, pol, x, z);
-							List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
+						if(!poly.isEmpty()){
+							int amount = (int) Mth.lerp(randomSource.nextFloat(), reservoir.minSize, reservoir.maxSize);
 							
-							if(!poly.isEmpty()){
-								int amount = (int) Mth.lerp(randomSource.nextFloat(), reservoir.minSize, reservoir.maxSize);
-								
-								ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
-								storage.addIsland(dimensionKey, island);
-							}
+							ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
+							storage.addIsland(dimensionKey, island);
 						}
 					}
 				}
