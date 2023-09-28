@@ -22,8 +22,7 @@ public class SurveyScan implements ISurveyInfo{
 	public static final int SCAN_RADIUS = 32;
 	public static final int SCAN_SIZE = SCAN_RADIUS * 2 + 1;
 	private static final double sqrt2048 = Math.sqrt((SCAN_RADIUS * SCAN_RADIUS) * 2);
-
-	// TODO Add dimension key
+	
 	@Nullable
 	private UUID uuid;
 	private int x, z;
