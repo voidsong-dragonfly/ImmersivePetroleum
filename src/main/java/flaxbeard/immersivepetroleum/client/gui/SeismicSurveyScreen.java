@@ -107,7 +107,7 @@ public class SeismicSurveyScreen extends Screen{
 				tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.worldcoords", worldX, worldZ));
 				
 				if(scanXCentered == 0 && scanYCentered == 0){
-					tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.worldcoords").withStyle(ChatFormatting.DARK_GRAY));
+					tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.takenhere").withStyle(ChatFormatting.DARK_GRAY));
 				}
 			}
 		}
