@@ -36,7 +36,7 @@ public class SeismicResultRenderer{
 	
 	static final Tesselator TESSELATOR = new Tesselator();
 	
-	private static final ResourceLocation OVERLAY = ResourceUtils.ip("textures/gui/seismic_overlay.png");
+	private static final ResourceLocation OVERLAY = ResourceUtils.ip("textures/gui/seismicsurvey_overlay.png");
 	
 	@SubscribeEvent
 	public void onRenderItemFrame(RenderItemInFrameEvent event){
@@ -63,34 +63,30 @@ public class SeismicResultRenderer{
 							int a = wrapper.width;
 							int b = wrapper.height;
 							VertexConsumer builder = buffer.getBuffer(wrapper.renderType);
-							builder.defaultColor(255, 255, 255, 255);
 							Matrix4f mat = matrix.last().pose();
 							
-							builder.vertex(mat, 0, 0, 0).uv(1.0F, 1.0F).uv2(light).endVertex();
-							builder.vertex(mat, 0, b, 0).uv(1.0F, 0.0F).uv2(light).endVertex();
-							builder.vertex(mat, a, b, 0).uv(0.0F, 0.0F).uv2(light).endVertex();
-							builder.vertex(mat, a, 0, 0).uv(0.0F, 1.0F).uv2(light).endVertex();
+							builder.vertex(mat, 0, 0, 0).color(-1).uv(1, 1).uv2(light).endVertex();
+							builder.vertex(mat, 0, b, 0).color(-1).uv(1, 0).uv2(light).endVertex();
+							builder.vertex(mat, a, b, 0).color(-1).uv(0, 0).uv2(light).endVertex();
+							builder.vertex(mat, a, 0, 0).color(-1).uv(0, 1).uv2(light).endVertex();
 						}
 						matrix.popPose();
 						
-						// Only shows the grid, the rest is "cut off"
+						// Draw Grid-Overlay
 						matrix.pushPose();
 						{
 							final int w = SurveyScan.SCAN_SIZE;
 							final int h = SurveyScan.SCAN_SIZE;
-							final float u = (w + 10) / 256F;
-							final float v = (h + 10) / 256F;
 							
 							matrix.translate(0, 0, -0.002F);
 							
 							VertexConsumer builder = buffer.getBuffer(RenderType.text(OVERLAY));
-							builder.defaultColor(255, 255, 255, 255);
 							Matrix4f mat = matrix.last().pose();
 							
-							builder.vertex(mat, 0, 0, 0).uv(0.0390625F, 0.0390625F).uv2(light).endVertex();
-							builder.vertex(mat, 0, h, 0).uv(0.0390625F, v).uv2(light).endVertex();
-							builder.vertex(mat, w, h, 0).uv(u, v).uv2(light).endVertex();
-							builder.vertex(mat, w, 0, 0).uv(u, 0.0390625F).uv2(light).endVertex();
+							builder.vertex(mat, 0, 0, 0).color(-1).uv(0, 0).uv2(light).endVertex();
+							builder.vertex(mat, 0, h, 0).color(-1).uv(0, 1).uv2(light).endVertex();
+							builder.vertex(mat, w, h, 0).color(-1).uv(1, 1).uv2(light).endVertex();
+							builder.vertex(mat, w, 0, 0).color(-1).uv(1, 0).uv2(light).endVertex();
 						}
 						matrix.popPose();
 					}

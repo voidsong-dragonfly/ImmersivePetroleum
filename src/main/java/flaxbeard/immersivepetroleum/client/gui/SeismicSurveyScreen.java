@@ -20,12 +20,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
 public class SeismicSurveyScreen extends Screen{
-	private static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/seismicsurveygui.png");
+	private static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/seismicsurvey_gui.png");
+	private static final ResourceLocation OVERLAY_TEXTURE = ResourceUtils.ip("textures/gui/seismicsurvey_overlay.png");
 	
 	private static final int X_SIZE = 154;
 	private static final int Y_SIZE = 154;
@@ -169,6 +171,12 @@ public class SeismicSurveyScreen extends Screen{
 			builder.vertex(mat, 0, b, 0).color(-1).uv(1.0F, 0.0F).uv2(0xF000F0).endVertex();
 			builder.vertex(mat, a, b, 0).color(-1).uv(0.0F, 0.0F).uv2(0xF000F0).endVertex();
 			builder.vertex(mat, a, 0, 0).color(-1).uv(0.0F, 1.0F).uv2(0xF000F0).endVertex();
+			
+			builder = buffer.getBuffer(RenderType.text(OVERLAY_TEXTURE));
+			builder.vertex(mat, 0, 0, 0).color(-1).uv(0, 0).uv2(0xF000F0).endVertex();
+			builder.vertex(mat, 0, b, 0).color(-1).uv(0, 1).uv2(0xF000F0).endVertex();
+			builder.vertex(mat, a, b, 0).color(-1).uv(1, 1).uv2(0xF000F0).endVertex();
+			builder.vertex(mat, a, 0, 0).color(-1).uv(1, 0).uv2(0xF000F0).endVertex();
 		}
 		matrix.popPose();
 		
