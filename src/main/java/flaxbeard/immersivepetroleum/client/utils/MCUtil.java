@@ -37,6 +37,10 @@ public class MCUtil{
 		RenderSystem.setShaderTexture(0, texture);
 	}
 	
+	public static void setScreen(Screen screen){
+		Minecraft.getInstance().setScreen(screen);
+	}
+	
 	public static Screen getScreen(){
 		Minecraft mc = Minecraft.getInstance();
 		return mc.screen;

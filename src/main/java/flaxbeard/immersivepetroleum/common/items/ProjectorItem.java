@@ -270,7 +270,7 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 	
 	@OnlyIn(Dist.CLIENT)
 	private static void openGUI(InteractionHand hand, ItemStack held){
-		Minecraft.getInstance().setScreen(new ProjectorScreen(hand, held));
+		MCUtil.setScreen(new ProjectorScreen(hand, held));
 	}
 	
 	@Override
@@ -721,6 +721,7 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 		@SubscribeEvent
 		public static void registerKeybind(RegisterKeyMappingsEvent event){
 			keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
+			event.register(keybind_preview_flip);
 		}
 		
 		static boolean shiftHeld = false;
