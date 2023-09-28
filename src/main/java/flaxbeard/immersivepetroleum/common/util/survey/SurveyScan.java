@@ -22,7 +22,8 @@ public class SurveyScan implements ISurveyInfo{
 	public static final int SCAN_RADIUS = 32;
 	public static final int SCAN_SIZE = SCAN_RADIUS * 2 + 1;
 	private static final double sqrt2048 = Math.sqrt((SCAN_RADIUS * SCAN_RADIUS) * 2);
-	
+
+	// TODO Add dimension key
 	@Nullable
 	private UUID uuid;
 	private int x, z;
@@ -79,10 +80,8 @@ public class SurveyScan implements ISurveyInfo{
 		final List<ReservoirIsland> islandCache = new ArrayList<>();
 		byte[] scanData = new byte[SCAN_SIZE * SCAN_SIZE];
 		
-		for(int j = -SCAN_RADIUS,
-				a = 0;j <= SCAN_RADIUS;j++,a++){
-			for(int i = -SCAN_RADIUS,
-					b = 0;i <= SCAN_RADIUS;i++,b++){
+		for(int j = -SCAN_RADIUS,a = 0;j <= SCAN_RADIUS;j++,a++){
+			for(int i = -SCAN_RADIUS,b = 0;i <= SCAN_RADIUS;i++,b++){
 				int x = pos.getX() - i;
 				int z = pos.getZ() - j;
 				

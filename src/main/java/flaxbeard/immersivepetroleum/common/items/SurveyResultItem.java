@@ -5,11 +5,16 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import flaxbeard.immersivepetroleum.client.gui.SeismicSurveyScreen;
+import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.survey.ISurveyInfo;
 import flaxbeard.immersivepetroleum.common.util.survey.IslandInfo;
 import flaxbeard.immersivepetroleum.common.util.survey.SurveyScan;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -32,6 +37,22 @@ public class SurveyResultItem extends IPItemBase{
 	}
 	
 	@Override
+	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand){
+		ItemStack held = pPlayer.getItemInHand(pUsedHand);
+		
+		if(pLevel.isClientSide && ISurveyInfo.from(held) instanceof SurveyScan scan){
+			if(scan.getUuid() == null){ // Faulty
+				pPlayer.displayClientMessage(Component.literal("This survey is faulty. (Destroy me!)").withStyle(ChatFormatting.RED), true);
+				return InteractionResultHolder.fail(held);
+			}
+			
+			MCUtil.setScreen(new SeismicSurveyScreen(pLevel, scan));
+		}
+		
+		return InteractionResultHolder.success(held);
+	}
+	
+	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
 		if(stack.hasTag() && stack.getTag() != null){
 			ISurveyInfo info = ISurveyInfo.from(stack);
@@ -43,7 +64,7 @@ public class SurveyResultItem extends IPItemBase{
 					return;
 				}
 				
-				tooltip.add(Component.translatable("desc.immersivepetroleum.flavour.surveytool.holdme"));
+				tooltip.add(Component.translatable("desc.immersivepetroleum.flavour.surveytool.rightclickme"));
 				
 				if(flagIn == TooltipFlag.Default.ADVANCED){
 					tooltip.add(Component.literal("ID: " + (scan.getUuid() != null ? scan.getUuid().toString() : "Null")));

@@ -7,8 +7,12 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
 public interface ISurveyInfo{
+	/** World-X */
 	public int getX();
+	
+	/** World-Z */
 	public int getZ();
+	
 	public CompoundTag writeToStack(ItemStack stack);
 	public CompoundTag writeToTag(CompoundTag tag);
 	

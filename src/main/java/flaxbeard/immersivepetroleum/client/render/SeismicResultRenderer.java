@@ -45,6 +45,10 @@ public class SeismicResultRenderer{
 	
 	@SubscribeEvent
 	public void renderGameOverlayEvent(RenderGuiOverlayEvent.Post event){
+		boolean debug = true;
+		if(debug)
+			return;
+		
 		Minecraft mc = Minecraft.getInstance();
 		
 		if(mc.player != null && event.getOverlay().id() == HOTBAR){
