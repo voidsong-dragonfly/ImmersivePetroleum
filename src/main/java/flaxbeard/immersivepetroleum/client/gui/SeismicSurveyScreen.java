@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 public class SeismicSurveyScreen extends Screen{
@@ -85,15 +86,15 @@ public class SeismicSurveyScreen extends Screen{
 		return ((int) this.scan.getData()[index]) & 0xFF;
 	}
 	
-	// FIXME Very "Hit & Miss", doesnt work 100% even though it should
 	private boolean hasReservoirAt(int x, int y){
-		if(this.bitSet == null || this.bitSet.length() != (SurveyScan.SCAN_SIZE * SurveyScan.SCAN_SIZE))
+		if(this.bitSet == null)
 			return false;
 		
 		if(x < 0 || x >= SurveyScan.SCAN_SIZE || y < 0 || y >= SurveyScan.SCAN_SIZE)
 			return false;
 		
-		int index = y * SurveyScan.SCAN_SIZE + x;
+		// Clamping just to be sure
+		int index = Mth.clamp(y * SurveyScan.SCAN_SIZE + x, 0, SurveyScan.SCAN_SIZE * SurveyScan.SCAN_SIZE);
 		return this.bitSet.get(index);
 	}
 	
