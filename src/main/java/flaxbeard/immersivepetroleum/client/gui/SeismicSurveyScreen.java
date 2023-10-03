@@ -139,14 +139,13 @@ public class SeismicSurveyScreen extends Screen{
 					tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.takenhere").withStyle(ChatFormatting.GRAY));
 				}
 				
-				// TODO Translations
 				if(this.bitSet != null){
 					if(hasReservoirAt(scanX, scanY)){
-						tooltip.add(Component.literal("This might be a Reservoir of some type").withStyle(ChatFormatting.DARK_GRAY));
+						tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.possibility").withStyle(ChatFormatting.DARK_GRAY));
 					}
 				}else{
 					if(this.requestSent){
-						tooltip.add(Component.literal("Waiting for Data from Server.....").withStyle(ChatFormatting.GRAY));
+						tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.awaitingresponse").withStyle(ChatFormatting.GRAY));
 					}
 				}
 			}

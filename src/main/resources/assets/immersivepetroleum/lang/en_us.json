@@ -175,6 +175,8 @@
 	"gui.immersivepetroleum.seismicsurvey.northarrow": "North",
 	"gui.immersivepetroleum.seismicsurvey.worldcoords": "World: x%1$d z%2$d",
 	"gui.immersivepetroleum.seismicsurvey.takenhere": "Sample was taken here.",
+	"gui.immersivepetroleum.seismicsurvey.possibility": "Possible reservoir of unknown type",
+	"gui.immersivepetroleum.seismicsurvey.awaitingresponse": "Waiting for Data from Server...",
 	
 	"_comment": "################## Effects ##################",
 	
