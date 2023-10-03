@@ -47,9 +47,10 @@ public class SurveyResultItem extends IPItemBase{
 			}
 			
 			MCUtil.setScreen(new SeismicSurveyScreen(pLevel, scan));
+			return InteractionResultHolder.success(held);
 		}
 		
-		return InteractionResultHolder.success(held);
+		return InteractionResultHolder.pass(held);
 	}
 	
 	@Override

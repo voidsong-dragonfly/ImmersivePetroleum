@@ -28,6 +28,9 @@ public class IPPacketHandler{
 		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
 		registerMessage(MessageProjectorSync.class, MessageProjectorSync::new);
 		registerMessage(MessageDerrick.class, MessageDerrick::new);
+
+		registerMessage(MessageSurveyResultDetails.ClientToServer.class, MessageSurveyResultDetails.ClientToServer::new);
+		registerMessage(MessageSurveyResultDetails.ServerToClient.class, MessageSurveyResultDetails.ServerToClient::new);
 	}
 	
 	private static int id = 0;

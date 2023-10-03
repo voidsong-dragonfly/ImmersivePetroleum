@@ -1,7 +1,9 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -14,6 +16,7 @@ import com.mojang.math.Matrix4f;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
+import flaxbeard.immersivepetroleum.common.network.MessageSurveyResultDetails;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.survey.SurveyScan;
 import net.minecraft.ChatFormatting;
@@ -41,6 +44,9 @@ public class SeismicSurveyScreen extends Screen{
 	private int gridScale = 2;
 	private float hoverSquareScale;
 	
+	boolean requestSent = false;
+	private BitSet bitSet;
+	
 	@Nonnull
 	public final SurveyScan scan;
 	public SeismicSurveyScreen(Level level, @Nonnull SurveyScan scan){
@@ -62,6 +68,13 @@ public class SeismicSurveyScreen extends Screen{
 		this.surveyTop = this.guiTop + 12;
 		this.surveyRight = this.surveyLeft + (SurveyScan.SCAN_SIZE * this.gridScale);
 		this.surveyBottom = this.surveyTop + (SurveyScan.SCAN_SIZE * this.gridScale);
+		
+		this.requestSent = true;
+		MessageSurveyResultDetails.sendRequestToServer(this.scan);
+	}
+	
+	public void setBitSet(BitSet bitSet){
+		this.bitSet = bitSet;
 	}
 	
 	private int getScanData(int x, int y){
@@ -70,6 +83,18 @@ public class SeismicSurveyScreen extends Screen{
 		
 		int index = y * SurveyScan.SCAN_SIZE + x;
 		return ((int) this.scan.getData()[index]) & 0xFF;
+	}
+	
+	// FIXME Very "Hit & Miss", doesnt work 100% even though it should
+	private boolean hasReservoirAt(int x, int y){
+		if(this.bitSet == null || this.bitSet.length() != (SurveyScan.SCAN_SIZE * SurveyScan.SCAN_SIZE))
+			return false;
+		
+		if(x < 0 || x >= SurveyScan.SCAN_SIZE || y < 0 || y >= SurveyScan.SCAN_SIZE)
+			return false;
+		
+		int index = y * SurveyScan.SCAN_SIZE + x;
+		return this.bitSet.get(index);
 	}
 	
 	@Override
@@ -110,7 +135,18 @@ public class SeismicSurveyScreen extends Screen{
 				tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.worldcoords", worldX, worldZ));
 				
 				if(scanXCentered == 0 && scanYCentered == 0){
-					tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.takenhere").withStyle(ChatFormatting.DARK_GRAY));
+					tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.takenhere").withStyle(ChatFormatting.GRAY));
+				}
+				
+				// TODO Translations
+				if(this.bitSet != null){
+					if(hasReservoirAt(scanX, scanY)){
+						tooltip.add(Component.literal("This might be a Reservoir of some type").withStyle(ChatFormatting.DARK_GRAY));
+					}
+				}else{
+					if(this.requestSent){
+						tooltip.add(Component.literal("Waiting for Data from Server.....").withStyle(ChatFormatting.GRAY));
+					}
 				}
 			}
 		}
