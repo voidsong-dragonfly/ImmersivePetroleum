@@ -41,10 +41,11 @@ public class SeismicSurveyScreen extends Screen{
 	private int gridScale = 2;
 	private float hoverSquareScale;
 	
-	private final SurveyScan scan;
+	@Nonnull
+	public final SurveyScan scan;
 	public SeismicSurveyScreen(Level level, @Nonnull SurveyScan scan){
 		super(Component.literal("seismicsurveyscreen"));
-		this.scan = scan;
+		this.scan = Objects.requireNonNull(scan);
 	}
 	
 	@Override
