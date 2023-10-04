@@ -3,6 +3,7 @@
   "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/block/obj/autolubricator.obj",
+  "render_type": "minecraft:translucent",
   "textures": {
     "particle": "immersivepetroleum:models/lubricator",
     "texture": "immersivepetroleum:models/lubricator"

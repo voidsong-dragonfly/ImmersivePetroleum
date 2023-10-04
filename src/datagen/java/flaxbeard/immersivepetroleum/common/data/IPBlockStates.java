@@ -87,7 +87,9 @@ public class IPBlockStates extends BlockStateProvider{
 		{
 			Block well = IPContent.Blocks.WELL.get();
 			
-			ModelFile wellModel = models().cubeTop(RegistryUtils.getRegistryNameOf(well).toString(), mcLoc("block/bedrock"), modLoc("block/well_top_oil"));
+			ModelFile wellModel = models()
+					.cubeTop(RegistryUtils.getRegistryNameOf(well).toString(), mcLoc("block/bedrock"), modLoc("block/well_top_oil"))
+					.renderType("cutout");
 			getVariantBuilder(well).partialState()
 				.setModels(new ConfiguredModel(wellModel));
 		}
@@ -127,7 +129,8 @@ public class IPBlockStates extends BlockStateProvider{
 			Mutable<IClientFluidTypeExtensions> box = new MutableObject<>();
 			source.getFluidType().initializeClient(box::setValue);
 			ResourceLocation texture = box.getValue().getStillTexture();
-			ModelFile model = this.models().getBuilder("block/fluid/" + ForgeRegistries.FLUIDS.getKey(source).getPath()).texture("particle", texture);
+			ModelFile model = this.models().getBuilder("block/fluid/" + ForgeRegistries.FLUIDS.getKey(source).getPath())
+					.texture("particle", texture);
 			
 			getVariantBuilder(f.block().get()).partialState().setModels(new ConfiguredModel(model));
 		}
@@ -251,7 +254,8 @@ public class IPBlockStates extends BlockStateProvider{
 		NongeneratedModel base = nongeneratedModels.withExistingParent(name, mcLoc("block"))
 			.customLoader(ObjModelBuilder::begin).modelLocation(model).automaticCulling(false).flipV(true).end()
 			.texture("texture", texture)
-			.texture("particle", texture);
+			.texture("particle", texture)
+			.renderType("cutout");
 		
 		BlockModelBuilder split = this.models().withExistingParent(name + "_split", mcLoc("block"))
 			.customLoader(SplitModelBuilder::begin)
@@ -270,7 +274,8 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder lubeModel = this.models().withExistingParent(getPath(IPContent.Blocks.AUTO_LUBRICATOR.get()), mcLoc("block"))
 			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/autolubricator.obj")).flipV(true).end()
 			.texture("texture", texture)
-			.texture("particle", texture);
+			.texture("particle", texture)
+			.renderType("translucent");
 		
 		VariantBlockStateBuilder lubeBuilder = getVariantBuilder(IPContent.Blocks.AUTO_LUBRICATOR.get());
 		for(Direction dir:AutoLubricatorBlock.FACING.getPossibleValues()){
@@ -295,7 +300,8 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.FLARESTACK.get()), mcLoc("block"))
 			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/flarestack.obj")).flipV(true).end()
 			.texture("texture", texture)
-			.texture("particle", texture);
+			.texture("particle", texture)
+			.renderType("cutout");
 		
 		VariantBlockStateBuilder flarestackBuilder = getVariantBuilder(IPContent.Blocks.FLARESTACK.get());
 		
@@ -315,7 +321,8 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.SEISMIC_SURVEY.get()), mcLoc("block"))
 			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/seismic_survey_tool.obj")).flipV(true).end()
 			.texture("texture", texture)
-			.texture("particle", texture);
+			.texture("particle", texture)
+			.renderType("cutout");
 		
 		VariantBlockStateBuilder flarestackBuilder = getVariantBuilder(IPContent.Blocks.SEISMIC_SURVEY.get());
 		
@@ -334,7 +341,8 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder model = this.models().getBuilder(getPath(IPContent.Blocks.GAS_GENERATOR.get()))
 			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/generator.obj")).flipV(true).end()
 			.texture("texture", texture)
-			.texture("particle", texture);
+			.texture("particle", texture)
+			.renderType("cutout");
 		
 		VariantBlockStateBuilder builder = getVariantBuilder(IPContent.Blocks.GAS_GENERATOR.get());
 		for(Direction dir:GasGeneratorBlock.FACING.getPossibleValues()){

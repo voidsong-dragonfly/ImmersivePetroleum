@@ -2,6 +2,7 @@
   "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/block/obj/generator.obj",
+  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "immersivepetroleum:block/obj/generator",
     "texture": "immersivepetroleum:block/obj/generator"

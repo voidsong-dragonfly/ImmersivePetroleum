@@ -3,6 +3,7 @@
   "flip_v": true,
   "loader": "forge:obj",
   "model": "immersivepetroleum:models/block/obj/seismic_survey_tool.obj",
+  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "immersivepetroleum:block/obj/seismic_survey_tool",
     "texture": "immersivepetroleum:block/obj/seismic_survey_tool"
