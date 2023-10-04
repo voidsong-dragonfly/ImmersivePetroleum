@@ -286,13 +286,28 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	protected static EntryData createContent(){
-		ManualInstance man = ManualHelper.getManual();
 		ArrayList<SpecialElementData> itemList = new ArrayList<>();
-		final ReservoirType[] reservoirs = ReservoirType.map.values().toArray(new ReservoirType[0]);
 		
 		StringBuilder contentBuilder = new StringBuilder();
-		contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.oil0"));
-		contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.oil1"));
+		for(int i = 0;i < 5;i++){
+			String tString = "ie.manual.entry.reservoirs.oil" + i;
+			if(I18n.get(tString).equals(tString))
+				break;
+			
+			contentBuilder.append(I18n.get(tString));
+		}
+		
+		createReservoirPages(contentBuilder, itemList);
+		
+		String translatedTitle = I18n.get("ie.manual.entry.reservoirs.title");
+		String tanslatedSubtext = I18n.get("ie.manual.entry.reservoirs.subtitle");
+		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
+		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent, itemList);
+	}
+	
+	/** Creates a page for every single currently registered reservoir */
+	private static void createReservoirPages(StringBuilder contentBuilder, ArrayList<SpecialElementData> itemList){
+		final ReservoirType[] reservoirs = ReservoirType.map.values().toArray(new ReservoirType[0]);
 		
 		for(int i = 0;i < reservoirs.length;i++){
 			ReservoirType reservoir = reservoirs[i];
@@ -362,12 +377,7 @@ public class ClientProxy extends CommonProxy{
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");
 			
-			itemList.add(new SpecialElementData(reservoir.getId().toString(), 0, new ManualElementItem(man, new ItemStack(fluid.getBucket()))));
+			itemList.add(new SpecialElementData(reservoir.getId().toString(), 0, new ManualElementItem(ManualHelper.getManual(), new ItemStack(fluid.getBucket()))));
 		}
-		
-		String translatedTitle = I18n.get("ie.manual.entry.reservoirs.title");
-		String tanslatedSubtext = I18n.get("ie.manual.entry.reservoirs.subtitle");
-		String formattedContent = contentBuilder.toString().replaceAll("\r\n|\r|\n", "\n");
-		return new EntryData(translatedTitle, tanslatedSubtext, formattedContent, itemList);
 	}
 }
