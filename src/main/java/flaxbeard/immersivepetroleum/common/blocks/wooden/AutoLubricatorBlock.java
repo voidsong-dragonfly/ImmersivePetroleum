@@ -12,9 +12,11 @@ import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -80,6 +82,13 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context){
 		return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+	}
+	
+	@Override
+	public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, LivingEntity pPlacer, ItemStack pStack){
+		if(!pLevel.isClientSide){
+			pLevel.setBlockAndUpdate(pPos.offset(0, 1, 0), pState.setValue(SLAVE, true));
+		}
 	}
 	
 	@Override
