@@ -362,11 +362,14 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 		int z = ((rotation.ordinal() % 2 == 0) ? size.getZ() : size.getX()) / 2;
 		Direction facing = playerIn.getDirection();
 		
+		boolean xEven = size.getX() % 2 == 0;
+		boolean zEven = size.getZ() % 2 == 0;
+		
 		switch(facing){
-			case NORTH -> hit.setWithOffset(hit, 0, 0, -z);
+			case NORTH -> hit.setWithOffset(hit, 0, 0, -z + (zEven ? 1 : 0));
 			case SOUTH -> hit.setWithOffset(hit, 0, 0, z);
 			case EAST -> hit.setWithOffset(hit, x, 0, 0);
-			case WEST -> hit.setWithOffset(hit, -x, 0, 0);
+			case WEST -> hit.setWithOffset(hit, -x + (xEven ? 1 : 0), 0, 0);
 			default -> {
 			}
 		}
