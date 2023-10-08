@@ -19,6 +19,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
@@ -46,11 +48,16 @@ public class SurveyResultItem extends IPItemBase{
 				return InteractionResultHolder.fail(held);
 			}
 			
-			MCUtil.setScreen(new SeismicSurveyScreen(pLevel, scan));
+			openGUI(pLevel, scan);
 			return InteractionResultHolder.success(held);
 		}
 		
 		return InteractionResultHolder.pass(held);
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	private static void openGUI(Level level, @Nonnull SurveyScan scan){
+		MCUtil.setScreen(new SeismicSurveyScreen(level, scan));
 	}
 	
 	@Override
