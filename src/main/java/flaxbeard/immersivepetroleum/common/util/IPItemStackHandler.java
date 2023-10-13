@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum.common.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.api.utils.CapabilityUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
@@ -38,7 +37,7 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		this.onChange.run();
 	}
 	
-	LazyOptional<IItemHandler> handler = CapabilityUtils.constantOptional(this);
+	LazyOptional<IItemHandler> handler = LazyOptional.of(() -> this);// CapabilityUtils.constantOptional(this);
 	
 	@Override
 	@Nonnull

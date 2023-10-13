@@ -66,6 +66,27 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		ItemUtils.removeTag(stack, "upgrades");
 	}
 	
+	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){
+		IItemHandler handler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+		
+		if(handler == null){
+			ImmersivePetroleum.log.debug("No valid inventory handler found for " + stack);
+			return NonNullList.create();
+		}
+		
+		if(handler instanceof IPItemStackHandler ipStackHandler){
+			return ipStackHandler.getContainedItems();
+		}
+		
+		ImmersivePetroleum.log.warn("Inefficiently getting contained items. Why does " + stack + " have a non-IP IItemHandler?");
+		NonNullList<ItemStack> inv = NonNullList.withSize(handler.getSlots(), ItemStack.EMPTY);
+		for(int i = 0;i < handler.getSlots();++i){
+			inv.set(i, handler.getStackInSlot(i));
+		}
+		
+		return inv;
+	}
+	
 	@Override
 	public boolean canTakeFromWorkbench(ItemStack stack){
 		return true;
@@ -104,6 +125,61 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@Override
 	public void removeFromWorkbench(Player player, ItemStack stack){
+	}
+	
+	@Override
+	public void finishUpgradeRecalculation(ItemStack stack){
+	}
+	
+	@Override
+	public Slot[] getWorkbenchSlots(AbstractContainerMenu container, ItemStack stack, Level world, Supplier<Player> getPlayer, IItemHandler inv){
+		if(inv != null){
+			return new Slot[]{
+					new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, UPGRADE_TYPE, stack, true, world, getPlayer),
+					new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, UPGRADE_TYPE, stack, true, world, getPlayer),
+					new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, UPGRADE_TYPE, stack, true, world, getPlayer)
+			};
+		}else{
+			return new Slot[0];
+		}
+	}
+	
+	@Override
+	@Nonnull
+	public Component getName(@Nonnull ItemStack stack){
+		boolean hasUpgrades = getContainedItems(stack).stream().anyMatch(s -> s != ItemStack.EMPTY);
+		
+		Component c = super.getName(stack);
+		if(hasUpgrades){
+			c = Component.translatable("desc.immersivepetroleum.flavour.speedboat.prefix").append(c).withStyle(ChatFormatting.GOLD);
+		}
+		return c;
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
+		if(stack.hasTag()){
+			CompoundTag tag = stack.getTag();
+			
+			if(tag.contains("tank")){
+				FluidStack fs = FluidStack.loadFluidStackFromNBT(tag.getCompound("tank"));
+				if(fs != null){
+					tooltip.add(((MutableComponent) fs.getDisplayName()).append(": " + fs.getAmount() + "mB").withStyle(ChatFormatting.GRAY));
+				}
+			}
+		}
+		
+		stack.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
+			for(int i = 0;i < handler.getSlots();i++){
+				if(handler.getStackInSlot(i).isEmpty())
+					continue;
+				
+				tooltip.add(Component.translatable("desc.immersivepetroleum.flavour.speedboat.upgrade", i + 1).append(handler.getStackInSlot(i).getHoverName()));
+			}
+		});
+		
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 	
 	@Override
@@ -170,82 +246,5 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 				return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
 			}
 		}
-	}
-	
-	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){
-		IItemHandler handler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
-		
-		if(handler == null){
-			ImmersivePetroleum.log.debug("No valid inventory handler found for " + stack);
-			return NonNullList.create();
-		}
-		
-		if(handler instanceof IPItemStackHandler ipStackHandler){
-			return ipStackHandler.getContainedItems();
-		}
-		
-		ImmersivePetroleum.log.warn("Inefficiently getting contained items. Why does " + stack + " have a non-IE IItemHandler?");
-		NonNullList<ItemStack> inv = NonNullList.withSize(handler.getSlots(), ItemStack.EMPTY);
-		for(int i = 0;i < handler.getSlots();++i){
-			inv.set(i, handler.getStackInSlot(i));
-		}
-		
-		return inv;
-	}
-	
-	@Override
-	public void finishUpgradeRecalculation(ItemStack stack){
-	}
-	
-	@Override
-	public Slot[] getWorkbenchSlots(AbstractContainerMenu container, ItemStack stack, Level world, Supplier<Player> getPlayer, IItemHandler inv){
-		if(inv != null){
-			return new Slot[]{
-					new IESlot.Upgrades(container, inv, 0, 78, 35 - 5, UPGRADE_TYPE, stack, true, world, getPlayer),
-					new IESlot.Upgrades(container, inv, 1, 98, 35 + 5, UPGRADE_TYPE, stack, true, world, getPlayer),
-					new IESlot.Upgrades(container, inv, 2, 118, 35 - 5, UPGRADE_TYPE, stack, true, world, getPlayer)
-			};
-		}else{
-			return new Slot[0];
-		}
-	}
-	
-	@Override
-	@Nonnull
-	public Component getName(@Nonnull ItemStack stack){
-		boolean hasUpgrades = getContainedItems(stack).stream().anyMatch(s -> s != ItemStack.EMPTY);
-		
-		Component c = super.getName(stack);
-		if(hasUpgrades){
-			c = Component.translatable("desc.immersivepetroleum.flavour.speedboat.prefix").append(c).withStyle(ChatFormatting.GOLD);
-		}
-		return c;
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
-		if(stack.hasTag()){
-			CompoundTag tag = stack.getTag();
-			
-			if(tag.contains("tank")){
-				FluidStack fs = FluidStack.loadFluidStackFromNBT(tag.getCompound("tank"));
-				if(fs != null){
-					tooltip.add(((MutableComponent) fs.getDisplayName()).append(": " + fs.getAmount() + "mB").withStyle(ChatFormatting.GRAY));
-				}
-			}
-			
-			NonNullList<ItemStack> items = getContainedItems(stack);
-			if(items != null && !items.isEmpty()){
-				for(int i = 0;i < items.size();i++){
-					ItemStack upgrade = items.get(i);
-					if(upgrade != ItemStack.EMPTY){
-						tooltip.add(Component.translatable("desc.immersivepetroleum.flavour.speedboat.upgrade", i + 1).append(upgrade.getHoverName()));
-					}
-				}
-			}
-		}
-		
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 }
