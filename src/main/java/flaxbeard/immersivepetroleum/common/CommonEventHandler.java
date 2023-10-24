@@ -244,8 +244,10 @@ public class CommonEventHandler{
 			}
 		}else if(event.phase == Phase.END){
 			if(toRemove.get(d) != null && napalmPositions.get(d) != null){
-				for(BlockPos position:toRemove.get(d)){
-					napalmPositions.get(d).remove(position);
+				synchronized(toRemove.get(d)){
+					for(BlockPos position:toRemove.get(d)){
+						napalmPositions.get(d).remove(position);
+					}
 				}
 			}
 		}
