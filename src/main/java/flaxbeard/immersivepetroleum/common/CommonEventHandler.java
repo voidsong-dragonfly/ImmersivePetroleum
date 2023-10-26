@@ -244,8 +244,9 @@ public class CommonEventHandler{
 			}
 		}else if(event.phase == Phase.END){
 			if(toRemove.get(d) != null && napalmPositions.get(d) != null){
-				synchronized(toRemove.get(d)){
-					for(BlockPos position:toRemove.get(d)){
+				List<BlockPos> list = toRemove.get(d);
+				synchronized(list){
+					for(BlockPos position:list){
 						napalmPositions.get(d).remove(position);
 					}
 				}
