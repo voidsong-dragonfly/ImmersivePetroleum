@@ -495,41 +495,41 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		if(y < 2){
 			if(x == 0 && z == 3){
 				if(y == 1){ // Actual Input
-					AABBUtils.box(main, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0);
+					AABBUtils.box16(main, 0, 0, 0, 8, 16, 16);
 				}else{ // Input Legs
-					AABBUtils.box(main, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0);
-					AABBUtils.box(main, 0.125, 0.0, 0.75, 0.375, 1.0, 0.875);
-					AABBUtils.box(main, 0.125, 0.0, 0.125, 0.375, 1.0, 0.25);
+					AABBUtils.box16(main, 0, 0, 0, 16, 8, 16);
+					AABBUtils.box16(main, 2, 0, 12, 6, 16, 14);
+					AABBUtils.box16(main, 2, 0, 2, 6, 16, 4);
 				}
 			}
 		}
 		
 		// Pipe over Furnace
 		if(y == 2 && x == 3 && z == 2){
-			AABBUtils.box(main, -0.0625, 0.375, 0.125, 0.0625, 1.125, 0.875);
-			AABBUtils.box(main, 0.125, 0, 0.125, 0.875, 0.125, 0.875);
-			AABBUtils.box(main, 0.25, 0.0, 0.25, 0.75, 1.0, 0.75);
-			AABBUtils.box(main, 0.0, 0.5, 0.25, 0.75, 1.0, 0.75);
+			AABBUtils.box16(main, -1, 6, 2, 1, 18, 14);
+			AABBUtils.box16(main, 2, 0, 2, 14, 2, 14);
+			AABBUtils.box16(main, 4, 0, 4, 12, 16, 12);
+			AABBUtils.box16(main, 0, 8, 4, 12, 16, 12);
 		}
 		
 		// Long Pipe
 		if(y > 0 && x == 1 && z == 3){
 			if(y != 15){
-				AABBUtils.box(main, 0.1875, 0.0, 0.1875, 0.8125, 1.0, 0.8125);
+				AABBUtils.box16(main, 3, 0, 3, 13, 16, 13);
 				if(y > 0 && y % 4 == 0){ // For pipe passing a platform
-					AABBUtils.box(main, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0);
+					AABBUtils.box16(main, 0, 8, 0, 16, 16, 16);
 				}
 			}else{ // Pipe Top Bend
-				AABBUtils.box(main, 0.1875, 0.0, -0.0625, 0.8125, 0.625, 0.8125);
+				AABBUtils.box16(main, 3, 0, -1, 13, 10, 13);
 			}
 		}
 		
 		// Ladder
 		if(y > 0 && x == 2 && z == 0){
-			AABBUtils.box(main, 0.0625, y == 1 ? 0.125 : 0.0, 0.875, 0.9375, 1.0, 1.0625);
+			AABBUtils.box16(main, 1, y == 1 ? 2 : 0, 14, 15, 16, 17);
 			if(y > 0 && y % 4 == 0){
-				AABBUtils.box(main, 0.0, 0.5, 0.875, 1.0, 1.0, 1.0625);
-				AABBUtils.box(main, 0.0, 0.5, 0.0, 1.0, 1.0, 0.0625);
+				AABBUtils.box16(main, 0, 8, 14, 16, 16, 17);
+				AABBUtils.box16(main, 0, 8, 0, 16, 16, 1);
 			}
 		}
 		
@@ -537,31 +537,31 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 		if(x > 0 && x < 3 && z > 0 && z < 3){
 			if(y > 0){
 				// Distillation Column
-				AABB bb = AABBUtils.box(0.0625, 0.0, 0.0625, 0.9375, 1.0, 0.9375);
+				AABB bb = AABBUtils.box16(1, 0, 1, 15, 16, 15);
 				if(z == 1){
-					if(x == 1) bb = AABBUtils.box(0.0625, 0.0, 0.0625, 1.0, 1.0, 1.0);
-					if(x == 2) bb = AABBUtils.box(0.0, 0.0, 0.0625, 0.9375, 1.0, 1.0);
+					if(x == 1) bb = AABBUtils.box16(1, 0, 1, 16, 16, 16);
+					if(x == 2) bb = AABBUtils.box16(0, 0, 1, 15, 16, 16);
 				}else if(z == 2){
-					if(x == 1) bb = AABBUtils.box(0.0625, 0.0, 0.0, 1.0, 1.0, 0.9375);
-					if(x == 2) bb = AABBUtils.box(0.0, 0.0, 0.0, 0.9375, 1.0, 0.9375);
+					if(x == 1) bb = AABBUtils.box16(1, 0, 0, 16, 16, 15);
+					if(x == 2) bb = AABBUtils.box16(0, 0, 0, 15, 16, 15);
 				}
 				main.add(bb);
 			}else{
 				// Distillation Column Base
-				AABBUtils.box(main, -0.125, 0.5, -0.125, 1.125, 1.125, 1.125);
-				AABBUtils.box(main, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0);
+				AABBUtils.box16(main, -2, 8, -2, 18, 18, 18);
+				AABBUtils.box16(main, 0, 0, 0, 16, 8, 16);
 			}
 		}
 		
 		// Platforms
 		if((y > 0 && y % 4 == 0) && !(x == 2 && z == 0) && !(x >= 1 && x <= 2 && z >= 1 && z <= 2)){
-			AABBUtils.box(main, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0);
+			AABBUtils.box16(main, 0, 8, 0, 16, 16, 16);
 		}
 		
 		// Base
 		if(y == 0){
 			if(!((x == 0 && z == 1) || (x == 1 && z == 3) || (x == 3 && z == 2) || (x == 3 && z == 3))){
-				AABBUtils.box(main, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0);
+				AABBUtils.box16(main, 0, 0, 0, 16, 8, 16);
 			}
 		}
 		
