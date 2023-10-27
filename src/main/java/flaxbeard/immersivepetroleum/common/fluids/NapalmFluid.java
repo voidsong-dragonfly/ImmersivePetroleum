@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.fluids;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -39,17 +40,16 @@ public class NapalmFluid extends IPFluid{
 	
 	public static void processFire(IPFluidEntry entry, Level world, BlockPos pos){
 		ResourceLocation d = world.dimension().location();
-		if(!CommonEventHandler.napalmPositions.containsKey(d)){
-			CommonEventHandler.napalmPositions.put(d, new ArrayList<>());
-		}
-		CommonEventHandler.napalmPositions.get(d).add(pos);
 		
+		List<BlockPos> list = CommonEventHandler.napalmPositions.computeIfAbsent(d, f -> new ArrayList<>());
+		
+		list.add(pos);
 		world.setBlock(pos, Blocks.FIRE.defaultBlockState(), 3);
 		
 		for(Direction facing:Direction.values()){
 			BlockPos notifyPos = pos.relative(facing);
 			if(world.getBlockState(notifyPos).is(entry.block().get())){
-				CommonEventHandler.napalmPositions.get(d).add(notifyPos);
+				list.add(notifyPos);
 			}
 		}
 	}
@@ -60,27 +60,27 @@ public class NapalmFluid extends IPFluid{
 		}
 		
 		@Override
-		public void onPlace(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving){
+		public void onPlace(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving){
 			for(Direction facing:Direction.values()){
 				BlockPos notifyPos = pos.relative(facing);
-				if(worldIn.getBlockState(notifyPos).getBlock() instanceof FireBlock || worldIn.getBlockState(notifyPos).getMaterial() == Material.FIRE){
-					worldIn.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+				if(world.getBlockState(notifyPos).getBlock() instanceof FireBlock || world.getBlockState(notifyPos).getMaterial() == Material.FIRE){
+					world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 					break;
 				}
 			}
-			super.onPlace(state, worldIn, pos, oldState, isMoving);
+			super.onPlace(state, world, pos, oldState, isMoving);
 		}
 		
 		@Override
-		public void neighborChanged(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving){
-			if(worldIn.getBlockState(fromPos).getBlock() instanceof FireBlock || worldIn.getBlockState(fromPos).getMaterial() == Material.FIRE){
-				ResourceLocation d = worldIn.dimension().location();
+		public void neighborChanged(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving){
+			if(world.getBlockState(fromPos).getBlock() instanceof FireBlock || world.getBlockState(fromPos).getMaterial() == Material.FIRE){
+				ResourceLocation d = world.dimension().location();
 				if(!CommonEventHandler.napalmPositions.containsKey(d) || !CommonEventHandler.napalmPositions.get(d).contains(fromPos)){
-					processFire(this.entry, worldIn, pos);
+					processFire(this.entry, world, pos);
 				}
 			}
 			
-			super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+			super.neighborChanged(state, world, pos, blockIn, fromPos, isMoving);
 		}
 	}
 }

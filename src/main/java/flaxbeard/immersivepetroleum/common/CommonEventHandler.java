@@ -53,6 +53,7 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 
 public class CommonEventHandler{
 	@SubscribeEvent
@@ -228,28 +229,35 @@ public class CommonEventHandler{
 	
 	@SubscribeEvent
 	public void handleNapalm(TickEvent.LevelTickEvent event){
+		if(event.side == LogicalSide.CLIENT)
+			return;
+		
 		ResourceLocation d = event.level.dimension().location();
 		
-		if(event.phase == Phase.START){
-			toRemove.put(d, new ArrayList<>());
-			if(napalmPositions.get(d) != null){
-				List<BlockPos> iterate = new ArrayList<>(napalmPositions.get(d));
-				for(BlockPos position:iterate){
-					BlockState state = event.level.getBlockState(position);
-					if(state.getBlock() instanceof LiquidBlock && state.getBlock() == IPContent.Fluids.NAPALM.block().get()){
-						NapalmFluid.processFire(IPContent.Fluids.NAPALM, event.level, position);
-					}
-					toRemove.get(d).add(position);
+		switch(event.phase){
+			case START:{
+				if(napalmPositions.get(d) != null){
+					List<BlockPos> trList = toRemove.computeIfAbsent(d, f -> new ArrayList<>());
+					
+					new ArrayList<>(napalmPositions.get(d)).forEach(pos -> {
+						BlockState state = event.level.getBlockState(pos);
+						if(state.getBlock() instanceof LiquidBlock fluidBlock && fluidBlock == IPContent.Fluids.NAPALM.block().get()){
+							NapalmFluid.processFire(IPContent.Fluids.NAPALM, event.level, pos);
+						}
+						trList.add(pos);
+					});
 				}
+				
+				break;
 			}
-		}else if(event.phase == Phase.END){
-			if(toRemove.get(d) != null && napalmPositions.get(d) != null){
-				List<BlockPos> list = toRemove.get(d);
-				synchronized(list){
-					for(BlockPos position:list){
-						napalmPositions.get(d).remove(position);
-					}
+			case END:{
+				if(toRemove.get(d) != null && napalmPositions.get(d) != null){
+					List<BlockPos> list = new ArrayList<>(toRemove.get(d));
+					napalmPositions.get(d).removeAll(list);
+					toRemove.get(d).clear();
 				}
+				
+				break;
 			}
 		}
 	}
