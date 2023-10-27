@@ -32,6 +32,7 @@ import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
+import flaxbeard.immersivepetroleum.common.util.AABBUtils;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
@@ -759,28 +760,28 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		
 		if(y == 0){
 			if(!(x == 2 && z == 4 || x == 4 && z == 2 || x == 2 && z == 0 || x == 2 && z == 2)){
-				main.add(box(0, 0, 0, 16, 8, 16));
+				AABBUtils.box16(main, 0, 0, 0, 16, 8, 16);
 			}
 			
 			if(z == 4){
 				// to left and right of fluid input
-				if(x == 1) main.add(box(8, 8, 0, 16, 16, 16));
-				if(x == 3) main.add(box(0, 8, 0, 8, 16, 16));
+				if(x == 1) AABBUtils.box16(main, 8, 8, 0, 16, 16, 16);
+				if(x == 3) AABBUtils.box16(main, 0, 8, 0, 8, 16, 16);
 			}
 			
 			// Drill Base
 			{
 				// Corners
-				if(x == 1 && z == 1) main.add(box(12, 8, 12, 16, 16, 16));
-				if(x == 3 && z == 1) main.add(box(0, 8, 12, 4, 16, 16));
-				if(x == 1 && z == 3) main.add(box(12, 8, 0, 16, 16, 4));
-				if(x == 3 && z == 3) main.add(box(0, 8, 0, 4, 16, 4));
+				if(x == 1 && z == 1) AABBUtils.box16(main, 12, 8, 12, 16, 16, 16);
+				if(x == 3 && z == 1) AABBUtils.box16(main, 0, 8, 12, 4, 16, 16);
+				if(x == 1 && z == 3) AABBUtils.box16(main, 12, 8, 0, 16, 16, 4);
+				if(x == 3 && z == 3) AABBUtils.box16(main, 0, 8, 0, 4, 16, 4);
 				
 				// Edges
-				if(x == 2 && z == 1) main.add(box(0, 8, 12, 16, 16, 16));
-				if(x == 2 && z == 3) main.add(box(0, 8, 0, 16, 16, 4));
-				if(x == 1 && z == 2) main.add(box(12, 8, 0, 16, 16, 16));
-				if(x == 3 && z == 2) main.add(box(0, 8, 0, 4, 16, 16));
+				if(x == 2 && z == 1) AABBUtils.box16(main, 0, 8, 12, 16, 16, 16);
+				if(x == 2 && z == 3) AABBUtils.box16(main, 0, 8, 0, 16, 16, 4);
+				if(x == 1 && z == 2) AABBUtils.box16(main, 12, 8, 0, 16, 16, 16);
+				if(x == 3 && z == 2) AABBUtils.box16(main, 0, 8, 0, 4, 16, 16);
 			}
 		}
 		
@@ -788,49 +789,49 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			// Power Box
 			if(z == 0){
 				if(x == 1){
-					main.add(box(4, 0, 0, 16, 16, 16));
+					AABBUtils.box16(main, 4, 0, 0, 16, 16, 16);
 				}else if(x == 3){
-					main.add(box(0, 0, 0, 12, 16, 16));
+					AABBUtils.box16(main, 0, 0, 0, 12, 16, 16);
 				}
 			}
 		}
 		
 		// E-Motor
 		if(x == 1 && z == 2){
-			if(y == 0) main.add(box(0, 8, 3, 12, 16, 13));
-			if(y == 1) main.add(box(0, 0, 3, 12, 2, 13));
+			if(y == 0) AABBUtils.box16(main, 0, 8, 3, 12, 16, 13);
+			if(y == 1) AABBUtils.box16(main, 0, 0, 3, 12, 2, 13);
 		}
 		
 		// Corner Posts
-		if(x == 1 && z == 1) main.add(box(0, 0, 0, 4, 16, 4));
-		if(x == 3 && z == 1) main.add(box(12, 0, 0, 16, 16, 4));
-		if(x == 1 && z == 3) main.add(box(0, 0, 12, 4, 16, 16));
-		if(x == 3 && z == 3) main.add(box(12, 0, 12, 16, 16, 16));
+		if(x == 1 && z == 1) AABBUtils.box16(main, 0, 0, 0, 4, 16, 4);
+		if(x == 3 && z == 1) AABBUtils.box16(main, 12, 0, 0, 16, 16, 4);
+		if(x == 1 && z == 3) AABBUtils.box16(main, 0, 0, 12, 4, 16, 16);
+		if(x == 3 && z == 3) AABBUtils.box16(main, 12, 0, 12, 16, 16, 16);
 		
 		// Ladder
 		if(y >= 0 && y <= 2 && x == 0 && z == 2){
-			main.add(box(15, 0, 2, 16, 16, 14));
+			AABBUtils.box16(main, 15, 0, 2, 16, 16, 14);
 		}
 		
 		// Upper Platform
 		if(y == 2 && x >= 1 && x <= 3 && z >= 1 && z <= 3){
-			main.add(box(0, 8, 0, 16, 16, 16));
+			AABBUtils.box16(main, 0, 8, 0, 16, 16, 16);
 		}
 		
 		// Railing
 		if(y == 3){
 			// Near ladder
 			if(x == 1 && z == 2){
-				main.add(box(0, 0, 0, 1, 16, 1));
-				main.add(box(0, 0, 15, 1, 16, 16));
+				AABBUtils.box16(main, 0, 0, 0, 1, 16, 1);
+				AABBUtils.box16(main, 0, 0, 15, 1, 16, 16);
 			}
 			if(x >= 1 && x <= 3){
-				if(z == 1) main.add(box(0, 0, 0, 16, 16, 1));
-				if(z == 3) main.add(box(0, 0, 15, 16, 16, 16));
+				if(z == 1) AABBUtils.box16(main, 0, 0, 0, 16, 16, 1);
+				if(z == 3) AABBUtils.box16(main, 0, 0, 15, 16, 16, 16);
 			}
-			if(x == 1 && (z == 1 || z == 3)) main.add(box(0, 0, 0, 1, 16, 16));
+			if(x == 1 && (z == 1 || z == 3)) AABBUtils.box16(main, 0, 0, 0, 1, 16, 16);
 			if(z >= 1 && z <= 3){
-				if(x == 3) main.add(box(15, 0, 0, 16, 16, 16));
+				if(x == 3) AABBUtils.box16(main, 15, 0, 0, 16, 16, 16);
 			}
 		}
 		
@@ -838,9 +839,9 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		if(y >= 1){
 			if(x == 2 && z == 2){
 				if(y == 7){
-					main.add(box(4, 0, 4, 12, 4, 12));
+					AABBUtils.box16(main, 4, 0, 4, 12, 4, 12);
 				}else{
-					main.add(box(4, 0, 4, 12, 16, 12));
+					AABBUtils.box16(main, 4, 0, 4, 12, 16, 12);
 				}
 			}
 		}
@@ -848,21 +849,16 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		// Redstone Controller
 		if(x == 0 && z == 1){
 			if(y == 0){
-				main.add(box(2, 0, 2, 6, 16, 4));
-				main.add(box(2, 0, 12, 6, 16, 14));
+				AABBUtils.box16(main, 2, 0, 2, 6, 16, 4);
+				AABBUtils.box16(main, 2, 0, 12, 6, 16, 14);
 			}
-			if(y == 1) main.add(box(0, 0, 0, 8, 16, 16));
+			if(y == 1) AABBUtils.box16(main, 0, 0, 0, 8, 16, 16);
 		}
 			
 		// Use default cube shape if nessesary
 		if(main.isEmpty()){
-			main.add(box(0, 0, 0, 16, 16, 16));
+			main.add(AABBUtils.FULL);
 		}
 		return main;
-	}
-	
-	/** Makes a box using texture pixel space (Assuming 16x16 p texture) */
-	private static AABB box(double x0, double y0, double z0, double x1, double y1, double z1){
-		return new AABB(x0 / 16D, y0 / 16D, z0 / 16D, x1 / 16D, y1 / 16D, z1 / 16D);
 	}
 }
