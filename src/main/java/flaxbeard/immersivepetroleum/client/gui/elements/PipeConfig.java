@@ -1,9 +1,5 @@
 package flaxbeard.immersivepetroleum.client.gui.elements;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -16,8 +12,6 @@ import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,11 +32,8 @@ public class PipeConfig extends Button{
 	};
 	
 	public static final int EMPTY = 0x00;
-	
 	public static final int PIPE_NORMAL = 0x01;
-	
 	public static final int PIPE_PERFORATED = 0x02;
-	
 	public static final int PIPE_PERFORATED_FIXED = 0x03;
 	
 	private final int dynTextureWidth, dynTextureHeight;
@@ -98,6 +89,10 @@ public class PipeConfig extends Button{
 		return this.grid;
 	}
 	
+	public int getGridScale(){
+		return this.gridScale;
+	}
+	
 	/** This has to be called at the end of its life! */
 	public void dispose(){
 		this.gridTexture.close();
@@ -109,17 +104,19 @@ public class PipeConfig extends Button{
 		int texCenterX = this.grid.width / this.gridScale;
 		int texCenterY = this.grid.height / this.gridScale;
 		
+		int cX = this.grid.width / 2;
+		int cY = this.grid.height / 2;
+		
 		ClientLevel world = MCUtil.getLevel();
 		
+		int a = 0;
 		for(int gy = 0;gy < this.grid.getHeight();gy++){
-			for(int gx = 0;gx < this.grid.getWidth();gx++){
+			for(int gx = 0;gx < this.grid.getWidth();gx++,a++){
 				int color = 0;
 				
 				switch(this.grid.get(gx, gy)){
 					case EMPTY -> {
-						if((gx >= texCenterX - 2 && gx <= texCenterX + 2) && (gy >= texCenterY - 2 && gy <= texCenterY + 2)){
-							color = 0x000000;
-						}else{
+						if(!((gx >= texCenterX - 2 && gx <= texCenterX + 2) && (gy >= texCenterY - 2 && gy <= texCenterY + 2))){
 							int px = gx - (this.grid.getWidth() / 2);
 							int py = gy - (this.grid.getHeight() / 2);
 							
@@ -134,8 +131,11 @@ public class PipeConfig extends Button{
 								state = world.getBlockState(p);
 							}while(state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
 							
+							float f = (a % 2 == 0) ? 0.80F : 0.70F;
+							if(gx == cX || gy == cY)
+								f -= 0.15F;
+							
 							int tmp = world.getBlockState(p).getMapColor(world, p).col;
-							float f = 0.5F;
 							int r = (int) (((tmp >> 16) & 0xFF) * f);
 							int g = (int) (((tmp >> 8) & 0xFF) * f);
 							int b = (int) (((tmp >> 0) & 0xFF) * f);
@@ -179,105 +179,6 @@ public class PipeConfig extends Button{
 		}
 		matrix.popPose();
 		buffer.endBatch();
-		
-		List<Component> tooltip = new ArrayList<>();
-		
-		if((mx >= this.x && mx < (this.x + this.width)) && (my >= this.y && my < (this.y + this.height))){
-			int x = (mx - this.x) / this.gridScale;
-			int y = (my - this.y) / this.gridScale;
-			
-			int px = x - (this.grid.getWidth() / 2);
-			int py = y - (this.grid.getHeight() / 2);
-			
-			if((px >= -2 && px <= 2) && (py >= -2 && py <= 2)){
-				tooltip.add(Component.literal("Center (Derrick)"));
-			}else{
-				String dir = "";
-				if(py < 0){
-					dir += "North";
-				}else if(py > 0){
-					dir += "South";
-				}
-				if(px != 0){
-					if(dir.length() > 0){
-						dir += "-";
-					}
-					
-					if(px < 0){
-						dir += "West";
-					}else if(px > 0){
-						dir += "East";
-					}
-				}
-				
-				tooltip.add(Component.literal("§n" + dir));
-			}
-			
-			tooltip.add(Component.literal(String.format(Locale.ENGLISH, "X: %d §7(%d)", (this.tilePos.x() + px), px)));
-			tooltip.add(Component.literal(String.format(Locale.ENGLISH, "Z: %d §7(%d)", (this.tilePos.z() + py), py)));
-			
-			int i = this.grid.get(x, y);
-			if(i > EMPTY){
-				if(i == PIPE_NORMAL){
-					tooltip.add(Component.literal("Normal Pipe"));
-				}else if(i == PIPE_PERFORATED){
-					tooltip.add(Component.literal("Perforated Pipe"));
-				}else if(i == PIPE_PERFORATED_FIXED){
-					tooltip.add(Component.literal("Perforated Pipe §c(Fixed)§r"));
-				}
-			}
-			
-			int xa = this.x + (x * this.gridScale);
-			int ya = this.y + (y * this.gridScale);
-			GuiComponent.fill(matrix, xa, ya, xa + this.gridScale, ya + this.gridScale, 0x7FFFFFFF);
-		}
-		
-		if(!tooltip.isEmpty()){
-			/*
-			Minecraft mc = Minecraft.getInstance();
-			int width = mc.getWindow().getGuiScaledWidth();
-			int height = mc.getWindow().getGuiScaledHeight();
-			GuiUtils.drawHoveringText(matrix, tooltip, mx, my, width, height, -1, mc.font);
-			*/
-			
-			// Draw my own crude tooltip, to have *something* here instead of nothing
-			
-			Font font = MCUtil.getFont();
-			int lHeight = font.lineHeight + 2;
-			int margin = 3;
-			int width = 0;
-			int height = lHeight * tooltip.size();
-			for(Component c:tooltip){
-				int sw = font.width(c);
-				if(sw > width)
-					width = sw;
-			}
-			
-			mx += 12;
-			my -= height;
-			
-			int x = mx - margin;
-			int y = my - margin;
-			int w = mx + width + margin;
-			int h = my + height;
-			
-			int fill = 0xFF000000;
-			int border = 0xFF3F3FFF;
-			
-			matrix.pushPose();
-			{
-				GuiComponent.fill(matrix, x, y, w, h, fill);
-				GuiComponent.fill(matrix, x, y, x + 1, h, border);
-				GuiComponent.fill(matrix, x, y, w, y + 1, border);
-				GuiComponent.fill(matrix, w - 1, y, w, h, border);
-				GuiComponent.fill(matrix, x, h - 1, w, h, border);
-				
-				for(int i = 0;i < tooltip.size();i++){
-					GuiComponent.drawString(matrix, font, tooltip.get(i), mx, my + lHeight * i, -1);
-				}
-			}
-			matrix.popPose();
-		}
 	}
 	
 	@Override

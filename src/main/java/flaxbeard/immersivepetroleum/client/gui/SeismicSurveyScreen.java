@@ -116,7 +116,7 @@ public class SeismicSurveyScreen extends Screen{
 		int scanYCentered = scanY - SurveyScan.SCAN_SIZE / 2;
 		
 		if(mouseX >= (this.guiLeft + 70) && mouseX <= (this.guiLeft + 83) && mouseY >= (this.guiTop + 4) && mouseY <= (this.guiTop + 10)){
-			tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.northarrow").withStyle(ChatFormatting.AQUA));
+			tooltip.add(Component.translatable("gui.immersivepetroleum.dirs.north").withStyle(ChatFormatting.AQUA));
 		}
 		
 		matrix.pushPose();
