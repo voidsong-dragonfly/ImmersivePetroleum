@@ -23,9 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.material.MaterialColor;
 
 public class PipeConfig extends Button{
 	static final Button.OnPress NO_ACTION = b -> {
@@ -100,59 +98,49 @@ public class PipeConfig extends Button{
 	}
 	
 	public void updateTexture(){
-		NativeImage image = this.gridTexture.getPixels();
-		int texCenterX = this.grid.width / this.gridScale;
-		int texCenterY = this.grid.height / this.gridScale;
+		final NativeImage image = this.gridTexture.getPixels();
+		final int texCenterX = this.grid.width / this.gridScale;
+		final int texCenterY = this.grid.height / this.gridScale;
 		
-		int cX = this.grid.width / 2;
-		int cY = this.grid.height / 2;
+		final int x2 = this.grid.width / 2;
+		final int y2 = this.grid.height / 2;
+		final int x4 = this.grid.width / 4;
+		final int y4 = this.grid.height / 4;
 		
 		ClientLevel world = MCUtil.getLevel();
 		
 		int a = 0;
 		for(int gy = 0;gy < this.grid.getHeight();gy++){
 			for(int gx = 0;gx < this.grid.getWidth();gx++,a++){
-				int color = 0;
-				
-				switch(this.grid.get(gx, gy)){
+				int color = switch(this.grid.get(gx, gy)){
 					case EMPTY -> {
+						int tmp = 0;
 						if(!((gx >= texCenterX - 2 && gx <= texCenterX + 2) && (gy >= texCenterY - 2 && gy <= texCenterY + 2))){
-							int px = gx - (this.grid.getWidth() / 2);
-							int py = gy - (this.grid.getHeight() / 2);
+							int px = gx - x2;
+							int py = gy - y2;
 							
 							ColumnPos c = new ColumnPos(this.tilePos.x() + px, this.tilePos.z() + py);
-							int y = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(c.x(), 0, c.z())).getY();
+							int y = world.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(c.x(), 0, c.z())).getY() - 1;
 							
-							BlockPos p;
-							BlockState state;
-							do{
-								--y;
-								p = new BlockPos(c.x(), y, c.z());
-								state = world.getBlockState(p);
-							}while(state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
+							BlockPos p = new BlockPos(c.x(), y, c.z());
 							
-							float f = (a % 2 == 0) ? 0.80F : 0.70F;
-							if(gx == cX || gy == cY)
+							float f = (a % 2 == 0) ? 0.55F : 0.60F;
+							if(gx % x4 == 0 || gy % y4 == 0)
 								f -= 0.15F;
 							
-							int tmp = world.getBlockState(p).getMapColor(world, p).col;
+							tmp = world.getBlockState(p).getMapColor(world, p).col;
 							int r = (int) (((tmp >> 16) & 0xFF) * f);
 							int g = (int) (((tmp >> 8) & 0xFF) * f);
 							int b = (int) (((tmp >> 0) & 0xFF) * f);
-							
-							color = (r << 16 | g << 8 | b);
+							tmp = (r << 16 | g << 8 | b);
 						}
+						yield tmp;
 					}
-					case PIPE_NORMAL -> {
-						color = this.pipeNormalColor;
-					}
-					case PIPE_PERFORATED -> {
-						color = this.pipePerforatedColor;
-					}
-					case PIPE_PERFORATED_FIXED -> {
-						color = this.pipePerforatedFixedColor;
-					}
-				}
+					case PIPE_NORMAL -> this.pipeNormalColor;
+					case PIPE_PERFORATED -> this.pipePerforatedColor;
+					case PIPE_PERFORATED_FIXED -> this.pipePerforatedFixedColor;
+					default -> 0;
+				};
 				
 				image.setPixelRGBA(gx, gy, toABGR(color));
 			}

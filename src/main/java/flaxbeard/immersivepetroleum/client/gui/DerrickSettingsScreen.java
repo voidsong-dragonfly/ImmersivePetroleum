@@ -97,16 +97,14 @@ public class DerrickSettingsScreen extends Screen{
 				tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.derrickishere"));
 			}else{
 				MutableComponent d = Component.empty();
-				String dir = "";
 				if(py < 0){
 					d.append(Component.translatable("gui.immersivepetroleum.dirs.north"));
 				}else if(py > 0){
 					d.append(Component.translatable("gui.immersivepetroleum.dirs.south"));
 				}
 				if(px != 0){
-					if(dir.length() > 0){
+					if(py != 0){
 						d.append(Component.literal("-"));
-						dir += "-";
 					}
 					
 					if(px < 0){
@@ -125,12 +123,10 @@ public class DerrickSettingsScreen extends Screen{
 			
 			int i = this.pipeConfig.getGrid().get(x, y);
 			if(i > PipeConfig.EMPTY){
-				if(i == PipeConfig.PIPE_NORMAL){
-					tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.normal"));
-				}else if(i == PipeConfig.PIPE_PERFORATED){
-					tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.perforated"));
-				}else if(i == PipeConfig.PIPE_PERFORATED_FIXED){
-					tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.perforated_fixed"));
+				switch(i){
+					case PipeConfig.PIPE_NORMAL -> tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.normal"));
+					case PipeConfig.PIPE_PERFORATED -> tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.perforated"));
+					case PipeConfig.PIPE_PERFORATED_FIXED -> tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.perforated_fixed"));
 				}
 			}
 			
