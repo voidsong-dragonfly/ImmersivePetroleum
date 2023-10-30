@@ -131,10 +131,10 @@ public class ReservoirRegionDataStorage extends SavedData{
 		final ResourceKey<Level> dimKey = world.dimension();
 		
 		ReservoirIsland ret = null;
-		if((ret = getIsland(dimKey, pos, 256, -256)) == null){
-			if((ret = getIsland(dimKey, pos, 256, 256)) == null){
-				if((ret = getIsland(dimKey, pos, -256, -256)) == null){
-					ret = getIsland(dimKey, pos, -256, 256);
+		if((ret = getIsland(dimKey, pos, 1, -1)) == null){
+			if((ret = getIsland(dimKey, pos, 1, 1)) == null){
+				if((ret = getIsland(dimKey, pos, -1, -1)) == null){
+					ret = getIsland(dimKey, pos, -1, 1);
 				}
 			}
 		}
@@ -142,55 +142,42 @@ public class ReservoirRegionDataStorage extends SavedData{
 		return ret;
 	}
 	
-	private ReservoirIsland getIsland(ResourceKey<Level> dimKey, ColumnPos pos, int xOff, int zOff){
-		RegionData regionData = getRegionData(toRegionCoords(offset(pos, xOff, zOff)));
+	private ReservoirIsland getIsland(ResourceKey<Level> dimKey, ColumnPos pos, int regionXOff, int regionZOff){
+		RegionData regionData = getOffsetRegionData(toRegionCoords(pos), regionXOff, regionZOff);
 		return regionData != null ? regionData.get(dimKey, pos) : null;
 	}
 	
-	private RegionData getRegionData(ColumnPos pos, int xOff, int zOff){
-		return getRegionData(toRegionCoords(offset(pos, xOff, zOff)));
-	}
-	
 	public boolean existsAt(ColumnPos pos){
-		RegionData topL = getRegionData(pos, 256, -256);
-		RegionData topR = getRegionData(pos, 256, 256);
-		RegionData bottomL = getRegionData(pos, -256, -256);
-		RegionData bottomR = getRegionData(pos, -256, 256);
-		
 		boolean ret = false;
-		if(!(ret = existsAt(topL, pos))){
-			if(!(ret = existsAt(topR, pos))){
-				if(!(ret = existsAt(bottomL, pos))){
-					ret = existsAt(bottomR, pos);
+		if(!(ret = existsAt(pos, 1, -1))){
+			if(!(ret = existsAt(pos, 1, 1))){
+				if(!(ret = existsAt(pos, -1, -1))){
+					ret = existsAt(pos, -1, 1);
 				}
 			}
 		}
 		return ret;
 	}
 	
-	private boolean existsAt(RegionData regionData, ColumnPos pos){
-		if(regionData != null){
-			synchronized(regionData.reservoirlist){
-				return regionData.reservoirlist.values().stream().anyMatch(island -> island.contains(pos));
-			}
+	private boolean existsAt(ColumnPos pos, int regionXOff, int regionZOff){
+		RegionData regionData = getOffsetRegionData(pos, regionXOff, regionZOff);
+		if(regionData == null)
+			return false;
+		
+		boolean ret = false;
+		synchronized(regionData.reservoirlist){
+			ret = regionData.reservoirlist.values().stream().anyMatch(island -> island.contains(pos));
 		}
-		return false;
+		return ret;
 	}
 	
 	private ColumnPos offset(ColumnPos in, int xOff, int zOff){
 		return new ColumnPos(in.x() + xOff, in.z() + zOff);
 	}
 	
-	/** Utility method */
-	public ColumnPos toRegionCoords(BlockPos pos){
-		// 9 = SectionPos.blockToSectionCoord & ChunkPos.getRegionX
-		return new ColumnPos(pos.getX() >> 9, pos.getZ() >> 9);
-	}
-	
-	/** Utility method */
-	public ColumnPos toRegionCoords(ColumnPos pos){
-		// 9 = SectionPos.blockToSectionCoord & ChunkPos.getRegionX
-		return new ColumnPos(pos.x() >> 9, pos.z() >> 9);
+	@Nullable
+	public RegionData getOffsetRegionData(ColumnPos regionPos, int xOff, int zOff){
+		return getRegionData(offset(regionPos, xOff, zOff));
 	}
 	
 	@Nullable
@@ -217,6 +204,18 @@ public class ReservoirRegionDataStorage extends SavedData{
 	
 	private String getRegionFileName(ColumnPos regionPos){
 		return DATA_NAME + File.separatorChar + regionPos.x() + "_" + regionPos.z();
+	}
+	
+	/** Utility method. Converts Block to Region Position. */
+	public static ColumnPos toRegionCoords(BlockPos pos){
+		// 9 = SectionPos.blockToSectionCoord & ChunkPos.getRegionX
+		return new ColumnPos(pos.getX() >> 9, pos.getZ() >> 9);
+	}
+	
+	/** Utility method. Converts Block to Region Position. */
+	public static ColumnPos toRegionCoords(ColumnPos pos){
+		// 9 = SectionPos.blockToSectionCoord & ChunkPos.getRegionX
+		return new ColumnPos(pos.x() >> 9, pos.z() >> 9);
 	}
 	
 	// -----------------------------------------------------------------------------

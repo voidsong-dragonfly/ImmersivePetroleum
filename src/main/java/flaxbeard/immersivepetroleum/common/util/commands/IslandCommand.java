@@ -75,11 +75,12 @@ public class IslandCommand{
 		
 		ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
 		
+		ColumnPos regionPos = ReservoirRegionDataStorage.toRegionCoords(srcPos);
 		RegionData[] regions = {
-				storage.getRegionData(storage.toRegionCoords(srcPos.offset(256, 0, -256))),
-				storage.getRegionData(storage.toRegionCoords(srcPos.offset(256, 0, 256))),
-				storage.getRegionData(storage.toRegionCoords(srcPos.offset(-256, 0, -256))),
-				storage.getRegionData(storage.toRegionCoords(srcPos.offset(-256, 0, 256))),
+				storage.getOffsetRegionData(regionPos, 1, -1),
+				storage.getOffsetRegionData(regionPos, 1, 1),
+				storage.getOffsetRegionData(regionPos, -1, -1),
+				storage.getOffsetRegionData(regionPos, -1, 1)
 		};
 		
 		final ResourceKey<Level> dimKey = source.getLevel().dimension();
