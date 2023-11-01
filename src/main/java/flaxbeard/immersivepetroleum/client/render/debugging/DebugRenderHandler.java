@@ -332,7 +332,7 @@ public class DebugRenderHandler{
 					matrix.pushPose();
 					{
 						ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
-						final ColumnPos playerRegionPos = storage.toRegionCoords(playerPos);
+						final ColumnPos playerRegionPos = ReservoirRegionDataStorage.toRegionCoords(playerPos);
 						final ResourceKey<Level> dimKey = player.getCommandSenderWorld().dimension();
 						final List<ReservoirIsland> islands = new ArrayList<>();
 						for(int z = -1;z <= 1;z++){
