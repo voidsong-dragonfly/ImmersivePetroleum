@@ -16,7 +16,6 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.glfw.GLFW;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -36,13 +35,13 @@ import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.Items;
+import flaxbeard.immersivepetroleum.common.IPKeyBinds;
 import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.util.projector.MultiblockProjection;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings.Mode;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -82,11 +81,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -168,7 +165,7 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 			if(isPressing(GLFW.GLFW_KEY_LEFT_CONTROL) || isPressing(GLFW.GLFW_KEY_RIGHT_CONTROL)){
 				Component title = Component.translatable("desc.immersivepetroleum.info.projector.holdctrl.text").withStyle(ChatFormatting.DARK_PURPLE);
 				Component ctrl0 = Component.translatable("desc.immersivepetroleum.info.projector.control1").withStyle(ChatFormatting.DARK_GRAY);
-				Component ctrl1 = Component.translatable("desc.immersivepetroleum.info.projector.control2", ClientInputHandler.keybind_preview_flip.getTranslatedKeyMessage()).withStyle(ChatFormatting.DARK_GRAY);
+				Component ctrl1 = Component.translatable("desc.immersivepetroleum.info.projector.control2", IPKeyBinds.keybind_preview_flip.getTranslatedKeyMessage()).withStyle(ChatFormatting.DARK_GRAY);
 				Component ctrl2 = Component.translatable("desc.immersivepetroleum.info.projector.control3").withStyle(ChatFormatting.DARK_GRAY);
 				
 				tooltip.add(title);
@@ -719,13 +716,7 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 	@OnlyIn(Dist.CLIENT)
 	@Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
 	public static class ClientInputHandler{
-		public static final KeyMapping keybind_preview_flip = new KeyMapping("key.immersivepetroleum.projector.flip", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, "key.categories.immersivepetroleum");
 		
-		@SubscribeEvent
-		public static void registerKeybind(RegisterKeyMappingsEvent event){
-			keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
-			event.register(keybind_preview_flip);
-		}
 		
 		static boolean shiftHeld = false;
 		
@@ -733,7 +724,7 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 		public static void onPlayerTick(TickEvent.PlayerTickEvent event){
 			if(event.side == LogicalSide.CLIENT && event.player != null && event.player == Minecraft.getInstance().getCameraEntity()){
 				if(event.phase == Phase.END){
-					if(!keybind_preview_flip.isUnbound() && keybind_preview_flip.consumeClick()){
+					if(!IPKeyBinds.keybind_preview_flip.isUnbound() && IPKeyBinds.keybind_preview_flip.consumeClick()){
 						doAFlip();
 					}
 				}
