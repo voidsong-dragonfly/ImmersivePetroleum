@@ -204,7 +204,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 						}
 					}
 					
-					if(spill != this.spill){
+					if(spill != this.spill || (spill && this.getWorldNonnull().getGameTime() % 10 == 0)){
 						this.spill = spill;
 						
 						if(this.spill){
