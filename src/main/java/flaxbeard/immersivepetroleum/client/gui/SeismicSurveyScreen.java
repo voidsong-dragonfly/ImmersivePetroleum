@@ -131,8 +131,8 @@ public class SeismicSurveyScreen extends Screen{
 					renderCursorBox(matrix, mouseX, mouseY, 0xFF000000 | (data < 0x7F ? 0xFFFFFF : 0));
 				}
 				
-				int worldX = this.scan.getX() + scanXCentered;
-				int worldZ = this.scan.getZ() + scanYCentered;
+				int worldX = this.scan.getX() - scanXCentered;
+				int worldZ = this.scan.getZ() - scanYCentered;
 				tooltip.add(Component.translatable("gui.immersivepetroleum.seismicsurvey.worldcoords", worldX, worldZ));
 				
 				if(scanXCentered == 0 && scanYCentered == 0){
