@@ -56,7 +56,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	// -----------------------------------------------------------------------------
 	
 	/** Contains existing reservoir-region files */
-	final Map<ColumnPos, RegionData> regions = new HashMap<>();
+	final Map<RegionPos, RegionData> regions = new HashMap<>();
 	final DimensionDataStorage dimData;
 	public ReservoirRegionDataStorage(DimensionDataStorage dimData){
 		this.dimData = dimData;
@@ -88,7 +88,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 			int x = tag.getInt("x");
 			int z = tag.getInt("z");
 			
-			ColumnPos rPos = new ColumnPos(x, z);
+			RegionPos rPos = new RegionPos(x, z);
 			RegionData rData = getOrCreateRegionData(rPos);
 			this.regions.put(rPos, rData);
 		}
@@ -103,7 +103,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	}
 	
 	public void addIsland(ResourceKey<Level> dimensionKey, ReservoirIsland island){
-		ColumnPos regionPos = toRegionCoords(island.getBoundingBox().getCenter());
+		RegionPos regionPos = new RegionPos(island.getBoundingBox().getCenter());
 		
 		RegionData regionData = getOrCreateRegionData(regionPos);
 		synchronized(regionData.reservoirlist){
@@ -130,7 +130,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 		
 		final ResourceKey<Level> dimKey = world.dimension();
 		
-		ReservoirIsland ret = null;
+		ReservoirIsland ret = getIsland(dimKey, pos, 0, 0);
 		if((ret = getIsland(dimKey, pos, 1, -1)) == null){
 			if((ret = getIsland(dimKey, pos, 1, 1)) == null){
 				if((ret = getIsland(dimKey, pos, -1, -1)) == null){
@@ -143,7 +143,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	}
 	
 	private ReservoirIsland getIsland(ResourceKey<Level> dimKey, ColumnPos pos, int regionXOff, int regionZOff){
-		RegionData regionData = getOffsetRegionData(toRegionCoords(pos), regionXOff, regionZOff);
+		RegionData regionData = getRegionData(new RegionPos(pos, regionXOff, regionZOff));
 		return regionData != null ? regionData.get(dimKey, pos) : null;
 	}
 	
@@ -160,7 +160,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	}
 	
 	private boolean existsAt(ColumnPos pos, int regionXOff, int regionZOff){
-		RegionData regionData = getOffsetRegionData(pos, regionXOff, regionZOff);
+		RegionData regionData = getRegionData(new RegionPos(pos, regionXOff, regionZOff));
 		if(regionData == null)
 			return false;
 		
@@ -171,27 +171,18 @@ public class ReservoirRegionDataStorage extends SavedData{
 		return ret;
 	}
 	
-	private ColumnPos offset(ColumnPos in, int xOff, int zOff){
-		return new ColumnPos(in.x() + xOff, in.z() + zOff);
-	}
-	
-	@Nullable
-	public RegionData getOffsetRegionData(ColumnPos regionPos, int xOff, int zOff){
-		return getRegionData(offset(regionPos, xOff, zOff));
-	}
-	
 	@Nullable
 	public RegionData getRegionData(BlockPos pos){
-		return getRegionData(toRegionCoords(pos));
+		return getRegionData(new RegionPos(pos));
 	}
 	
 	@Nullable
-	public RegionData getRegionData(ColumnPos regionPos){
+	public RegionData getRegionData(RegionPos regionPos){
 		RegionData ret = this.regions.getOrDefault(regionPos, null);
 		return ret;
 	}
 	
-	private RegionData getOrCreateRegionData(ColumnPos regionPos){
+	private RegionData getOrCreateRegionData(RegionPos regionPos){
 		RegionData ret = this.regions.computeIfAbsent(regionPos, p -> {
 			String fn = getRegionFileName(p);
 			RegionData data = this.dimData.computeIfAbsent(t -> new RegionData(p, t), () -> new RegionData(p), fn);
@@ -202,23 +193,29 @@ public class ReservoirRegionDataStorage extends SavedData{
 		return ret;
 	}
 	
-	private String getRegionFileName(ColumnPos regionPos){
+	private String getRegionFileName(RegionPos regionPos){
 		return DATA_NAME + File.separatorChar + regionPos.x() + "_" + regionPos.z();
 	}
 	
-	/** Utility method. Converts Block to Region Position. */
-	public static ColumnPos toRegionCoords(BlockPos pos){
-		// 9 = SectionPos.blockToSectionCoord & ChunkPos.getRegionX
-		return new ColumnPos(pos.getX() >> 9, pos.getZ() >> 9);
-	}
-	
-	/** Utility method. Converts Block to Region Position. */
-	public static ColumnPos toRegionCoords(ColumnPos pos){
-		// 9 = SectionPos.blockToSectionCoord & ChunkPos.getRegionX
-		return new ColumnPos(pos.x() >> 9, pos.z() >> 9);
-	}
-	
 	// -----------------------------------------------------------------------------
+	
+	public static record RegionPos(int x, int z){
+		public RegionPos(BlockPos pos, int xOff, int zOff){
+			this((pos.getX() + 256 * xOff) >> 9, (pos.getZ() + 256 * zOff) >> 9);
+		}
+		
+		public RegionPos(ColumnPos pos, int xOff, int zOff){
+			this((pos.x() + 256 * xOff) >> 9, (pos.z() + 256 * zOff) >> 9);
+		}
+		
+		public RegionPos(BlockPos pos){
+			this(pos.getX() >> 9, pos.getZ() >> 9);
+		}
+		
+		public RegionPos(ColumnPos pos){
+			this(pos.x() >> 9, pos.z() >> 9);
+		}
+	}
 	
 	/**
 	 * Contains reservoirs within a particular region.
@@ -226,12 +223,12 @@ public class ReservoirRegionDataStorage extends SavedData{
 	 * @author TwistedGate
 	 */
 	public static class RegionData extends SavedData{
-		final ColumnPos regionPos;
+		final RegionPos regionPos;
 		final Multimap<ResourceKey<Level>, ReservoirIsland> reservoirlist = ArrayListMultimap.create();
-		RegionData(ColumnPos regionPos){
+		RegionData(RegionPos regionPos){
 			this.regionPos = regionPos;
 		}
-		RegionData(ColumnPos regionPos, CompoundTag nbt){
+		RegionData(RegionPos regionPos, CompoundTag nbt){
 			this.regionPos = regionPos;
 			load(nbt);
 		}
@@ -290,7 +287,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 		}
 		
 		/** Position of this RegionData instance. */
-		public ColumnPos position(){
+		public RegionPos position(){
 			return this.regionPos;
 		}
 		

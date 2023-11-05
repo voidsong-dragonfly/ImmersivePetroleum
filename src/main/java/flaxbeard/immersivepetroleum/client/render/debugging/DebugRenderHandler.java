@@ -1,8 +1,11 @@
 package flaxbeard.immersivepetroleum.client.render.debugging;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -23,6 +26,7 @@ import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionPos;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
@@ -221,6 +225,35 @@ public class DebugRenderHandler{
 							}
 						}
 						default -> {
+							boolean debug = false;
+							if(debug){
+								final ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
+								BlockPos playerPos = MCUtil.getPlayer().blockPosition();
+								
+								RegionPos rLocal = new RegionPos(playerPos);
+								
+								RegionPos r0 = new RegionPos(playerPos, 1, -1);
+								RegionPos r1 = new RegionPos(playerPos, 1, 1);
+								RegionPos r2 = new RegionPos(playerPos, -1, -1);
+								RegionPos r3 = new RegionPos(playerPos, -1, 1);
+								
+								boolean bLocal = storage.getRegionData(rLocal) != null;
+								
+								boolean b0 = storage.getRegionData(r0) != null;
+								boolean b1 = storage.getRegionData(r1) != null;
+								boolean b2 = storage.getRegionData(r2) != null;
+								boolean b3 = storage.getRegionData(r3) != null;
+								
+								List<Component> list = List.of(
+									Component.literal(String.format("PlayerXYZ: %d %d %d", playerPos.getX(), playerPos.getY(), playerPos.getZ())),
+									Component.literal(String.format("LocalXZ: %d %d", rLocal.x(), rLocal.z())).withStyle(bLocal ? ChatFormatting.GREEN : ChatFormatting.RED),
+									Component.literal(String.format("XZ: %d %d", r0.x(), r0.z())).withStyle(b0 ? ChatFormatting.GREEN : ChatFormatting.RED),
+									Component.literal(String.format("XZ: %d %d", r1.x(), r1.z())).withStyle(b1 ? ChatFormatting.GREEN : ChatFormatting.RED),
+									Component.literal(String.format("XZ: %d %d", r2.x(), r2.z())).withStyle(b2 ? ChatFormatting.GREEN : ChatFormatting.RED),
+									Component.literal(String.format("XZ: %d %d", r3.x(), r3.z())).withStyle(b3 ? ChatFormatting.GREEN : ChatFormatting.RED)
+								);
+								renderOverlay(event.getPoseStack(), list);
+							}
 						}
 					}
 				}
@@ -332,16 +365,27 @@ public class DebugRenderHandler{
 					matrix.pushPose();
 					{
 						ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
-						final ColumnPos playerRegionPos = ReservoirRegionDataStorage.toRegionCoords(playerPos);
 						final ResourceKey<Level> dimKey = player.getCommandSenderWorld().dimension();
-						final List<ReservoirIsland> islands = new ArrayList<>();
-						for(int z = -1;z <= 1;z++){
-							for(int x = -1;x <= 1;x++){
-								RegionData rd = storage.getRegionData(new ColumnPos(playerRegionPos.x() + x, playerRegionPos.z() + z));
-								if(rd != null){
-									synchronized(rd.getReservoirIslandList()){
-										islands.addAll(rd.getReservoirIslandList().get(dimKey));
-									}
+						final Set<ReservoirIsland> islands = new HashSet<>();
+						
+						RegionPos pLocal = new RegionPos(playerPos);
+						RegionPos p0 = new RegionPos(playerPos, 1, -1);
+						RegionPos p1 = new RegionPos(playerPos, 1, 1);
+						RegionPos p2 = new RegionPos(playerPos, -1, -1);
+						RegionPos p3 = new RegionPos(playerPos, -1, 1);
+						
+						RegionData rLocal = storage.getRegionData(pLocal);
+						RegionData r0 = storage.getRegionData(p0);
+						RegionData r1 = storage.getRegionData(p1);
+						RegionData r2 = storage.getRegionData(p2);
+						RegionData r3 = storage.getRegionData(p3);
+						
+						RegionData[] array = {rLocal, r0, r1, r2, r3};
+						for(RegionData rd:array){
+							if(rd != null){
+								Multimap<ResourceKey<Level>, ReservoirIsland> m = rd.getReservoirIslandList();
+								synchronized(m){
+									islands.addAll(m.get(dimKey));
 								}
 							}
 						}

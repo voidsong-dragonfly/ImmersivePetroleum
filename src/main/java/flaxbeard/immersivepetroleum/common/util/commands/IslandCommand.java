@@ -23,6 +23,7 @@ import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionPos;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -75,12 +76,11 @@ public class IslandCommand{
 		
 		ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
 		
-		ColumnPos regionPos = ReservoirRegionDataStorage.toRegionCoords(srcPos);
 		RegionData[] regions = {
-				storage.getOffsetRegionData(regionPos, 1, -1),
-				storage.getOffsetRegionData(regionPos, 1, 1),
-				storage.getOffsetRegionData(regionPos, -1, -1),
-				storage.getOffsetRegionData(regionPos, -1, 1)
+				storage.getRegionData(new RegionPos(srcPos, 1, -1)),
+				storage.getRegionData(new RegionPos(srcPos, 1, 1)),
+				storage.getRegionData(new RegionPos(srcPos, -1, -1)),
+				storage.getRegionData(new RegionPos(srcPos, -1, 1))
 		};
 		
 		final ResourceKey<Level> dimKey = source.getLevel().dimension();
