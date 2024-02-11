@@ -15,22 +15,29 @@ license="All rights reserved"
 	#credits=""
 
 [[dependencies.immersivepetroleum]]
-	modId="immersiveengineering"
+	modId="minecraft"
 	mandatory=true
-	versionRange="[1.19.2-9.2.2-165,)"
-	ordering="BEFORE"
-	side="BOTH"
-
-[[dependencies.immersivepetroleum]]
-	modId="forge"
-	mandatory=true
-	versionRange="[43.2.0,)"
+	versionRange="[${mc_version}]"
 	ordering="NONE"
 	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
-	modId="minecraft"
+	modId="neoforge"
 	mandatory=true
-	versionRange="[1.19.2]"
+	versionRange="[${neoforge_version},)"
+	ordering="NONE"
+	side="BOTH"
+
+[[dependencies.immersivepetroleum]]
+	modId="immersiveengineering"
+	mandatory=true
+	versionRange="[${ie_version},)"
+	ordering="BEFORE"
+	side="BOTH"
+
+[[dependencies.immersivepetroleum]]
+	modId="jei"
+	type="optional"
+	versionRange="[${jei_version},)"
 	ordering="NONE"
 	side="BOTH"

@@ -1,25 +1,18 @@
-buildscript {
-	repositories {
-		maven { url = 'https://maven.minecraftforge.net' }
-		jcenter()
-		mavenCentral()
-		maven { url 'https://maven.parchmentmc.org' }
-	}
-	dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-		classpath 'org.parchmentmc:librarian:1.+'
-	}
+plugins {
+	id 'java-library'
+	id 'eclipse'
+	id 'idea'
+	id 'net.neoforged.gradle.userdev' version "$version_neogradle"
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 //----------------------------------------------------------------------------------------------------------------------
 
 version = '4.2.0-28'
 group = 'flaxbeard.immersivepetroleum'
-archivesBaseName = 'ImmersivePetroleum-1.19.2'
+archivesBaseName = 'ImmersivePetroleum-1.20.4'
 
 repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }			// IE & CT Files
@@ -28,7 +21,8 @@ repositories {
 	maven { // CC-Tweaked
 		url 'https://squiddev.cc/maven/'
 		content {
-			includeGroup 'org.squiddev'
+			includeGroup("cc.tweaked")
+			includeModule("org.squiddev", "Cobalt")
 		}
 	}
 	
@@ -52,85 +46,72 @@ sourceSets {
 	}
 }
 
-minecraft {
-	mappings channel: 'parchment', version: version_parchment
-	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-	
-	runs {
-		client {
-			workingDirectory project.file('run')
-			property 'forge.logging.markers', ''
-			property 'forge.logging.console.level', 'info'
-			property 'fml.earlyprogresswindow', 'false'
-			property 'mixin.env.remapRefMap', 'true'
-			property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-			mods {
-				immersivepetroleum {
-					source sourceSets.main
-				}
-			}
-		}
+def version_replaces = [
+	'mc_version'		: version_minecraft,
+	'neoforge_version'	: version_neoforge,
+	'mod_version'		: project.version,
+	'ie_version'		: version_ie,
+	'jei_version'		: version_jei,
+]
 
-		server {
-			workingDirectory project.file('run')
-			property 'forge.logging.markers', ''
-			property 'forge.logging.console.level', 'info'
-			property 'fml.earlyprogresswindow', 'false'
-			property 'mixin.env.remapRefMap', 'true'
-			property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-			
-			arg '-nogui'
-			
-			mods {
-				immersivepetroleum {
-					source sourceSets.main
-				}
-			}
-		}
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.FAIL
+	inputs.properties(version_replaces)
+	filesMatching("META-INF/mods.toml") {
+		expand version_replaces
+	}
+	exclude ".cache"
+}
 
-		data {
-			workingDirectory project.file('run')
-			property 'forge.logging.markers', ''
-			property 'forge.logging.console.level', 'info'
-			property 'fml.earlyprogresswindow', 'false'
-			property 'mixin.env.remapRefMap', 'true'
-			property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-			
-			args '--mod', 'immersivepetroleum',
-				 '--all',
-				 '--output', file('src/generated/resources/'),
-				 '--validate',
-				 '--existing', sourceSets.main.resources.srcDirs[0],
-				 '--existing-mod', 'immersiveengineering'
-			ideaModule project.name+".datagen"
-			
-			mods {
-				immersivepetroleum {
-					source sourceSets.main
-					source sourceSets.datagen
-				}
-			}
-		}
+minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+
+runs {
+	configureEach {
+		workingDirectory project.file('run')
+		systemProperty 'forge.logging.markers', 'REGISTRIES'
+		systemProperty 'forge.logging.console.level', 'info'
+		systemProperty 'fml.earlyprogresswindow', 'false'
+		
+		systemProperty 'mixin.env.remapRefMap', 'true'
+		systemProperty 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+		modSource project.sourceSets.main
+	}
+
+	client
+
+	server {
+		programArgument '-nogui'
+	}
+
+	data {
+		programArguments.addAll '--mod', 'immersivepetroleum',
+			 '--all',
+			 '--output', file('src/generated/resources/'),
+			 '--validate',
+			 '--existing', sourceSets.main.resources.srcDirs[0],
+			 '--existing-mod', 'immersiveengineering'
 	}
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
+	implementation "net.neoforged:neoforge:${version_neoforge}"
 	
-	implementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}")
-	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:api")
-	datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
+	implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}"
+	//compile "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:api"
+	datagenImplementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen"
 
-	//implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
-	//implementation fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:3913972")
+	//implementation "vazkii.patchouli:Patchouli:1.18.2-67"
+	//implementation "curse.maven:pneumaticcraft-repressurized-281849:3913972"
 
-	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${version_ct}")
+	//compileOnly "com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${version_ct}"
 	
-	runtimeOnly fg.deobf("mezz.jei:jei-${version_minecraft}-forge:${version_jei}")
-	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}")
-	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
+	runtimeOnly "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
+	compileOnly "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
+	compileOnly "mezz.jei:jei-${version_minecraft}-common-api:${version_jei}"
 	
-    compileOnly fg.deobf("org.squiddev:cc-tweaked-${version_minecraft}:${version_cctweaked}")
+    runtimeOnly "cc.tweaked:cc-tweaked-${version_minecraft}-common:${version_cctweaked}"
+    compileOnly "cc.tweaked:cc-tweaked-${version_minecraft}-common-api:${version_cctweaked}"
 }
 
 def customGradle = rootProject.file('custom.gradle');
@@ -150,12 +131,4 @@ jar {
 			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		])
 	}
-}
-
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile){ type 'jar'; builtBy 'reobfJar'; }
-
-publishing {
-	publications { mavenJava(MavenPublication){ artifact reobfArtifact } }
-	repositories { maven { url "file:///${project.projectDir}/mcmodsrepo" } }
 }
