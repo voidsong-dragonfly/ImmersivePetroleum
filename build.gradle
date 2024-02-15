@@ -98,7 +98,7 @@ dependencies {
 	implementation "net.neoforged:neoforge:${version_neoforge}"
 	
 	implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}"
-	//compile "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:api"
+	//compileOnly "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:api"
 	datagenImplementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen"
 
 	//implementation "vazkii.patchouli:Patchouli:1.18.2-67"
