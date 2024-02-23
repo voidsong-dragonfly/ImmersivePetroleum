@@ -5,7 +5,7 @@ import org.openzen.zencode.java.ZenCodeType.Name;
 
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.tag.type.KnownTag;
-import com.blamejared.crafttweaker.api.util.Many;
+import com.mojang.datafixers.functions.PointFreeRule.Many;
 
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import net.minecraft.world.level.material.Fluid;

@@ -10,16 +10,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 public class CommonProxy{
 	/** Fired at {@link FMLCommonSetupEvent} */
 	public void setup(){
 	}
 	
-	public void registerContainersAndScreens(){
+	public void registerContainersAndScreens(RegisterMenuScreensEvent event){
 	}
 	
 	public void preInit(){
@@ -35,7 +35,7 @@ public class CommonProxy{
 	}
 	
 	/** Fired at {@link FMLLoadCompleteEvent} */
-	public void completed(ParallelDispatchEvent event){
+	public void completed(FMLLoadCompleteEvent event){
 	}
 	
 	public void renderTile(BlockEntity te, VertexConsumer iVertexBuilder, PoseStack transform, MultiBufferSource buffer){

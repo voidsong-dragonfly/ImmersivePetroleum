@@ -8,15 +8,15 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class IPEffects{
 	
 	/**
 	 * This is only as a burn prevention for when someone dismounts the {@link MotorboatEntity} while that is in lava<br>
 	 */
-	public static final RegistryObject<IPEffect> ANTI_DISMOUNT_FIRE = IPRegisters.registerMobEffect("anti_fire", AntiFireEffect::new);
+	public static final DeferredHolder<MobEffect, AntiFireEffect> ANTI_DISMOUNT_FIRE = IPRegisters.registerMobEffect("anti_fire", AntiFireEffect::new);
 	
 	public static void forceClassLoad(){
 	}

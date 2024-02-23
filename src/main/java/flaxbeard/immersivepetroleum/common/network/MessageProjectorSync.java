@@ -1,18 +1,19 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.util.function.Supplier;
-
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public class MessageProjectorSync implements INetMessage{
+	public static final ResourceLocation ID = ResourceUtils.ip("projectorsync");
 	
 	public static void sendToServer(Settings settings, InteractionHand hand){
 		IPPacketHandler.sendToServer(new MessageProjectorSync(settings, hand, true));
@@ -43,19 +44,22 @@ public class MessageProjectorSync implements INetMessage{
 	}
 	
 	@Override
-	public void toBytes(FriendlyByteBuf buf){
+	public void write(FriendlyByteBuf buf){
 		buf.writeNbt(this.nbt);
 		buf.writeBoolean(this.forServer);
 		buf.writeByte(this.hand.ordinal());
 	}
 	
 	@Override
-	public void process(Supplier<NetworkEvent.Context> context){
-		context.get().enqueueWork(() -> {
-			NetworkEvent.Context con = context.get();
-			
-			if(con.getDirection().getReceptionSide() == getSide() && con.getSender() != null){
-				Player player = con.getSender();
+	public ResourceLocation id(){
+		return ID;
+	}
+	
+	@Override
+	public void process(PlayPayloadContext context){
+		context.workHandler().execute(() -> {
+			if(context.flow().getReceptionSide() == getSide()){
+				Player player = context.player().orElseThrow();
 				ItemStack held = player.getItemInHand(this.hand);
 				
 				if(held.is(IPContent.Items.PROJECTOR.get())){

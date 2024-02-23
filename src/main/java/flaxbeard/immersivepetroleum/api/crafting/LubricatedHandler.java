@@ -16,8 +16,9 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -34,9 +35,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public class LubricatedHandler{
 	public interface ILubricationHandler<E extends BlockEntity> {
@@ -101,11 +101,11 @@ public class LubricatedHandler{
 			String name = tag.getString("world");
 			String lubricantName = tag.getString("lubricant");
 			
-			this.world = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(name));
+			this.world = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name));
 			this.pos = new BlockPos(x, y, z);
 			this.ticks = ticks;
 			
-			this.lubricant = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(lubricantName));
+			this.lubricant = BuiltInRegistries.FLUID.get(new ResourceLocation(lubricantName));
 			if(this.lubricant == null){
 				this.lubricant = Fluids.EMPTY;
 			}
@@ -119,7 +119,7 @@ public class LubricatedHandler{
 			tag.putInt("y", this.pos.getY());
 			tag.putInt("z", this.pos.getZ());
 			tag.putString("world", this.world.location().toString());
-			tag.putString("lubricant", ForgeRegistries.FLUIDS.getKey(this.lubricant).toString());
+			tag.putString("lubricant", BuiltInRegistries.FLUID.getKey(this.lubricant).toString());
 			
 			return tag;
 		}
@@ -199,7 +199,7 @@ public class LubricatedHandler{
 		public void applyToBlock(Level world, HitResult mop, Player shooter, ItemStack thrower, Fluid fluid){
 			if(LubricantHandler.isValidLube(fluid)){
 				int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
-				LubricatedHandler.lubricateTile(world.getBlockEntity(new BlockPos(mop.getLocation())), fluid, amount, true, 1200); // 1 Minute
+				LubricatedHandler.lubricateTile(world.getBlockEntity(BlockPos.containing(mop.getLocation())), fluid, amount, true, 1200); // 1 Minute
 			}
 		}
 	}

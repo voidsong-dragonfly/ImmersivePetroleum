@@ -16,23 +16,26 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 
 public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	
 	public static final BooleanProperty BROKEN = BooleanProperty.create("broken");
 	
 	public WellPipeBlock(){
-		super(Block.Properties.of(Material.STONE, MaterialColor.PODZOL).strength(75.0F, 10.0F).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		super(stoneProperty(MapColor.PODZOL).strength(75.0F, 10.0F).requiresCorrectToolForDrops());
 		
 		registerDefaultState(getStateDefinition().any()
 				.setValue(BROKEN, false));
+	}
+	
+	@Override
+	public boolean addSelfToCreativeTab(){
+		return false;
 	}
 	
 	@Override
@@ -68,7 +71,7 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 		if(f == -1.0F){
 			return 0.0F;
 		}else{
-			int i = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(state, player) ? 30 : 100;
+			int i = net.neoforged.neoforge.common.CommonHooks.isCorrectToolForDrops(state, player) ? 30 : 100;
 			return player.getDigSpeed(state, pos) / f / (float) i;
 		}
 	}

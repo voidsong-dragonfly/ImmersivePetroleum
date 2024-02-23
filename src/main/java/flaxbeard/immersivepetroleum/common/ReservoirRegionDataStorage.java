@@ -18,9 +18,10 @@ import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -271,7 +272,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 					for(int i = 0;i < reservoirs.size();i++){
 						CompoundTag dim = reservoirs.getCompound(i);
 						ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
-						ResourceKey<Level> dimType = ResourceKey.create(Registry.DIMENSION_REGISTRY, rl);
+						ResourceKey<Level> dimType = ResourceKey.create(Registries.DIMENSION, rl);
 						ListTag islands = dim.getList("islands", Tag.TAG_COMPOUND);
 						
 						List<ReservoirIsland> list = islands.stream()

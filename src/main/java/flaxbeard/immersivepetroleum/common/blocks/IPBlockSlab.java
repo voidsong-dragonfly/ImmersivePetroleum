@@ -14,7 +14,7 @@ public class IPBlockSlab<B extends IPBlockBase> extends SlabBlock{
 	private final B base;
 	
 	public IPBlockSlab(B base){
-		super(Properties.copy(base).isSuffocating(causesSuffocation(base)).isRedstoneConductor(isNormalCube(base)));
+		super(Properties.ofFullCopy(base).isSuffocating(causesSuffocation(base)).isRedstoneConductor(isNormalCube(base)));
 		this.base = base;
 	}
 	

@@ -26,8 +26,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public class CrusherLubricationHandler implements ILubricationHandler<CrusherBlockEntity>{
 	private static final Vec3i size = new Vec3i(3, 3, 5);

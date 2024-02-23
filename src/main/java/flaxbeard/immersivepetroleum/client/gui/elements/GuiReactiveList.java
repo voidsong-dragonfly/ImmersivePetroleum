@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.gui.Font;
@@ -132,7 +131,7 @@ public class GuiReactiveList extends Button{
 		int mmY = my - this.y;
 		int strWidth = width - padding[2] - padding[3] - (needsSlider ? 6 : 0);
 		if(needsSlider){
-			ClientUtils.bindTexture(TEXTURE);
+			MCUtil.bindTexture(TEXTURE);
 			this.blit(transform, x + width - 6, y, 16, 136, 6, 4);
 			this.blit(transform, x + width - 6, y + height - 4, 16, 144, 6, 4);
 			for(int i = 0;i < height - 8;i += 2)

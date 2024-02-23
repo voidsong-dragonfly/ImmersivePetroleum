@@ -1,16 +1,17 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.util.function.Supplier;
-
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public class MessageDebugSync implements INetMessage{
+	public static final ResourceLocation ID = ResourceUtils.ip("debugsync");
 	
 	CompoundTag nbt;
 	public MessageDebugSync(CompoundTag nbt){
@@ -22,17 +23,21 @@ public class MessageDebugSync implements INetMessage{
 	}
 	
 	@Override
-	public void toBytes(FriendlyByteBuf buf){
+	public void write(FriendlyByteBuf buf){
 		buf.writeNbt(this.nbt);
 	}
 	
 	@Override
-	public void process(Supplier<NetworkEvent.Context> context){
-		context.get().enqueueWork(() -> {
-			NetworkEvent.Context con = context.get();
-			
-			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER && con.getSender() != null){
-				Player player = con.getSender();
+	public ResourceLocation id(){
+		return ID;
+	}
+	
+	@Override
+	public void process(PlayPayloadContext context){
+		context.workHandler().execute(() -> {
+			if(context.flow().getReceptionSide() == LogicalSide.SERVER){
+				Player player = context.player().orElseThrow();
+				
 				ItemStack mainItem = player.getMainHandItem();
 				ItemStack secondItem = player.getOffhandItem();
 				boolean main = !mainItem.isEmpty() && mainItem.getItem() == IPContent.DEBUGITEM.get();

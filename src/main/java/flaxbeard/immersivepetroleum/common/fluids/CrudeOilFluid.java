@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
 public class CrudeOilFluid extends IPFluid{

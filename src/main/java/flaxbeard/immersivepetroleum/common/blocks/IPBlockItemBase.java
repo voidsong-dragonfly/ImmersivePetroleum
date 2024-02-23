@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.api.Lib;
+import flaxbeard.immersivepetroleum.common.IPCreativeTab.IMightShowUpInCreativeTab;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -16,9 +17,9 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
-public class IPBlockItemBase extends BlockItem{
+public class IPBlockItemBase extends BlockItem implements IMightShowUpInCreativeTab{
 	public IPBlockItemBase(Block blockIn, Properties builder){
 		super(blockIn, builder);
 	}

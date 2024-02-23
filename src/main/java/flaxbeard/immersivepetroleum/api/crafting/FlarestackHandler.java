@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Simple handler for the Flarestack

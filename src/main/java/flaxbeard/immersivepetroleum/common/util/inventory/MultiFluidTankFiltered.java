@@ -5,7 +5,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class MultiFluidTankFiltered extends MultiFluidTank{
 	

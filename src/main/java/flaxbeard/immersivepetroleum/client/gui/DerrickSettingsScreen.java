@@ -9,8 +9,8 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
+import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.network.MessageDerrick;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
@@ -159,7 +159,7 @@ public class DerrickSettingsScreen extends Screen{
 	}
 	
 	private void background(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-		ClientUtils.bindTexture(GUI_TEXTURE);
+		MCUtil.bindTexture(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 }

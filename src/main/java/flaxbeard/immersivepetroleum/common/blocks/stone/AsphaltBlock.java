@@ -13,15 +13,13 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 
 public class AsphaltBlock extends IPBlockBase{
 	protected static final float SPEED_FACTOR = 1.20F;
 	
 	public AsphaltBlock(){
-		super(Block.Properties.of(Material.STONE).speedFactor(SPEED_FACTOR).strength(2.0F, 10.0F).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		super(stoneProperty().speedFactor(SPEED_FACTOR).strength(2.0F, 10.0F).requiresCorrectToolForDrops());
+//		super(Block.Properties.of(Material.STONE).speedFactor(SPEED_FACTOR).strength(2.0F, 10.0F).sound(SoundType.STONE).requiresCorrectToolForDrops());
 	}
 	
 	@Override

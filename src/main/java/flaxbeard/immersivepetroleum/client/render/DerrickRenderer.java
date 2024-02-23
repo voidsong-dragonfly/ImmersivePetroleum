@@ -4,11 +4,12 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
@@ -19,7 +20,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);

@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -17,16 +16,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 public class GasolineBottleItem extends IPItemBase{
 	/** How much gasoline a filled bottle contains in mB. */
 	public static final int FILLED_AMOUNT = 250;
 	
 	public GasolineBottleItem(){
-		super(new Item.Properties().stacksTo(16).tab(ImmersivePetroleum.creativeTab));
+		super(new Item.Properties().stacksTo(16));
 	}
 	
 	@Override

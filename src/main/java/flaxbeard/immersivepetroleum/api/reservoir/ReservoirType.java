@@ -14,9 +14,13 @@ import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -24,8 +28,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.jarjar.nio.util.Lazy;
 
 public class ReservoirType extends IESerializableRecipe{
 	static final Lazy<ItemStack> EMPTY_LAZY = Lazy.of(() -> ItemStack.EMPTY);
@@ -59,7 +62,7 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @param weight        The weight for this reservoir
 	 */
 	public ReservoirType(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int equilibrium, int weight){
-		this(name, id, ForgeRegistries.FLUIDS.getValue(fluidLocation), minSize, maxSize, residual, equilibrium, weight);
+		this(name, id, BuiltInRegistries.FLUID.get(fluidLocation), minSize, maxSize, residual, equilibrium, weight);
 	}
 	
 	/**
@@ -75,7 +78,8 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @param weight   The weight for this reservoir
 	 */
 	public ReservoirType(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int equilibrium, int weight){
-		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, id);
+		super(new TagOutput(ItemStack.EMPTY), IPRecipeTypes.RESERVOIR);
+//		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, id);
 		this.name = name;
 		this.fluidLocation = RegistryUtils.getRegistryNameOf(fluid);
 		this.fluid = fluid;
@@ -87,12 +91,13 @@ public class ReservoirType extends IESerializableRecipe{
 	}
 	
 	public ReservoirType(CompoundTag nbt){
-		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, new ResourceLocation(nbt.getString("id")));
+		super(new TagOutput(ItemStack.EMPTY), IPRecipeTypes.RESERVOIR);
+//		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, new ResourceLocation(nbt.getString("id")));
 		
 		this.name = nbt.getString("name");
 		
 		this.fluidLocation = new ResourceLocation(nbt.getString("fluid"));
-		this.fluid = ForgeRegistries.FLUIDS.getValue(this.fluidLocation);
+		this.fluid = BuiltInRegistries.FLUID.get(this.fluidLocation);
 		
 		this.minSize = nbt.getInt("minSize");
 		this.maxSize = nbt.getInt("maxSize");
@@ -116,7 +121,7 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	public CompoundTag writeToNBT(CompoundTag nbt){
 		nbt.putString("name", this.name);
-		nbt.putString("id", this.id.toString());
+//		nbt.putString("id", this.id.toString()); // FIXME ! In need of a replacement
 		nbt.putString("fluid", this.fluidLocation.toString());
 		
 		nbt.putInt("minSize", this.minSize);
@@ -130,6 +135,11 @@ public class ReservoirType extends IESerializableRecipe{
 		nbt.putInt("weight", this.weight);
 		
 		return nbt;
+	}
+	
+	@Deprecated(forRemoval = true)
+	public ResourceLocation getId(){
+		return new ResourceLocation(ImmersivePetroleum.MODID, "fixme");
 	}
 	
 	public void setBiomes(boolean blacklist, ResourceLocation... names){
@@ -166,7 +176,7 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	@Override
 	@Nonnull
-	public ItemStack getResultItem(){
+	public ItemStack getResultItem(RegistryAccess pRegistryAccess){
 		return ItemStack.EMPTY;
 	}
 	

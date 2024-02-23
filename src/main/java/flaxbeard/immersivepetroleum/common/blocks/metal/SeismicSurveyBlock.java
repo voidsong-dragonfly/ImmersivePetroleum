@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
@@ -26,34 +25,29 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * @author TwistedGate
  */
 public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
-	private static final Material material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
-	
 	public static final BooleanProperty SLAVE = BooleanProperty.create("slave");
 	
 	public SeismicSurveyBlock(){
-		super(Block.Properties.of(material).strength(5.0F, 6.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
+		super(metalProperty().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion().pushReaction(PushReaction.BLOCK));
 		
 		registerDefaultState(getStateDefinition().any()
 				.setValue(SLAVE, false));
@@ -102,7 +96,7 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void playerWillDestroy(@Nonnull Level world, @Nonnull BlockPos pos, BlockState state, @Nonnull Player player){
+	public BlockState playerWillDestroy(@Nonnull Level world, @Nonnull BlockPos pos, BlockState state, @Nonnull Player player){
 		if(state.getValue(SLAVE)){
 			// Find the master block
 			for(int i = 1;i < 3;i++){
@@ -121,13 +115,13 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 			world.destroyBlock(pos.offset(0, 2, 0), false);
 		}
 		
-		super.playerWillDestroy(world, pos, state, player);
+		return super.playerWillDestroy(world, pos, state, player);
 	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	@Nonnull
-	public List<ItemStack> getDrops(BlockState state, @Nonnull LootContext.Builder builder){
+	public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder){
 		if(state.getValue(SLAVE)){
 			// TODO Don't know how else i would do this yet
 			return Collections.emptyList();
@@ -180,7 +174,7 @@ public class SeismicSurveyBlock extends IPBlockBase implements EntityBlock{
 	
 	public static class SeismicSurveyBlockItem extends IPBlockItemBase{
 		public SeismicSurveyBlockItem(Block blockIn){
-			super(blockIn, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
+			super(blockIn, new Item.Properties());
 		}
 		
 		@Override

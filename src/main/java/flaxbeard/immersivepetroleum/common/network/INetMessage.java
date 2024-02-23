@@ -1,11 +1,8 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.util.function.Supplier;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-
-public interface INetMessage{
-	void toBytes(FriendlyByteBuf buf);
-	void process(Supplier<NetworkEvent.Context> context);
+public interface INetMessage extends CustomPacketPayload{
+	void process(PlayPayloadContext context);
 }

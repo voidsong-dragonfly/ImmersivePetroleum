@@ -3,9 +3,10 @@ package flaxbeard.immersivepetroleum.common.multiblocks;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
@@ -24,7 +25,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class PumpjackMultiblock extends IPTemplateMultiblock{
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();

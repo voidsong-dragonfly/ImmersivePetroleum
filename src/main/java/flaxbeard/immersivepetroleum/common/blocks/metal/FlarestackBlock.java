@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
@@ -20,7 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,31 +30,27 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public class FlarestackBlock extends IPBlockBase implements EntityBlock{
-	private static final Material material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
-	
 	public static final BooleanProperty SLAVE = BooleanProperty.create("slave");
 	
 	public FlarestackBlock(){
-		super(Block.Properties.of(material).strength(3.0F, 15.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
+		super(metalProperty().strength(3.0F, 15.0F).requiresCorrectToolForDrops().noOcclusion().pushReaction(PushReaction.BLOCK));
 		
 		registerDefaultState(getStateDefinition().any().setValue(SLAVE, false));
 	}
@@ -64,6 +58,12 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	@Override
 	public Supplier<BlockItem> blockItemSupplier(){
 		return () -> new FlarestackBlockItem(this);
+	}
+	
+	@Override
+	public boolean addSelfToCreativeTab(){
+		// Only FlarestackBlockItem should
+		return false;
 	}
 	
 	@Override
@@ -110,13 +110,13 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
-	public void playerWillDestroy(@Nonnull Level worldIn, @Nonnull BlockPos pos, BlockState state, @Nonnull Player player){
+	public BlockState playerWillDestroy(@Nonnull Level worldIn, @Nonnull BlockPos pos, BlockState state, @Nonnull Player player){
 		if(state.getValue(SLAVE)){
 			worldIn.destroyBlock(pos.offset(0, -1, 0), !player.isCreative());
 		}else{
 			worldIn.destroyBlock(pos.offset(0, 1, 0), false);
 		}
-		super.playerWillDestroy(worldIn, pos, state, player);
+		return super.playerWillDestroy(worldIn, pos, state, player);
 	}
 	
 	@Override
@@ -129,14 +129,14 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	@Override
 	public void entityInside(BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn){
 		if(state.getValue(SLAVE) && !entityIn.fireImmune()){
-			entityIn.hurt(DamageSource.HOT_FLOOR, 1.0F);
+			entityIn.hurt(worldIn.damageSources().hotFloor(), 1.0F);
 		}
 	}
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	@Nonnull
-	public List<ItemStack> getDrops(BlockState state, @Nonnull net.minecraft.world.level.storage.loot.LootContext.Builder builder){
+	public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder){
 		if(state.getValue(SLAVE)){
 			// TODO Don't know how else i would do this yet
 			return Collections.emptyList();
@@ -189,7 +189,7 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	
 	public static class FlarestackBlockItem extends IPBlockItemBase{
 		public FlarestackBlockItem(Block blockIn){
-			super(blockIn, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
+			super(blockIn, new Item.Properties());
 		}
 		
 		@Override

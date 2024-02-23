@@ -7,7 +7,7 @@ import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 @ZenRegister
 @Name("mods.immersivepetroleum.FuelRegistry")

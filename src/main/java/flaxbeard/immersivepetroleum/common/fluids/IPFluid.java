@@ -15,13 +15,12 @@ import org.apache.commons.lang3.mutable.MutableObject;
 
 import com.google.common.collect.ImmutableList;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.IPCreativeTab.IMightShowUpInCreativeTab;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -49,16 +48,13 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class IPFluid extends FlowingFluid{
 	public static final List<IPFluidEntry> FLUIDS = new ArrayList<>();
@@ -131,7 +127,7 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	@Override
-	protected boolean canConvertToSource(){
+	protected boolean canConvertToSource(Level pLevel){
 		return false;
 	}
 	
@@ -217,7 +213,7 @@ public class IPFluid extends FlowingFluid{
 	
 	// STATIC CLASSES
 	
-	public record IPFluidEntry(RegistryObject<IPFluid> source, RegistryObject<IPFluid> flowing, RegistryObject<IPFluidBlock> block, RegistryObject<BucketItem> bucket, RegistryObject<FluidType> type, List<Property<?>> properties){
+	public record IPFluidEntry(DeferredHolder<Fluid, IPFluid> source, DeferredHolder<Fluid, IPFluid> flowing, DeferredHolder<Block, IPFluidBlock> block, DeferredHolder<Item, BucketItem> bucket, DeferredHolder<FluidType, CustomFluidType> type, List<Property<?>> properties){
 		
 		public Fluid get(){
 			return source().get();
@@ -253,14 +249,14 @@ public class IPFluid extends FlowingFluid{
 				buildAttributes.accept(builder);
 			}
 			
-			RegistryObject<FluidType> type = IPRegisters.FLUID_TYPE.register(name, () -> new CustomFluidType(name, builder));
+			DeferredHolder<FluidType, CustomFluidType> type = IPRegisters.FLUID_TYPE.register(name, () -> new CustomFluidType(name, builder));
 			
 			Mutable<IPFluidEntry> thisMutable = new MutableObject<>();
 			
-			RegistryObject<IPFluid> source = IPRegisters.registerFluid(name, () -> IPFluid.makeFluid(makeSource, thisMutable.getValue()));
-			RegistryObject<IPFluid> flow = IPRegisters.registerFluid(name + "_flowing", () -> IPFluid.makeFluid(makeFlowing, thisMutable.getValue()));
-			RegistryObject<IPFluidBlock> block = IPRegisters.registerBlock(name + "_fluid_block", () -> makeBlock.apply(thisMutable.getValue(), Properties.copy(Blocks.WATER)));
-			RegistryObject<BucketItem> bucket = IPRegisters.registerItem(name + "_bucket", () -> new IPBucketItem(source, burnTime));
+			DeferredHolder<Fluid, IPFluid> source = IPRegisters.registerFluid(name, () -> IPFluid.makeFluid(makeSource, thisMutable.getValue()));
+			DeferredHolder<Fluid, IPFluid> flow = IPRegisters.registerFluid(name + "_flowing", () -> IPFluid.makeFluid(makeFlowing, thisMutable.getValue()));
+			DeferredHolder<Block, IPFluidBlock> block = IPRegisters.registerBlock(name + "_fluid_block", () -> makeBlock.apply(thisMutable.getValue(), Properties.ofFullCopy(Blocks.WATER)));
+			DeferredHolder<Item, BucketItem> bucket = IPRegisters.registerItem(name + "_bucket", () -> new IPBucketItem(source, burnTime));
 			
 			IPFluidEntry entry = new IPFluidEntry(source, flow, block, bucket, type, properties);
 			thisMutable.setValue(entry);
@@ -309,7 +305,7 @@ public class IPFluid extends FlowingFluid{
 			double walkSpeed = entity.isSprinting() ? drag * 1.125F : drag;
 			double swimSpeed = 0.02F;
 			
-			swimSpeed *= entity.getAttribute(ForgeMod.SWIM_SPEED.get()).getValue();
+			swimSpeed *= entity.getAttribute(NeoForgeMod.SWIM_SPEED.value()).getValue();
 			entity.moveRelative((float) swimSpeed, movementVector);
 			entity.move(MoverType.SELF, entity.getDeltaMovement());
 			Vec3 deltaMovment = entity.getDeltaMovement();
@@ -378,8 +374,8 @@ public class IPFluid extends FlowingFluid{
 		}
 	}
 	
-	public static class IPBucketItem extends BucketItem{
-		private static final Item.Properties PROPS = new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(ImmersivePetroleum.creativeTab);
+	public static class IPBucketItem extends BucketItem implements IMightShowUpInCreativeTab{
+		private static final Item.Properties PROPS = new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET);
 		
 		private int burnTime;
 		public IPBucketItem(Supplier<? extends Fluid> fluid, int burnTime){
@@ -391,10 +387,13 @@ public class IPFluid extends FlowingFluid{
 			super(fluid, props.apply(PROPS));
 		}
 		
+		// TODO Capabilities?
+		/*
 		@Override
 		public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable CompoundTag nbt){
 			return new FluidBucketWrapper(stack);
 		}
+		*/
 		
 		@Override
 		public int getBurnTime(ItemStack itemStack, @org.jetbrains.annotations.Nullable RecipeType<?> recipeType){

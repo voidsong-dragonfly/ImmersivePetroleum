@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import org.jline.reader.Widget;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Quaternion;
@@ -16,7 +18,6 @@ import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks.Multibl
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
@@ -28,7 +29,6 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -44,9 +44,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.material.Material;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.util.Lazy;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class ProjectorScreen extends Screen{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/projector.png");
@@ -196,7 +194,7 @@ public class ProjectorScreen extends Screen{
 				this.move += 1.5 * partialTicks;
 			}
 			
-			ClientUtils.bindTexture(GUI_TEXTURE);
+			MCUtil.bindTexture(GUI_TEXTURE);
 			blit(matrix, x, y, 0, 166, 200, 13);
 			
 			x += 100;
@@ -293,7 +291,7 @@ public class ProjectorScreen extends Screen{
 	}
 	
 	private void background(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-		ClientUtils.bindTexture(GUI_TEXTURE);
+		MCUtil.bindTexture(GUI_TEXTURE);
 		blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 	
@@ -335,7 +333,7 @@ public class ProjectorScreen extends Screen{
 		
 		@Override
 		public void renderButton(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-			ClientUtils.bindTexture(GUI_TEXTURE);
+			MCUtil.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}
@@ -441,7 +439,7 @@ public class ProjectorScreen extends Screen{
 		
 		@Override
 		public void renderButton(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks){
-			ClientUtils.bindTexture(GUI_TEXTURE);
+			MCUtil.bindTexture(GUI_TEXTURE);
 			if(isHovered){
 				fill(matrix, this.x, this.y + 1, this.x + this.iconSize, this.y + this.iconSize - 1, 0xAF7F7FFF);
 			}

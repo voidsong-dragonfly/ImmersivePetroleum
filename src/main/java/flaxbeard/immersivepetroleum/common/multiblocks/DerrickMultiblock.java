@@ -25,7 +25,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.data.ModelData;;
+import net.neoforged.neoforge.client.model.data.ModelData;;
 
 public class DerrickMultiblock extends IPTemplateMultiblock{
 	public static final DerrickMultiblock INSTANCE = new DerrickMultiblock();

@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
@@ -30,14 +29,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	private static final Material material = new Material(MaterialColor.WOOD, false, false, true, true, false, false, PushReaction.BLOCK);
@@ -56,6 +54,12 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	@Override
 	public Supplier<BlockItem> blockItemSupplier(){
 		return () -> new AutoLubricatorBlockItem(this);
+	}
+	
+	@Override
+	public boolean addSelfToCreativeTab(){
+		// Only AutoLubricatorBlockItem should
+		return false;
 	}
 	
 	@Override
@@ -127,7 +131,7 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	
 	public static class AutoLubricatorBlockItem extends IPBlockItemBase{
 		public AutoLubricatorBlockItem(Block blockIn){
-			super(blockIn, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
+			super(blockIn, new Item.Properties());
 		}
 		
 		@Override

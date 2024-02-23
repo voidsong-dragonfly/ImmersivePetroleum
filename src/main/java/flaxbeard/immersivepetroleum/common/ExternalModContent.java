@@ -1,34 +1,48 @@
 package flaxbeard.immersivepetroleum.common;
 
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
-public class ExternalModContent{
+public final class ExternalModContent{
 	// Blocks
-	private static RegistryObject<Block> IE_REDSTONE_ENGINEERING_BLOCK;
+	private static DeferredHolder<Block, Block> IE_REDSTONE_ENGINEERING_BLOCK;
 	
 	// Items
-	private static RegistryObject<Item> IE_ITEM_PIPE;
-	private static RegistryObject<Item> IE_ITEM_BUCKSHOT;
-	private static RegistryObject<Item> IE_ITEM_EMPTY_SHELL;
+	private static DeferredHolder<Item, Item> IE_ITEM_PIPE;
+	private static DeferredHolder<Item, Item> IE_ITEM_BUCKSHOT;
+	private static DeferredHolder<Item, Item> IE_ITEM_EMPTY_SHELL;
 	
 	// Fluids
-	private static RegistryObject<Fluid> IE_FLUID_CONCRETE;
+	private static DeferredHolder<Fluid, Fluid> IE_FLUID_CONCRETE;
 	
 	public static void init(){
-		IE_REDSTONE_ENGINEERING_BLOCK = RegistryObject.create(ResourceUtils.ie("rs_engineering"), ForgeRegistries.BLOCKS);
+		IE_REDSTONE_ENGINEERING_BLOCK = getBlock(ResourceUtils.ie("rs_engineering"));
 		
-		IE_ITEM_PIPE = RegistryObject.create(ResourceUtils.ie("fluid_pipe"), ForgeRegistries.ITEMS);
-		IE_ITEM_BUCKSHOT = RegistryObject.create(ResourceUtils.ie("buckshot"), ForgeRegistries.ITEMS);
-		IE_ITEM_EMPTY_SHELL = RegistryObject.create(ResourceUtils.ie("empty_shell"), ForgeRegistries.ITEMS);
-		IE_FLUID_CONCRETE = RegistryObject.create(ResourceUtils.ie("concrete"), ForgeRegistries.FLUIDS);
+		IE_ITEM_PIPE = getItem(ResourceUtils.ie("fluid_pipe"));
+		IE_ITEM_BUCKSHOT = getItem(ResourceUtils.ie("buckshot"));
+		IE_ITEM_EMPTY_SHELL = getItem(ResourceUtils.ie("empty_shell"));
+		IE_FLUID_CONCRETE = getFluid(ResourceUtils.ie("concrete"));
 	}
+	
+	private static DeferredHolder<Block, Block> getBlock(ResourceLocation name){
+		return DeferredHolder.create(BuiltInRegistries.BLOCK.key(), name);
+	}
+	
+	private static DeferredHolder<Item, Item> getItem(ResourceLocation name){
+		return DeferredHolder.create(BuiltInRegistries.ITEM.key(), name);
+	}
+	
+	private static DeferredHolder<Fluid, Fluid> getFluid(ResourceLocation name){
+		return DeferredHolder.create(BuiltInRegistries.FLUID.key(), name);
+	}
+	
 	
 	public static Fluid getIEFluid_Concrete(){
 		return IE_FLUID_CONCRETE.get();
@@ -80,5 +94,8 @@ public class ExternalModContent{
 	
 	public static boolean isIEItem_Pipe(Item item){
 		return item.equals(getIEItem_Pipe());
+	}
+	
+	private ExternalModContent(){
 	}
 }

@@ -1,20 +1,19 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import flaxbeard.immersivepetroleum.client.gui.elements.PipeConfig;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public class MessageDerrick implements INetMessage{
+	public static final ResourceLocation ID = ResourceUtils.ip("derrick");
 	
 	public static void sendToServer(BlockPos derrickPos, PipeConfig.Grid grid){
 		IPPacketHandler.sendToServer(new MessageDerrick(derrickPos, grid));
@@ -34,30 +33,39 @@ public class MessageDerrick implements INetMessage{
 	}
 	
 	@Override
-	public void toBytes(FriendlyByteBuf buf){
+	public void write(FriendlyByteBuf buf){
 		buf.writeNbt(this.nbt);
 		buf.writeBlockPos(this.derrickPos);
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
-	public void process(Supplier<NetworkEvent.Context> context){
-		context.get().enqueueWork(() -> {
-			NetworkEvent.Context con = context.get();
-			
-			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER){
-				ServerLevel world = Objects.requireNonNull(con.getSender()).getLevel();
-				if(world.isAreaLoaded(this.derrickPos, 2)){
-					BlockEntity te = world.getBlockEntity(this.derrickPos);
-					if(te instanceof DerrickTileEntity derrick){
+	public ResourceLocation id(){
+		return ID;
+	}
+	
+	@Override
+	public void process(PlayPayloadContext context){
+		context.workHandler().execute(() -> {
+			if(context.flow().getReceptionSide() == LogicalSide.SERVER){
+				Player player = context.player().orElseThrow();
+				
+				if(player.level() instanceof ServerLevel world){
+					if(world.isAreaLoaded(this.derrickPos, 2)){
+						BlockEntity te = world.getBlockEntity(this.derrickPos);
 						
-						derrick.gridStorage = PipeConfig.Grid.fromCompound(this.nbt);
-						derrick.updateMasterBlock(null, true);
-						
-						WellTileEntity well = derrick.getWell();
-						derrick.transferGridDataToWell(well);
+						/*// TODO Gridstorage transfer
+						if(te instanceof DerrickTileEntity derrick){
+							
+							derrick.gridStorage = PipeConfig.Grid.fromCompound(this.nbt);
+							derrick.updateMasterBlock(null, true);
+							
+							WellTileEntity well = derrick.getWell();
+							derrick.transferGridDataToWell(well);
+						}
+						*/
 					}
 				}
+				
 			}
 		});
 	}

@@ -13,7 +13,7 @@ import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.CCTUti
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic.PoweredMultiblockPeripheral;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class DerrickPeripheral extends PoweredMultiblockPeripheral{
 	DerrickTileEntity master;

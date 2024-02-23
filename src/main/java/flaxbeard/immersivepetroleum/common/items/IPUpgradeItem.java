@@ -8,28 +8,27 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableSet;
 
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public class IPUpgradeItem extends IPItemBase implements IUpgrade{
 	private Set<String> set;
 	public IPUpgradeItem(String type){
-		super(new Item.Properties().stacksTo(1).tab(ImmersivePetroleum.creativeTab));
+		super(new Item.Properties().stacksTo(1));
 		this.set = ImmutableSet.of(type);
 	}
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, List<Component> tooltip, @Nonnull TooltipFlag flagIn){
-		tooltip.add(Component.translatable("desc.immersivepetroleum.flavour." + ForgeRegistries.ITEMS.getKey(this).getPath()));
+		tooltip.add(Component.translatable("desc.immersivepetroleum.flavour." + BuiltInRegistries.ITEM.getKey(this).getPath()));
 	}
 	
 	@Override

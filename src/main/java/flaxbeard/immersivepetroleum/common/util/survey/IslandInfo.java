@@ -7,13 +7,13 @@ import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class IslandInfo implements ISurveyInfo{
 	public static final String TAG_KEY = "islandscan";
@@ -35,7 +35,7 @@ public class IslandInfo implements ISurveyInfo{
 			try{
 				ResourceLocation fluidRL = new ResourceLocation(tag.getString("fluid"));
 				
-				Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidRL);
+				Fluid fluid = BuiltInRegistries.FLUID.get(fluidRL);
 				if(fluid != null){
 					this.fluidStack = new FluidStack(fluid, 1);
 				}

@@ -6,18 +6,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 /**
  * Based on the old events from Flaxbeard
  * 
  * @author TwistedGate
  */
-@Cancelable
-public class ProjectorEvent extends Event{
+public class ProjectorEvent extends Event implements ICancellableEvent{
 	
-	@Cancelable
 	public static class PlaceBlock extends ProjectorEvent{
 		public PlaceBlock(IMultiblock multiblock, Level templateWorld, BlockPos templatePos, Level world, BlockPos worldPos, BlockState state, Rotation rotation){
 			super(multiblock, templateWorld, templatePos, world, worldPos, state, rotation);
@@ -32,14 +30,12 @@ public class ProjectorEvent extends Event{
 		}
 	}
 	
-	@Cancelable
 	public static class PlaceBlockPost extends ProjectorEvent{
 		public PlaceBlockPost(IMultiblock multiblock, Level templateWorld, BlockPos templatePos, Level world, BlockPos worldPos, BlockState state, Rotation rotation){
 			super(multiblock, templateWorld, templatePos, world, worldPos, state, rotation);
 		}
 	}
 	
-	@Cancelable
 	public static class RenderBlock extends ProjectorEvent{
 		public RenderBlock(IMultiblock multiblock, Level templateWorld, BlockPos templatePos, Level world, BlockPos worldPos, BlockState state, Rotation rotation){
 			super(multiblock, templateWorld, templatePos, world, worldPos, state, rotation);

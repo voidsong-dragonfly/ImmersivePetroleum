@@ -1,15 +1,17 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.util.function.Supplier;
-
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public class MessageConsumeBoatFuel implements INetMessage{
+	public static final ResourceLocation ID = ResourceUtils.ip("consumeboatfuel");
+	
 	public int amount;
 	
 	public MessageConsumeBoatFuel(int amount){
@@ -21,19 +23,23 @@ public class MessageConsumeBoatFuel implements INetMessage{
 	}
 	
 	@Override
-	public void toBytes(FriendlyByteBuf buf){
+	public void write(FriendlyByteBuf buf){
 		buf.writeInt(amount);
 	}
 	
 	@Override
-	public void process(Supplier<NetworkEvent.Context> context){
-		context.get().enqueueWork(() -> {
-			NetworkEvent.Context con = context.get();
+	public ResourceLocation id(){
+		return ID;
+	}
+	
+	@Override
+	public void process(PlayPayloadContext context){
+		context.workHandler().execute(() -> {
 			
-			if(con.getDirection().getReceptionSide() == LogicalSide.SERVER && con.getSender() != null){
-				Entity entity = con.getSender().getVehicle();
+			if(context.flow().getReceptionSide() == LogicalSide.SERVER){
+				Entity vehicle = context.player().orElseThrow().getVehicle();
 				
-				if(entity instanceof MotorboatEntity boat){
+				if(vehicle instanceof MotorboatEntity boat){
 					FluidStack fluid = boat.getContainedFluid();
 					
 					if(fluid != null && fluid != FluidStack.EMPTY)
@@ -42,6 +48,7 @@ public class MessageConsumeBoatFuel implements INetMessage{
 					boat.setContainedFluid(fluid);
 				}
 			}
+			
 		});
 	}
 }

@@ -3,8 +3,8 @@ package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openjdk.nashorn.internal.objects.annotations.Constructor;
 import org.openzen.zencode.java.ZenCodeType;
-import org.openzen.zencode.java.ZenCodeType.Constructor;
 import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
 

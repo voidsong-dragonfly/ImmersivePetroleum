@@ -3,6 +3,9 @@ package flaxbeard.immersivepetroleum.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
+
 import com.electronwill.nightconfig.core.Config;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -40,7 +43,6 @@ import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -63,13 +65,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class ClientProxy extends CommonProxy{
 	
@@ -78,15 +82,15 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
-	public void registerContainersAndScreens(){
-		MenuScreens.register(IPMenuTypes.DISTILLATION_TOWER.getType(), DistillationTowerScreen::new);
-		MenuScreens.register(IPMenuTypes.COKER.getType(), CokerUnitScreen::new);
-		MenuScreens.register(IPMenuTypes.DERRICK.getType(), DerrickScreen::new);
-		MenuScreens.register(IPMenuTypes.HYDROTREATER.getType(), HydrotreaterScreen::new);
+	public void registerContainersAndScreens(RegisterMenuScreensEvent event){
+		event.register(IPMenuTypes.DISTILLATION_TOWER.getType(), DistillationTowerScreen::new);
+		event.register(IPMenuTypes.COKER.getType(), CokerUnitScreen::new);
+		event.register(IPMenuTypes.DERRICK.getType(), DerrickScreen::new);
+		event.register(IPMenuTypes.HYDROTREATER.getType(), HydrotreaterScreen::new);
 	}
 	
 	@Override
-	public void completed(ParallelDispatchEvent event){
+	public void completed(FMLLoadCompleteEvent event){
 		event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch(str){
 			case "distillationtower_operationcost" -> (int) (1024 * IPServerConfig.REFINING.distillationTower_energyModifier.get());
 			case "coker_operationcost" -> (int) (1024 * IPServerConfig.REFINING.cokerUnit_energyModifier.get());
@@ -134,11 +138,11 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void init(){
-		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-		MinecraftForge.EVENT_BUS.register(new RecipeReloadListener(null));
+		NeoForge.EVENT_BUS.register(new ClientEventHandler());
+		NeoForge.EVENT_BUS.register(new RecipeReloadListener(null));
 		
-		MinecraftForge.EVENT_BUS.register(new DebugRenderHandler());
-		MinecraftForge.EVENT_BUS.register(new SeismicResultRenderer());
+		NeoForge.EVENT_BUS.register(new DebugRenderHandler());
+		NeoForge.EVENT_BUS.register(new SeismicResultRenderer());
 	}
 	
 	@Override
@@ -151,7 +155,7 @@ public class ClientProxy extends CommonProxy{
 		
 		if(te instanceof PumpjackTileEntity pumpjack){
 			transform.pushPose();
-			transform.mulPose(new Quaternion(0, -90, 0, true));
+			transform.mulPose(new Quaternionf(new AxisAngle4f(-90, 0, 1, 0)));
 			transform.translate(1, 1, -2);
 			
 			float pt = 0;
@@ -244,7 +248,7 @@ public class ClientProxy extends CommonProxy{
 		builder.appendText(() -> {
 			List<Component[]> list = new ArrayList<>();
 			for(TagKey<Fluid> tag:FlarestackHandler.getSet()){
-				for(Fluid fluid:ForgeRegistries.FLUIDS.getValues()){
+				for(Fluid fluid:NeoForgeRegistries.FLUID_TYPES.getValues()){
 					if(fluid.is(tag)){
 						Component[] entry = new Component[]{Component.empty(), new FluidStack(fluid, 1).getDisplayName()};
 						list.add(entry);

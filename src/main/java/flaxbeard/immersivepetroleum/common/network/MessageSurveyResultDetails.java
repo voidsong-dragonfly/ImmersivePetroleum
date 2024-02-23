@@ -6,26 +6,24 @@ import static flaxbeard.immersivepetroleum.common.util.survey.SurveyScan.SCAN_SI
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.gui.SeismicSurveyScreen;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.survey.SurveyScan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent.Context;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public class MessageSurveyResultDetails{
 	
@@ -34,11 +32,9 @@ public class MessageSurveyResultDetails{
 		IPPacketHandler.sendToServer(new MessageSurveyResultDetails.ClientToServer(scan));
 	}
 	
-	private static void sendReply(Player player, UUID scanId, BitSet replyBitSet){
-		IPPacketHandler.sendToPlayer(player, new MessageSurveyResultDetails.ServerToClient(scanId, replyBitSet));
-	}
-	
 	public static class ClientToServer implements INetMessage{
+		public static final ResourceLocation ID = ResourceUtils.ip("surveyresultdetails_clienttoserver");
+		
 		private int x, z;
 		private UUID scanId;
 		public ClientToServer(SurveyScan scan){
@@ -54,22 +50,29 @@ public class MessageSurveyResultDetails{
 		}
 		
 		@Override
-		public void toBytes(FriendlyByteBuf buf){
+		public void write(FriendlyByteBuf buf){
 			buf.writeInt(this.x);
 			buf.writeInt(this.z);
 			buf.writeUUID(this.scanId);
 		}
 		
-		@SuppressWarnings("deprecation")
 		@Override
-		public void process(Supplier<Context> context){
-			context.get().enqueueWork(() -> {
-				final ServerPlayer sPlayer = Objects.requireNonNull(context.get().getSender());
-				final ServerLevel sLevel = sPlayer.getLevel();
-				
-				if(sLevel.isAreaLoaded(new BlockPos(this.x, 0, this.z), SCAN_RADIUS)){
-					final BitSet set = compileBitSet(sLevel);
-					sendReply(sPlayer, this.scanId, set);
+		public ResourceLocation id(){
+			return ID;
+		}
+		
+		@Override
+		public void process(PlayPayloadContext context){
+			context.workHandler().execute(() -> {
+				if(context.flow().getReceptionSide() == LogicalSide.SERVER){
+					final ServerPlayer sPlayer = (ServerPlayer) context.player().orElseThrow();
+					final ServerLevel sLevel = (ServerLevel) sPlayer.level();
+					
+					if(sLevel.isAreaLoaded(new BlockPos(this.x, 0, this.z), SCAN_RADIUS)){
+						final BitSet set = compileBitSet(sLevel);
+						
+						context.replyHandler().send(new MessageSurveyResultDetails.ServerToClient(this.scanId, set));
+					}
 				}
 			});
 		}
@@ -109,6 +112,8 @@ public class MessageSurveyResultDetails{
 	}
 	
 	public static class ServerToClient implements INetMessage{
+		public static final ResourceLocation ID = ResourceUtils.ip("surveyresultdetails_servertoclient");
+		
 		private BitSet replyBitSet;
 		private UUID scanId;
 		public ServerToClient(UUID scanId, BitSet replyBitSet){
@@ -122,16 +127,24 @@ public class MessageSurveyResultDetails{
 		}
 		
 		@Override
-		public void toBytes(FriendlyByteBuf buf){
+		public void write(FriendlyByteBuf buf){
 			buf.writeUUID(this.scanId);
 			buf.writeBitSet(this.replyBitSet);
 		}
 		
 		@Override
-		public void process(Supplier<Context> context){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-				if(MCUtil.getScreen() instanceof SeismicSurveyScreen surveyScreen && this.scanId.equals(surveyScreen.scan.getUuid())){
-					surveyScreen.setBitSet(this.replyBitSet);
+		public ResourceLocation id(){
+			return ID;
+		}
+		
+		@Override
+		public void process(PlayPayloadContext context){
+			// TODO This may be broken AF
+			context.workHandler().execute(() -> {
+				if(context.flow().getReceptionSide() == LogicalSide.CLIENT){
+					if(MCUtil.getScreen() instanceof SeismicSurveyScreen surveyScreen && this.scanId.equals(surveyScreen.scan.getUuid())){
+						surveyScreen.setBitSet(this.replyBitSet);
+					}
 				}
 			});
 		}

@@ -2,8 +2,6 @@ package flaxbeard.immersivepetroleum;
 
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +14,6 @@ import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.IPToolShaders;
@@ -32,24 +29,22 @@ import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.DistExecutor;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 @Mod(ImmersivePetroleum.MODID)
 public class ImmersivePetroleum{
@@ -57,6 +52,7 @@ public class ImmersivePetroleum{
 	
 	public static final Logger log = LogManager.getLogger(MODID);
 	
+	/*
 	public static final CreativeModeTab creativeTab = new CreativeModeTab(MODID){
 		@Override
 		@Nonnull
@@ -64,6 +60,7 @@ public class ImmersivePetroleum{
 			return new ItemStack(Fluids.CRUDEOIL.bucket().get());
 		}
 	};
+	*/
 	
 	// Complete hack: DistExecutor::safeRunForDist intentionally tries to access the "wrong" supplier in dev, which
 	// throws an error (rather than an exception) on J16 due to trying to load a client-only class. So we need to
@@ -80,29 +77,32 @@ public class ImmersivePetroleum{
 		};
 	}
 	
+	@SuppressWarnings({"removal", "deprecation"})
 	public static final CommonProxy proxy = DistExecutor.safeRunForDist(bootstrapErrorToXCPInDev(() -> ClientProxy::new), bootstrapErrorToXCPInDev(() -> CommonProxy::new));
 	
-	public ImmersivePetroleum(){
+	@SuppressWarnings({"removal", "deprecation"})
+	public ImmersivePetroleum(IEventBus modBus){
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, IPServerConfig.ALL);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, IPClientConfig.ALL);
 		
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
+		modBus.addListener(this::setup);
+		modBus.addListener(IPPacketHandler.Register::init);
+		modBus.addListener(this::loadComplete);
+		modBus.addListener(this::registerMenuScreens);
 		
-		MinecraftForge.EVENT_BUS.addListener(this::worldLoad);
-		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
-		MinecraftForge.EVENT_BUS.addListener(this::registerCommand);
-		MinecraftForge.EVENT_BUS.addListener(this::addReloadListeners);
+		NeoForge.EVENT_BUS.addListener(this::worldLoad);
+		NeoForge.EVENT_BUS.addListener(this::serverStarting);
+		NeoForge.EVENT_BUS.addListener(this::registerCommand);
+		NeoForge.EVENT_BUS.addListener(this::addReloadListeners);
 		
-		IEventBus eBus = FMLJavaModLoadingContext.get().getModEventBus();
-		IPRegisters.addRegistersToEventBus(eBus);
+		IPRegisters.addRegistersToEventBus(modBus);
 		
-		IPContent.modConstruction();
-		IPLootFunctions.modConstruction();
-		IPRecipeTypes.modConstruction();
+		IPContent.modConstruction(modBus);
+		IPLootFunctions.modConstruction(modBus);
+		IPRecipeTypes.modConstruction(modBus);
 		
-		MinecraftForge.EVENT_BUS.register(new IPWorldGen());
-		IPWorldGen.init(eBus);
+		NeoForge.EVENT_BUS.register(new IPWorldGen());
+		IPWorldGen.init(modBus);
 	}
 	
 	public void setup(FMLCommonSetupEvent event){
@@ -113,7 +113,6 @@ public class ImmersivePetroleum{
 		proxy.preInit();
 		
 		IPContent.preInit();
-		IPPacketHandler.preInit();
 		IPToolShaders.preInit();
 		
 		proxy.preInitEnd();
@@ -122,7 +121,7 @@ public class ImmersivePetroleum{
 		
 		IPContent.init(event);
 		
-		MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
+		NeoForge.EVENT_BUS.register(new CommonEventHandler());
 		
 		proxy.init();
 		
@@ -137,11 +136,15 @@ public class ImmersivePetroleum{
 		ReservoirHandler.recalculateChances();
 		ExternalModContent.init();
 		
-		proxy.registerContainersAndScreens();
+		//proxy.registerContainersAndScreens();
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event){
 		proxy.completed(event);
+	}
+	
+	public void registerMenuScreens(RegisterMenuScreensEvent event){
+		proxy.registerContainersAndScreens(event);
 	}
 	
 	public void registerCommand(RegisterCommandsEvent event){

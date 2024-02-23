@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.IPCreativeTab.IMightShowUpInCreativeTab;
 import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlacementReader;
 import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlayerInteraction;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
@@ -21,21 +21,24 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
-public class IPBlockBase extends Block{
+public class IPBlockBase extends Block implements IMightShowUpInCreativeTab{
 	public IPBlockBase(Block.Properties props){
 		super(props);
 	}
 	
 	public Supplier<BlockItem> blockItemSupplier(){
-		return () -> new IPBlockItemBase(this, new Item.Properties().tab(ImmersivePetroleum.creativeTab));
+		return () -> new IPBlockItemBase(this, new Item.Properties());
 	}
 	
 	private final boolean isEntityBlock = this instanceof EntityBlock;
@@ -60,8 +63,20 @@ public class IPBlockBase extends Block{
 		}
 	}
 	
+	protected static final BlockBehaviour.Properties metalProperty(){
+		return BlockBehaviour.Properties.of().sound(SoundType.METAL).mapColor(MapColor.METAL);
+	}
+	
+	protected static final BlockBehaviour.Properties stoneProperty(){
+		return stoneProperty(MapColor.STONE);
+	}
+	
+	protected static final BlockBehaviour.Properties stoneProperty(MapColor color){
+		return BlockBehaviour.Properties.of().sound(SoundType.STONE).mapColor(color);
+	}
+	
 	@Nullable
-	public static <E extends BlockEntity & IPCommonTickableTile, A extends BlockEntity> BlockEntityTicker<A> createCommonTicker(boolean isClient, BlockEntityType<A> actual, RegistryObject<BlockEntityType<E>> expected){
+	public static <E extends BlockEntity & IPCommonTickableTile, A extends BlockEntity> BlockEntityTicker<A> createCommonTicker(boolean isClient, BlockEntityType<A> actual, DeferredHolder<BlockEntityType<?>, BlockEntityType<E>> expected){
 		return createCommonTicker(isClient, actual, expected.get());
 	}
 	

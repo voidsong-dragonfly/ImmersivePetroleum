@@ -15,8 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class DistillationTowerRecipe extends IPMultiblockRecipe{
 	public static Map<ResourceLocation, DistillationTowerRecipe> recipes = new HashMap<>();
