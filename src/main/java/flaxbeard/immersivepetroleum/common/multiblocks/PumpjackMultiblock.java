@@ -3,10 +3,11 @@ package flaxbeard.immersivepetroleum.common.multiblocks;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
@@ -31,7 +32,7 @@ public class PumpjackMultiblock extends IPTemplateMultiblock{
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();
 	
 	private PumpjackMultiblock(){
-		super(ResourceUtils.ip("multiblocks/pumpjack"), new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), new BlockPos(3, 4, 6), IPContent.Multiblock.PUMPJACK);
+		super(ResourceUtils.ip("multiblocks/pumpjack"), new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), new BlockPos(3, 4, 6));//, IPContent.Multiblock.PUMPJACK);
 	}
 	
 	@Override
@@ -61,6 +62,7 @@ public class PumpjackMultiblock extends IPTemplateMultiblock{
 			return true;
 		}
 		
+		final Quaternionf rot = new Quaternionf(new AxisAngle4f(90F, new Vector3f(0F, 1F, 0F)));
 		@Override
 		public void renderCustomFormedStructure(PoseStack matrix, MultiBufferSource buffer){
 			if(this.te == null){
@@ -94,7 +96,5 @@ public class PumpjackMultiblock extends IPTemplateMultiblock{
 				}
 			}
 		}
-		
-		final Quaternion rot = new Quaternion(new Vector3f(0F, 1F, 0F), 90, true);
 	}
 }

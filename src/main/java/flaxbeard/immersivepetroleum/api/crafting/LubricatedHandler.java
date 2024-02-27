@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
@@ -132,6 +133,14 @@ public class LubricatedHandler{
 	}
 	
 	public static boolean lubricateTile(BlockEntity tile, Fluid lubricant, int ticks, boolean additive, int cap){
+		if(!(tile instanceof IMultiblockBEHelperMaster<?>)){
+			return false;
+		}
+		IMultiblockBEHelperMaster<?> master = (IMultiblockBEHelperMaster<?>) tile;
+		
+		// ------------------------------------------------------------------------------------------------
+		// TODO
+		
 		if(tile instanceof MultiblockPartBlockEntity<?> mpte && mpte.offsetToMaster != BlockPos.ZERO){
 			tile = mpte.master();
 		}

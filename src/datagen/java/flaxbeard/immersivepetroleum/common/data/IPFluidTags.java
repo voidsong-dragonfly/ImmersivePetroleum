@@ -1,22 +1,25 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import java.util.concurrent.CompletableFuture;
+
 import blusunrize.immersiveengineering.api.IETags;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
-import net.minecraftforge.common.Tags.Fluids;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.Tags.Fluids;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class IPFluidTags extends FluidTagsProvider{
 	
-	public IPFluidTags(DataGenerator gen, ExistingFileHelper exHelper){
-		super(gen, ImmersivePetroleum.MODID, exHelper);
+	public IPFluidTags(PackOutput output, CompletableFuture<Provider> lookup, ExistingFileHelper exHelper){
+		super(output, lookup, ImmersivePetroleum.MODID, exHelper);
 	}
 	
 	@Override
-	protected void addTags(){
+	protected void addTags(Provider provider){
 		tag(IPTags.Fluids.crudeOil).add(IPContent.Fluids.CRUDEOIL.get());
 		
 		tag(IPTags.Fluids.diesel)

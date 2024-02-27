@@ -18,7 +18,6 @@ import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
-import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -48,10 +47,10 @@ public class ReservoirRegionDataStorage extends SavedData{
 	}
 	
 	public static final void init(final DimensionDataStorage dimData){
-		active_instance = dimData.computeIfAbsent(t -> new ReservoirRegionDataStorage(dimData, t), () -> {
+		dimData.computeIfAbsent(new SavedData.Factory<>(() -> {
 			log.debug("Creating new ReservoirRegionDataStorage instance.");
 			return new ReservoirRegionDataStorage(dimData);
-		}, DATA_NAME);
+		}, nbt -> new ReservoirRegionDataStorage(dimData, nbt)), DATA_NAME);
 	}
 	
 	// -----------------------------------------------------------------------------
@@ -186,7 +185,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	private RegionData getOrCreateRegionData(RegionPos regionPos){
 		RegionData ret = this.regions.computeIfAbsent(regionPos, p -> {
 			String fn = getRegionFileName(p);
-			RegionData data = this.dimData.computeIfAbsent(t -> new RegionData(p, t), () -> new RegionData(p), fn);
+			RegionData data = this.dimData.computeIfAbsent(new SavedData.Factory<>(() -> new RegionData(p), t -> new RegionData(p, t)), fn);
 			setDirty();
 			log.debug("Created RegionData[{}, {}]", regionPos.x(), regionPos.z());
 			return data;

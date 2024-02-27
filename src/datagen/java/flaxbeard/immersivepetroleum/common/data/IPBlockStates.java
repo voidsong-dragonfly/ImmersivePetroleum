@@ -34,7 +34,8 @@ import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
@@ -42,25 +43,24 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
-import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
+import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class IPBlockStates extends BlockStateProvider{
 	final ExistingFileHelper exFileHelper;
 	private final NongeneratedModels nongeneratedModels;
-	public IPBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper){
-		super(gen, ImmersivePetroleum.MODID, exFileHelper);
+	public IPBlockStates(PackOutput output, ExistingFileHelper exFileHelper){
+		super(output, ImmersivePetroleum.MODID, exFileHelper);
 		this.exFileHelper = exFileHelper;
-		this.nongeneratedModels = new NongeneratedModels(gen, exFileHelper);
+		this.nongeneratedModels = new NongeneratedModels(output, exFileHelper);
 	}
 	
 	@Override
@@ -129,7 +129,7 @@ public class IPBlockStates extends BlockStateProvider{
 			Mutable<IClientFluidTypeExtensions> box = new MutableObject<>();
 			source.getFluidType().initializeClient(box::setValue);
 			ResourceLocation texture = box.getValue().getStillTexture();
-			ModelFile model = this.models().getBuilder("block/fluid/" + ForgeRegistries.FLUIDS.getKey(source).getPath())
+			ModelFile model = this.models().getBuilder("block/fluid/" + BuiltInRegistries.FLUID.getKey(source).getPath())
 					.texture("particle", texture);
 			
 			getVariantBuilder(f.block().get()).partialState().setModels(new ConfiguredModel(model));

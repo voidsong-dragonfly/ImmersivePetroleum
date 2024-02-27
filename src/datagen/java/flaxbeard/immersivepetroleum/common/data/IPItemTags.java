@@ -1,20 +1,24 @@
 package flaxbeard.immersivepetroleum.common.data;
 
+import java.util.concurrent.CompletableFuture;
+
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class IPItemTags extends ItemTagsProvider{
-	public IPItemTags(DataGenerator dataGen, BlockTagsProvider blockTags, ExistingFileHelper exFileHelper){
-		super(dataGen, blockTags, ImmersivePetroleum.MODID, exFileHelper);
+	
+	public IPItemTags(PackOutput output, CompletableFuture<Provider> lookup, CompletableFuture<TagLookup<Block>> content, ExistingFileHelper exHelper){
+		super(output, lookup, content, ImmersivePetroleum.MODID, exHelper);
 	}
 	
 	@Override
-	protected void addTags(){
+	protected void addTags(Provider provider){
 		IPTags.forAllBlocktags(this::copy);
 		
 		tag(IPTags.Items.bitumen)

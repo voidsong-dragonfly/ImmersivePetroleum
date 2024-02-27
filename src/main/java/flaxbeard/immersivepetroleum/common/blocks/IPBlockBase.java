@@ -64,7 +64,11 @@ public class IPBlockBase extends Block implements IMightShowUpInCreativeTab{
 	}
 	
 	protected static final BlockBehaviour.Properties metalProperty(){
-		return BlockBehaviour.Properties.of().sound(SoundType.METAL).mapColor(MapColor.METAL);
+		return metalProperty(MapColor.METAL);
+	}
+	
+	protected static final BlockBehaviour.Properties metalProperty(MapColor color){
+		return BlockBehaviour.Properties.of().sound(SoundType.METAL).mapColor(color);
 	}
 	
 	protected static final BlockBehaviour.Properties stoneProperty(){
@@ -73,6 +77,14 @@ public class IPBlockBase extends Block implements IMightShowUpInCreativeTab{
 	
 	protected static final BlockBehaviour.Properties stoneProperty(MapColor color){
 		return BlockBehaviour.Properties.of().sound(SoundType.STONE).mapColor(color);
+	}
+	
+	protected static final BlockBehaviour.Properties woodProperty(){
+		return stoneProperty(MapColor.WOOD);
+	}
+	
+	protected static final BlockBehaviour.Properties woodProperty(MapColor color){
+		return BlockBehaviour.Properties.of().sound(SoundType.WOOD).mapColor(color);
 	}
 	
 	@Nullable

@@ -396,7 +396,7 @@ public class IPFluid extends FlowingFluid{
 		*/
 		
 		@Override
-		public int getBurnTime(ItemStack itemStack, @org.jetbrains.annotations.Nullable RecipeType<?> recipeType){
+		public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType){
 			return this.burnTime;
 		}
 	}

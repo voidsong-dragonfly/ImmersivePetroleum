@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
 import blusunrize.immersiveengineering.common.register.IEPotions;
@@ -60,8 +61,8 @@ import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
-import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -102,7 +103,12 @@ public class IPContent{
 				"oiltank", OilTankBlock::new
 		);
 		
-		private static void forceClassLoad(){
+		private static void forceClassLoad(IEventBus modEventBus){
+			/*// Am just playing around here, actualy have no clue yet how to use the new multiblock API lol
+			MultiblockRegistration.builder(null, ResourceUtils.ip("pumpjack"))
+				.structure(() -> PumpjackMultiblock.INSTANCE)
+				.build(a -> a.accept(modEventBus));
+			*/
 		}
 	}
 	
@@ -205,7 +211,7 @@ public class IPContent{
 		Blocks.forceClassLoad();
 		Items.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
-		Multiblock.forceClassLoad();
+		Multiblock.forceClassLoad(modEventBus);
 		IPMenuTypes.forceClassLoad();
 		Serializers.forceClassLoad();
 		IPEffects.forceClassLoad();
@@ -218,8 +224,6 @@ public class IPContent{
 	}
 	
 	public static void init(ParallelDispatchEvent event){
-		event.enqueueWork(IPWorldGen::registerReservoirGen);
-		
 		Fluids.CRUDEOIL.setEffect(IEPotions.FLAMMABLE.value(), 100, 1);
 		Fluids.DIESEL.setEffect(IEPotions.FLAMMABLE.value(), 40, 1); // Realisticly diesel can not be ignited with an open flame..
 		Fluids.DIESEL_SULFUR.setEffect(IEPotions.FLAMMABLE.value(), 40, 1);

@@ -22,7 +22,9 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -30,8 +32,7 @@ public class IPMetalMultiblock<T extends MultiblockPartBlockEntity<T> & IPCommon
 	private final MultiblockBEType<T> multiblockBEType;
 	
 	public IPMetalMultiblock(MultiblockBEType<T> te){
-		super(te, Block.Properties.of(Material.METAL)
-				.sound(SoundType.METAL)
+		super(te, BlockBehaviour.Properties.of().sound(SoundType.METAL).mapColor(MapColor.METAL)
 				.strength(3, 15)
 				.requiresCorrectToolForDrops()
 				.isViewBlocking((state, blockReader, pos) -> false)

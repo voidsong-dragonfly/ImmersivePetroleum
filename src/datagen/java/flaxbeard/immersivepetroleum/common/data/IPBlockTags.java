@@ -1,25 +1,26 @@
 package flaxbeard.immersivepetroleum.common.data;
 
-import java.util.function.Supplier;
+import java.util.concurrent.CompletableFuture;
+
+import org.jetbrains.annotations.Nullable;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Tiers;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class IPBlockTags extends BlockTagsProvider{
-	public IPBlockTags(DataGenerator dataGen, ExistingFileHelper exFileHelper){
-		super(dataGen, ImmersivePetroleum.MODID, exFileHelper);
-	}
 	
+	public IPBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper){
+		super(output, lookupProvider, ImmersivePetroleum.MODID, existingFileHelper);
+	}
+
 	@Override
-	protected void addTags(){
+	protected void addTags(Provider provider){
 		// IP Tags
 		
 		tag(IPTags.Blocks.asphalt).add(IPContent.Blocks.ASPHALT.get());
@@ -41,14 +42,15 @@ public class IPBlockTags extends BlockTagsProvider{
 			IPContent.Blocks.GAS_GENERATOR.get(),
 			IPContent.Blocks.FLARESTACK.get(),
 			IPContent.Blocks.WELL_PIPE.get(),
-			IPContent.Blocks.SEISMIC_SURVEY.get(),
-			//MBs
+			IPContent.Blocks.SEISMIC_SURVEY.get()/*,
+			//MBs// TODO Revisit this once Multiblocks have been Re-implemented
 			IPContent.Multiblock.DERRICK.get(),
 			IPContent.Multiblock.PUMPJACK.get(),
 			IPContent.Multiblock.OILTANK.get(),
 			IPContent.Multiblock.DISTILLATIONTOWER.get(),
 			IPContent.Multiblock.COKERUNIT.get(),
 			IPContent.Multiblock.HYDROTREATER.get()
+			*/
 		);
 		
 		tag(BlockTags.MINEABLE_WITH_SHOVEL).add(IPContent.Blocks.PARAFFIN_WAX.get());
@@ -71,26 +73,5 @@ public class IPBlockTags extends BlockTagsProvider{
 			IPContent.Blocks.FLARESTACK.get(),
 			IPContent.Blocks.SEISMIC_SURVEY.get()
 		);
-	}
-	
-	private void setMiningLevel(Supplier<? extends Block> block, Tiers tier){
-		TagKey<Block> with = switch(tier){
-			case WOOD -> BlockTags.MINEABLE_WITH_AXE;
-			case STONE, GOLD, IRON, DIAMOND, NETHERITE -> BlockTags.MINEABLE_WITH_PICKAXE;
-			default -> throw new IllegalArgumentException("Unexpected value: " + tier);
-		};
-		tag(with).add(block.get());
-		
-		if(tier == Tiers.WOOD)
-			return;
-		
-		TagKey<Block> type = switch(tier){
-			case STONE -> BlockTags.NEEDS_STONE_TOOL;
-			case IRON, GOLD -> BlockTags.NEEDS_IRON_TOOL;
-			case DIAMOND, NETHERITE -> BlockTags.NEEDS_DIAMOND_TOOL;
-			default -> throw new IllegalArgumentException("Unexpected value: " + tier);
-		};
-		
-		tag(type).add(block.get());
 	}
 }

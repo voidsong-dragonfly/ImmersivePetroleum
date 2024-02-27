@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum;
 
-import java.util.function.Supplier;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,8 +28,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.DistExecutor;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
@@ -52,35 +51,11 @@ public class ImmersivePetroleum{
 	
 	public static final Logger log = LogManager.getLogger(MODID);
 	
-	/*
-	public static final CreativeModeTab creativeTab = new CreativeModeTab(MODID){
-		@Override
-		@Nonnull
-		public ItemStack makeIcon(){
-			return new ItemStack(Fluids.CRUDEOIL.bucket().get());
-		}
-	};
-	*/
-	
-	// Complete hack: DistExecutor::safeRunForDist intentionally tries to access the "wrong" supplier in dev, which
-	// throws an error (rather than an exception) on J16 due to trying to load a client-only class. So we need to
-	// replace the error with an exception in dev.
-	public static <T> Supplier<T> bootstrapErrorToXCPInDev(Supplier<T> in){
-		if(FMLLoader.isProduction())
-			return in;
-		return () -> {
-			try{
-				return in.get();
-			}catch(BootstrapMethodError e){
-				throw new RuntimeException(e);
-			}
-		};
+	public static final CommonProxy proxy = makeProxy();
+	private static CommonProxy makeProxy(){
+		return FMLLoader.getDist() == Dist.CLIENT ? new ClientProxy() : new CommonProxy();
 	}
 	
-	@SuppressWarnings({"removal", "deprecation"})
-	public static final CommonProxy proxy = DistExecutor.safeRunForDist(bootstrapErrorToXCPInDev(() -> ClientProxy::new), bootstrapErrorToXCPInDev(() -> CommonProxy::new));
-	
-	@SuppressWarnings({"removal", "deprecation"})
 	public ImmersivePetroleum(IEventBus modBus){
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, IPServerConfig.ALL);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, IPClientConfig.ALL);
@@ -101,7 +76,6 @@ public class ImmersivePetroleum{
 		IPLootFunctions.modConstruction(modBus);
 		IPRecipeTypes.modConstruction(modBus);
 		
-		NeoForge.EVENT_BUS.register(new IPWorldGen());
 		IPWorldGen.init(modBus);
 	}
 	
@@ -162,7 +136,7 @@ public class ImmersivePetroleum{
 	public void worldLoad(LevelEvent.Load event){
 		if(!event.getLevel().isClientSide() && event.getLevel() instanceof ServerLevel world && world.dimension() == Level.OVERWORLD){
 			ReservoirRegionDataStorage.init(world.getDataStorage());
-			world.getDataStorage().computeIfAbsent(IPSaveData::new, IPSaveData::new, IPSaveData.dataName);
+			world.getDataStorage().computeIfAbsent(new SavedData.Factory<>(IPSaveData::new, IPSaveData::new), IPSaveData.dataName);
 		}
 	}
 	
