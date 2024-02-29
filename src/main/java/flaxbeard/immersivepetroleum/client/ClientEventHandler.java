@@ -57,6 +57,7 @@ import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
+import net.neoforged.neoforge.event.TickEvent.Phase;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class ClientEventHandler{
@@ -94,17 +95,17 @@ public class ClientEventHandler{
 						for(int z = -16;z <= 16;z++){
 							for(int y = -16;y <= 16;y++){
 								BlockPos pos = base.offset(x, y, z);
-								BlockEntity te = mc.player.level.getBlockEntity(pos);
+								BlockEntity te = mc.player.level().getBlockEntity(pos);
 								
 								if(te != null){
 									ILubricationHandler<BlockEntity> handler = LubricatedHandler.getHandlerForTile(te);
 									if(handler != null){
-										Tuple<BlockPos, Direction> target = handler.getGhostBlockPosition(mc.player.level, te);
+										Tuple<BlockPos, Direction> target = handler.getGhostBlockPosition(mc.player.level(), te);
 										if(target != null){
 											BlockPos targetPos = target.getA();
 											Direction targetFacing = target.getB();
-											BlockState targetState = mc.player.level.getBlockState(targetPos);
-											BlockState targetStateUp = mc.player.level.getBlockState(targetPos.above());
+											BlockState targetState = mc.player.level().getBlockState(targetPos);
+											BlockState targetStateUp = mc.player.level().getBlockState(targetPos.above());
 											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
 												VertexConsumer vBuilder = buffer.getBuffer(RenderType.translucent());
 												matrix.pushPose();

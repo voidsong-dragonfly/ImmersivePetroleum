@@ -146,9 +146,11 @@ public class IslandCommand{
 		final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + p.x() + " ~ " + p.z());
 		final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.coordinates.tooltip"));
 		
-		source.sendSuccess(Component.translatable("chat.immersivepetroleum.command.reservoir.locate",
-				closestIsland.getType().name,
-				ComponentUtils.wrapInSquareBrackets(Component.literal(p.x() + " " + p.z())).withStyle((s) -> {
+		final String islandName = closestIsland.getType().name;
+		final ColumnPos finalPos = p;
+		source.sendSuccess(() -> Component.translatable("chat.immersivepetroleum.command.reservoir.locate",
+				islandName,
+				ComponentUtils.wrapInSquareBrackets(Component.literal(finalPos.x() + " " + finalPos.z())).withStyle((s) -> {
 					return s.withColor(ChatFormatting.GREEN)
 							.withItalic(true)
 							.withClickEvent(clickEvent)
@@ -169,7 +171,7 @@ public class IslandCommand{
 	}
 	
 	private static CompletableFuture<Suggestions> typeSuggestor(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder){
-		return SharedSuggestionProvider.suggest(ReservoirType.map.values().stream().map(type -> type.name), builder);
+		return SharedSuggestionProvider.suggest(ReservoirType.map.stream().map(type -> type.name), builder);
 	}
 	
 	private static int setReservoirAmount(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
@@ -193,7 +195,7 @@ public class IslandCommand{
 	private static int setReservoirType(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		String name = context.getArgument("name", String.class);
 		ReservoirType reservoir = null;
-		for(ReservoirType res:ReservoirType.map.values()){
+		for(ReservoirType res:ReservoirType.map){
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 		}
@@ -212,7 +214,7 @@ public class IslandCommand{
 	
 	static <T extends ArgumentBuilder<CommandSourceStack, T>> T positional(T builder, BiFunction<CommandContext<CommandSourceStack>, ReservoirIsland, Integer> function){
 		builder.executes(command -> {
-			ColumnPos pos = Utils.toColumnPos(new BlockPos(command.getSource().getPosition()));
+			ColumnPos pos = Utils.toColumnPos(command.getSource().getPosition());
 			
 			ReservoirIsland island = ReservoirHandler.getIsland(command.getSource().getLevel(), pos);
 			if(island == null){

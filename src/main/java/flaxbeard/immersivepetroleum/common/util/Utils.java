@@ -3,19 +3,21 @@ package flaxbeard.immersivepetroleum.common.util;
 import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
 
 /**
  * General purpose Utilities
@@ -51,20 +53,22 @@ public class Utils{
 	
 	/** Copy of {@link blusunrize.immersiveengineering.common.util.Utils#unlockIEAdvancement(Player, String)} */
 	public static void unlockIPAdvancement(Player player, String name){
-		if(player instanceof ServerPlayer serverPlayer){
-			PlayerAdvancements advancements = serverPlayer.getAdvancements();
-			ServerAdvancementManager manager = ((ServerLevel) serverPlayer.getCommandSenderWorld()).getServer().getAdvancements();
-			Advancement advancement = manager.getAdvancement(ResourceUtils.ip(name));
-			if(advancement != null)
-				advancements.award(advancement, "code_trigger");
-		}
+		if(!(player instanceof ServerPlayer))
+			return;
+		
+		PlayerAdvancements advancements = ((ServerPlayer) player).getAdvancements();
+		ServerAdvancementManager manager = ((ServerLevel) player.getCommandSenderWorld()).getServer().getAdvancements();
+		AdvancementHolder advancement = manager.get(ResourceUtils.ip(name));
+		if(advancement != null)
+			advancements.award(advancement, "code_trigger");
 	}
 	
 	/** Copy of {@link blusunrize.immersiveengineering.common.util.Utils#isFluidRelatedItemStack(ItemStack)} */
 	public static boolean isFluidRelatedItemStack(ItemStack stack){
 		if(stack.isEmpty())
 			return false;
-		return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
+		
+		return stack.getCapability(FluidHandler.ITEM) != null;
 	}
 	
 	public static void dropItem(Level level, BlockPos pos, ItemStack stack){
@@ -90,6 +94,10 @@ public class Utils{
 	
 	public static ColumnPos toColumnPos(BlockPos pos){
 		return new ColumnPos(pos.getX(), pos.getZ());
+	}
+	
+	public static ColumnPos toColumnPos(Vec3 vec){
+		return new ColumnPos(Mth.floor(vec.x()), Mth.floor(vec.z()));
 	}
 	
 	public static boolean hasKey(ItemStack stack, String key, int tagId){

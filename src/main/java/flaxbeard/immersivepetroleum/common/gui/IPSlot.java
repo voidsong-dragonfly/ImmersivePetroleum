@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -9,7 +10,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
@@ -65,7 +66,7 @@ public class IPSlot extends Slot{
 		
 		@Override
 		public boolean mayPlace(@Nonnull ItemStack itemStack){
-			LazyOptional<IFluidHandlerItem> handlerCap = FluidUtil.getFluidHandler(itemStack);
+			Optional<IFluidHandlerItem> handlerCap = FluidUtil.getFluidHandler(itemStack);
 			return handlerCap.map(handler -> {
 				if(handler.getTanks() <= 0)
 					return false;

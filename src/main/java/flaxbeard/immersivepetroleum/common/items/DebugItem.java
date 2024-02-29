@@ -208,7 +208,7 @@ public class DebugItem extends IPItemBase{
 					BlockPos pos = context.getClickedPos();
 					
 					ResourceLocation dimensionRL = world.dimension().location();
-					ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(pos).value());
+					ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world, pos);
 					
 					player.displayClientMessage(Component.literal(dimensionRL.toString()), false);
 					

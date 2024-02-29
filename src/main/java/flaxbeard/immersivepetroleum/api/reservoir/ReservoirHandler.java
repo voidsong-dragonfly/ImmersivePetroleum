@@ -64,7 +64,7 @@ public class ReservoirHandler{
 				
 				
 				// Getting the biome now to prevent lockups
-				ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(new BlockPos(x, 64, z)).value());
+				ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world, new BlockPos(x, 64, z));
 				
 				final ColumnPos current = new ColumnPos(x, z);
 				if(storage.existsAt(current)){
@@ -75,7 +75,7 @@ public class ReservoirHandler{
 				int totalWeight = getTotalWeight(dimensionRL, biomeRL);
 				if(totalWeight > 0){
 					int weight = Math.abs(randomSource.nextInt() % totalWeight);
-					for(ReservoirType res:ReservoirType.map.values()){
+					for(ReservoirType res:ReservoirType.map){
 						if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
 							weight -= res.weight;
 							if(weight < 0){
@@ -116,7 +116,7 @@ public class ReservoirHandler{
 		if(totalWeight == null){
 			totalWeight = 0;
 			
-			for(ReservoirType reservoir:ReservoirType.map.values()){
+			for(ReservoirType reservoir:ReservoirType.map){
 				if(reservoir.getDimensions().valid(dimension) && reservoir.getBiomes().valid(biome)){
 					totalWeight += reservoir.weight;
 				}
@@ -175,9 +175,21 @@ public class ReservoirHandler{
 	 * @param id        The "recipeId" of the reservoir type
 	 * @param reservoir The {@link ReservoirType} type to add
 	 * @return The {@link ReservoirType} passed in
+	 * @deprecated		-> {@link #addReservoir(ReservoirType)}
 	 */
 	public static ReservoirType addReservoir(ResourceLocation id, ReservoirType reservoir){
-		ReservoirType.map.put(id, reservoir);
+		return addReservoir(reservoir);
+	}
+	
+	/**
+	 * Adds a reservoir type to the pool of valid reservoirs
+	 * 
+	 * @param id        The "recipeId" of the reservoir type
+	 * @param reservoir The {@link ReservoirType} type to add
+	 * @return The {@link ReservoirType} passed in
+	 */
+	public static ReservoirType addReservoir(ReservoirType reservoir){
+		ReservoirType.map.add(reservoir);
 		return reservoir;
 	}
 	
