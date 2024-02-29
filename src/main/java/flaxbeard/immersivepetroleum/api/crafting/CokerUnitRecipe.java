@@ -1,7 +1,7 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -9,19 +9,21 @@ import javax.annotation.Nonnull;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-public class CokerUnitRecipe extends IPMultiblockRecipe{
-	public static Map<ResourceLocation, CokerUnitRecipe> recipes = new HashMap<>();
+public class CokerUnitRecipe extends MultiblockRecipe{
+	public static List<CokerUnitRecipe> recipes = new ArrayList<>();
 	
 	public static CokerUnitRecipe findRecipe(ItemStack stack, FluidStack fluid){
-		for(CokerUnitRecipe recipe:recipes.values()){
+		for(CokerUnitRecipe recipe:recipes){
 			if((recipe.inputItem != null && recipe.inputItem.test(stack)) && (recipe.inputFluid != null && recipe.inputFluid.test(fluid))){
 				return recipe;
 			}
@@ -35,7 +37,7 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!stack.isEmpty() && !fluid.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes.values()){
+			for(CokerUnitRecipe recipe:recipes){
 				if(recipe.inputItem != null && recipe.inputFluid != null && recipe.inputItem.test(stack) && recipe.inputFluid.test(fluid)){
 					return true;
 				}
@@ -48,7 +50,7 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(stack);
 		
 		if(!stack.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes.values()){
+			for(CokerUnitRecipe recipe:recipes){
 				if(recipe.inputItem != null){
 					if((!ignoreSize && recipe.inputItem.test(stack)) || (ignoreSize && recipe.inputItem.testIgnoringSize(stack))){
 						return true;
@@ -63,7 +65,7 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes.values()){
+			for(CokerUnitRecipe recipe:recipes){
 				if(recipe.inputFluid != null){
 					if((!ignoreAmount && recipe.inputFluid.test(fluid)) || (ignoreAmount && recipe.inputFluid.testIgnoringAmount(fluid))){
 						return true;
@@ -72,6 +74,11 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 			}
 		}
 		return false;
+	}
+	
+	private static final RecipeMultiplier MULTIPLIER = new RecipeMultiplier(IPServerConfig.REFINING.cokerUnit_timeModifier::get, IPServerConfig.REFINING.cokerUnit_energyModifier::get);
+	private static RecipeMultiplier multipliers(){
+		return MULTIPLIER;
 	}
 	
 	// just a "Reference"
@@ -87,14 +94,11 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	public final FluidTagInput inputFluid;
 	
 	public CokerUnitRecipe(ResourceLocation id, Lazy<ItemStack> outputItem2, FluidStack outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
-		super(ItemStack.EMPTY, IPRecipeTypes.COKER, id);
+		super(TagOutput.EMPTY, IPRecipeTypes.COKER, energy, time, CokerUnitRecipe::multipliers);
 		this.inputFluid = inputFluid;
 		this.inputItem = inputItem;
 		this.outputFluid = outputFluid;
 		this.outputItem = outputItem2;
-		
-		timeAndEnergy(time, energy);
-		modifyTimeAndEnergy(IPServerConfig.REFINING.cokerUnit_timeModifier::get, IPServerConfig.REFINING.cokerUnit_energyModifier::get);
 	}
 	
 	@Override
@@ -103,7 +107,7 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	}
 	
 	@Override
-	public NonNullList<ItemStack> getActualItemOutputs(BlockEntity tile){
+	public NonNullList<ItemStack> getActualItemOutputs(){
 		NonNullList<ItemStack> list = NonNullList.create();
 		list.add(this.outputItem.get());
 		return list;

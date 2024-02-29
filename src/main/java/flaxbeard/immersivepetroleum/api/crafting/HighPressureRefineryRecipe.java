@@ -1,9 +1,9 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -11,24 +11,27 @@ import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
+public class HighPressureRefineryRecipe extends MultiblockRecipe{
 	
-	public static Map<ResourceLocation, HighPressureRefineryRecipe> recipes = new HashMap<>();
+	public static List<HighPressureRefineryRecipe> recipes = new ArrayList<>();
+	
+    private static final RandomSource RANDOM = RandomSource.create();
 	
 	public static HighPressureRefineryRecipe findRecipe(@Nonnull FluidStack input, @Nonnull FluidStack secondary){
 		Objects.requireNonNull(input);
 		Objects.requireNonNull(secondary);
 		
-		for(HighPressureRefineryRecipe recipe:recipes.values()){
+		for(HighPressureRefineryRecipe recipe:recipes){
 			if(secondary.isEmpty()){
 				if(recipe.inputFluidSecondary == null && (recipe.inputFluid != null && recipe.inputFluid.test(input))){
 					return recipe;
@@ -46,7 +49,7 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(HighPressureRefineryRecipe recipe:recipes.values()){
+			for(HighPressureRefineryRecipe recipe:recipes){
 				if(recipe.inputFluid != null){
 					if((!ignoreAmount && recipe.inputFluid.test(fluid)) || (ignoreAmount && recipe.inputFluid.testIgnoringAmount(fluid))){
 						return true;
@@ -61,7 +64,7 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(HighPressureRefineryRecipe recipe:recipes.values()){
+			for(HighPressureRefineryRecipe recipe:recipes){
 				if(recipe.inputFluidSecondary != null){
 					if((!ignoreAmount && recipe.inputFluidSecondary.test(fluid)) || (ignoreAmount && recipe.inputFluidSecondary.testIgnoringAmount(fluid))){
 						return true;
@@ -70,6 +73,11 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 			}
 		}
 		return false;
+	}
+	
+	private static final RecipeMultiplier MULTIPLIER = new RecipeMultiplier(IPServerConfig.REFINING.hydrotreater_timeModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
+	private static RecipeMultiplier multipliers(){
+		return MULTIPLIER;
 	}
 	
 	public final ItemStack outputItem;
@@ -92,7 +100,7 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 	 * @param time                duration of the recipe
 	 */
 	public HighPressureRefineryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
-		super(ItemStack.EMPTY, IPRecipeTypes.HYDROTREATER, id);
+		super(TagOutput.EMPTY, IPRecipeTypes.HYDROTREATER, energy, time, HighPressureRefineryRecipe::multipliers);
 		this.output = output;
 		this.outputItem = outputItem;
 		this.inputFluid = inputFluid;
@@ -101,9 +109,6 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 		
 		this.fluidOutputList = Collections.singletonList(output);
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
-		
-		timeAndEnergy(time, energy);
-		modifyTimeAndEnergy(IPServerConfig.REFINING.hydrotreater_timeModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
 	}
 	
 	public boolean hasSecondaryItem(){
@@ -125,10 +130,9 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 	}
 	
 	@Override
-	public NonNullList<ItemStack> getActualItemOutputs(BlockEntity tile){
+	public NonNullList<ItemStack> getActualItemOutputs(){
 		NonNullList<ItemStack> list = NonNullList.create();
-		Level level = tile.getLevel();
-		if(level.random.nextFloat() <= chance){
+		if(RANDOM.nextFloat() <= this.chance){
 			list.add(this.outputItem);
 		}
 		return list;
