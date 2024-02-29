@@ -72,6 +72,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
@@ -92,7 +93,7 @@ public class DebugRenderHandler{
 	public void renderDebuggingOverlay(RenderGuiOverlayEvent.Post event){
 		Minecraft mc = Minecraft.getInstance();
 		
-		if(mc.player != null && event.getOverlay().id() == VanillaGuiOverlay.DEBUG_TEXT.id()){
+		if(mc.player != null && event.getOverlay().id() == VanillaGuiOverlay.DEBUG_SCREEN.id()){
 			Player player = mc.player;
 			
 			if(isHoldingDebugItem(player)){
@@ -101,7 +102,7 @@ public class DebugRenderHandler{
 					switch(rt.getType()){
 						case BLOCK -> {
 							BlockHitResult result = (BlockHitResult) rt;
-							Level world = player.level;
+							Level world = player.level();
 							
 							BlockState blockState = world.getBlockState(result.getBlockPos());
 							
