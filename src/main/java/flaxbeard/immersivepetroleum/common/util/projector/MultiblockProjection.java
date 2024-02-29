@@ -14,6 +14,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
@@ -46,14 +48,15 @@ public class MultiblockProjection{
 		this.realWorld = world;
 		
 		List<StructureTemplate.StructureBlockInfo> blocks = multiblock.getStructure(world);
-		this.templateWorld = TemplateWorldCreator.CREATOR.getValue().makeWorld(blocks, pos -> true);
+		this.templateWorld = TemplateWorldCreator.CREATOR.get().makeWorld(blocks, pos -> true, RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
+//		this.templateWorld = TemplateWorldCreator.CREATOR.get().makeWorld(blocks, pos -> true);
 		
 		this.blockcount = blocks.size();
 		for(StructureTemplate.StructureBlockInfo info:blocks){
-			List<StructureTemplate.StructureBlockInfo> list = this.layers.get(info.pos.getY());
+			List<StructureTemplate.StructureBlockInfo> list = this.layers.get(info.pos().getY());
 			if(list == null){
 				list = new ArrayList<>();
-				this.layers.put(info.pos.getY(), list);
+				this.layers.put(info.pos().getY(), list);
 			}
 			
 			list.add(info);
@@ -227,18 +230,18 @@ public class MultiblockProjection{
 			this.templateWorld = projection.templateWorld;
 			this.settings = projection.settings;
 			this.tBlockInfo = templateBlockInfo;
-			this.tPos = StructureTemplate.calculateRelativePosition(this.settings, templateBlockInfo.pos).subtract(projection.offset);
+			this.tPos = StructureTemplate.calculateRelativePosition(this.settings, templateBlockInfo.pos()).subtract(projection.offset);
 		}
 		
 		/** Convenience method for getting the state with mirror and rotation already applied */
 		public BlockState getModifiedState(Level realWorld, BlockPos realPos){
-			return this.templateWorld.getBlockState(this.tBlockInfo.pos)
+			return this.templateWorld.getBlockState(this.tBlockInfo.pos())
 					.mirror(this.settings.getMirror())
 					.rotate(realWorld, realPos, this.settings.getRotation());
 		}
 		
 		public BlockState getRawState(){
-			return this.templateWorld.getBlockState(this.tBlockInfo.pos);
+			return this.templateWorld.getBlockState(this.tBlockInfo.pos());
 		}
 	}
 }
