@@ -2,18 +2,18 @@ package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.openzen.zencode.java.ZenCodeType.Constructor;
+import org.openjdk.nashorn.internal.objects.annotations.Constructor;
+import org.openzen.zencode.java.ZenCodeType;
 import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
 
-import com.blamejared.crafttweaker.api.CraftTweakerAPI;
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.Reservoir;
-import flaxbeard.immersivepetroleum.api.crafting.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 
@@ -23,22 +23,21 @@ public class ReservoirTweaker{
 	
 	@Method
 	public static boolean remove(String name){
-			List<ResourceLocation> test = Reservoir.map.keySet().stream()
-				.filter(loc -> loc.getPath().contains(name))
-				.collect(Collectors.toList());
+		List<ResourceLocation> test = ReservoirType.map.keySet().stream()
+				.filter(loc -> loc.getPath().contains(name)).toList();
 		
 		if(test.size() > 1){
-			CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
+			//CraftTweakerAPI.logError("§cMultiple results for \"%s\"§r", name);
 		}else if(test.size() == 1){
 			ResourceLocation id = test.get(0);
-			if(Reservoir.map.containsKey(id)){
-				Reservoir.map.remove(id);
+			if(ReservoirType.map.containsKey(id)){
+				ReservoirType.map.remove(id);
 				return true;
 			}else{
-				CraftTweakerAPI.logError("§c%s does not exist, or was already removed.§r", id);
+				//CraftTweakerAPI.logError("§c%s does not exist, or was already removed.§r", id);
 			}
 		}else{
-			CraftTweakerAPI.logInfo("\"%s\" does not exist or could not be found.", name);
+			//CraftTweakerAPI.logInfo("\"%s\" does not exist or could not be found.", name);
 		}
 		
 		return false;
@@ -46,7 +45,7 @@ public class ReservoirTweaker{
 	
 	@Method
 	public static void removeAll(){
-		Reservoir.map.clear();
+		ReservoirType.map.clear();
 	}
 	
 	@ZenRegister
@@ -55,32 +54,39 @@ public class ReservoirTweaker{
 		
 		private boolean isValid = true;
 		
-		private IFluidStack iFluidStack;
-		private int minSize, maxSize;
-		private int traceAmount;
-		private int weight;
+		private final IFluidStack iFluidStack;
+		private final int minSize;
+		private final int maxSize;
+		private final int traceAmount;
+		private final int equilibrium;
+		private final int weight;
 		
-		private List<ResourceLocation> dimWhitelist = new ArrayList<>();
-		private List<ResourceLocation> dimBlacklist = new ArrayList<>();
-		private List<ResourceLocation> bioWhitelist = new ArrayList<>();
-		private List<ResourceLocation> bioBlacklist = new ArrayList<>();
+		private boolean isDimBlacklist = false;
+		private final List<ResourceLocation> dimensions = new ArrayList<>();
+		
+		private boolean isBioBlacklist = false;
+		private final List<ResourceLocation> biomes = new ArrayList<>();
 		
 		@Constructor
-		public ReservoirBuilder(IFluidStack fluid, int minSize, int maxSize, int traceAmount, int weight){
+		public ReservoirBuilder(IFluidStack fluid, int minSize, int maxSize, int traceAmount, int weight, @ZenCodeType.OptionalInt int equilibrium){
 			if(fluid == null){
-				CraftTweakerAPI.logError("§cReservoir fluid can not be null!§r");
+				//CraftTweakerAPI.logError("§cReservoir fluid can not be null!§r");
 				this.isValid = false;
 			}
 			if(minSize <= 0){
-				CraftTweakerAPI.logError("§cReservoir minSize has to be at least 1mb!§r");
+				//CraftTweakerAPI.logError("§cReservoir minSize has to be at least 1mb!§r");
 				this.isValid = false;
 			}
 			if(maxSize < minSize){
-				CraftTweakerAPI.logError("§cReservoir maxSize can not be smaller than minSize!§r");
+				//CraftTweakerAPI.logError("§cReservoir maxSize can not be smaller than minSize!§r");
 				this.isValid = false;
 			}
 			if(weight <= 1){
-				CraftTweakerAPI.logError("§cReservoir weight has to be greater than or equal to 1!§r");
+				//CraftTweakerAPI.logError("§cReservoir weight has to be greater than or equal to 1!§r");
+				this.isValid = false;
+			}
+			if(equilibrium <= 0){
+				//CraftTweakerAPI.logError("§cReservoir equilibrium amount has to be greater than or equal to 0!§r");
 				this.isValid = false;
 			}
 			
@@ -89,78 +95,64 @@ public class ReservoirTweaker{
 			this.maxSize = maxSize;
 			this.traceAmount = traceAmount;
 			this.weight = weight;
+			this.equilibrium = equilibrium;
 		}
 		
 		@Method
-		public ReservoirBuilder addDimensions(boolean blacklist, String[] names){
-			List<ResourceLocation> list = new ArrayList<>();
-			for(int i = 0;i < names.length;i++){
+		public ReservoirBuilder setDimensions(boolean blacklist, String[] names){
+			if(!this.dimensions.isEmpty()){
+				throw new IllegalArgumentException("Dimensions B/W-List already set!");
+			}
+			
+			this.isDimBlacklist = blacklist;
+			for(String name:names){
 				try{
-					list.add(new ResourceLocation(names[i]));
+					ResourceLocation rl = new ResourceLocation(name);
+					this.dimensions.add(rl);
 				}catch(ResourceLocationException e){
-					CraftTweakerAPI.logError("§caddDimension: %s§r", e.getMessage());
+					throw new IllegalArgumentException(e);
 				}
 			}
-			
-			if(blacklist){
-				this.dimBlacklist.addAll(list);
-			}else{
-				this.dimWhitelist.addAll(list);
-			}
-			
 			return this;
 		}
 		
 		@Method
-		public ReservoirBuilder addBiomes(boolean blacklist, String[] names){
-			List<ResourceLocation> list = new ArrayList<>();
-			for(int i = 0;i < names.length;i++){
+		public ReservoirBuilder setBiomes(boolean blacklist, String[] names){
+			if(!this.dimensions.isEmpty()){
+				throw new IllegalArgumentException("Biomes B/W-List already set!");
+			}
+			
+			this.isBioBlacklist = blacklist;
+			for(String name:names){
 				try{
-					list.add(new ResourceLocation(names[i]));
+					ResourceLocation rl = new ResourceLocation(name);
+					this.biomes.add(rl);
 				}catch(ResourceLocationException e){
-					CraftTweakerAPI.logError("§caddBiome: %s§r", e.getMessage());
+					throw new IllegalArgumentException(e);
 				}
 			}
-			
-			if(blacklist){
-				this.bioBlacklist.addAll(list);
-			}else{
-				this.bioWhitelist.addAll(list);
-			}
-			
 			return this;
 		}
 		
 		@Method
 		public void build(String name){
 			if(name.isEmpty()){
-				CraftTweakerAPI.logError("§cReservoir name can not be empty string!§r");
+				//CraftTweakerAPI.logError("§cReservoir name can not be empty string!§r");
 				this.isValid = false;
 			}
 			
 			if(this.isValid){
-				ResourceLocation id = TweakerUtils.ctLoc(name);
+				ResourceLocation id = ResourceUtils.ct(name);
 				
-				if(!Reservoir.map.containsKey(id)){
-					Reservoir reservoir = new Reservoir(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.weight);
+				if(!ReservoirType.map.containsKey(id)){
+					ReservoirType reservoir = new ReservoirType(name, id, this.iFluidStack.getFluid(), this.minSize, this.maxSize, this.traceAmount, this.equilibrium, this.weight);
 					
-					if(!this.dimWhitelist.isEmpty()){
-						reservoir.addDimension(false, this.dimWhitelist);
-					}
-					if(!this.dimBlacklist.isEmpty()){
-						reservoir.addDimension(true, this.dimBlacklist);
-					}
-					
-					if(!this.bioWhitelist.isEmpty()){
-						reservoir.addBiome(false, this.bioWhitelist);
-					}
-					if(!this.bioBlacklist.isEmpty()){
-						reservoir.addBiome(true, this.bioBlacklist);
-					}
+					reservoir.setDimensions(this.isDimBlacklist, this.dimensions);
+					reservoir.setDimensions(this.isBioBlacklist, this.biomes);
 					
 					ReservoirHandler.addReservoir(id, reservoir);
 				}else{
-					CraftTweakerAPI.logError("§cReservoir %s already exists!§r", name);
+					//CraftTweakerAPI.logError("§cReservoir %s already exists!§r", name);
 				}
 			}
 		}

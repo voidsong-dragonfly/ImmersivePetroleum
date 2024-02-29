@@ -3,12 +3,11 @@ package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
 
-import com.blamejared.crafttweaker.api.CraftTweakerAPI;
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 @ZenRegister
 @Name("mods.immersivepetroleum.FuelRegistry")
@@ -17,12 +16,12 @@ public class FuelTweaker{
 	@Method
 	public static void registerGeneratorFuel(IFluidStack fluid, int fluxPerTick){
 		if(fluid == null){
-			CraftTweakerAPI.logError("§cGeneratorFuel fluid can not be null!§r");
+			//CraftTweakerAPI.logError("§cGeneratorFuel fluid can not be null!§r");
 			return;
 		}
 		
 		if(fluxPerTick < 1){
-			CraftTweakerAPI.logError("§cGeneratorFuel fluxPerTick has to be at least 1!§r");
+			//CraftTweakerAPI.logError("§cGeneratorFuel fluxPerTick has to be at least 1!§r");
 			return;
 		}
 		
@@ -33,7 +32,7 @@ public class FuelTweaker{
 	@Method
 	public static void registerMotorboatFuel(IFluidStack fluid){
 		if(fluid == null){
-			CraftTweakerAPI.logError("§cMotorboatFuel fluid can not be null!§r");
+			//CraftTweakerAPI.logError("§cMotorboatFuel fluid can not be null!§r");
 			return;
 		}
 		

@@ -8,25 +8,30 @@ import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import com.blamejared.crafttweaker.api.item.IItemStack;
 import com.blamejared.crafttweaker.api.item.MCItemStack;
-import com.blamejared.crafttweaker.impl.tag.MCTagWithAmount;
+import com.blamejared.crafttweaker.api.tag.type.KnownTag;
 import com.blamejared.crafttweaker_annotations.annotations.Document;
+import com.mojang.datafixers.functions.PointFreeRule.Many;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
+import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import mezz.jei.api.recipe.IRecipeManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 @ZenRegister
 @Document("mods/immersivepetroleum/Coker")
 @Name("mods.immersivepetroleum.CokerUnit")
-public class CokerUnitRecipeTweaker implements IRecipeManager{
+public class CokerUnitRecipeTweaker implements IRecipeManager<CokerUnitRecipe>{
 	@Override
 	public RecipeType<CokerUnitRecipe> getRecipeType(){
-		return CokerUnitRecipe.TYPE;
+		return IPRecipeTypes.COKER.get();
 	}
 	
 	/**
@@ -40,13 +45,13 @@ public class CokerUnitRecipeTweaker implements IRecipeManager{
 	/**
 	 * Removes all recipes that output the given IIngredient.
 	 * 
-	 * @param output
+	 * @param output {@link IIngredient} output to remove
 	 * @docParam output <item:immersivepetroleum:petcoke>
 	 * @docParam output <tag:items:forge:coal_petcoke>
 	 */
 	@Method
 	public void remove(IIngredient output){
-		CokerUnitRecipe.recipes.values().removeIf(recipe -> output.matches(new MCItemStack(recipe.outputItem)));
+		CokerUnitRecipe.recipes.values().removeIf(recipe -> output.matches(new MCItemStack(recipe.outputItem.get())));
 	}
 	
 	/**
@@ -56,19 +61,18 @@ public class CokerUnitRecipeTweaker implements IRecipeManager{
 	 */
 	@Method
 	public void remove(IFluidStack output){
-		CokerUnitRecipe.recipes.values().removeIf(recipe -> recipe.outputFluid.testIgnoringAmount(output.getInternal()));
+		CokerUnitRecipe.recipes.values().removeIf(recipe -> recipe.outputFluid.isFluidEqual(output.getInternal()));
 	}
 	
 	/**
 	 * Adds a recipe to the Coker
 	 * 
-	 * @param name The recipe name, without the resource location
-	 * @param inputItem The input ingredient
-	 * @param outputItem The output ingredient
-	 * @param inputFluid The input fluid
+	 * @param name        The recipe name, without the resource location
+	 * @param inputItem   The input ingredient
+	 * @param outputItem  The output ingredient
+	 * @param inputFluid  The input fluid
 	 * @param outputFluid The output fluid
-	 * @param energy energy required per tick
-	 * 
+	 * @param energy      energy required per tick
 	 * @docParam name "clay_from_sand"
 	 * @docParam inputItem <item:minecraft:sand>
 	 * @docParam outputItem <item:minecraft:clay_ball>
@@ -77,18 +81,20 @@ public class CokerUnitRecipeTweaker implements IRecipeManager{
 	 * @docParam energy 1024
 	 */
 	@Method
-	public void addRecipe(String name, IItemStack inputItem, IItemStack outputItem, MCTagWithAmount<Fluid> inputFluid, MCTagWithAmount<Fluid> outputFluid, int energy){
-		ResourceLocation id = TweakerUtils.ctLoc("cokerunit/" + name);
-		FluidTagInput outFluid = new FluidTagInput(outputFluid.getTag().getId(), outputFluid.getAmount());
-		FluidTagInput inFluid = new FluidTagInput(inputFluid.getTag().getId(), inputFluid.getAmount());
+	public void addRecipe(String name, IItemStack inputItem, IItemStack outputItem, Many<KnownTag<Fluid>> inputFluid, IFluidStack outputFluid, int energy){
+		name = fixRecipeName(name);
+		
+		ResourceLocation id = ResourceUtils.ct("cokerunit/" + name);
+		FluidStack outFluid = outputFluid.getInternal();
+		FluidTagInput inFluid = new FluidTagInput(inputFluid.getData().getTagKey(), inputFluid.getAmount());
 		
 		IngredientWithSize inStack = new IngredientWithSize(Ingredient.of(inputItem.getInternal()), inputItem.getAmount());
-		ItemStack outStack = outputItem.getInternal();
+		Lazy<ItemStack> outStack = Lazy.of(outputItem::getInternal);
 		
 		CokerUnitRecipe recipe = new CokerUnitRecipe(id, outStack, outFluid, inStack, inFluid, energy, 30);
 		
 		// Does NOT work with this
-		//CraftTweakerAPI.apply(new ActionAddRecipe(this, recipe, null));
+		//CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));
 		
 		// This however does, while it may not be the safest thing to do..
 		CokerUnitRecipe.recipes.put(id, recipe);
