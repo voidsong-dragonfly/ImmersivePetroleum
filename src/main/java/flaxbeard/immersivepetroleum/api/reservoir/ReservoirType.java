@@ -135,20 +135,30 @@ public class ReservoirType extends IESerializableRecipe{
 		return nbt;
 	}
 	
-	public void setBiomes(boolean blacklist, ResourceLocation... names){
-		setBiomes(blacklist, Arrays.asList(names));
+	public ReservoirType setBiomes(boolean blacklist, ResourceLocation... names){
+		return setBiomes(blacklist, Arrays.asList(names));
 	}
 	
-	public void setBiomes(boolean blacklist, List<ResourceLocation> names){
-		this.biomes = new BWList(new HashSet<>(names), blacklist);
+	public ReservoirType setBiomes(boolean blacklist, List<ResourceLocation> names){
+		return setBiomes(new BWList(new HashSet<>(names), blacklist));
 	}
 	
-	public void setDimensions(boolean blacklist, ResourceLocation... names){
-		setDimensions(blacklist, Arrays.asList(names));
+	public ReservoirType setBiomes(@Nonnull BWList biomeList){
+		this.biomes = biomeList;
+		return this;
 	}
 	
-	public void setDimensions(boolean blacklist, List<ResourceLocation> names){
-		this.dimensions = new BWList(new HashSet<>(names), blacklist);
+	public ReservoirType setDimensions(boolean blacklist, ResourceLocation... names){
+		return setDimensions(blacklist, Arrays.asList(names));
+	}
+	
+	public ReservoirType setDimensions(boolean blacklist, List<ResourceLocation> names){
+		return setDimensions(new BWList(new HashSet<>(names), blacklist));
+	}
+	
+	public ReservoirType setDimensions(@Nonnull BWList dimensionList){
+		this.dimensions = dimensionList;
+		return this;
 	}
 	
 	public Set<ResourceLocation> getBiomeList(){
@@ -270,7 +280,7 @@ public class ReservoirType extends IESerializableRecipe{
 			}
 			
 			boolean contains = this.set.contains(rl);
-			return this.isBlacklist ? !contains : contains;
+			return this.isBlacklist ^ contains;
 		}
 		
 		public Set<ResourceLocation> getSet(){

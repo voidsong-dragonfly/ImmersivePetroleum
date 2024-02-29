@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 	
+	// @formatter:off
 	public static final Codec<ReservoirType> CODEC = RecordCodecBuilder.create(inst -> inst.group(
 		Codec.STRING.fieldOf("name").forGetter(r -> r.name),
 		ResourceLocation.CODEC.fieldOf("fluid").forGetter(r -> r.fluidLocation),
@@ -24,14 +25,12 @@ public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 		ReservoirType.BWList.CODEC.fieldOf("biomes").forGetter(r -> r.getBiomes())
 		
 	).apply(inst, (name, fluid, min, max, trace, equilibrium, weight, dimensions, biomes) -> {
-		// That null is gonna be nuked later..
-		ReservoirType type = new ReservoirType(name, fluid, min, max, trace, equilibrium, weight);
-		
-		// TODO Maybe allow it to accept the BWLists directly in the constructor instead?
-		type.setDimensions(dimensions.isBlacklist(), dimensions.getSet().toArray(ResourceLocation[]::new));
-		type.setBiomes(biomes.isBlacklist(), biomes.getSet().toArray(ResourceLocation[]::new));
+		ReservoirType type = new ReservoirType(name, fluid, min, max, trace, equilibrium, weight)
+			.setDimensions(dimensions)
+			.setBiomes(biomes);
 		return type;
 	}));
+	// @formatter:on
 	
 	@Override
 	public Codec<ReservoirType> codec(){
