@@ -3,12 +3,12 @@ package flaxbeard.immersivepetroleum.common.fluids;
 import javax.annotation.Nonnull;
 
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 
 public class CrudeOilFluid extends IPFluid{
-	public static final Material MATERIAL = createMaterial(MaterialColor.COLOR_BLACK);
-	
 	public CrudeOilFluid(IPFluidEntry entry){
 		super(entry);
 	}
@@ -30,7 +30,15 @@ public class CrudeOilFluid extends IPFluid{
 	
 	public static class CrudeOilBlock extends IPFluidBlock{
 		public CrudeOilBlock(IPFluidEntry entry, BlockBehaviour.Properties props){
-			super(entry, BlockBehaviour.Properties.of(MATERIAL).noCollission().strength(100.0F));
+			super(entry, BlockBehaviour.Properties.of()
+	                .mapColor(MapColor.COLOR_BLACK)
+	                .replaceable()
+	                .noCollission()
+	                .strength(100.0F)
+	                .pushReaction(PushReaction.DESTROY)
+	                .noLootTable()
+	                .liquid()
+	                .sound(SoundType.EMPTY));
 		}
 	}
 }

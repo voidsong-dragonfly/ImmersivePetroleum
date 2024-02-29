@@ -48,8 +48,6 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.MaterialColor;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.NeoForgeMod;
@@ -96,10 +94,11 @@ public class IPFluid extends FlowingFluid{
 		return entry;
 	}
 	
-	
+	/*
 	protected static Material createMaterial(MaterialColor color){
 		return new Material(color, true, false, false, false, false, true, PushReaction.DESTROY);
 	}
+	*/
 	
 	private static IPFluidEntry staticEntry;
 	private static IPFluid makeFluid(Function<IPFluidEntry, ? extends IPFluid> make, IPFluid.IPFluidEntry entry){
