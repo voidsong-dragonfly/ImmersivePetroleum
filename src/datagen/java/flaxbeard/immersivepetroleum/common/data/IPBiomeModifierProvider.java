@@ -14,6 +14,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.RegistryOps;
@@ -22,30 +24,28 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.JsonCodecProvider;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
-import net.minecraftforge.registries.ForgeRegistries.Keys;
-import net.minecraftforge.registries.holdersets.AnyHolderSet;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.JsonCodecProvider;
+import net.neoforged.neoforge.common.world.BiomeModifier;
+import net.neoforged.neoforge.common.world.BiomeModifiers.AddFeaturesBiomeModifier;
+import net.neoforged.neoforge.registries.NeoForgeRegistries.Keys;
+import net.neoforged.neoforge.registries.holdersets.AnyHolderSet;
 
 public class IPBiomeModifierProvider{
 	public static void method(DataGenerator generator, ExistingFileHelper exhelper, Consumer<DataProvider> add){
-		IPWorldGen.registerReservoirGen();
-		
-		final RegistryAccess registryAccess = RegistryAccess.builtinCopy();
+		final RegistryAccess registryAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
 		
 		final RegistryOps<JsonElement> jsonOps = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
-		final Registry<Biome> biomeReg = registryAccess.registryOrThrow(Registry.BIOME_REGISTRY);
-		final Registry<PlacedFeature> featureReg = registryAccess.registryOrThrow(Registry.PLACED_FEATURE_REGISTRY);
+		final Registry<Biome> biomeReg = registryAccess.registryOrThrow(Registries.BIOME);
+		final Registry<PlacedFeature> featureReg = registryAccess.registryOrThrow(Registries.PLACED_FEATURE);
 		
-		final AnyHolderSet<Biome> anyBiome = new AnyHolderSet<>(biomeReg);
+		final AnyHolderSet<Biome> anyBiome = new AnyHolderSet<Biome>(biomeReg.asLookup());
 		
 		final ImmutableMap.Builder<ResourceLocation, BiomeModifier> modifiers = ImmutableMap.builder();
 		for(Entry<String, Holder<PlacedFeature>> entry:IPWorldGen.features.entrySet()){
 			ResourceLocation name = ResourceUtils.ip(entry.getKey());
 			
-			ResourceKey<PlacedFeature> key = ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, name);
+			ResourceKey<PlacedFeature> key = ResourceKey.create(Registries.PLACED_FEATURE, name);
 			Holder<PlacedFeature> featureHolder = featureReg.getHolderOrThrow(key);
 			
 			AddFeaturesBiomeModifier modifier = new AddFeaturesBiomeModifier(anyBiome, HolderSet.direct(featureHolder), Decoration.UNDERGROUND_ORES);

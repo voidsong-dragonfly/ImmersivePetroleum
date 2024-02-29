@@ -30,6 +30,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	
 	private ReservoirBuilder(){
 		super(Serializers.RESERVOIR_SERIALIZER.get());
+		
 		addWriter(writer -> {
 			writer.addProperty("fluid", this.fluid);
 			writer.addProperty("fluidminimum", this.fluidMinimum);

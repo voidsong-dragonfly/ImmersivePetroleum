@@ -9,7 +9,9 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.TickEvent.Phase;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT)
@@ -27,7 +29,7 @@ public class SneakScrollHandler{
 	
 	@SubscribeEvent
 	public static void handleScroll(InputEvent.MouseScrollingEvent event){
-		double delta = event.getScrollDelta();
+		double delta = event.getScrollDeltaY();
 		
 		if(sneaking && delta != 0.0){
 			Player player = MCUtil.getPlayer();

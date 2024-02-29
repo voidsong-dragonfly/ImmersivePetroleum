@@ -27,7 +27,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -36,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class DebugItem extends IPItemBase{
@@ -83,7 +83,8 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
-	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
+	public boolean addSelfToCreativeTab(){
+		return false;
 	}
 	
 	@Override
@@ -211,7 +212,7 @@ public class DebugItem extends IPItemBase{
 					
 					player.displayClientMessage(Component.literal(dimensionRL.toString()), false);
 					
-					for(ReservoirType res:ReservoirType.map.values()){
+					for(ReservoirType res:ReservoirType.map){
 						BWList dims = res.getDimensions();
 						BWList biom = res.getBiomes();
 						
@@ -243,7 +244,7 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	public void onSpeedboatClick(MotorboatEntity speedboatEntity, Player player, ItemStack debugStack){
-		if(speedboatEntity.level.isClientSide || DebugItem.getMode(debugStack) != Modes.INFO_SPEEDBOAT){
+		if(speedboatEntity.level().isClientSide() || DebugItem.getMode(debugStack) != Modes.INFO_SPEEDBOAT){
 			return;
 		}
 		

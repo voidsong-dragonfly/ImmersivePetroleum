@@ -281,6 +281,7 @@ public class ReservoirIsland{
 	
 	public CompoundTag writeToNBT(){
 		CompoundTag nbt = new CompoundTag();
+		this.reservoir.getType();
 		nbt.putString("reservoir", this.reservoir.getId().toString()); // FIXME ! This is only temporary
 		nbt.putInt("amount", (int) (this.getAmount() & MAX_AMOUNT));
 		nbt.putInt("capacity", (int) (this.getCapacity() & MAX_AMOUNT));

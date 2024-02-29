@@ -1,21 +1,22 @@
 package flaxbeard.immersivepetroleum.api.reservoir;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
@@ -33,7 +34,7 @@ import net.neoforged.jarjar.nio.util.Lazy;
 public class ReservoirType extends IESerializableRecipe{
 	static final Lazy<ItemStack> EMPTY_LAZY = Lazy.of(() -> ItemStack.EMPTY);
 	
-	public static Map<ResourceLocation, ReservoirType> map = new HashMap<>();
+	public static List<ReservoirType> map = new ArrayList<>();
 	
 	public final String name;
 	public final ResourceLocation fluidLocation;
@@ -61,8 +62,8 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @param equilibrium   Maximum amount of fluid that residuals regenerate at
 	 * @param weight        The weight for this reservoir
 	 */
-	public ReservoirType(String name, ResourceLocation id, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int equilibrium, int weight){
-		this(name, id, BuiltInRegistries.FLUID.get(fluidLocation), minSize, maxSize, residual, equilibrium, weight);
+	public ReservoirType(String name, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int equilibrium, int weight){
+		this(name, BuiltInRegistries.FLUID.get(fluidLocation), minSize, maxSize, residual, equilibrium, weight);
 	}
 	
 	/**
@@ -77,9 +78,8 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @param equilibrium   Maximum amount of fluid that residuals regenerate at
 	 * @param weight   The weight for this reservoir
 	 */
-	public ReservoirType(String name, ResourceLocation id, Fluid fluid, int minSize, int maxSize, int residual, int equilibrium, int weight){
+	public ReservoirType(String name, Fluid fluid, int minSize, int maxSize, int residual, int equilibrium, int weight){
 		super(new TagOutput(ItemStack.EMPTY), IPRecipeTypes.RESERVOIR);
-//		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, id);
 		this.name = name;
 		this.fluidLocation = RegistryUtils.getRegistryNameOf(fluid);
 		this.fluid = fluid;
@@ -92,7 +92,6 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	public ReservoirType(CompoundTag nbt){
 		super(new TagOutput(ItemStack.EMPTY), IPRecipeTypes.RESERVOIR);
-//		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, new ResourceLocation(nbt.getString("id")));
 		
 		this.name = nbt.getString("name");
 		
@@ -121,7 +120,6 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	public CompoundTag writeToNBT(CompoundTag nbt){
 		nbt.putString("name", this.name);
-//		nbt.putString("id", this.id.toString()); // FIXME ! In need of a replacement
 		nbt.putString("fluid", this.fluidLocation.toString());
 		
 		nbt.putInt("minSize", this.minSize);
@@ -135,11 +133,6 @@ public class ReservoirType extends IESerializableRecipe{
 		nbt.putInt("weight", this.weight);
 		
 		return nbt;
-	}
-	
-	@Deprecated(forRemoval = true)
-	public ResourceLocation getId(){
-		return new ResourceLocation(ImmersivePetroleum.MODID, "fixme");
 	}
 	
 	public void setBiomes(boolean blacklist, ResourceLocation... names){
@@ -215,6 +208,14 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @author TwistedGate
 	 */
 	public static class BWList{
+		
+		public static final Codec<BWList> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+			Codec.BOOL.fieldOf("isBlacklist").forGetter(l -> l.isBlacklist()),
+			ResourceLocation.CODEC.listOf().fieldOf("list").xmap(HashSet::new, ArrayList::new).forGetter(l -> (HashSet<ResourceLocation>) l.getSet())
+		).apply(inst, (isBlacklist, list) -> {
+			return new BWList(list, isBlacklist);
+		}));
+		
 		private Set<ResourceLocation> set;
 		private boolean isBlacklist;
 		public BWList(boolean isBlacklist){

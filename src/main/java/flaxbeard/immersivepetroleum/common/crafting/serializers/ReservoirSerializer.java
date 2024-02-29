@@ -1,71 +1,45 @@
 package flaxbeard.immersivepetroleum.common.crafting.serializers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.conditions.ICondition.IContext;
 
 public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
+	
+	public static final Codec<ReservoirType> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+		Codec.STRING.fieldOf("name").forGetter(r -> r.name),
+		ResourceLocation.CODEC.fieldOf("fluid").forGetter(r -> r.fluidLocation),
+		Codec.INT.fieldOf("fluidminimum").forGetter(r -> r.minSize),
+		Codec.INT.fieldOf("fluidcapacity").forGetter(r -> r.maxSize),
+		Codec.INT.fieldOf("fluidtrace").forGetter(r -> r.residual),
+		Codec.INT.fieldOf("equilibrium").forGetter(r -> r.equilibrium),
+		Codec.INT.fieldOf("weight").forGetter(r -> r.weight),
+
+		ReservoirType.BWList.CODEC.fieldOf("dimensions").forGetter(r -> r.getDimensions()),
+		ReservoirType.BWList.CODEC.fieldOf("biomes").forGetter(r -> r.getBiomes())
+		
+	).apply(inst, (name, fluid, min, max, trace, equilibrium, weight, dimensions, biomes) -> {
+		// That null is gonna be nuked later..
+		ReservoirType type = new ReservoirType(name, fluid, min, max, trace, equilibrium, weight);
+		
+		// TODO Maybe allow it to accept the BWLists directly in the constructor instead?
+		type.setDimensions(dimensions.isBlacklist(), dimensions.getSet().toArray(ResourceLocation[]::new));
+		type.setBiomes(biomes.isBlacklist(), biomes.getSet().toArray(ResourceLocation[]::new));
+		return type;
+	}));
+	
 	@Override
-	public ReservoirType readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
-		String name = GsonHelper.getAsString(json, "name");
-		ResourceLocation fluid = new ResourceLocation(GsonHelper.getAsString(json, "fluid"));
-		int min = GsonHelper.getAsInt(json, "fluidminimum");
-		int max = GsonHelper.getAsInt(json, "fluidcapacity");
-		int trace = GsonHelper.getAsInt(json, "fluidtrace");
-		int equilibrium = GsonHelper.getAsInt(json, "equilibrium", 0);
-		int weight = GsonHelper.getAsInt(json, "weight");
-		
-		ReservoirType reservoir = new ReservoirType(name, recipeId, fluid, min, max, trace, equilibrium, weight);
-		
-		ImmersivePetroleum.log.debug("Loaded reservoir {} as {}, with {}mB to {}mB of {} and {}mB trace at {}mB equilibrium, with {} of weight.",
-				recipeId, name, min, max, fluid, trace, equilibrium, weight);
-		
-		if(GsonHelper.isValidNode(json, "dimensions")){
-			JsonObject dimensions = GsonHelper.getAsJsonObject(json, "dimensions");
-			
-			boolean isBlacklist = GsonHelper.getAsBoolean(dimensions, "isBlacklist");
-			
-			if(GsonHelper.isValidNode(dimensions, "list")){
-				JsonArray array = GsonHelper.getAsJsonArray(dimensions, "list");
-				
-				List<ResourceLocation> list = new ArrayList<>();
-				array.forEach(rl -> list.add(new ResourceLocation(rl.getAsString())));
-				reservoir.setDimensions(isBlacklist, list);
-			}
-		}
-		
-		if(GsonHelper.isValidNode(json, "biomes")){
-			JsonObject biomes = GsonHelper.getAsJsonObject(json, "biomes");
-			
-			boolean isBlacklist = GsonHelper.getAsBoolean(biomes, "isBlacklist");
-			
-			if(GsonHelper.isValidNode(biomes, "list")){
-				JsonArray array = GsonHelper.getAsJsonArray(biomes, "list");
-				
-				List<ResourceLocation> list = new ArrayList<>();
-				array.forEach(rl -> list.add(new ResourceLocation(rl.getAsString())));
-				reservoir.setBiomes(isBlacklist, list);
-			}
-		}
-		
-		return reservoir;
+	public Codec<ReservoirType> codec(){
+		return CODEC;
 	}
 	
 	@Override
-	public ReservoirType fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer){
+	public ReservoirType fromNetwork(FriendlyByteBuf buffer){
 		return new ReservoirType(buffer.readNbt()); // Very convenient having the NBT stuff already.
 	}
 	

@@ -48,7 +48,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 	protected void writeCustom(CompoundTag tag){
 		tag.putBoolean("slave", this.isSlave);
 		tag.putInt("timer", this.timer);
-		tag.put("stack", this.stack.serializeNBT());
+		tag.put("stack", this.stack.save(new CompoundTag()));
 	}
 	
 	@Override
@@ -121,7 +121,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 						final double bZ = (pos.getZ() + 0.5);
 						
 						world.playSound(null, bX, bY, bZ, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 0.25F);
-						world.playSound(null, bX, bY, bZ, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE, SoundSource.BLOCKS, 0.25F, 0.1F);
+						world.playSound(null, bX, bY, bZ, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS, 0.25F, 0.1F);
 					}
 					
 					return true;
@@ -136,9 +136,9 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 						if(dst < 4.0){
 							double scale = 1.0 - Mth.clamp(dst / 3D, 0.0, 1.0);
 							
+							player.animateHurt(Math.random() < 0.5 ? 180F : 0F);
 							player.hurtDuration = 40;
 							player.hurtTime = 40 + (int) (30 * scale);
-							player.hurtDir = Math.random() < 0.5 ? 180F : 0F;
 						}
 					}
 					
@@ -159,7 +159,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 				}else{
 					SoundEvent sound = ((BulletItem) ExternalModContent.getIEItem_Buckshot()).getType().getSound();
 					if(sound == null){
-						sound = IESounds.revolverFire.get();
+						sound = IESounds.revolverFire.value();
 					}
 					
 					final double bX = (pos.getX() + 0.5);

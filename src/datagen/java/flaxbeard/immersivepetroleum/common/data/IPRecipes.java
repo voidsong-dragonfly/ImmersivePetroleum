@@ -2,20 +2,14 @@ package flaxbeard.immersivepetroleum.common.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import blusunrize.immersiveengineering.api.EnumMetals;
 import blusunrize.immersiveengineering.api.IETags;
+import blusunrize.immersiveengineering.api.crafting.BlastFurnaceFuel;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.builders.ArcFurnaceRecipeBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.BlastFurnaceFuelBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.BottlingMachineRecipeBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.CrusherRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.GeneratorFuelBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.RefineryRecipeBuilder;
-import blusunrize.immersiveengineering.api.crafting.builders.SqueezerRecipeBuilder;
+import blusunrize.immersiveengineering.api.energy.GeneratorFuel;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
 import blusunrize.immersiveengineering.common.crafting.fluidaware.IngredientFluidStack;
 import blusunrize.immersiveengineering.common.items.ToolUpgradeItem;
@@ -24,6 +18,12 @@ import blusunrize.immersiveengineering.common.register.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.register.IEFluids;
 import blusunrize.immersiveengineering.common.register.IEItems;
 import blusunrize.immersiveengineering.data.recipebuilder.FluidAwareShapedRecipeBuilder;
+import blusunrize.immersiveengineering.data.recipes.builder.ArcFurnaceRecipeBuilder;
+import blusunrize.immersiveengineering.data.recipes.builder.BottlingMachineRecipeBuilder;
+import blusunrize.immersiveengineering.data.recipes.builder.CrusherRecipeBuilder;
+import blusunrize.immersiveengineering.data.recipes.builder.MixerRecipeBuilder;
+import blusunrize.immersiveengineering.data.recipes.builder.RefineryRecipeBuilder;
+import blusunrize.immersiveengineering.data.recipes.builder.SqueezerRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecipeBuilder;
@@ -33,34 +33,39 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 
 public class IPRecipes extends RecipeProvider{
 	private final Map<String, Integer> PATH_COUNT = new HashMap<>();
 	
-	protected Consumer<FinishedRecipe> out;
-	public IPRecipes(DataGenerator generatorIn){
-		super(generatorIn);
+	protected RecipeOutput out;
+	public IPRecipes(PackOutput pOutput){
+		super(pOutput);
+//		super(generatorIn);
 	}
 	
 	@Override
-	protected void buildCraftingRecipes(Consumer<FinishedRecipe> out){
+	protected void buildRecipes(RecipeOutput out){
 		this.out = out;
 		
 		itemRecipes();
@@ -73,18 +78,20 @@ public class IPRecipes extends RecipeProvider{
 		refineryRecipes();
 		paraffinWaxRecipes();
 		
-		MixerRecipeBuilder.builder(IPContent.Fluids.NAPALM.source().get(), 500)
-			.addFluidTag(IPTags.Fluids.gasoline, 500)
-			.addInput(new IngredientWithSize(IETags.getTagsFor(EnumMetals.ALUMINUM).dust, 3))
+		MixerRecipeBuilder.builder()
+			.output(IPContent.Fluids.NAPALM.source().get(), 500)
+			.fluidInput(IPTags.Fluids.gasoline, 500)
+			.input(new IngredientWithSize(IETags.getTagsFor(EnumMetals.ALUMINUM).dust, 3))
 			.setEnergy(3200)
 			.build(this.out, rl("mixer/napalm"));
 		
-		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel, 322)
-			.build(this.out, rl("fuels/diesel"));
-		GeneratorFuelBuilder.builder(IPTags.Fluids.diesel_sulfur, 285)
-			.build(this.out, rl("fuels/diesel_sulfur"));
-		GeneratorFuelBuilder.builder(IPTags.Fluids.kerosene, 208)
-			.build(this.out, rl("fuels/kerosene"));
+		addGeneratorFuel(rl("fuels/diesel"), IPTags.Fluids.diesel, 322);
+		addGeneratorFuel(rl("fuels/diesel_sulfur"), IPTags.Fluids.diesel_sulfur, 285);
+		addGeneratorFuel(rl("fuels/kerosene"), IPTags.Fluids.kerosene, 208);
+	}
+	
+	private void addGeneratorFuel(ResourceLocation rl, TagKey<Fluid> tag, int burntime){
+		this.out.accept(rl, new GeneratorFuel(tag, burntime), null);
 	}
 	
 	private void reservoirs(){
@@ -149,6 +156,10 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("distillationtower/lubricant_cracking"));
 	}
 	
+	private void addBlastFurnaceFuel(ResourceLocation rl, TagKey<Item> tag, int time){
+		this.out.accept(rl, new BlastFurnaceFuel(Ingredient.of(tag), time), null);
+	}
+	
 	/** Contains everything related to Petcoke */
 	private void cokerRecipes(){
 		CokerUnitRecipeBuilder.builder(new ItemStack(IPContent.Items.PETCOKE.get(), 2), IPContent.Fluids.DIESEL_SULFUR.get(), 27)
@@ -158,49 +169,58 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("coking/petcoke"));
 		
 		// Petcoke Compression and Decompression
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.PETCOKE.get())
+		
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.Blocks.PETCOKE.get())
 			.define('c', IPTags.Items.petcoke)
 			.pattern("ccc")
 			.pattern("ccc")
 			.pattern("ccc")
 			.unlockedBy("has_petcoke_item", has(IPTags.Items.petcoke))
 			.save(this.out, rl("petcoke_items_to_block"));
-		ShapelessRecipeBuilder.shapeless(IPContent.Items.PETCOKE.get(), 9)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IPContent.Items.PETCOKE.get(), 9)
 			.requires(IPTags.getItemTag(IPTags.Blocks.petcoke))
 			.unlockedBy("has_petcoke_block", has(IPTags.getItemTag(IPTags.Blocks.petcoke)))
 			.save(this.out, rl("petcoke_block_to_items"));
 		
 		// Registering Petcoke as Fuel for the Blastfurnace
+		addBlastFurnaceFuel(rl("blastfurnace/fuel_petcoke"), IPTags.Items.petcoke, 1200);
+		addBlastFurnaceFuel(rl("blastfurnace/fuel_petcoke_block"), IPTags.Items.petcokeStorage, 12000);
+		
+		/*
 		BlastFurnaceFuelBuilder.builder(IPTags.Items.petcoke)
 			.setTime(1200)
 			.build(this.out, rl("blastfurnace/fuel_petcoke"));
 		BlastFurnaceFuelBuilder.builder(IPTags.getItemTag(IPTags.Blocks.petcoke))
 			.setTime(12000)
 			.build(this.out, rl("blastfurnace/fuel_petcoke_block"));
+		*/
 		
 		// Petcoke Dust recipes
-		CrusherRecipeBuilder.builder(IPTags.Items.petcokeDust, 1)
-			.addInput(IPTags.Items.petcoke)
+		CrusherRecipeBuilder.builder()
+			.output(IPTags.Items.petcokeDust, 1)
+			.input(IPTags.Items.petcoke)
 			.setEnergy(2400)
 			.build(this.out, rl("crusher/petcoke"));
-		CrusherRecipeBuilder.builder(IPTags.Items.petcokeDust, 9)
-			.addInput(IPTags.Items.petcokeStorage)
+		CrusherRecipeBuilder.builder()
+			.output(IPTags.Items.petcokeDust, 9)
+			.input(IPTags.Items.petcokeStorage)
 			.setEnergy(4800)
 			.build(this.out, rl("crusher/petcoke_block"));
 		
 		// Petcoke dust and Iron Ingot to make Steel Ingot
-		ArcFurnaceRecipeBuilder.builder(IETags.getTagsFor(EnumMetals.STEEL).ingot, 1)
-			.addIngredient("input", Tags.Items.INGOTS_IRON)
-			.addInput(IPTags.Items.petcokeDust)
-			.addSlag(IETags.slag, 1)
+		ArcFurnaceRecipeBuilder.builder()
+			.output(IETags.getTagsFor(EnumMetals.STEEL).ingot, 1)
+			.input(Tags.Items.INGOTS_IRON)
+			.additive(IPTags.Items.petcokeDust)
+			.slag(IETags.slag, 1)
 			.setTime(400)
 			.setEnergy(204800)
 			.build(out, rl("arcfurnace/steel"));
 		
 		// 8 Petcoke Dust to 1 HOP Graphite Dust
 		SqueezerRecipeBuilder.builder()
-			.addResult(new IngredientWithSize(IETags.hopGraphiteDust))
-			.addInput(new IngredientWithSize(IPTags.Items.petcokeDust, 8))
+			.output(new IngredientWithSize(IETags.hopGraphiteDust))
+			.input(new IngredientWithSize(IPTags.Items.petcokeDust, 8))
 			.setEnergy(19200)
 			.build(out, rl("squeezer/graphite_dust"));
 	}
@@ -243,27 +263,30 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void refineryRecipes(){
-		RefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.GASOLINE.get(), 10))
-			.addInput(new FluidTagInput(IPTags.Fluids.naphtha, 7))
-			.addInput(new FluidTagInput(IPTags.Fluids.gasoline_additives, 3))
+		RefineryRecipeBuilder.builder()
+			.output(new FluidStack(IPContent.Fluids.GASOLINE.get(), 10))
+			.input(IPTags.Fluids.naphtha, 7)
+			.input(IPTags.Fluids.gasoline_additives, 3)
 			.setEnergy(80)
-			.build(out, rl("refinery/gasoline"));
+			.build(this.out, rl("refinery/gasoline"));
 		
-		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.CREOSOTE.getStill(), 16))
-			.addInput(new FluidTagInput(IPTags.Fluids.benzene, 8))
-			.addInput(new FluidTagInput(IPTags.Fluids.propylene, 8))
+		RefineryRecipeBuilder.builder()
+			.output(new FluidStack(IEFluids.CREOSOTE.getStill(), 16))
+			.input(IPTags.Fluids.benzene, 8)
+			.input(IPTags.Fluids.propylene, 8)
 			.setEnergy(240)
-			.build(out, rl("refinery/phenol"));
+			.build(this.out, rl("refinery/phenol"));
 		
-		RefineryRecipeBuilder.builder(new FluidStack(IEFluids.ACETALDEHYDE.getStill(), 8))
-			.addCatalyst(IETags.getTagsFor(EnumMetals.COPPER).plate)
-			.addInput(new FluidTagInput(IPTags.Fluids.ethylene, 8))
+		RefineryRecipeBuilder.builder()
+			.output(new FluidStack(IEFluids.ACETALDEHYDE.getStill(), 8))
+			.catalyst(IETags.getTagsFor(EnumMetals.COPPER).plate)
+			.input(IPTags.Fluids.ethylene, 8)
 			.setEnergy(120)
-			.build(out, rl("refinery/acetaldehyde"));
+			.build(this.out, rl("refinery/acetaldehyde"));
 	}
 	
 	private void speedboatUpgradeRecipes(){
-		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.REINFORCED_HULL.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.BoatUpgrades.REINFORCED_HULL.get())
 			.define('P', IETags.getTagsFor(EnumMetals.STEEL).plate)
 			.define('B', IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage))
 			.pattern("P P")
@@ -272,7 +295,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_steel_block", has(IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage)))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.ICE_BREAKER.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.BoatUpgrades.ICE_BREAKER.get())
 			.define('P', IETags.getTagsFor(EnumMetals.STEEL).plate)
 			.define('I', IETags.getTagsFor(EnumMetals.STEEL).ingot)
 			.define('B', IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage))
@@ -283,7 +306,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_steel_block", has(IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage)))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.TANK.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.BoatUpgrades.TANK.get())
 			.define('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('T', IEBlocks.MetalDevices.BARREL)
 			.pattern(" P ")
@@ -292,7 +315,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.RUDDERS.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.BoatUpgrades.RUDDERS.get())
 			.define('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('R', IETags.ironRod)
 			.pattern(" RR")
@@ -301,7 +324,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_iron_rod", has(IETags.ironRod))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.PADDLES.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.BoatUpgrades.PADDLES.get())
 			.define('P', IETags.getItemTag(IETags.treatedWood))
 			.define('S', IETags.treatedStick)
 			.pattern("S S")
@@ -323,7 +346,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
 			.save(this.out, rl("asphalt"));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.ASPHALT_STAIR.get(), 6)
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, IPContent.Blocks.ASPHALT_STAIR.get(), 6)
 			.define('A', IPTags.getItemTag(IPTags.Blocks.asphalt))
 			.pattern("A  ")
 			.pattern("AA ")
@@ -332,7 +355,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
 			.save(this.out, rl("asphalt_stair"));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.ASPHALT_SLAB.get(), 6)
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, IPContent.Blocks.ASPHALT_SLAB.get(), 6)
 			.define('A', IPTags.getItemTag(IPTags.Blocks.asphalt))
 			.pattern("AAA")
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
@@ -347,16 +370,16 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
 			.save(this.out, rl("asphalt"));
 		
-		SingleItemRecipeBuilder.stonecutting(Ingredient.of(IPContent.Blocks.ASPHALT.get()), IPContent.Blocks.ASPHALT_SLAB.get(), 2)
+		SingleItemRecipeBuilder.stonecutting(Ingredient.of(IPContent.Blocks.ASPHALT.get()), RecipeCategory.BUILDING_BLOCKS, IPContent.Blocks.ASPHALT_SLAB.get(), 2)
 			.unlockedBy("has_asphalt", has(IPContent.Blocks.ASPHALT.get()))
 			.save(this.out, "asphalt_slab_from_asphalt_stonecutting");
 		
-		SingleItemRecipeBuilder.stonecutting(Ingredient.of(IPContent.Blocks.ASPHALT.get()), IPContent.Blocks.ASPHALT_STAIR.get())
+		SingleItemRecipeBuilder.stonecutting(Ingredient.of(IPContent.Blocks.ASPHALT.get()), RecipeCategory.BUILDING_BLOCKS, IPContent.Blocks.ASPHALT_STAIR.get())
 			.unlockedBy("has_asphalt", has(IPContent.Blocks.ASPHALT.get()))
 			.save(this.out, "asphalt_stairs_from_asphalt_stonecutting");
 		
 		
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.GAS_GENERATOR.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.Blocks.GAS_GENERATOR.get())
 			.define('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('G', MetalDecoration.GENERATOR)
 			.define('C', IEBlocks.MetalDevices.CAPACITOR_LV)
@@ -368,7 +391,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_"+toPath(MetalDecoration.GENERATOR), has(MetalDecoration.GENERATOR))
 			.save(this.out, rl("gas_generator"));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.AUTO_LUBRICATOR.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.Blocks.AUTO_LUBRICATOR.get())
 			.define('G', Tags.Items.GLASS)
 			.define('T', IETags.getItemTag(IETags.treatedWood))
 			.define('P', IEBlocks.MetalDevices.FLUID_PIPE)
@@ -379,7 +402,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_"+toPath(IEBlocks.MetalDevices.FLUID_PIPE), has(IEBlocks.MetalDevices.FLUID_PIPE))
 			.save(this.out, rl("auto_lubricator"));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.FLARESTACK.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.Blocks.FLARESTACK.get())
 			.define('I', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('C', IEItems.Ingredients.COMPONENT_STEEL)
 			.define('P', IEBlocks.MetalDevices.FLUID_PIPE)
@@ -392,7 +415,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_"+toPath(IEBlocks.MetalDevices.FLUID_PIPE), has(IEBlocks.MetalDevices.FLUID_PIPE))
 			.save(this.out, rl("flarestack"));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.SEISMIC_SURVEY.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.Blocks.SEISMIC_SURVEY.get())
 			.pattern("SBH")
 			.pattern("SBS")
 			.pattern("MLM")
@@ -406,7 +429,7 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void itemRecipes(){
-		ShapedRecipeBuilder.shaped(IPContent.Items.OIL_CAN.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IPContent.Items.OIL_CAN.get())
 			.define('R', Tags.Items.DYES_RED)
 			.define('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('B', Items.BUCKET)
@@ -416,7 +439,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(IPContent.Items.PROJECTOR.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IPContent.Items.PROJECTOR.get())
 			.define('I', Tags.Items.INGOTS_IRON)
 			.define('W', IETags.getItemTag(IETags.treatedWood))
 			.define('L', MetalDecoration.LANTERN)
@@ -428,7 +451,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_treated_planks", has(IETags.getItemTag(IETags.treatedWood)))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(IPContent.Items.SPEEDBOAT.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, IPContent.Items.SPEEDBOAT.get())
 			.define('P', IETags.getItemTag(IETags.treatedWood))
 			.define('E', MetalDecoration.ENGINEERING_LIGHT)
 			.define('M', IEItems.Ingredients.COMPONENT_IRON)
@@ -448,7 +471,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_drill", has(IEItems.Tools.DRILL))
 			.save(out, rl(toPath(IEItems.Misc.TOOL_UPGRADES.get(ToolUpgradeItem.ToolUpgrade.DRILL_LUBE))));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Items.MOLOTOV.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, IPContent.Items.MOLOTOV.get())
 			.pattern("W")
 			.pattern("M")
 			.define('M', IPContent.Items.GASOLINE_BOTTLE.get())
@@ -456,7 +479,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_gasoline_bottle", has(IPContent.Items.GASOLINE_BOTTLE.get()))
 			.save(this.out, rl("molotov_wool"));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Items.MOLOTOV.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, IPContent.Items.MOLOTOV.get())
 			.pattern("F")
 			.pattern("M")
 			.define('M', IPContent.Items.GASOLINE_BOTTLE.get())
@@ -464,27 +487,28 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_gasoline_bottle", has(IPContent.Items.GASOLINE_BOTTLE.get()))
 			.save(this.out, rl("molotov_fabric"));
 		
-		BottlingMachineRecipeBuilder.builder(IPContent.Items.GASOLINE_BOTTLE.get())
-			.addFluidTag(IPTags.Fluids.gasoline, GasolineBottleItem.FILLED_AMOUNT)
-			.addInput(Items.GLASS_BOTTLE)
+		BottlingMachineRecipeBuilder.builder()
+			.input(IPContent.Items.GASOLINE_BOTTLE.get())
+			.fluidInput(IPTags.Fluids.gasoline, GasolineBottleItem.FILLED_AMOUNT)
+			.input(Items.GLASS_BOTTLE)
 			.build(this.out, rl("bottling/gasoline_bottle"));
 	}
 	
 	private void paraffinWaxRecipes(){
 		// Paraffin Wax Compression and Decompression
-		ShapedRecipeBuilder.shaped(IPContent.Blocks.PARAFFIN_WAX.get())
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.Blocks.PARAFFIN_WAX.get())
 			.define('c', IPTags.Items.paraffinWax)
 			.pattern("ccc")
 			.pattern("ccc")
 			.pattern("ccc")
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(this.out, rl("paraffin_wax_to_block"));
-		ShapelessRecipeBuilder.shapeless(IPContent.Items.PARAFFIN_WAX.get(), 9)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IPContent.Items.PARAFFIN_WAX.get(), 9)
 			.requires(IPTags.getItemTag(IPTags.Blocks.paraffinWaxBlock))
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(this.out, rl("paraffin_wax_block_to_items"));
 		
-		ShapedRecipeBuilder.shaped(IEItems.Ingredients.ERSATZ_LEATHER, 8)
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IEItems.Ingredients.ERSATZ_LEATHER, 8)
 			.pattern("fff")
 			.pattern("fwf")
 			.pattern("fff")
@@ -494,7 +518,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(IEItems.Ingredients.ERSATZ_LEATHER)));
 		
-		ShapedRecipeBuilder.shaped(Items.CANDLE, 1)
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.CANDLE, 1)
 			.pattern("s")
 			.pattern("w")
 			.define('s', Tags.Items.STRING)
@@ -502,97 +526,97 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.CANDLE)));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_COPPER_BLOCK, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_COPPER_BLOCK, 1)
 			.requires(Tags.Items.STORAGE_BLOCKS_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.COPPER_BLOCK) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_CUT_COPPER, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_CUT_COPPER, 1)
 			.requires(Items.CUT_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.CUT_COPPER) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_CUT_COPPER_STAIRS, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_CUT_COPPER_STAIRS, 1)
 			.requires(Items.CUT_COPPER_STAIRS)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.CUT_COPPER_STAIRS) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_CUT_COPPER_SLAB, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_CUT_COPPER_SLAB, 1)
 			.requires(Items.CUT_COPPER_SLAB)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.CUT_COPPER_SLAB) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_COPPER, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_EXPOSED_COPPER, 1)
 			.requires(Items.EXPOSED_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.EXPOSED_COPPER) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_CUT_COPPER, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_EXPOSED_CUT_COPPER, 1)
 			.requires(Items.EXPOSED_CUT_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.EXPOSED_CUT_COPPER) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_CUT_COPPER_STAIRS, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_EXPOSED_CUT_COPPER_STAIRS, 1)
 			.requires(Items.EXPOSED_CUT_COPPER_STAIRS)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.EXPOSED_CUT_COPPER_STAIRS) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_EXPOSED_CUT_COPPER_SLAB, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_EXPOSED_CUT_COPPER_SLAB, 1)
 			.requires(Items.EXPOSED_CUT_COPPER_SLAB)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.EXPOSED_CUT_COPPER_SLAB) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_COPPER, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_WEATHERED_COPPER, 1)
 			.requires(Items.WEATHERED_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.WEATHERED_COPPER) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_CUT_COPPER, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_WEATHERED_CUT_COPPER, 1)
 			.requires(Items.WEATHERED_CUT_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.WEATHERED_CUT_COPPER) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_CUT_COPPER_STAIRS, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_WEATHERED_CUT_COPPER_STAIRS, 1)
 			.requires(Items.WEATHERED_CUT_COPPER_STAIRS)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.WEATHERED_CUT_COPPER_STAIRS) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_WEATHERED_CUT_COPPER_SLAB, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_WEATHERED_CUT_COPPER_SLAB, 1)
 			.requires(Items.WEATHERED_CUT_COPPER_SLAB)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.WEATHERED_CUT_COPPER_SLAB) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_COPPER, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_OXIDIZED_COPPER, 1)
 			.requires(Items.OXIDIZED_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.OXIDIZED_COPPER) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_CUT_COPPER, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_OXIDIZED_CUT_COPPER, 1)
 			.requires(Items.OXIDIZED_CUT_COPPER)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.OXIDIZED_CUT_COPPER) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_CUT_COPPER_STAIRS, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_OXIDIZED_CUT_COPPER_STAIRS, 1)
 			.requires(Items.OXIDIZED_CUT_COPPER_STAIRS)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
 			.save(out, rl(toPath(Items.OXIDIZED_CUT_COPPER_STAIRS) + "_paraffin_waxed"));
 		
-		ShapelessRecipeBuilder.shapeless(Items.WAXED_OXIDIZED_CUT_COPPER_SLAB, 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.WAXED_OXIDIZED_CUT_COPPER_SLAB, 1)
 			.requires(Items.OXIDIZED_CUT_COPPER_SLAB)
 			.requires(IPTags.Items.paraffinWax)
 			.unlockedBy("has_paraffin_wax", has(IPTags.Items.paraffinWax))
@@ -613,5 +637,4 @@ public class IPRecipes extends RecipeProvider{
 	private String toPath(ItemLike src){
 		return RegistryUtils.getRegistryNameOf(src.asItem()).getPath();
 	}
-	
 }

@@ -3,11 +3,12 @@ package flaxbeard.immersivepetroleum.api.crafting;
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes.TypeWithClass;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.registries.RegistryObject;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class IPRecipeTypes{
@@ -24,14 +25,7 @@ public class IPRecipeTypes{
 	}
 	
 	private static <T extends Recipe<?>> TypeWithClass<T> makeType(String name, Class<T> type){
-		RegistryObject<RecipeType<T>> regObj = REGISTER.register(name, () -> new RecipeType<T>(){
-			final String res = ImmersivePetroleum.MODID + ":" + name;
-			@Override
-			public String toString(){
-				// Is this even still needed?
-				return this.res;
-			}
-		});
+		DeferredHolder<RecipeType<?>, RecipeType<T>> regObj = REGISTER.register(name, () -> RecipeType.simple(ResourceUtils.ip(name)));
 		return new TypeWithClass<>(regObj, type);
 	}
 }

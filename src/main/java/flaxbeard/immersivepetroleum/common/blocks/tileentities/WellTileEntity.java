@@ -16,6 +16,7 @@ import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
@@ -27,7 +28,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class WellTileEntity extends IPTileEntityBase implements IPCommonTickableTile{
 	
@@ -78,7 +78,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 		this.selfDestructTimer = nbt.getInt("selfdestructtimer");
 		
 		try{
-			this.spillFType = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillftype")));
+			this.spillFType = BuiltInRegistries.FLUID.get(new ResourceLocation(nbt.getString("spillftype")));
 		}catch(ResourceLocationException rle){
 			this.spillFType = Fluids.EMPTY;
 		}

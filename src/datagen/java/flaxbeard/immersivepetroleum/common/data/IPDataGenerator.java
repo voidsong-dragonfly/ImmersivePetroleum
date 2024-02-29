@@ -34,11 +34,11 @@ public class IPDataGenerator{
 			generator.addProvider(true, new IPItemTags(output, lookup, blockTags.contentsGetter(), exHelper));
 			generator.addProvider(true, new IPFluidTags(output, lookup, exHelper));
 			generator.addProvider(true, new IPLootGenerator(generator));
-			generator.addProvider(true, new IPRecipes(generator));
-			generator.addProvider(true, new IPAdvancements(generator, exHelper));
+			generator.addProvider(true, new IPRecipes(output));
+			generator.addProvider(true, new IPAdvancements(output, lookup, exHelper));
 			
-			generator.addProvider(true, new IPBlockStates(generator, exHelper));
-			generator.addProvider(true, new IPItemModels(generator, exHelper));
+			generator.addProvider(true, new IPBlockStates(output, exHelper));
+			generator.addProvider(true, new IPItemModels(output, generator, exHelper));
 			
 			IPBiomeModifierProvider.method(generator, exHelper, d -> generator.addProvider(true, d));
 		}

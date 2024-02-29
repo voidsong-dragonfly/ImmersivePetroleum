@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.crafting;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,21 +35,21 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 	
 	@Override
 	public void onResourceManagerReload(@Nonnull ResourceManager resourceManager){
-		if(dataPackRegistries != null){
-			lists(dataPackRegistries.getRecipeManager());
+		if(this.dataPackRegistries != null){
+			updateLists(this.dataPackRegistries.getRecipeManager());
 		}
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void recipesUpdated(RecipesUpdatedEvent event){
 		if(!Minecraft.getInstance().hasSingleplayerServer()){
-			lists(event.getRecipeManager());
+			updateLists(event.getRecipeManager());
 		}
 		
 		DynamicTextureWrapper.clearCache();
 	}
 	
-	static void lists(RecipeManager recipeManager){
+	static void updateLists(RecipeManager recipeManager){
 		Collection<RecipeHolder<?>> recipes = recipeManager.getRecipes();
 		if(recipes.size() == 0){
 			return;
@@ -67,10 +68,10 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		HighPressureRefineryRecipe.recipes = filterRecipes(recipes, HighPressureRefineryRecipe.class, IPRecipeTypes.HYDROTREATER);
 	}
 	
-	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<Recipe<?>> recipes, Class<R> recipeClass, IERecipeTypes.TypeWithClass<R> recipeType){
+	static <R extends Recipe<?>> List<R> filterRecipes(Collection<RecipeHolder<?>> recipes, Class<R> recipeClass, IERecipeTypes.TypeWithClass<R> recipeType){
 		return recipes.stream()
-				.filter(iRecipe -> iRecipe.getType() == recipeType.get())
+				.filter(iRecipe -> iRecipe.value() == recipeType.get())
 				.map(recipeClass::cast)
-				.collect(Collectors.toMap(recipe -> recipe.getId(), recipe -> recipe));
+				.toList();
 	}
 }
