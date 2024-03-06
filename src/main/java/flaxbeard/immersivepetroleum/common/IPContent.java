@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
 import blusunrize.immersiveengineering.common.register.IEPotions;
@@ -31,6 +32,7 @@ import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerM
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.PumpjackLogic;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltStairs;
@@ -60,6 +62,7 @@ import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandle
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -102,11 +105,11 @@ public class IPContent{
 		);
 		
 		private static void forceClassLoad(IEventBus modEventBus){
-			/*// Am just playing around here, actualy have no clue yet how to use the new multiblock API lol
-			MultiblockRegistration.builder(null, ResourceUtils.ip("pumpjack"))
+			// Am just playing around here, actualy have no clue yet how to use the new multiblock API lol
+			MultiblockRegistration.builder(new PumpjackLogic(), ResourceUtils.ip("pumpjack"))
 				.structure(() -> PumpjackMultiblock.INSTANCE)
 				.build(a -> a.accept(modEventBus));
-			*/
+			// am not even sure this is even right anymore
 		}
 	}
 	
