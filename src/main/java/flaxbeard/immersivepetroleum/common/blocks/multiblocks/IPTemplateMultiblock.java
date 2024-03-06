@@ -23,10 +23,6 @@ public abstract class IPTemplateMultiblock extends TemplateMultiblock{
 	protected void replaceStructureBlock(StructureBlockInfo info, Level world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster){
 	}
 	
-	public Vec3i getSize(){
-		return this.size;
-	}
-	
 	public ResourceLocation getBlockName(){
 		return this.logic.id();
 	}
