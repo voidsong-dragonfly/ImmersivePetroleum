@@ -110,8 +110,8 @@ dependencies {
 	compileOnly "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
 	compileOnly "mezz.jei:jei-${version_minecraft}-common-api:${version_jei}"
 	
-    runtimeOnly "cc.tweaked:cc-tweaked-${version_minecraft}-common:${version_cctweaked}"
-    compileOnly "cc.tweaked:cc-tweaked-${version_minecraft}-common-api:${version_cctweaked}"
+	runtimeOnly "cc.tweaked:cc-tweaked-${version_minecraft}-common:${version_cctweaked}"
+	compileOnly "cc.tweaked:cc-tweaked-${version_minecraft}-common-api:${version_cctweaked}"
 }
 
 def customGradle = rootProject.file('custom.gradle');

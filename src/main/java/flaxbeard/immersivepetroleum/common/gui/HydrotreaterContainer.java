@@ -1,7 +1,7 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
-import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 

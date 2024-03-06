@@ -1,9 +1,9 @@
 package flaxbeard.immersivepetroleum.common.gui;
 
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
-import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.fluids.FluidStack;

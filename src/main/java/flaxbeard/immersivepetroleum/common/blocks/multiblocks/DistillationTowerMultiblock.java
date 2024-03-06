@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.multiblocks;
+package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import java.util.function.Consumer;
 

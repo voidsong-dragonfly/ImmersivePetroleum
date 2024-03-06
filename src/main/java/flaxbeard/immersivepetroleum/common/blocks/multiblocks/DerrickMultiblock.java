@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.multiblocks;
+package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import static flaxbeard.immersivepetroleum.client.render.DerrickRenderer.DRILL;
 import static flaxbeard.immersivepetroleum.client.render.DerrickRenderer.PIPE_SEGMENT;

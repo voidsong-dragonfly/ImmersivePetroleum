@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.multiblocks;
+package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,15 +24,19 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class PumpjackMultiblock extends IPTemplateMultiblock{
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();
 	
 	private PumpjackMultiblock(){
-		super(ResourceUtils.ip("multiblocks/pumpjack"), new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), new BlockPos(3, 4, 6));//, IPContent.Multiblock.PUMPJACK);
+		super(ResourceUtils.ip("multiblocks/pumpjack"), new BlockPos(1, 0, 0), new BlockPos(1, 1, 4), new BlockPos(3, 4, 6), IPContent.Multiblock.PUMPJACK);
 	}
 	
 	@Override

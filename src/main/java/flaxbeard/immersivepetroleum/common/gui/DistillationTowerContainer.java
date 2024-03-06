@@ -8,9 +8,9 @@ import static flaxbeard.immersivepetroleum.common.blocks.tileentities.Distillati
 import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
-import flaxbeard.immersivepetroleum.common.multiblocks.DistillationTowerMultiblock;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
