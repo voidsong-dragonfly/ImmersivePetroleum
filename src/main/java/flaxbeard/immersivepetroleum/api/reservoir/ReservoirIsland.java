@@ -16,6 +16,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -40,7 +41,7 @@ public class ReservoirIsland{
 	private RegionData regionData;
 	
 	@Nonnull
-	private ReservoirType reservoir;
+	private RecipeHolder<ReservoirType> reservoir;
 	@Nonnull
 	private List<ColumnPos> poly;
 	private AxisAlignedIslandBB islandAABB;
@@ -49,7 +50,7 @@ public class ReservoirIsland{
 	
 	private ReservoirIsland(){}
 	
-	public ReservoirIsland(@Nonnull List<ColumnPos> poly, @Nonnull ReservoirType reservoir, long amount){
+	public ReservoirIsland(@Nonnull List<ColumnPos> poly, @Nonnull RecipeHolder<ReservoirType> reservoir, long amount){
 		Objects.requireNonNull(poly);
 		Objects.requireNonNull(reservoir);
 		
@@ -121,7 +122,7 @@ public class ReservoirIsland{
 	/**
 	 * Sets the Reservoir Type
 	 */
-	public ReservoirIsland setReservoirType(@Nonnull ReservoirType reservoir){
+	public ReservoirIsland setReservoirType(@Nonnull RecipeHolder<ReservoirType> reservoir){
 		this.reservoir = Objects.requireNonNull(reservoir);
 		return this;
 	}
@@ -151,12 +152,12 @@ public class ReservoirIsland{
 	}
 	
 	@Nonnull
-	public ReservoirType getType(){
+	public RecipeHolder<ReservoirType> getType(){
 		return this.reservoir;
 	}
 	
 	public Fluid getFluid(){
-		return this.reservoir.getFluid();
+		return this.reservoir.value().getFluid();
 	}
 	
 	public AxisAlignedIslandBB getBoundingBox(){
@@ -176,7 +177,7 @@ public class ReservoirIsland{
 	 * @return boolean on whether reservoir is below hydrostatic equilibrium
 	 */
 	public boolean belowHydrostaticEquilibrium(@Nonnull Level level) {
-		return this.reservoir.residual > 0 && this.amount <= this.reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime();
+		return this.reservoir.value().residual > 0 && this.amount <= this.reservoir.value().equilibrium && this.lastEquilibriumTick != level.getGameTime();
 	}
 	
 	/**
@@ -185,9 +186,9 @@ public class ReservoirIsland{
 	 * @param level needed to check game time
 	 */
 	public void equalizeHydrostaticPressure(@Nonnull Level level) {
-		if(this.amount <= this.reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime()){
+		if(this.amount <= this.reservoir.value().equilibrium && this.lastEquilibriumTick != level.getGameTime()){
 			this.lastEquilibriumTick = level.getGameTime();
-			this.amount += this.reservoir.residual;
+			this.amount += this.reservoir.value().residual;
 		}
 	}
 	
@@ -281,8 +282,7 @@ public class ReservoirIsland{
 	
 	public CompoundTag writeToNBT(){
 		CompoundTag nbt = new CompoundTag();
-		this.reservoir.getType();
-		nbt.putString("reservoir", this.reservoir.getId().toString()); // FIXME ! This is only temporary
+		nbt.putString("reservoir", this.reservoir.id().toString()); // FIXME ! This is only temporary
 		nbt.putInt("amount", (int) (this.getAmount() & MAX_AMOUNT));
 		nbt.putInt("capacity", (int) (this.getCapacity() & MAX_AMOUNT));
 		nbt.put("bounds", this.getBoundingBox().writeToNBT());
@@ -306,7 +306,7 @@ public class ReservoirIsland{
 	
 	public static ReservoirIsland readFromNBT(CompoundTag nbt){
 		try{
-			ReservoirType reservoir = ReservoirType.map.get(new ResourceLocation(nbt.getString("reservoir")));
+			RecipeHolder<ReservoirType> reservoir = ReservoirType.map.get(new ResourceLocation(nbt.getString("reservoir")));
 			if(reservoir != null){
 				long amount = ((long) nbt.getInt("amount")) & MAX_AMOUNT;
 				long capacity = ((long) nbt.getInt("capacity")) & MAX_AMOUNT;

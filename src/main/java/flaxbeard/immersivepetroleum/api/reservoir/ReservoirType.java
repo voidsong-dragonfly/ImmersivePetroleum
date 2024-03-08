@@ -30,13 +30,14 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.jarjar.nio.util.Lazy;
 
 public class ReservoirType extends IESerializableRecipe{
 	static final Lazy<ItemStack> EMPTY_LAZY = Lazy.of(() -> ItemStack.EMPTY);
 	
-	public static Map<ResourceLocation, ReservoirType> map = new HashMap<>();
+	public static Map<ResourceLocation, RecipeHolder<ReservoirType>> map = new HashMap<>();
 	
 	public final String name;
 	public final ResourceLocation fluidLocation;

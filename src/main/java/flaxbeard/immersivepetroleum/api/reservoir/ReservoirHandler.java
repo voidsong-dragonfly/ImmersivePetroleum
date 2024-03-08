@@ -24,6 +24,7 @@ import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
@@ -71,29 +72,31 @@ public class ReservoirHandler{
 					return;
 				}
 				
-				ReservoirType reservoir = null;
+				RecipeHolder<ReservoirType> reservoirholder = null;
 				int totalWeight = getTotalWeight(dimensionRL, biomeRL);
 				if(totalWeight > 0){
 					int weight = Math.abs(randomSource.nextInt() % totalWeight);
-					for(ReservoirType res:ReservoirType.map.values()){
+					for(RecipeHolder<ReservoirType> holder:ReservoirType.map.values()){
+						final ReservoirType res = holder.value();
+						
 						if(res.getDimensions().valid(dimensionRL) && res.getBiomes().valid(biomeRL)){
 							weight -= res.weight;
 							if(weight < 0){
-								reservoir = res;
+								reservoirholder = holder;
 								break;
 							}
 						}
 					}
 					
-					if(reservoir != null){
+					if(reservoirholder != null){
 						Set<ColumnPos> pol = new HashSet<>();
 						next(world, pol, x, z);
 						List<ColumnPos> poly = optimizeIsland(world, new ArrayList<>(pol));
 						
 						if(!poly.isEmpty()){
-							int amount = (int) Mth.lerp(randomSource.nextFloat(), reservoir.minSize, reservoir.maxSize);
+							int amount = (int) Mth.lerp(randomSource.nextFloat(), reservoirholder.value().minSize, reservoirholder.value().maxSize);
 							
-							ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
+							ReservoirIsland island = new ReservoirIsland(poly, reservoirholder, amount);
 							storage.addIsland(dimensionKey, island);
 						}
 					}
@@ -116,7 +119,9 @@ public class ReservoirHandler{
 		if(totalWeight == null){
 			totalWeight = 0;
 			
-			for(ReservoirType reservoir:ReservoirType.map.values()){
+			for(RecipeHolder<ReservoirType> holder:ReservoirType.map.values()){
+				final ReservoirType reservoir = holder.value();
+				
 				if(reservoir.getDimensions().valid(dimension) && reservoir.getBiomes().valid(biome)){
 					totalWeight += reservoir.weight;
 				}
@@ -167,18 +172,6 @@ public class ReservoirHandler{
 		
 		ReservoirIsland island = ReservoirRegionDataStorage.get().getIsland(world, pos);
 		return island;
-	}
-	
-	/**
-	 * Adds a reservoir type to the pool of valid reservoirs
-	 * 
-	 * @param id        The "recipeId" of the reservoir type
-	 * @param reservoir The {@link ReservoirType} type to add
-	 * @return The {@link ReservoirType} passed in
-	 */
-	public static ReservoirType addReservoir(ResourceLocation id, ReservoirType reservoir){
-		ReservoirType.map.put(id, reservoir);
-		return reservoir;
 	}
 	
 	static final double scale = 0.015625D;

@@ -37,7 +37,6 @@ import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPMenuTypes;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
@@ -61,6 +60,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -101,10 +101,10 @@ public class ClientProxy extends CommonProxy{
 			case "pumpjack_days" -> {
 				int oil_min = 1000000;
 				int oil_max = 5000000;
-				for(ReservoirType reservoir:ReservoirType.map.values()){
-					if(reservoir.name.equals("oil")){
-						oil_min = reservoir.minSize;
-						oil_max = reservoir.maxSize;
+				for(RecipeHolder<ReservoirType> reservoir:ReservoirType.map.values()){
+					if(reservoir.value().name.equals("oil")){
+						oil_min = reservoir.value().minSize;
+						oil_max = reservoir.value().maxSize;
 						break;
 					}
 				}
@@ -154,6 +154,7 @@ public class ClientProxy extends CommonProxy{
 		if(tesr == null)
 			return;
 		
+		/*// TODO Restore special rendering
 		if(te instanceof PumpjackTileEntity pumpjack){
 			transform.pushPose();
 			transform.mulPose(new Quaternionf(new AxisAngle4f(-90, 0, 1, 0)));
@@ -167,7 +168,7 @@ public class ClientProxy extends CommonProxy{
 			
 			tesr.render(pumpjack, pt, transform, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY);
 			transform.popPose();
-		}else{
+		}*/else{
 			transform.pushPose();
 			transform.mulPose(ROT_90);
 			transform.translate(0, 1, -4);

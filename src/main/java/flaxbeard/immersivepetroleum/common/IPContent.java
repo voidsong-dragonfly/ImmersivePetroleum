@@ -13,7 +13,6 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
 import flaxbeard.immersivepetroleum.client.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
@@ -39,7 +38,6 @@ import flaxbeard.immersivepetroleum.common.blocks.stone.ParaffinWaxBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.PetcokeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.entity.IPEntityTypes;
@@ -57,9 +55,6 @@ import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.items.OilCanItem;
 import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
 import flaxbeard.immersivepetroleum.common.items.SurveyResultItem;
-import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandler;
-import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
-import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.world.item.Item;
@@ -256,9 +251,10 @@ public class IPContent{
 		
 		FlarestackHandler.register(IPTags.Utility.burnableInFlarestack);
 		
-		LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, PumpjackLubricationHandler::new);
-		LubricatedHandler.registerLubricatedTile(ExcavatorBlockEntity.class, ExcavatorLubricationHandler::new);
-		LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
+		// TODO Register lubricated tiles
+		//LubricatedHandler.registerLubricatedTile(PumpjackTileEntity.class, PumpjackLubricationHandler::new);
+		//LubricatedHandler.registerLubricatedTile(ExcavatorBlockEntity.class, ExcavatorLubricationHandler::new);
+		//LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
 	}
 	
 	@OnlyIn(Dist.CLIENT)

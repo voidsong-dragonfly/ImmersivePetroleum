@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.registries.RegistryObject;
 import net.neoforged.neoforge.network.IContainerFactory;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class IPMenuTypes{
 	public static final BEContainerIP<DistillationTowerTileEntity, DistillationTowerContainer> DISTILLATION_TOWER =
@@ -37,7 +38,7 @@ public class IPMenuTypes{
 	
 	@SuppressWarnings("unchecked")
 	public static <T extends BlockEntity, C extends IEContainerMenu> BEContainerIP<T, C> register(String name, IEMenuTypes.BEContainerConstructor<T, C> container){
-		RegistryObject<MenuType<C>> typeRef = IPRegisters.registerMenu(name, () -> {
+		DeferredHolder<MenuType<?>, MenuType<C>> typeRef = IPRegisters.registerMenu(name, () -> {
 			Mutable<MenuType<C>> typeBox = new MutableObject<>();
 			MenuType<C> type = new MenuType<>((IContainerFactory<C>) (windowId, inv, data) -> {
 				Level world = ImmersivePetroleum.proxy.getClientWorld();

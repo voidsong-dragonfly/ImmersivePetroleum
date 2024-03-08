@@ -10,7 +10,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -138,12 +137,16 @@ public class LubricatedHandler{
 		}
 		IMultiblockBEHelperMaster<?> master = (IMultiblockBEHelperMaster<?>) tile;
 		
+		
 		// ------------------------------------------------------------------------------------------------
 		// TODO
+		boolean debugDisabled = true;
+		if(debugDisabled)
+			return false;
 		
-		if(tile instanceof MultiblockPartBlockEntity<?> mpte && mpte.offsetToMaster != BlockPos.ZERO){
-			tile = mpte.master();
-		}
+//		if(tile instanceof MultiblockPartBlockEntity<?> mpte && mpte.offsetToMaster != BlockPos.ZERO){
+//			tile = mpte.master();
+//		}
 		
 		if(getHandlerForTile(tile) != null){
 			BlockPos pos = tile.getBlockPos();

@@ -4,11 +4,7 @@ import java.util.function.Supplier;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
-import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
 import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
-import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
-import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
-import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
 import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.entity.IPEntityTypes;
@@ -30,10 +26,12 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderer
 public class ClientModBusEventHandlers{
 	@SubscribeEvent
 	public static void registerRenders(EntityRenderersEvent.RegisterRenderers ev){
+		/*// FIXME Find a way to replace this
 		registerBERender(ev, IPTileTypes.TOWER.master(), MultiblockDistillationTowerRenderer::new);
 		registerBERender(ev, IPTileTypes.PUMP.master(), MultiblockPumpjackRenderer::new);
 		registerBERender(ev, IPTileTypes.OILTANK.master(), OilTankRenderer::new);
 		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
+		*/
 		
 		registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
 		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);

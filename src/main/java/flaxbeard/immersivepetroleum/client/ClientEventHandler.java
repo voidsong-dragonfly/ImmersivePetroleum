@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.joml.AxisAngle4d;
+import org.joml.Quaternionf;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.ItemOverlayUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import blusunrize.immersiveengineering.common.items.BuzzsawItem;
@@ -64,7 +65,7 @@ public class ClientEventHandler{
 	
 	@SubscribeEvent
 	public void renderLevelStage(RenderLevelStageEvent event){
-		if(event.getStage() == Stage.AFTER_TRIPWIRE_BLOCKS){
+		if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS){
 			renderAutoLubricatorGhost(event);
 		}
 	}
@@ -106,7 +107,7 @@ public class ClientEventHandler{
 											Direction targetFacing = target.getB();
 											BlockState targetState = mc.player.level().getBlockState(targetPos);
 											BlockState targetStateUp = mc.player.level().getBlockState(targetPos.above());
-											if(targetState.getMaterial().isReplaceable() && targetStateUp.getMaterial().isReplaceable()){
+											if(targetState.canBeReplaced() && targetStateUp.canBeReplaced()){
 												VertexConsumer vBuilder = buffer.getBuffer(RenderType.translucent());
 												matrix.pushPose();
 												{
@@ -152,19 +153,20 @@ public class ClientEventHandler{
 			List<Component> debugOut = new ArrayList<>();
 			
 			if(!debugOut.isEmpty()){
-				PoseStack matrix = event.getPoseStack();
+				final Font font = MCUtil.getFont();
+				PoseStack matrix = event.getGuiGraphics().pose();
 				matrix.pushPose();
 				MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 				for(int i = 0;i < debugOut.size();i++){
-					int w = ClientUtils.font().width(debugOut.get(i).getString());
-					int yOff = i * (ClientUtils.font().lineHeight + 2);
+					int w = font.width(debugOut.get(i).getString());
+					int yOff = i * (font.lineHeight + 2);
 					
 					matrix.pushPose();
 					matrix.translate(0, 0, 1);
 					GuiHelper.drawColouredRect(1, 1 + yOff, w + 1, 10, 0xAF_000000, buffer, matrix);
 					buffer.endBatch();
 					// Draw string without shadow
-					ClientUtils.font().draw(matrix, debugOut.get(i), 2, 2 + yOff, -1);
+					event.getGuiGraphics().drawString(font, debugOut.get(i), 2, 2 + yOff, -1);
 					matrix.popPose();
 				}
 				matrix.popPose();
@@ -186,13 +188,13 @@ public class ClientEventHandler{
 							String[] text = motorboat.getOverlayText(player, result);
 							
 							if(text != null && text.length > 0){
-								Font font = ClientUtils.font();
+								final Font font = MCUtil.getFont();
 								int col = 0xffffff;
 								for(int i = 0;i < text.length;i++){
 									if(text[i] != null){
 										int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
 										int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
-										font.drawShadow(event.getPoseStack(), text[i], fx, fy, col);
+										event.getGuiGraphics().drawString(font, text[i], fx, fy, col);
 									}
 								}
 							}
@@ -207,7 +209,7 @@ public class ClientEventHandler{
 	public void onRenderOverlayPost(RenderGuiOverlayEvent.Post event){
 		if(MCUtil.getPlayer() != null && event.getOverlay().id() == VanillaGuiOverlay.HOTBAR.id()){
 			Player player = MCUtil.getPlayer();
-			PoseStack matrix = event.getPoseStack();
+			PoseStack matrix = event.getGuiGraphics().pose();
 			
 			if(player.getVehicle() instanceof MotorboatEntity motorboat){
 				int offset = 0;
@@ -256,7 +258,7 @@ public class ClientEventHandler{
 							int amount = fuel.getAmount();
 							float angle = 83 - (166 * amount / capacity);
 							matrix.pushPose();
-							matrix.mulPose(new Quaternion(0, 0, angle, true));
+							matrix.mulPose(new Quaternionf(new AxisAngle4d(angle, 0, 0, 1)));
 							GuiHelper.drawTexturedRect(builder, matrix, 6, -2, 24, 4, 256f, 91, 123, 80, 87);
 							matrix.popPose();
 							matrix.translate(23, 37, 0);
@@ -271,7 +273,7 @@ public class ClientEventHandler{
 					if(holdingDebugItem && MCUtil.getFont() != null){
 						matrix.pushPose();
 						{
-							Font font = MCUtil.getFont();
+							final Font font = MCUtil.getFont();
 							
 							int capacity = motorboat.getMaxFuel();
 							FluidStack fs = motorboat.getContainedFluid();
@@ -288,7 +290,7 @@ public class ClientEventHandler{
 							};
 							int w = 3, h = 3;
 							for(int i = 0;i < array.length;i++){
-								font.drawShadow(matrix, array[i], w, h + (9 * i), -1);
+								event.getGuiGraphics().drawString(font, array[i], w, h + (9 * i), -1);
 							}
 						}
 						matrix.popPose();

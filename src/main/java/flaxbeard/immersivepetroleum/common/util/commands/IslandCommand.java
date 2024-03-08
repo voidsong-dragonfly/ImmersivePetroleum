@@ -37,6 +37,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ColumnPos;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -146,7 +147,7 @@ public class IslandCommand{
 		final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + p.x() + " ~ " + p.z());
 		final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.coordinates.tooltip"));
 		
-		final String islandName = closestIsland.getType().name;
+		final String islandName = closestIsland.getType().value().name;
 		final ColumnPos finalPos = p;
 		source.sendSuccess(() -> Component.translatable("chat.immersivepetroleum.command.reservoir.locate",
 				islandName,
@@ -171,7 +172,7 @@ public class IslandCommand{
 	}
 	
 	private static CompletableFuture<Suggestions> typeSuggestor(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder){
-		return SharedSuggestionProvider.suggest(ReservoirType.map.values().stream().map(type -> type.name), builder);
+		return SharedSuggestionProvider.suggest(ReservoirType.map.values().stream().map(type -> type.value().name), builder);
 	}
 	
 	private static int setReservoirAmount(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
@@ -194,9 +195,9 @@ public class IslandCommand{
 	
 	private static int setReservoirType(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		String name = context.getArgument("name", String.class);
-		ReservoirType reservoir = null;
-		for(ReservoirType res:ReservoirType.map.values()){
-			if(res.name.equalsIgnoreCase(name))
+		RecipeHolder<ReservoirType> reservoir = null;
+		for(RecipeHolder<ReservoirType> res:ReservoirType.map.values()){
+			if(res.value().name.equalsIgnoreCase(name))
 				reservoir = res;
 		}
 		
@@ -208,7 +209,7 @@ public class IslandCommand{
 		island.setReservoirType(reservoir);
 		island.setDirty();
 		
-		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.type.success", reservoir.name);
+		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.type.success", reservoir.value().name);
 		return Command.SINGLE_SUCCESS;
 	}
 	
