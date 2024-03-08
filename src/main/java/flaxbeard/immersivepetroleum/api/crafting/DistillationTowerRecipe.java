@@ -1,9 +1,9 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -20,14 +20,14 @@ import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class DistillationTowerRecipe extends MultiblockRecipe{
-	public static List<DistillationTowerRecipe> recipes = new ArrayList<>();
+	public static Map<ResourceLocation, DistillationTowerRecipe> recipes = new HashMap<>();
 	
     private static final RandomSource RANDOM = RandomSource.create();
 	
 	/** May return null! */
 	public static DistillationTowerRecipe findRecipe(FluidStack input){
 		if(!recipes.isEmpty()){
-			for(DistillationTowerRecipe r:recipes){
+			for(DistillationTowerRecipe r:recipes.values()){
 				if(r.input != null && r.input.testIgnoringAmount(input)){
 					return r;
 				}

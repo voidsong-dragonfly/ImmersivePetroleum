@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -34,7 +36,7 @@ import net.neoforged.jarjar.nio.util.Lazy;
 public class ReservoirType extends IESerializableRecipe{
 	static final Lazy<ItemStack> EMPTY_LAZY = Lazy.of(() -> ItemStack.EMPTY);
 	
-	public static List<ReservoirType> map = new ArrayList<>();
+	public static Map<ResourceLocation, ReservoirType> map = new HashMap<>();
 	
 	public final String name;
 	public final ResourceLocation fluidLocation;

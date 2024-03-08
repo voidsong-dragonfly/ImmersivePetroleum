@@ -57,6 +57,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
+@Deprecated(forRemoval = true)
 public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationTowerRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<DistillationTowerTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;

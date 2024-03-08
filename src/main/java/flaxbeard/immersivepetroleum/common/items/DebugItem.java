@@ -212,7 +212,7 @@ public class DebugItem extends IPItemBase{
 					
 					player.displayClientMessage(Component.literal(dimensionRL.toString()), false);
 					
-					for(ReservoirType res:ReservoirType.map){
+					for(ReservoirType res:ReservoirType.map.values()){
 						BWList dims = res.getDimensions();
 						BWList biom = res.getBiomes();
 						

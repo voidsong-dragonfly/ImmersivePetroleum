@@ -1,9 +1,9 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -23,7 +23,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 public class HighPressureRefineryRecipe extends MultiblockRecipe{
 	
-	public static List<HighPressureRefineryRecipe> recipes = new ArrayList<>();
+	public static Map<ResourceLocation, HighPressureRefineryRecipe> recipes = new HashMap<>();
 	
     private static final RandomSource RANDOM = RandomSource.create();
 	
@@ -31,7 +31,7 @@ public class HighPressureRefineryRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(input);
 		Objects.requireNonNull(secondary);
 		
-		for(HighPressureRefineryRecipe recipe:recipes){
+		for(HighPressureRefineryRecipe recipe:recipes.values()){
 			if(secondary.isEmpty()){
 				if(recipe.inputFluidSecondary == null && (recipe.inputFluid != null && recipe.inputFluid.test(input))){
 					return recipe;
@@ -49,7 +49,7 @@ public class HighPressureRefineryRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(HighPressureRefineryRecipe recipe:recipes){
+			for(HighPressureRefineryRecipe recipe:recipes.values()){
 				if(recipe.inputFluid != null){
 					if((!ignoreAmount && recipe.inputFluid.test(fluid)) || (ignoreAmount && recipe.inputFluid.testIgnoringAmount(fluid))){
 						return true;
@@ -64,7 +64,7 @@ public class HighPressureRefineryRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(HighPressureRefineryRecipe recipe:recipes){
+			for(HighPressureRefineryRecipe recipe:recipes.values()){
 				if(recipe.inputFluidSecondary != null){
 					if((!ignoreAmount && recipe.inputFluidSecondary.test(fluid)) || (ignoreAmount && recipe.inputFluidSecondary.testIgnoringAmount(fluid))){
 						return true;

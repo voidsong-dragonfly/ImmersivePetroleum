@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import org.joml.AxisAngle4f;
@@ -9,28 +8,11 @@ import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import blusunrize.immersiveengineering.client.utils.RenderUtils;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
-import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class PumpjackMultiblock extends IPTemplateMultiblock{
 	public static final PumpjackMultiblock INSTANCE = new PumpjackMultiblock();
@@ -50,8 +32,8 @@ public class PumpjackMultiblock extends IPTemplateMultiblock{
 	}
 	
 	public class PumpjackClientData extends IPClientMultiblockProperties{
-		private PumpjackTileEntity te;
-		private List<BakedQuad> list;
+		//private PumpjackTileEntity te;
+		//private List<BakedQuad> list;
 		public PumpjackClientData(){
 			super(PumpjackMultiblock.INSTANCE, 0, 0, 0);
 		}
@@ -69,6 +51,7 @@ public class PumpjackMultiblock extends IPTemplateMultiblock{
 		final Quaternionf rot = new Quaternionf(new AxisAngle4f(90F, new Vector3f(0F, 1F, 0F)));
 		@Override
 		public void renderCustomFormedStructure(PoseStack matrix, MultiBufferSource buffer){
+			/*
 			if(this.te == null){
 				this.te = new PumpjackTileEntity(IPTileTypes.PUMP.master(), BlockPos.ZERO, IPContent.Multiblock.PUMPJACK.get().defaultBlockState());
 			}
@@ -99,6 +82,7 @@ public class PumpjackMultiblock extends IPTemplateMultiblock{
 					matrix.popPose();
 				}
 			}
+			*/
 		}
 	}
 }

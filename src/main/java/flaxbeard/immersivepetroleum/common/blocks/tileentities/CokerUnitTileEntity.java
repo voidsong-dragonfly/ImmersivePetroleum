@@ -63,6 +63,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
+@Deprecated(forRemoval = true)
 public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<CokerUnitTileEntity>, IEBlockInterfaces.IBlockBounds{
 	
 	public enum Inventory{

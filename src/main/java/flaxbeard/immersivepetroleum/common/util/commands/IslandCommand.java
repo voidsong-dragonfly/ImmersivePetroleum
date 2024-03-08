@@ -171,7 +171,7 @@ public class IslandCommand{
 	}
 	
 	private static CompletableFuture<Suggestions> typeSuggestor(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder){
-		return SharedSuggestionProvider.suggest(ReservoirType.map.stream().map(type -> type.name), builder);
+		return SharedSuggestionProvider.suggest(ReservoirType.map.values().stream().map(type -> type.name), builder);
 	}
 	
 	private static int setReservoirAmount(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
@@ -195,7 +195,7 @@ public class IslandCommand{
 	private static int setReservoirType(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		String name = context.getArgument("name", String.class);
 		ReservoirType reservoir = null;
-		for(ReservoirType res:ReservoirType.map){
+		for(ReservoirType res:ReservoirType.map.values()){
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 		}

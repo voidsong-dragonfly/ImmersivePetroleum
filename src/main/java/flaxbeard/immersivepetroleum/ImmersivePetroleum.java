@@ -70,7 +70,7 @@ public class ImmersivePetroleum{
 		NeoForge.EVENT_BUS.addListener(this::registerCommand);
 		NeoForge.EVENT_BUS.addListener(this::addReloadListeners);
 		
-		IPRegisters.addRegistersToEventBus(modBus);
+		IPRegisters.addRegistersToEventBus(modBus); // TODO Might need to be moved to be *under* IPContent.modConstruction
 		
 		IPContent.modConstruction(modBus);
 		IPLootFunctions.modConstruction(modBus);

@@ -1,5 +1,8 @@
 package flaxbeard.immersivepetroleum.common;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -7,7 +10,11 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
-import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistrationBuilder;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.MultiblockBEType;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -27,9 +34,13 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -52,7 +63,9 @@ public class IPRegisters{
 	private static final DeferredRegister<EntityType<?>> ENTITY_TYPE = DeferredRegister.create(Registries.ENTITY_TYPE, ImmersivePetroleum.MODID);
 	public static final DeferredRegister<FluidType> FLUID_TYPE = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, ImmersivePetroleum.MODID);
 	
-	public static void addRegistersToEventBus(IEventBus eventBus){
+	private static final List<Consumer<IEventBus>> MOD_BUS_CALLBACKS = new ArrayList<>();
+	
+	public static void addRegistersToEventBus(final IEventBus eventBus){
 		CTAB_REGISTER.register(eventBus);
 		FLUID_REGISTER.register(eventBus);
 		BLOCK_REGISTER.register(eventBus);
@@ -66,6 +79,7 @@ public class IPRegisters{
 		PARTICLE_TYPE.register(eventBus);
 		ENTITY_TYPE.register(eventBus);
 		FLUID_TYPE.register(eventBus);
+		MOD_BUS_CALLBACKS.forEach(e -> e.accept(eventBus));
 	}
 	
 	public static <T extends CreativeModeTab> DeferredHolder<CreativeModeTab, T> registerCreativeTab(String name, Supplier<T> tabConstruction){
@@ -76,8 +90,47 @@ public class IPRegisters{
 		return registerBlock(name, blockConstructor, null);
 	}
 	
+	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMetalMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure){
+		// @formatter:off
+		BlockBehaviour.Properties prop = BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
+			.strength(3, 15)
+			.requiresCorrectToolForDrops()
+			.isViewBlocking((state, blockReader, pos) -> false)
+			.noOcclusion()
+			.dynamicShape()
+			.pushReaction(PushReaction.BLOCK);
+		// @formatter:on
+		
+		return registerMultiblock(name, logic, structure, prop);
+	}
+	
+	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, BlockBehaviour.Properties prop){
+		final ResourceLocation rl = ResourceUtils.ip(name);
+		
+		// @formatter:off
+		MultiblockBuilder<S> builder = new MultiblockBuilder<>(logic, rl)
+			.structure(structure)
+			.defaultBEs(TE_REGISTER)
+			.defaultBlock(BLOCK_REGISTER, ITEM_REGISTER, prop);
+		// @formatter:on
+		
+		return builder.build(MOD_BUS_CALLBACKS::add);
+	}
+	
+	private static class MultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, MultiblockBuilder<S>>{
+		public MultiblockBuilder(IMultiblockLogic<S> logic, ResourceLocation name){
+			super(logic, name);
+		}
+		
+		@Override
+		protected MultiblockBuilder<S> self(){
+			return this;
+		}
+	}
+	
+	@Deprecated
 	public static <T extends Block> DeferredHolder<Block, T> registerMultiblockBlock(String name, Supplier<T> blockConstructor){
-		return registerBlock(name, blockConstructor, block -> new BlockItem(block, new Item.Properties()));
+		throw new UnsupportedOperationException();
 	}
 	
 	public static <T extends Block> DeferredHolder<Block, T> registerBlock(String name, Supplier<T> blockConstructor, @Nullable Function<T, ? extends BlockItem> blockItem){
@@ -100,31 +153,32 @@ public class IPRegisters{
 		return ITEM_REGISTER.register(name, itemConstructor);
 	}
 	
-	public static <T extends Fluid> DeferredHolder<Fluid,T> registerFluid(String name, Supplier<T> fluidConstructor){
+	public static <T extends Fluid> DeferredHolder<Fluid, T> registerFluid(String name, Supplier<T> fluidConstructor){
 		return FLUID_REGISTER.register(name, fluidConstructor);
 	}
 	
-	public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>,BlockEntityType<T>> registerTE(String name, BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> valid){
+	public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerTE(String name, BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> valid){
 		return TE_REGISTER.register(name, () -> new BlockEntityType<>(factory, ImmutableSet.of(valid.get()), null));
 	}
 	
+	@Deprecated
 	public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock> MultiblockBEType<T> registerMultiblockTE(String name, MultiblockBEType.BEWithTypeConstructor<T> factory, Supplier<? extends Block> valid){
-		return new MultiblockBEType<>(name, TE_REGISTER, factory, valid, state -> state.hasProperty(IEProperties.MULTIBLOCKSLAVE) && !state.getValue(IEProperties.MULTIBLOCKSLAVE));
+		throw new UnsupportedOperationException();
 	}
 	
-	public static <T extends EntityType<?>> DeferredHolder<EntityType<?>,T> registerEntity(String name, Supplier<T> entityConstructor){
+	public static <T extends EntityType<?>> DeferredHolder<EntityType<?>, T> registerEntity(String name, Supplier<T> entityConstructor){
 		return ENTITY_REGISTER.register(name, entityConstructor);
 	}
 	
-	public static <T extends RecipeSerializer<?>> DeferredHolder<RecipeSerializer<?>,T> registerSerializer(String name, Supplier<T> serializer){
+	public static <T extends RecipeSerializer<?>> DeferredHolder<RecipeSerializer<?>, T> registerSerializer(String name, Supplier<T> serializer){
 		return RECIPE_SERIALIZERS.register(name, serializer);
 	}
 	
-	public static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>,MenuType<T>> registerMenu(String name, Supplier<MenuType<T>> factory){
+	public static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> registerMenu(String name, Supplier<MenuType<T>> factory){
 		return MENU_REGISTER.register(name, factory);
 	}
 	
-	public static <T extends IPEffect> DeferredHolder<MobEffect,T> registerMobEffect(String name, Supplier<T> constructor){
+	public static <T extends IPEffect> DeferredHolder<MobEffect, T> registerMobEffect(String name, Supplier<T> constructor){
 		return MOB_EFFECT.register(name, constructor);
 	}
 	
@@ -132,11 +186,11 @@ public class IPRegisters{
 		return SOUND_EVENT.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceUtils.ip(name)));
 	}
 	
-	public static <PType extends ParticleType<?>> DeferredHolder<ParticleType<?>,PType> registerParticleType(String name, Supplier<PType> particleType){
+	public static <PType extends ParticleType<?>> DeferredHolder<ParticleType<?>, PType> registerParticleType(String name, Supplier<PType> particleType){
 		return PARTICLE_TYPE.register(name, particleType);
 	}
 	
-	public static <EType extends EntityType<?>> DeferredHolder<EntityType<?>,EType> registerEntityType(String name, Function<ResourceLocation, EType> entityType){
+	public static <EType extends EntityType<?>> DeferredHolder<EntityType<?>, EType> registerEntityType(String name, Function<ResourceLocation, EType> entityType){
 		return ENTITY_TYPE.register(name, () -> entityType.apply(ResourceUtils.ip(name)));
 	}
 	

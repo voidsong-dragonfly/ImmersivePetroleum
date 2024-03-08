@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -19,7 +18,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPos
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext.ProcessContextInMachine;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.shapes.PumpjackShape;
@@ -160,7 +158,7 @@ public class PumpjackLogic implements IMultiblockLogic<PumpjackLogic.State>, ISe
 		return PumpjackShape.GETTER;
 	}
 	
-	public static class State implements IMultiblockState, ProcessContextInMachine<MultiblockRecipe>{
+	public static class State implements IMultiblockState{
 		public static final FluidTank FAKE_TANK = new FluidTank(0);
 		
 		public final AveragingEnergyStorage energy = new AveragingEnergyStorage(16000);
@@ -188,11 +186,6 @@ public class PumpjackLogic implements IMultiblockLogic<PumpjackLogic.State>, ISe
 			if(!this.wasActive && lastActive){
 				this.activeTicks++;
 			}
-		}
-		
-		@Override
-		public AveragingEnergyStorage getEnergy(){
-			return this.energy;
 		}
 	}
 }

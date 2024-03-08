@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import com.electronwill.nightconfig.core.Config;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
@@ -51,6 +51,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -65,7 +67,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -73,7 +74,6 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class ClientProxy extends CommonProxy{
 	
@@ -146,6 +146,7 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
+	@Deprecated
 	public void renderTile(BlockEntity te, VertexConsumer iVertexBuilder, PoseStack transform, MultiBufferSource buffer){
 		BlockEntityRenderer<BlockEntity> tesr = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(te);
 		
@@ -168,13 +169,15 @@ public class ClientProxy extends CommonProxy{
 			transform.popPose();
 		}else{
 			transform.pushPose();
-			transform.mulPose(new Quaternion(0, -90, 0, true));
+			transform.mulPose(ROT_90);
 			transform.translate(0, 1, -4);
 			
 			tesr.render(te, 0, transform, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY);
 			transform.popPose();
 		}
 	}
+	
+	static final Quaternionf ROT_90 = new Quaternionf(new AxisAngle4f(90F, new Vector3f(0F, 1F, 0F)));
 	
 	@Override
 	public void drawUpperHalfSlab(PoseStack transform, ItemStack stack){
@@ -248,12 +251,12 @@ public class ClientProxy extends CommonProxy{
 		builder.appendText(() -> {
 			List<Component[]> list = new ArrayList<>();
 			for(TagKey<Fluid> tag:FlarestackHandler.getSet()){
-				for(Fluid fluid:NeoForgeRegistries.FLUID_TYPES.getValues()){
+				BuiltInRegistries.FLUID.forEach(fluid -> {
 					if(fluid.is(tag)){
 						Component[] entry = new Component[]{Component.empty(), new FluidStack(fluid, 1).getDisplayName()};
 						list.add(entry);
 					}
-				}
+				});
 			}
 			
 			StringBuilder additionalText = new StringBuilder();
@@ -307,7 +310,7 @@ public class ClientProxy extends CommonProxy{
 	
 	/** Creates a page for every single currently registered reservoir */
 	private static void createReservoirPages(StringBuilder contentBuilder, ArrayList<SpecialElementData> itemList){
-		final ReservoirType[] reservoirs = ReservoirType.map.values().toArray(new ReservoirType[0]);
+		final ReservoirType[] reservoirs = ReservoirType.map.values().toArray(ReservoirType[]::new);
 		
 		for(int i = 0;i < reservoirs.length;i++){
 			ReservoirType reservoir = reservoirs[i];
@@ -345,7 +348,7 @@ public class ClientProxy extends CommonProxy{
 				StringBuilder strBuilder = new StringBuilder();
 				
 				reservoir.getBiomes().forEach(rl -> {
-					Biome bio = ForgeRegistries.BIOMES.getValue(rl);
+					Biome bio = ImmersivePetroleum.proxy.getClientWorld().registryAccess().registryOrThrow(Registries.BIOME).get(rl);
 					strBuilder.append((strBuilder.length() > 0) ? ", " : "").append(bio != null ? bio.toString() : rl);
 				});
 				
@@ -371,13 +374,13 @@ public class ClientProxy extends CommonProxy{
 				else
 				    repRate = I18n.get("ie.manual.entry.reservoirs.replenish_depleted", reservoir.residual, fluidName);
 			}
-			contentBuilder.append("<&").append(reservoir.getId().toString()).append(">");
+			contentBuilder.append("<&").append(reservoir.getType().toString()).append(">");
 			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBWList, fluidName, Utils.fDecimal(reservoir.minSize/1000), Utils.fDecimal(reservoir.maxSize/1000), repRate, bioBWList));
 			
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");
 			
-			itemList.add(new SpecialElementData(reservoir.getId().toString(), 0, new ManualElementItem(ManualHelper.getManual(), new ItemStack(fluid.getBucket()))));
+			itemList.add(new SpecialElementData(reservoir.getType().toString(), 0, new ManualElementItem(ManualHelper.getManual(), new ItemStack(fluid.getBucket()))));
 		}
 	}
 }

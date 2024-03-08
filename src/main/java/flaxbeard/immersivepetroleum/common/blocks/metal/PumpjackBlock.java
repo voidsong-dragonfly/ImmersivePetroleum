@@ -1,11 +1,11 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
-import flaxbeard.immersivepetroleum.common.IPTileTypes;
-import flaxbeard.immersivepetroleum.common.blocks.IPMetalMultiblock;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
+import net.minecraft.world.level.block.Block;
 
-public class PumpjackBlock extends IPMetalMultiblock<PumpjackTileEntity>{
+@Deprecated
+public class PumpjackBlock extends Block{// extends IPMetalMultiblock<PumpjackTileEntity>{
 	public PumpjackBlock(){
-		super(IPTileTypes.PUMP);
+		super(null);
+		//super(IPTileTypes.PUMP);
 	}
 }

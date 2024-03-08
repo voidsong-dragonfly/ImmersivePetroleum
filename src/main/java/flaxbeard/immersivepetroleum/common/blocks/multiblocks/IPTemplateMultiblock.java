@@ -37,8 +37,11 @@ public abstract class IPTemplateMultiblock extends TemplateMultiblock{
 		return this.logic.block().get();
 	}
 	
-	@Deprecated(forRemoval = true)
+	/**
+	 * @deprecated Replaced by {@link #getBlock()}
+	 * @return
+	 */
 	public Block getBaseBlock(){
-		throw new UnsupportedOperationException();
+		return getBlock();
 	}
 }

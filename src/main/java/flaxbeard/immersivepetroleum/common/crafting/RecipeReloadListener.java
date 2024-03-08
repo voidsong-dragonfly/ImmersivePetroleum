@@ -1,7 +1,9 @@
 package flaxbeard.immersivepetroleum.common.crafting;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -14,6 +16,7 @@ import flaxbeard.immersivepetroleum.api.crafting.IPRecipeTypes;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -53,22 +56,22 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		}
 		
 		ImmersivePetroleum.log.info("Loading Distillation Recipes.");
-		DistillationTowerRecipe.recipes = filterRecipes(recipes, DistillationTowerRecipe.class, IPRecipeTypes.DISTILLATION);
+		DistillationTowerRecipe.recipes = filterRecipes(recipes, IPRecipeTypes.DISTILLATION);
 		
 		ImmersivePetroleum.log.info("Loading Reservoirs.");
-		ReservoirType.map = filterRecipes(recipes, ReservoirType.class, IPRecipeTypes.RESERVOIR);
+		ReservoirType.map = filterRecipes(recipes, IPRecipeTypes.RESERVOIR);
 		
 		ImmersivePetroleum.log.info("Loading Coker-Unit Recipes.");
-		CokerUnitRecipe.recipes = filterRecipes(recipes, CokerUnitRecipe.class, IPRecipeTypes.COKER);
+		CokerUnitRecipe.recipes = filterRecipes(recipes, IPRecipeTypes.COKER);
 		
 		ImmersivePetroleum.log.info("Loading High-Pressure Refinery Recipes.");
-		HighPressureRefineryRecipe.recipes = filterRecipes(recipes, HighPressureRefineryRecipe.class, IPRecipeTypes.HYDROTREATER);
+		HighPressureRefineryRecipe.recipes = filterRecipes(recipes, IPRecipeTypes.HYDROTREATER);
 	}
 	
-	static <R extends Recipe<?>> List<R> filterRecipes(Collection<RecipeHolder<?>> recipes, Class<R> recipeClass, IERecipeTypes.TypeWithClass<R> recipeType){
+	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<RecipeHolder<?>> recipes, IERecipeTypes.TypeWithClass<R> recipeType){
 		return recipes.stream()
-				.filter(iRecipe -> iRecipe.value() == recipeType.get())
-				.map(recipeClass::cast)
-				.toList();
+				.filter(holder -> holder.value().getType() == recipeType.type().get())
+				.flatMap(Stream::of)
+				.collect(Collectors.toMap(RecipeHolder::id, h -> recipeType.recipeClass().cast(h.value())));
 	}
 }

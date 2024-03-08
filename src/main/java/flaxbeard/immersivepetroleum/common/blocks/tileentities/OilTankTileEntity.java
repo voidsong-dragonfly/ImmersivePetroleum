@@ -54,6 +54,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
+@Deprecated(forRemoval = true)
 public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEntity> implements IPCommonTickableTile, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IHammerInteraction, IEBlockInterfaces.IComparatorOverride, IPressurizedFluidOutput{
 	
 	public enum PortState implements StringRepresentable{

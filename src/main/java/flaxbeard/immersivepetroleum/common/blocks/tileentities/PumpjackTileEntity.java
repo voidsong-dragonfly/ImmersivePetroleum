@@ -1,55 +1,34 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.datafixers.util.Pair;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
-import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
-import blusunrize.immersiveengineering.common.util.ResettableCapability;
-import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
-import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
-import flaxbeard.immersivepetroleum.common.util.AABBUtils;
-import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ColumnPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.IFluidTank;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
-public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IPCommonTickableTile, IEBlockInterfaces.IBlockBounds{
+@Deprecated(forRemoval = true)
+public class PumpjackTileEntity /*extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe>*/ implements IPCommonTickableTile, IEBlockInterfaces.IBlockBounds{
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 5));
 	
@@ -70,13 +49,12 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 	public static final FluidTank FAKE_TANK = new FluidTank(0);
 	public boolean wasActive = false;
 	public float activeTicks = 0;
-	public PumpjackTileEntity(BlockEntityType<PumpjackTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
-		super(PumpjackMultiblock.INSTANCE, 16000, true, type, pWorldPosition, pBlockState);
+	public PumpjackTileEntity(BlockEntityType<?> type, BlockPos pWorldPosition, BlockState pBlockState){
+		//super(PumpjackMultiblock.INSTANCE, 16000, true, type, pWorldPosition, pBlockState);
 	}
 	
-	@Override
 	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
-		super.readCustomNBT(nbt, descPacket);
+		//super.readCustomNBT(nbt, descPacket);
 		boolean lastActive = this.wasActive;
 		this.wasActive = nbt.getBoolean("wasActive");
 		if(!this.wasActive && lastActive){
@@ -84,21 +62,23 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 		}
 	}
 	
-	@Override
 	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
-		super.writeCustomNBT(nbt, descPacket);
+		//super.writeCustomNBT(nbt, descPacket);
 		nbt.putBoolean("wasActive", this.wasActive);
 	}
 	
 	@Override
 	public void tickClient(){
+		/*
 		if(!isDummy() && this.wasActive){
 			this.activeTicks++;
 		}
+		*/
 	}
 	
 	@Override
 	public void tickServer(){
+		/*
 		if(isDummy()){
 			return;
 		}
@@ -183,120 +163,89 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 		}
 		
 		this.wasActive = active;
+		*/
 	}
 	
-	@Override
 	public Set<MultiblockFace> getEnergyPos(){
 		return Energy_IN;
 	}
 	
-	@Override
 	public Set<BlockPos> getRedstonePos(){
 		return Redstone_IN;
 	}
 	
-	@Override
 	public boolean isInWorldProcessingMachine(){
 		return false;
 	}
 	
-	@Override
 	public void doProcessOutput(ItemStack output){
 	}
 	
-	@Override
 	public void doProcessFluidOutput(FluidStack output){
 	}
 	
-	@Override
-	public void onProcessFinish(MultiblockProcess<MultiblockRecipe> process){
+	public void onProcessFinish(Object process){
 	}
 	
-	@Override
-	public boolean additionalCanProcessCheck(MultiblockProcess<MultiblockRecipe> process){
+	public boolean additionalCanProcessCheck(Object process){
 		return false;
 	}
 	
-	@Override
-	public float getMinProcessDistance(MultiblockProcess<MultiblockRecipe> process){
+	public float getMinProcessDistance(Object process){
 		return 0;
 	}
 	
-	@Override
 	public int getMaxProcessPerTick(){
 		return 1;
 	}
 	
-	@Override
 	public int getProcessQueueMaxLength(){
 		return 1;
 	}
 	
-	@Override
 	public boolean isStackValid(int slot, ItemStack stack){
 		return true;
 	}
 	
-	@Override
 	public int getSlotLimit(int slot){
 		return 64;
 	}
 	
-	@Override
 	public int[] getOutputSlots(){
 		return null;
 	}
 	
-	@Override
 	public int[] getOutputTanks(){
 		return new int[]{1};
 	}
 	
-	@Override
 	public void doGraphicalUpdates(){
-		this.setChanged();
-		this.markContainingBlockForUpdate(null);
+//		this.setChanged();
+//		this.markContainingBlockForUpdate(null);
 	}
 	
-	@Override
 	public MultiblockRecipe findRecipeForInsertion(ItemStack inserting){
 		return null;
 	}
 	
-	@Override
 	protected MultiblockRecipe getRecipeForId(Level level, ResourceLocation id){
 		return null;
 	}
 	
-	@Override
 	public NonNullList<ItemStack> getInventory(){
 		return null;
 	}
 	
-	@Override
 	public IFluidTank[] getInternalTanks(){
 		return null;
 	}
 	
-	private final ResettableCapability<IFluidHandler> fakeFluidHandler = registerFluidHandler(FAKE_TANK);
+	public <C> Object getCapability(@Nonnull Object capability, @Nullable Direction side){
+		return null;
+	}
 	
-	@Nonnull
 	@Override
-	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
-		if(capability == ForgeCapabilities.FLUID_HANDLER){
-			// East Port
-			if(this.posInMultiblock.equals(East_Port)){
-				if(side == null || (getIsMirrored() ? (side == getFacing().getCounterClockWise()) : (side == getFacing().getClockWise()))){
-					return fakeFluidHandler.cast();
-				}
-			}
-			// West Port
-			if(this.posInMultiblock.equals(West_Port)){
-				if(side == null || (getIsMirrored() ? (side == getFacing().getClockWise()) : (side == getFacing().getCounterClockWise()))){
-					return fakeFluidHandler.cast();
-				}
-			}
-		}
-		return super.getCapability(capability, side);
+	public VoxelShape getBlockBounds(CollisionContext ctx){
+		return null;
 	}
 }

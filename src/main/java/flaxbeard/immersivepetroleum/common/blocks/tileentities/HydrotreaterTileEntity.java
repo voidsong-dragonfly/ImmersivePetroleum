@@ -53,6 +53,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
+@Deprecated(forRemoval = true)
 public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, HighPressureRefineryRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<HydrotreaterTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;

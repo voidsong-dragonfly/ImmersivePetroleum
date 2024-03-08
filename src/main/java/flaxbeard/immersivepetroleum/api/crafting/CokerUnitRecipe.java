@@ -1,7 +1,7 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -20,10 +20,10 @@ import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class CokerUnitRecipe extends MultiblockRecipe{
-	public static List<CokerUnitRecipe> recipes = new ArrayList<>();
+	public static Map<ResourceLocation, CokerUnitRecipe> recipes = new HashMap<>();
 	
 	public static CokerUnitRecipe findRecipe(ItemStack stack, FluidStack fluid){
-		for(CokerUnitRecipe recipe:recipes){
+		for(CokerUnitRecipe recipe:recipes.values()){
 			if((recipe.inputItem != null && recipe.inputItem.test(stack)) && (recipe.inputFluid != null && recipe.inputFluid.test(fluid))){
 				return recipe;
 			}
@@ -37,7 +37,7 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!stack.isEmpty() && !fluid.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes){
+			for(CokerUnitRecipe recipe:recipes.values()){
 				if(recipe.inputItem != null && recipe.inputFluid != null && recipe.inputItem.test(stack) && recipe.inputFluid.test(fluid)){
 					return true;
 				}
@@ -50,7 +50,7 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(stack);
 		
 		if(!stack.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes){
+			for(CokerUnitRecipe recipe:recipes.values()){
 				if(recipe.inputItem != null){
 					if((!ignoreSize && recipe.inputItem.test(stack)) || (ignoreSize && recipe.inputItem.testIgnoringSize(stack))){
 						return true;
@@ -65,7 +65,7 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes){
+			for(CokerUnitRecipe recipe:recipes.values()){
 				if(recipe.inputFluid != null){
 					if((!ignoreAmount && recipe.inputFluid.test(fluid)) || (ignoreAmount && recipe.inputFluid.testIgnoringAmount(fluid))){
 						return true;

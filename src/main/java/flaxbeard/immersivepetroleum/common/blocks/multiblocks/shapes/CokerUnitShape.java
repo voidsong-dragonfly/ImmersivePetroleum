@@ -9,10 +9,10 @@ import flaxbeard.immersivepetroleum.common.util.AABBUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 
-public class CokerShape extends GenericShape{
-	public static final CokerShape GETTER = new CokerShape();
+public class CokerUnitShape extends GenericShape{
+	public static final CokerUnitShape GETTER = new CokerUnitShape();
 	
-	private CokerShape(){
+	private CokerUnitShape(){
 	}
 	
 	@Nonnull

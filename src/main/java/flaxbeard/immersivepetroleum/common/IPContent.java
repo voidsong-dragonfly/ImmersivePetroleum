@@ -17,14 +17,8 @@ import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricantEffect;
 import flaxbeard.immersivepetroleum.client.particle.IPParticleTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
-import flaxbeard.immersivepetroleum.common.blocks.metal.CokerUnitBlock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DerrickBlock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.DistillationTowerBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.HydrotreaterBlock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.OilTankBlock;
-import flaxbeard.immersivepetroleum.common.blocks.metal.PumpjackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.SeismicSurveyBlock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.CokerUnitMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DerrickMultiblock;
@@ -32,6 +26,11 @@ import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerM
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DistillationTowerLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.HydroTreaterLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.OilTankLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.PumpjackLogic;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
@@ -62,7 +61,6 @@ import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandle
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
-import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -85,31 +83,26 @@ public class IPContent{
 	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/Content");
 	
 	public static class Multiblock{
-		public static final DeferredHolder<Block, DistillationTowerBlock> DISTILLATIONTOWER = IPRegisters.registerMultiblockBlock(
-				"distillation_tower", DistillationTowerBlock::new
+		public static final MultiblockRegistration<DistillationTowerLogic.State> DISTILLATIONTOWER = IPRegisters.registerMetalMultiblock(
+				"distillation_tower", new DistillationTowerLogic(), () -> DistillationTowerMultiblock.INSTANCE
 		);
-		public static final DeferredHolder<Block, PumpjackBlock> PUMPJACK = IPRegisters.registerMultiblockBlock(
-				"pumpjack", PumpjackBlock::new
+		public static final MultiblockRegistration<PumpjackLogic.State> PUMPJACK = IPRegisters.registerMetalMultiblock(
+				"pumpjack", new PumpjackLogic(), () -> PumpjackMultiblock.INSTANCE
 		);
-		public static final DeferredHolder<Block, CokerUnitBlock> COKERUNIT = IPRegisters.registerMultiblockBlock(
-				"coker_unit", CokerUnitBlock::new
+		public static final MultiblockRegistration<CokerUnitLogic.State> COKERUNIT = IPRegisters.registerMetalMultiblock(
+				"coker_unit", new CokerUnitLogic(), () -> CokerUnitMultiblock.INSTANCE
 		);
-		public static final DeferredHolder<Block, HydrotreaterBlock> HYDROTREATER = IPRegisters.registerMultiblockBlock(
-				"hydrotreater", HydrotreaterBlock::new
+		public static final MultiblockRegistration<HydroTreaterLogic.State> HYDROTREATER = IPRegisters.registerMetalMultiblock(
+				"hydrotreater", new HydroTreaterLogic(), () -> HydroTreaterMultiblock.INSTANCE
 		);
-		public static final DeferredHolder<Block, DerrickBlock> DERRICK = IPRegisters.registerMultiblockBlock(
-				"derrick", DerrickBlock::new
+		public static final MultiblockRegistration<DerrickLogic.State> DERRICK = IPRegisters.registerMetalMultiblock(
+				"derrick", new DerrickLogic(), () -> DerrickMultiblock.INSTANCE
 		);
-		public static final DeferredHolder<Block, OilTankBlock> OILTANK = IPRegisters.registerMultiblockBlock(
-				"oiltank", OilTankBlock::new
+		public static final MultiblockRegistration<OilTankLogic.State> OILTANK = IPRegisters.registerMetalMultiblock(
+				"oiltank", new OilTankLogic(), () -> OilTankMultiblock.INSTANCE
 		);
 		
-		private static void forceClassLoad(IEventBus modEventBus){
-			// Am just playing around here, actualy have no clue yet how to use the new multiblock API lol
-			MultiblockRegistration.builder(new PumpjackLogic(), ResourceUtils.ip("pumpjack"))
-				.structure(() -> PumpjackMultiblock.INSTANCE)
-				.build(a -> a.accept(modEventBus));
-			// am not even sure this is even right anymore
+		private static void forceClassLoad(){
 		}
 	}
 	
@@ -212,7 +205,7 @@ public class IPContent{
 		Blocks.forceClassLoad();
 		Items.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
-		Multiblock.forceClassLoad(modEventBus);
+		Multiblock.forceClassLoad();
 		IPMenuTypes.forceClassLoad();
 		Serializers.forceClassLoad();
 		IPEffects.forceClassLoad();

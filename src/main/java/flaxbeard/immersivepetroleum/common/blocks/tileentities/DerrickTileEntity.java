@@ -71,6 +71,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
+@Deprecated(forRemoval = true)
 public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileEntity, MultiblockRecipe> implements IPCommonTickableTile, ICanSkipGUI, IPMenuProvider<DerrickTileEntity>, IEBlockInterfaces.IBlockBounds{
 	public static final int REQUIRED_WATER_AMOUNT = 125;
 	public static final int REQUIRED_CONCRETE_AMOUNT = 125;
