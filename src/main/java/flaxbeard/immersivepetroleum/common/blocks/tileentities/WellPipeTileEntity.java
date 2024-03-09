@@ -2,7 +2,10 @@ package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.PumpjackLogic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -60,8 +63,11 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 			pos = new BlockPos(this.worldPosition.getX(), y, this.worldPosition.getZ());
 			BlockEntity teHigh = this.level.getBlockEntity(pos);
 			
-			if((teHigh instanceof PumpjackTileEntity pumpjack && pumpjack.offsetToMaster.equals(BlockPos.ZERO)) || (teHigh instanceof DerrickTileEntity derrick && derrick.offsetToMaster.equals(BlockPos.ZERO))){
-				return Pair.of(true, pos);
+			if(teHigh instanceof MultiblockBlockEntityMaster<?> master){
+				Object state = master.getHelper().getState();
+				if(state instanceof PumpjackLogic.State || state instanceof DerrickLogic.State){
+					return Pair.of(true, pos);
+				}
 			}
 			
 			if(!(teHigh instanceof WellPipeTileEntity)){
