@@ -32,15 +32,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidUtil;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
@@ -138,6 +131,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 		return List.of(stack);
 	}
 	
+	/*// TODO Lubricator Capabilities
 	private LazyOptional<IFluidHandler> outputHandler;
 	
 	@Override
@@ -168,19 +162,20 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 	}
 	
 	@Override
+	public void invalidateCaps(){
+		super.invalidateCaps();
+		if(this.outputHandler != null)
+			this.outputHandler.invalidate();
+	}
+	*/
+	
+	@Override
 	public void setChanged(){
 		super.setChanged();
 		
 		BlockState state = this.level.getBlockState(this.worldPosition);
 		this.level.sendBlockUpdated(this.worldPosition, state, state, 3);
 		this.level.updateNeighborsAt(this.worldPosition, state.getBlock());
-	}
-	
-	@Override
-	public void invalidateCaps(){
-		super.invalidateCaps();
-		if(this.outputHandler != null)
-			this.outputHandler.invalidate();
 	}
 	
 	public Direction getFacing(){
@@ -191,12 +186,14 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 		return !this.isSlave;
 	}
 	
+	/*// TODO RenderBoundingBox gone, find alternative
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public AABB getRenderBoundingBox(){
 		BlockPos pos = getBlockPos();
 		return new AABB(pos.offset(-3, -3, -3), pos.offset(3, 3, 3));
 	}
+	*/
 	
 	@Override
 	public Component[] getOverlayText(Player player, @Nonnull HitResult mop, boolean hammer){

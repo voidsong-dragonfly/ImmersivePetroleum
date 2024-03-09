@@ -16,16 +16,19 @@ import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class CokerUnitRecipe extends MultiblockRecipe{
-	public static Map<ResourceLocation, CokerUnitRecipe> recipes = new HashMap<>();
+	public static Map<ResourceLocation, RecipeHolder<CokerUnitRecipe>> recipes = new HashMap<>();
 	
-	public static CokerUnitRecipe findRecipe(ItemStack stack, FluidStack fluid){
-		for(CokerUnitRecipe recipe:recipes.values()){
+	public static RecipeHolder<CokerUnitRecipe> findRecipe(ItemStack stack, FluidStack fluid){
+		for(RecipeHolder<CokerUnitRecipe> holder:recipes.values()){
+			final CokerUnitRecipe recipe = holder.value();
+			
 			if((recipe.inputItem != null && recipe.inputItem.test(stack)) && (recipe.inputFluid != null && recipe.inputFluid.test(fluid))){
-				return recipe;
+				return holder;
 			}
 		}
 		
@@ -37,7 +40,9 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!stack.isEmpty() && !fluid.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes.values()){
+			for(RecipeHolder<CokerUnitRecipe> holder:recipes.values()){
+				final CokerUnitRecipe recipe = holder.value();
+				
 				if(recipe.inputItem != null && recipe.inputFluid != null && recipe.inputItem.test(stack) && recipe.inputFluid.test(fluid)){
 					return true;
 				}
@@ -50,7 +55,9 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(stack);
 		
 		if(!stack.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes.values()){
+			for(RecipeHolder<CokerUnitRecipe> holder:recipes.values()){
+				final CokerUnitRecipe recipe = holder.value();
+				
 				if(recipe.inputItem != null){
 					if((!ignoreSize && recipe.inputItem.test(stack)) || (ignoreSize && recipe.inputItem.testIgnoringSize(stack))){
 						return true;
@@ -65,7 +72,9 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(CokerUnitRecipe recipe:recipes.values()){
+			for(RecipeHolder<CokerUnitRecipe> holder:recipes.values()){
+				final CokerUnitRecipe recipe = holder.value();
+				
 				if(recipe.inputFluid != null){
 					if((!ignoreAmount && recipe.inputFluid.test(fluid)) || (ignoreAmount && recipe.inputFluid.testIgnoringAmount(fluid))){
 						return true;

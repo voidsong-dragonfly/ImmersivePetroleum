@@ -16,27 +16,30 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class DistillationTowerRecipe extends MultiblockRecipe{
-	public static Map<ResourceLocation, DistillationTowerRecipe> recipes = new HashMap<>();
+	public static Map<ResourceLocation, RecipeHolder<DistillationTowerRecipe>> recipes = new HashMap<>();
 	
     private static final RandomSource RANDOM = RandomSource.create();
 	
 	/** May return null! */
-	public static DistillationTowerRecipe findRecipe(FluidStack input){
+	public static RecipeHolder<DistillationTowerRecipe> findRecipe(FluidStack input){
 		if(!recipes.isEmpty()){
-			for(DistillationTowerRecipe r:recipes.values()){
-				if(r.input != null && r.input.testIgnoringAmount(input)){
-					return r;
+			for(RecipeHolder<DistillationTowerRecipe> holder:recipes.values()){
+				final DistillationTowerRecipe recipe = holder.value();
+				
+				if(recipe.input != null && recipe.input.testIgnoringAmount(input)){
+					return holder;
 				}
 			}
 		}
 		return null;
 	}
 	
-	public static DistillationTowerRecipe loadFromNBT(CompoundTag nbt){
+	public static RecipeHolder<DistillationTowerRecipe> loadFromNBT(CompoundTag nbt){
 		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input"));
 		return findRecipe(input);
 	}

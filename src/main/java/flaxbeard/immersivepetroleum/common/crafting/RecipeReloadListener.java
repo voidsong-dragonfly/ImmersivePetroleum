@@ -59,7 +59,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		DistillationTowerRecipe.recipes = filterRecipes(recipes, IPRecipeTypes.DISTILLATION);
 		
 		ImmersivePetroleum.log.info("Loading Reservoirs.");
-		ReservoirType.map = filterRecipes2(recipes, IPRecipeTypes.RESERVOIR);
+		ReservoirType.map = filterRecipes(recipes, IPRecipeTypes.RESERVOIR);
 		
 		ImmersivePetroleum.log.info("Loading Coker-Unit Recipes.");
 		CokerUnitRecipe.recipes = filterRecipes(recipes, IPRecipeTypes.COKER);
@@ -68,16 +68,8 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		HighPressureRefineryRecipe.recipes = filterRecipes(recipes, IPRecipeTypes.HYDROTREATER);
 	}
 	
-	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<RecipeHolder<?>> recipes, IERecipeTypes.TypeWithClass<R> recipeType){
-		return recipes.stream()
-				.filter(holder -> holder.value().getType() == recipeType.type().get())
-				.flatMap(Stream::of)
-				.collect(Collectors.toMap(RecipeHolder::id, h -> recipeType.recipeClass().cast(h.value())));
-	}
-	
-	
 	@SuppressWarnings("unchecked")
-	static <R extends Recipe<?>> Map<ResourceLocation, RecipeHolder<R>> filterRecipes2(Collection<RecipeHolder<?>> recipes, IERecipeTypes.TypeWithClass<R> recipeType){
+	static <R extends Recipe<?>> Map<ResourceLocation, RecipeHolder<R>> filterRecipes(Collection<RecipeHolder<?>> recipes, IERecipeTypes.TypeWithClass<R> recipeType){
 		return recipes.stream()
 				.filter(holder -> holder.value().getType() == recipeType.type().get())
 				.flatMap(Stream::of)

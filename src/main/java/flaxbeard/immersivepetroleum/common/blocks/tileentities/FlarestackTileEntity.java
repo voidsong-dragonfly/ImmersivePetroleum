@@ -13,28 +13,20 @@ import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTickableTile, IEBlockInterfaces.ISoundBE{
-	static final DamageSource FLARESTACK = new DamageSource("ipFlarestack").bypassArmor().setIsFire();
+	static final DamageSource FLARESTACK = null;//new DamageSource("ipFlarestack").bypassArmor().setIsFire(); // TODO Register a new DamageType for this
 	
 	protected boolean isRedstoneInverted;
 	protected boolean isActive;
@@ -80,6 +72,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTi
 		nbt.put("tank", tank);
 	}
 	
+	/*// TODO Flarestack Capabilities
 	private LazyOptional<IFluidHandler> inputHandler;
 	
 	@Override
@@ -118,6 +111,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTi
 			this.inputHandler.invalidate();
 		}
 	}
+	*/
 	
 	@Override
 	public void setChanged(){
@@ -128,12 +122,14 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTi
 		this.level.updateNeighborsAt(this.worldPosition, state.getBlock());
 	}
 	
+	/*// TODO RenderBoundingBox gone, find alternative
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public AABB getRenderBoundingBox(){
 		BlockPos pos = getBlockPos();
 		return new AABB(pos.offset(-1, -1, -1), pos.offset(1, 2, 1));
 	}
+	*/
 	
 	@Override
 	public void tickClient(){
@@ -185,7 +181,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTi
 				list.forEach(e -> {
 					if(!e.fireImmune()){
 						e.setSecondsOnFire(15);
-						e.hurt(FLARESTACK, 6.0F * (this.drained / (float) this.tank.getCapacity()));
+						//e.hurt(FLARESTACK, 6.0F * (this.drained / (float) this.tank.getCapacity())); // TODO Flarestack Damage
 					}
 				});
 				
