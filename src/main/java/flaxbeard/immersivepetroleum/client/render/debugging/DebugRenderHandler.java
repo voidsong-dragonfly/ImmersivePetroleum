@@ -13,12 +13,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl.RSState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
-import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.MultiblockBEHelperMaster;
 import flaxbeard.immersivepetroleum.api.reservoir.AxisAlignedIslandBB;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
@@ -28,14 +30,16 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionPos;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DistillationTowerLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.HydroTreaterLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.OilTankLogic;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.HydrotreaterTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.IPTileEntityBase;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.OilTankTileEntity.Port;
@@ -45,6 +49,8 @@ import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -109,7 +115,7 @@ public class DebugRenderHandler{
 							List<Component> debugOut = new ArrayList<>();
 							
 							if(blockState.getBlock() instanceof EntityBlock){
-								BlockEntity te = world.getBlockEntity(result.getBlockPos());
+								final BlockEntity te = world.getBlockEntity(result.getBlockPos());
 								
 								if(te instanceof GasGeneratorTileEntity gas){
 									debugOut.add(toTranslation(te.getBlockState().getBlock().getDescriptionId()).withStyle(ChatFormatting.GOLD));
@@ -132,29 +138,47 @@ public class DebugRenderHandler{
 									}else if(te instanceof WellPipeTileEntity wellPipe){
 									}
 									
-								}else if(te instanceof MultiblockPartBlockEntity<?> generic){
+								}else if(te instanceof IMultiblockBE<?> generic){
+									IMultiblockState mbState;
 									{
-										BlockPos tPos = generic.posInMultiblock;
-										if(!generic.offsetToMaster.equals(BlockPos.ZERO)){
-											generic = generic.master();
+										IMultiblockBEHelper<? extends IMultiblockState> helper = generic.getHelper();
+										BlockPos tPos = helper.getPositionInMB();
+										
+										BlockEntity masterMaybe = helper.getContext().getLevel().getBlockEntity(helper.getMultiblock().masterPosInMB());
+										if(masterMaybe instanceof IMultiblockBE<?> master){
+											generic = master;
+											helper = master.getHelper();
 										}
-										Block block = generic.getBlockState().getBlock();
+										
+										mbState = helper.getState();
+										
+										Block block = helper.getMultiblock().block().get();
 										
 										debugOut.add(toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
 										
 										MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
 										
-										try{
-											name.append(toText(generic.isRSDisabled() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
-										}catch(UnsupportedOperationException e){
-											// Don't care, skip if this is thrown
+										if(helper instanceof MultiblockBEHelperMaster<? extends IMultiblockState> masterHelper){
+											IMultiblockContext<?> context = masterHelper.getComponentInstances().stream()
+													.filter(c -> c.component() instanceof RedstoneControl<?>)
+													.map(c -> c.wrappedContext())
+													.findAny().orElse(null);
+											
+											if(context != null){
+												RSState rsstate = ((RSState) context.getState());
+												
+												name.append(toText((!rsstate.isEnabled(context)) ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
+											}
 										}
 										
+										/*// TODO Debug Display: Enery Storage
 										if(generic instanceof PoweredMultiblockBlockEntity<?, ?> poweredGeneric){
 											name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
 											debugOut.add(toText(poweredGeneric.energyStorage.getEnergyStored() + "/" + poweredGeneric.energyStorage.getMaxEnergyStored() + "RF"));
 										}
+										*/
 										
+										/*// TODO Debug Display: Lubrication
 										synchronized(LubricatedHandler.lubricatedTiles){
 											for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
 												if(info.pos.equals(generic.getBlockPos())){
@@ -162,23 +186,24 @@ public class DebugRenderHandler{
 												}
 											}
 										}
+										*/
 										
 										debugOut.add(name);
 									}
 									
-									if(te instanceof DistillationTowerTileEntity tower){
-										distillationtower(debugOut, tower);
+									if(mbState instanceof DistillationTowerLogic.State towerState){
+										distillationtower(debugOut, towerState);
 										
-									}else if(te instanceof CokerUnitTileEntity coker){
+									}else if(mbState instanceof CokerUnitLogic.State coker){
 										cokerunit(debugOut, coker);
 										
-									}else if(te instanceof HydrotreaterTileEntity treater){
+									}else if(mbState instanceof HydroTreaterLogic.State treater){
 										hydrotreater(debugOut, treater);
 										
-									}else if(te instanceof OilTankTileEntity oiltank){
+									}else if(mbState instanceof OilTankLogic.State oiltank){
 										oiltank(debugOut, oiltank);
 										
-									}else if(te instanceof DerrickTileEntity derrick){
+									}else if(mbState instanceof DerrickLogic.State derrick){
 										derrick(debugOut, derrick);
 									}
 								}
@@ -193,7 +218,7 @@ public class DebugRenderHandler{
 								BlockPos hit = result.getBlockPos();
 								debugOut.add(0, toText("World XYZ: " + hit.getX() + ", " + hit.getY() + ", " + hit.getZ()));
 								
-								renderOverlay(event.getPoseStack(), debugOut);
+								renderOverlay(event.getGuiGraphics(), debugOut);
 							}
 						}
 						case ENTITY -> {
@@ -222,7 +247,7 @@ public class DebugRenderHandler{
 									}
 								}
 								
-								renderOverlay(event.getPoseStack(), debugOut);
+								renderOverlay(event.getGuiGraphics(), debugOut);
 							}
 						}
 						default -> {
@@ -253,7 +278,7 @@ public class DebugRenderHandler{
 									Component.literal(String.format("XZ: %d %d", r2.x(), r2.z())).withStyle(b2 ? ChatFormatting.GREEN : ChatFormatting.RED),
 									Component.literal(String.format("XZ: %d %d", r3.x(), r3.z())).withStyle(b3 ? ChatFormatting.GREEN : ChatFormatting.RED)
 								);
-								renderOverlay(event.getPoseStack(), list);
+								renderOverlay(event.getGuiGraphics(), list);
 							}
 						}
 					}
@@ -480,15 +505,17 @@ public class DebugRenderHandler{
 		}
 	}
 	
-	private static void renderOverlay(PoseStack matrix, List<Component> debugOut){
-		Minecraft mc = Minecraft.getInstance();
+	private static void renderOverlay(GuiGraphics graphics, List<Component> debugOut){
+		Font font = MCUtil.getFont();
+		
+		PoseStack matrix = graphics.pose();
 		
 		matrix.pushPose();
 		{
 			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			for(int i = 0;i < debugOut.size();i++){
-				int w = mc.font.width(debugOut.get(i).getString());
-				int yOff = i * (mc.font.lineHeight + 2);
+				int w = font.width(debugOut.get(i).getString());
+				int yOff = i * (font.lineHeight + 2);
 				
 				matrix.pushPose();
 				{
@@ -496,7 +523,7 @@ public class DebugRenderHandler{
 					GuiHelper.drawColouredRect(1, 1 + yOff, w + 1, 10, 0xAF_000000, buffer, matrix);
 					buffer.endBatch();
 					// Draw string without shadow
-					mc.font.draw(matrix, debugOut.get(i), 2, 2 + yOff, -1);
+					graphics.drawString(font, debugOut.get(i), 2, 2 + yOff, -1);
 				}
 				matrix.popPose();
 			}
@@ -504,18 +531,26 @@ public class DebugRenderHandler{
 		matrix.popPose();
 	}
 	
-	private static void distillationtower(List<Component> text, DistillationTowerTileEntity tower){
-		if(!tower.offsetToMaster.equals(BlockPos.ZERO)){
-			tower = tower.master();
+	private static void distillationtower(List<Component> text, DistillationTowerLogic.State tower){
+		text.add(toText("Input Tank").withStyle(ChatFormatting.UNDERLINE));
+		{
+			List<FluidStack> fluids = tower.tanks.input().fluids;
+			if(fluids.size() > 0){
+				for(int j = 0;j < fluids.size();j++){
+					FluidStack fstack = fluids.get(j);
+					text.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
+				}
+			}else{
+				text.add(toText("  Empty"));
+			}
 		}
 		
-		for(int i = 0;i < tower.tanks.length;i++){
-			text.add(toText("Tank " + (i + 1)).withStyle(ChatFormatting.UNDERLINE));
-			
-			MultiFluidTank tank = tower.tanks[i];
-			if(tank.fluids.size() > 0){
-				for(int j = 0;j < tank.fluids.size();j++){
-					FluidStack fstack = tank.fluids.get(j);
+		text.add(toText("Output Tank").withStyle(ChatFormatting.UNDERLINE));
+		{
+			List<FluidStack> fluids = tower.tanks.output().fluids;
+			if(fluids.size() > 0){
+				for(int j = 0;j < fluids.size();j++){
+					FluidStack fstack = fluids.get(j);
 					text.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
 				}
 			}else{
@@ -524,11 +559,7 @@ public class DebugRenderHandler{
 		}
 	}
 	
-	private static void cokerunit(List<Component> text, CokerUnitTileEntity coker){
-		if(!coker.offsetToMaster.equals(BlockPos.ZERO)){
-			coker = coker.master();
-		}
-		
+	private static void cokerunit(List<Component> text, CokerUnitLogic.State coker){
 		{
 			FluidTank tank = coker.bufferTanks[CokerUnitTileEntity.TANK_INPUT];
 			FluidStack fs = tank.getFluid();
@@ -557,11 +588,7 @@ public class DebugRenderHandler{
 		}
 	}
 	
-	private static void hydrotreater(List<Component> text, HydrotreaterTileEntity treater){
-		if(!treater.offsetToMaster.equals(BlockPos.ZERO)){
-			treater = treater.master();
-		}
-		
+	private static void hydrotreater(List<Component> text, HydroTreaterLogic.State treater){
 		IFluidTank[] tanks = treater.getInternalTanks();
 		if(tanks != null && tanks.length > 0){
 			for(int i = 0;i < tanks.length;i++){
@@ -571,7 +598,7 @@ public class DebugRenderHandler{
 		}
 	}
 	
-	private static void oiltank(List<Component> text, OilTankTileEntity tank){
+	private static void oiltank(List<Component> text, OilTankLogic.State tank){
 		BlockPos mbpos = tank.posInMultiblock;
 		Port port = null;
 		for(Port p:Port.values()){
@@ -579,10 +606,6 @@ public class DebugRenderHandler{
 				port = p;
 				break;
 			}
-		}
-		
-		if(!tank.offsetToMaster.equals(BlockPos.ZERO)){
-			tank = tank.master();
 		}
 		
 		if(port != null){
@@ -598,11 +621,7 @@ public class DebugRenderHandler{
 		text.add(toText("Fluid: " + (fs.getAmount() + "/" + tank.tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 	}
 	
-	private static void derrick(List<Component> text, DerrickTileEntity derrick){
-		if(!derrick.offsetToMaster.equals(BlockPos.ZERO)){
-			derrick = derrick.master();
-		}
-		
+	private static void derrick(List<Component> text, DerrickLogic.State derrick){
 		IFluidTank[] tanks = derrick.getInternalTanks();
 		if(tanks != null && tanks.length > 0){
 			for(int i = 0;i < tanks.length;i++){
