@@ -44,6 +44,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -126,7 +127,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		this.clientFlow = nbt.getInt("spillflow");
 		
 		try{
-			this.fluidSpilled = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillingfluid")));
+			this.fluidSpilled = BuiltInRegistries.FLUID.get(new ResourceLocation(nbt.getString("spillingfluid")));
 		}catch(ResourceLocationException rle){
 			this.fluidSpilled = Fluids.EMPTY;
 		}

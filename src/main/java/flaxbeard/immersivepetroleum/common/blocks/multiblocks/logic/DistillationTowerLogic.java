@@ -20,7 +20,6 @@ import flaxbeard.immersivepetroleum.common.util.inventory.MultiFluidTankFiltered
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -62,6 +61,11 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 	public static final BlockPos REDSTONE_IN = new BlockPos(0, 1, 3);
 	
 	@Override
+	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
+		return new DistillationTowerLogic.State(capabilitySource);
+	}
+	
+	@Override
 	public void tickClient(IMultiblockContext<DistillationTowerLogic.State> context){
 	}
 	
@@ -77,7 +81,7 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		
 		boolean update = false;
 		if(rsEnabled){
-			/*
+			/*// TODO Recipe processing..
 			if(state.energy.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
 				if(state.tanks.input.getFluidAmount() > 0){
 					
@@ -85,11 +89,6 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 			}
 			*/
 		}
-	}
-	
-	@Override
-	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
-		return new DistillationTowerLogic.State(capabilitySource);
 	}
 	
 	@Override
@@ -143,19 +142,21 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		}
 	}
 	
-	public static record Tanks(MultiFluidTankFiltered input, MultiFluidTankFiltered output){
+	public static record Tanks(MultiFluidTankFiltered input, MultiFluidTankFiltered output) implements IReadWriteNBT{
 		public static final int CAPACITY = 24 * FluidType.BUCKET_VOLUME;
 		
 		public Tanks(){
 			this(new MultiFluidTankFiltered(CAPACITY, fs -> DistillationTowerRecipe.findRecipe(fs) != null), new MultiFluidTankFiltered(CAPACITY));
 		}
 		
+		@Override
 		public void readNBT(CompoundTag nbt){
 			this.input.readFromNBT(nbt.getCompound("input"));
 			this.output.readFromNBT(nbt.getCompound("output"));
 		}
 		
-		public Tag writeNBT(){
+		@Override
+		public CompoundTag writeNBT(){
 			CompoundTag nbt = new CompoundTag();
 			nbt.put("input", this.input.writeToNBT(new CompoundTag()));
 			nbt.put("output", this.output.writeToNBT(new CompoundTag()));

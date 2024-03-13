@@ -82,19 +82,34 @@ public class IPContent{
 				"distillation_tower", new DistillationTowerLogic(), () -> DistillationTowerMultiblock.INSTANCE
 		);
 		public static final MultiblockRegistration<PumpjackLogic.State> PUMPJACK = IPRegisters.registerMetalMultiblock(
-				"pumpjack", new PumpjackLogic(), () -> PumpjackMultiblock.INSTANCE
+				"pumpjack", new PumpjackLogic(), () -> PumpjackMultiblock.INSTANCE,
+				builder -> {
+					builder.redstone(st -> st.rsState, PumpjackLogic.REDSTONE_IN);
+				}
 		);
 		public static final MultiblockRegistration<CokerUnitLogic.State> COKERUNIT = IPRegisters.registerMetalMultiblock(
-				"coker_unit", new CokerUnitLogic(), () -> CokerUnitMultiblock.INSTANCE
+				"coker_unit", new CokerUnitLogic(), () -> CokerUnitMultiblock.INSTANCE,
+				builder -> {
+					builder.redstone(st -> st.rsState, CokerUnitLogic.Redstone_IN);
+				}
 		);
 		public static final MultiblockRegistration<HydroTreaterLogic.State> HYDROTREATER = IPRegisters.registerMetalMultiblock(
-				"hydrotreater", new HydroTreaterLogic(), () -> HydroTreaterMultiblock.INSTANCE
+				"hydrotreater", new HydroTreaterLogic(), () -> HydroTreaterMultiblock.INSTANCE,
+				builder -> {
+					builder.redstone(st -> st.rsState, HydroTreaterLogic.Redstone_IN);
+				}
 		);
 		public static final MultiblockRegistration<DerrickLogic.State> DERRICK = IPRegisters.registerMetalMultiblock(
-				"derrick", new DerrickLogic(), () -> DerrickMultiblock.INSTANCE
+				"derrick", new DerrickLogic(), () -> DerrickMultiblock.INSTANCE,
+				builder -> {
+					builder.redstone(st -> st.rsState, DerrickLogic.Redstone_IN);
+				}
 		);
 		public static final MultiblockRegistration<OilTankLogic.State> OILTANK = IPRegisters.registerMetalMultiblock(
-				"oiltank", new OilTankLogic(), () -> OilTankMultiblock.INSTANCE
+				"oiltank", new OilTankLogic(), () -> OilTankMultiblock.INSTANCE,
+				builder -> {
+					builder.redstone(st -> st.rsState, OilTankLogic.Redstone_IN);
+				}
 		);
 		
 		private static void forceClassLoad(){

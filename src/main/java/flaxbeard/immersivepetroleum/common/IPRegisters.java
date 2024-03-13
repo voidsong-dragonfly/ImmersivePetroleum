@@ -13,6 +13,10 @@ import com.google.common.collect.ImmutableSet;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistrationBuilder;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.ComparatorManager;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent.StateWrapper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl.RSState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
@@ -21,6 +25,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;
 import flaxbeard.immersivepetroleum.common.util.IPEffects.IPEffect;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -91,6 +96,10 @@ public class IPRegisters{
 	}
 	
 	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMetalMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure){
+		return registerMetalMultiblock(name, logic, structure, null);
+	}
+	
+	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMetalMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, @Nullable Consumer<MultiblockBuilder<S>> extras){
 		// @formatter:off
 		BlockBehaviour.Properties prop = BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
 			.strength(3, 15)
@@ -101,25 +110,37 @@ public class IPRegisters{
 			.pushReaction(PushReaction.BLOCK);
 		// @formatter:on
 		
-		return registerMultiblock(name, logic, structure, prop);
+		return registerMultiblock(name, logic, structure, extras, prop);
 	}
 	
-	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, BlockBehaviour.Properties prop){
-		final ResourceLocation rl = ResourceUtils.ip(name);
-		
+	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, @Nullable Consumer<MultiblockBuilder<S>> extras, BlockBehaviour.Properties prop){
 		// @formatter:off
-		MultiblockBuilder<S> builder = new MultiblockBuilder<>(logic, rl)
+		MultiblockBuilder<S> builder = new MultiblockBuilder<>(logic, name)
 			.structure(structure)
 			.defaultBEs(TE_REGISTER)
 			.defaultBlock(BLOCK_REGISTER, ITEM_REGISTER, prop);
 		// @formatter:on
 		
+		if(extras != null){
+			extras.accept(builder);
+		}
+		
 		return builder.build(MOD_BUS_CALLBACKS::add);
 	}
 	
-	private static class MultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, MultiblockBuilder<S>>{
-		public MultiblockBuilder(IMultiblockLogic<S> logic, ResourceLocation name){
-			super(logic, name);
+	protected static class MultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, MultiblockBuilder<S>>{
+		public MultiblockBuilder(IMultiblockLogic<S> logic, String name){
+			super(logic, ResourceUtils.ip(name));
+		}
+		
+		public MultiblockBuilder<S> redstone(StateWrapper<S, RSState> getState, BlockPos... positions){
+			redstoneAware();
+			return selfWrappingComponent(new RedstoneControl<>(getState, positions));
+		}
+		
+		public MultiblockBuilder<S> comparator(ComparatorManager<S> comparator){
+			withComparator();
+			return super.selfWrappingComponent(comparator);
 		}
 		
 		@Override
