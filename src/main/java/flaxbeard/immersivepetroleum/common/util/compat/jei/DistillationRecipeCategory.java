@@ -15,7 +15,6 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -25,10 +24,12 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.ITypedIngredient;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -44,7 +45,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 		super(DistillationTowerRecipe.class, guiHelper, ID, "block.immersivepetroleum.distillation_tower");
 		ResourceLocation background = ResourceUtils.ip("textures/gui/jei/distillationtower.png");
 		setBackground(guiHelper.createDrawable(background, 0, 0, 120, 77));
-		setIcon(new ItemStack(IPContent.Multiblock.DISTILLATIONTOWER.get()));
+		setIcon(IPContent.Multiblock.DISTILLATIONTOWER.iconStack());
 		this.tankOverlay = guiHelper.createDrawable(background, 120, 0, 20, 51);
 	}
 	
@@ -69,7 +70,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 				IRecipeSlotBuilder slot = builder
 						.addSlot(RecipeIngredientRole.OUTPUT, x0, lastHeight - height)
 						.setFluidRenderer(f.getAmount(), false, tW, height)
-						.addIngredient(ForgeTypes.FLUID_STACK, f);
+						.addIngredient(NeoForgeTypes.FLUID_STACK, f);
 				
 				lastHeight -= height;
 				
@@ -79,12 +80,12 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 				}
 			}
 		}
-
+		
 		if(recipe.getInputFluid() != null){
 			builder.addSlot(RecipeIngredientRole.INPUT, 11, 21)
 				.setFluidRenderer(outputTotal, false, 16, 47)
 				.setOverlay(this.tankOverlay, -2, -2)
-				.addIngredients(ForgeTypes.FLUID_STACK, recipe.getInputFluid().getMatchingFluidStacks());
+				.addIngredients(NeoForgeTypes.FLUID_STACK, recipe.getInputFluid().getMatchingFluidStacks());
 		}
 		
 		IRecipeSlotBuilder itemOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 77, 37)
@@ -129,7 +130,9 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 	}
 	
 	@Override
-	public void draw(@Nonnull DistillationTowerRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull PoseStack matrix, double mouseX, double mouseY){
+	public void draw(DistillationTowerRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY){
+		PoseStack matrix = guiGraphics.pose();
+		
 		IDrawable background = getBackground();
 		int bWidth = background.getWidth();
 		int bHeight = background.getHeight();
@@ -143,10 +146,10 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 			matrix.translate(23, 0, 0);
 			
 			String text0 = I18n.get("desc.immersiveengineering.info.ift", Utils.fDecimal(energy));
-			font.draw(matrix, text0, bWidth / 2 - font.width(text0) / 2, bHeight - (font.lineHeight * 2), 0);
+			guiGraphics.drawString(font, text0, bWidth / 2 - font.width(text0) / 2, bHeight - (font.lineHeight * 2), 0);
 			
 			String text1 = I18n.get("desc.immersiveengineering.info.seconds", Utils.fDecimal(time / 20D));
-			font.draw(matrix, text1, bWidth / 2 - font.width(text1) / 2, bHeight - font.lineHeight, 0);
+			guiGraphics.drawString(font, text1, bWidth / 2 - font.width(text1) / 2, bHeight - font.lineHeight, 0);
 		}
 		matrix.popPose();
 	}
