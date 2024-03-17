@@ -5,12 +5,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
+import flaxbeard.immersivepetroleum.common.util.ChancedItemStack;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -26,6 +29,7 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
     private static final RandomSource RANDOM = RandomSource.create();
 	
 	/** May return null! */
+	@Nullable
 	public static RecipeHolder<DistillationTowerRecipe> findRecipe(FluidStack input){
 		if(!recipes.isEmpty()){
 			for(RecipeHolder<DistillationTowerRecipe> holder:recipes.values()){
@@ -39,6 +43,12 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
 		return null;
 	}
 	
+	@Nullable
+	public static RecipeHolder<DistillationTowerRecipe> getRecipe(ResourceLocation id){
+		return recipes.get(id);
+	}
+	
+	@Nullable
 	public static RecipeHolder<DistillationTowerRecipe> loadFromNBT(CompoundTag nbt){
 		FluidStack input = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input"));
 		return findRecipe(input);
@@ -52,19 +62,24 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
 	protected final Lazy<NonNullList<ItemStack>> lazyOutputList;
 	protected final FluidTagInput input;
 	protected final FluidStack[] fluidOutput;
-	protected final ItemStack[] itemOutput;
-	protected final double[] chances;
+	@Deprecated(forRemoval = true) protected ItemStack[] itemOutput;
+	@Deprecated(forRemoval = true) protected double[] chances;
+	protected final ChancedItemStack[] itemOutputs;
 	
-	public DistillationTowerRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
+	public DistillationTowerRecipe(FluidStack[] fluidOutput, ChancedItemStack[] itemOutput, FluidTagInput input, int energy, int time){
 		super(TagOutput.EMPTY, IPRecipeTypes.DISTILLATION, energy, time, DistillationTowerRecipe::multipliers);
 		this.fluidOutput = fluidOutput;
-		this.itemOutput = itemOutput;
-		this.chances = chances;
+		this.itemOutputs = itemOutput;
 		
 		this.input = input;
 		this.fluidInputList = Collections.singletonList(input);
 		this.fluidOutputList = Arrays.asList(this.fluidOutput);
-		this.lazyOutputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, itemOutput));
+		this.lazyOutputList = Lazy.of(() -> {
+			NonNullList<ItemStack> list = Arrays.asList(itemOutput).stream()
+				.map(m -> m.stack())
+				.collect(() -> NonNullList.withSize(itemOutput.length, ItemStack.EMPTY), NonNullList::add, NonNullList::addAll);
+			return list;
+		});
 	}
 	
 	@Override
@@ -84,13 +99,13 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
 	
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(){
-		if(this.itemOutput.length == 0 && this.chances.length == 0)
-			return NonNullList.create();
+		if(this.itemOutputs.length == 0)
+			return NonNullList.withSize(0, ItemStack.EMPTY);
 		
 		NonNullList<ItemStack> output = NonNullList.create();
-		for(int i = 0;i < this.itemOutput.length;i++){
-			if(RANDOM.nextFloat() <= this.chances[i]){
-				output.add(this.itemOutput[i]);
+		for(int i = 0;i < this.itemOutputs.length;i++){
+			if(RANDOM.nextFloat() <= this.itemOutputs[i].chance()){
+				output.add(this.itemOutputs[i].stack());
 			}
 		}
 		
@@ -101,7 +116,12 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
 		return this.input;
 	}
 	
+	@Deprecated
 	public double[] chances(){
-		return this.chances;
+		throw new UnsupportedOperationException();
+	}
+	
+	public ChancedItemStack[] getByproducts(){
+		return this.itemOutputs;
 	}
 }

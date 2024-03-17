@@ -15,15 +15,21 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPos
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.crafting.RecipeWorker;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.shapes.DistillationTowerShape;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.util.IPoweredMultiblockRecipeProcessor;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.util.IReadWriteNBT;
 import flaxbeard.immersivepetroleum.common.util.inventory.MultiFluidTankFiltered;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.IFluidTank;
 
 public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowerLogic.State>, IServerTickableComponent<DistillationTowerLogic.State>, IClientTickableComponent<DistillationTowerLogic.State>{
 	
@@ -81,13 +87,29 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		
 		boolean update = false;
 		if(rsEnabled){
-			/*// TODO Recipe processing..
-			if(state.energy.getEnergyStored() > 0 && this.processQueue.size() < getProcessQueueMaxLength()){
-				if(state.tanks.input.getFluidAmount() > 0){
-					
+			if(state.energy.getEnergyStored() > 0 && state.recipeWorker.size() < state.recipeWorker.getMaxQueueSize() && state.tanks.input.getFluidAmount() > 0){
+				RecipeHolder<DistillationTowerRecipe> holder = DistillationTowerRecipe.findRecipe(state.tanks.input.getFluid());
+				DistillationTowerRecipe recipe;
+				
+				if(holder != null && (recipe = holder.value()) != null){
+					if(state.tanks.input.getFluidAmount() >= recipe.getInputFluid().getAmount() && state.energy.getEnergyStored() >= recipe.getTotalProcessEnergy() / recipe.getTotalProcessTime()){
+						if(state.recipeWorker.addToQueue(context, holder)){
+							update = true;
+						}
+					}
 				}
 			}
-			*/
+			
+			if(!state.recipeWorker.isEmpty()){
+				state.wasActive = true;
+				state.cooldownTicks = 10;
+				update = true;
+			}else if(state.wasActive){
+				state.wasActive = false;
+				update = true;
+			}
+			
+			state.recipeWorker.tick(context);
 		}
 	}
 	
@@ -96,9 +118,11 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		return DistillationTowerShape.GETTER;
 	}
 	
-	public static class State implements IMultiblockState{
+	public static class State implements IMultiblockState, IPoweredMultiblockRecipeProcessor{
 		public final AveragingEnergyStorage energy = new AveragingEnergyStorage(16000);
 		public final RSState rsState = RSState.enabledByDefault();
+		
+		public final RecipeWorker<DistillationTowerRecipe> recipeWorker = new RecipeWorker<>(1, DistillationTowerRecipe::getRecipe);
 		
 		public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 		public final Tanks tanks = new Tanks();
@@ -109,9 +133,25 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		}
 		
 		@Override
+		public IEnergyStorage getPowerSupply(){
+			return this.energy;
+		}
+		
+		@Override
+		public IFluidTank[] getInternalTanks(){
+			return this.tanks.asArray();
+		}
+		
+		@Override
+		public int[] getOutputTanks(){
+			return new int[]{1};
+		}
+		
+		@Override
 		public void readSaveNBT(CompoundTag nbt){
 			this.tanks.readNBT(nbt.getCompound("tanks"));
 			this.cooldownTicks = nbt.getInt("cooldownTicks");
+			this.recipeWorker.readNBT(nbt.getCompound("recipeworker"));
 			
 			this.inventory = readInventory(nbt.getCompound("inventory"));
 		}
@@ -120,6 +160,7 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		public void writeSaveNBT(CompoundTag nbt){
 			nbt.put("tanks", this.tanks.writeNBT());
 			nbt.putInt("cooldownTicks", this.cooldownTicks);
+			nbt.put("recipeworker", this.recipeWorker.writeNBT());
 			
 			nbt.put("inventory", writeInventory(this.inventory));
 		}
@@ -147,6 +188,10 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		
 		public Tanks(){
 			this(new MultiFluidTankFiltered(CAPACITY, fs -> DistillationTowerRecipe.findRecipe(fs) != null), new MultiFluidTankFiltered(CAPACITY));
+		}
+		
+		public IFluidTank[] asArray(){
+			return new IFluidTank[]{input, output};
 		}
 		
 		@Override

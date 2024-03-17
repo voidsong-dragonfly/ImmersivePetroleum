@@ -102,7 +102,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 			for(int i = 0;i < list.size();i++){
 				ItemStack stack = list.get(i);
 				
-				this.map.put(RegistryUtils.getRegistryNameOf(stack.getItem()), recipe.chances()[i]);
+				this.map.put(RegistryUtils.getRegistryNameOf(stack.getItem()), recipe.getByproducts()[i].chance());
 			}
 		}
 		

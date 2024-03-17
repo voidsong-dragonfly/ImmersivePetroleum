@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.crafting.serializers;
 
+import java.util.Optional;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -21,13 +23,15 @@ public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 		Codec.INT.fieldOf("equilibrium").forGetter(r -> r.equilibrium),
 		Codec.INT.fieldOf("weight").forGetter(r -> r.weight),
 
-		ReservoirType.BWList.CODEC.fieldOf("dimensions").forGetter(r -> r.getDimensions()),
-		ReservoirType.BWList.CODEC.fieldOf("biomes").forGetter(r -> r.getBiomes())
+		ReservoirType.BWList.CODEC.optionalFieldOf("dimensions").forGetter(r -> Optional.of(r.getDimensions())),
+		ReservoirType.BWList.CODEC.optionalFieldOf("biomes").forGetter(r -> Optional.of(r.getBiomes()))
 		
 	).apply(inst, (name, fluid, min, max, trace, equilibrium, weight, dimensions, biomes) -> {
-		ReservoirType type = new ReservoirType(name, fluid, min, max, trace, equilibrium, weight)
-			.setDimensions(dimensions)
-			.setBiomes(biomes);
+		ReservoirType type = new ReservoirType(name, fluid, min, max, trace, equilibrium, weight);
+		
+		dimensions.ifPresent(type::setDimensions);
+		biomes.ifPresent(type::setBiomes);
+		
 		return type;
 	}));
 	// @formatter:on

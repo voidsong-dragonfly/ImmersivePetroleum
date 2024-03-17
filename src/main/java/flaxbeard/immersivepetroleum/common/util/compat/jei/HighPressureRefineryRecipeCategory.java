@@ -75,7 +75,7 @@ public class HighPressureRefineryRecipeCategory extends IPRecipeCategory<HighPre
 		
 		int time = recipe.getTotalProcessTime();
 		int energy = recipe.getTotalProcessEnergy()/recipe.getTotalProcessTime();
-		int chance = (int) (100 * recipe.chance);
+		int chance = (int) (100 * recipe.outputItem.chance());
 		
 		matrix.pushPose();
 		String text0 = I18n.get("desc.immersiveengineering.info.ift", Utils.fDecimal(energy));

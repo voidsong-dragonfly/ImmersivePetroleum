@@ -1,50 +1,41 @@
 package flaxbeard.immersivepetroleum.common.crafting.serializers;
 
-import javax.annotation.Nonnull;
+import java.util.Optional;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.api.crafting.HighPressureRefineryRecipe;
-import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecipeBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ChancedItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.conditions.ICondition.IContext;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<HighPressureRefineryRecipe>{
+	// @formatter:off
+	public static final Codec<HighPressureRefineryRecipe> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+		FluidStack.CODEC.fieldOf("result").forGetter(r -> r.output),
+		FluidTagInput.CODEC.fieldOf("input").forGetter(r -> r.inputFluid),
+		FluidTagInput.CODEC.optionalFieldOf("secondary_input").forGetter(r -> Optional.ofNullable(r.inputFluidSecondary)),
+		ChancedItemStack.CODEC.optionalFieldOf("secondary_result", ChancedItemStack.EMPTY).forGetter(a -> a.outputItem),
+		Codec.INT.fieldOf("energy").forGetter(r -> r.getBaseEnergy()),
+		Codec.INT.fieldOf("time").forGetter(r -> r.getBaseTime())
+	).apply(inst, (result, inputFluid, inputFluidSecondary, secondaryResult, energy, time) -> {
+		return new HighPressureRefineryRecipe(result, secondaryResult, inputFluid, inputFluidSecondary.orElse(null), energy, time);
+	}));
+	// @formatter:on
 	
 	@Override
-	public HighPressureRefineryRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
-		FluidStack output = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
-		FluidTagInput inputFluid0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-		FluidTagInput inputFluid1 = null;
-		Tuple<ItemStack, Double> itemWithChance = new Tuple<ItemStack, Double>(ItemStack.EMPTY, 0.0D);
-		
-		if(json.has("secondary_input")){
-			inputFluid1 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "secondary_input"));
-		}
-		
-		if(json.has("secondary_result")){
-			itemWithChance = DistillationTowerRecipeBuilder.deserializeItemStackWithChance(json.get("secondary_result").getAsJsonObject());
-		}
-		
-		int energy = GsonHelper.getAsInt(json, "energy");
-		int time = GsonHelper.getAsInt(json, "time");
-		
-		return new HighPressureRefineryRecipe(recipeId, output, itemWithChance.getA(), inputFluid0, inputFluid1, itemWithChance.getB(), energy, time);
+	public Codec<HighPressureRefineryRecipe> codec(){
+		return CODEC;
 	}
 	
 	@Override
-	public HighPressureRefineryRecipe fromNetwork(@Nonnull ResourceLocation id, FriendlyByteBuf buffer){
-		ItemStack outputItem = buffer.readItem();
-		double chance = buffer.readDouble();
+	public HighPressureRefineryRecipe fromNetwork(FriendlyByteBuf buffer){
+		ChancedItemStack outputItem = new ChancedItemStack(buffer);
 		
 		FluidStack output = buffer.readFluidStack();
 		FluidTagInput inputFluid0 = FluidTagInput.read(buffer);
@@ -58,13 +49,12 @@ public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<Hig
 		int energy = buffer.readInt();
 		int time = buffer.readInt();
 		
-		return new HighPressureRefineryRecipe(id, output, outputItem, inputFluid0, inputFluid1, chance, energy, time);
+		return new HighPressureRefineryRecipe(output, outputItem, inputFluid0, inputFluid1, energy, time);
 	}
 	
 	@Override
 	public void toNetwork(FriendlyByteBuf buffer, HighPressureRefineryRecipe recipe){
-		buffer.writeItem(recipe.outputItem);
-		buffer.writeDouble(recipe.chance);
+		recipe.outputItem.writeToBuffer(buffer);
 		
 		buffer.writeFluidStack(recipe.output);
 		recipe.inputFluid.write(buffer);
@@ -81,6 +71,6 @@ public class HighPressureRefineryRecipeSerializer extends IERecipeSerializer<Hig
 	
 	@Override
 	public ItemStack getIcon(){
-		return new ItemStack(IPContent.Multiblock.HYDROTREATER.get());
+		return IPContent.Multiblock.HYDROTREATER.iconStack();
 	}
 }

@@ -15,6 +15,7 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
+import flaxbeard.immersivepetroleum.common.util.ChancedItemStack;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -87,8 +88,8 @@ public class HighPressureRefineryRecipe extends MultiblockRecipe{
 		return MULTIPLIER;
 	}
 	
-	public final ItemStack outputItem;
-	public final double chance;
+	
+	public final ChancedItemStack outputItem;
 	
 	public final FluidStack output;
 	
@@ -97,29 +98,26 @@ public class HighPressureRefineryRecipe extends MultiblockRecipe{
 	public final FluidTagInput inputFluidSecondary;
 	
 	/**
-	 * @param id                  {@link ResourceLocation} ID to create the recipe with
 	 * @param output              {@link FluidStack} to output
-	 * @param outputItem          {@link ItemStack} to output
+	 * @param outputItem          {@link ChancedItemStack} to output
 	 * @param inputFluid          {@link FluidStack} to input
 	 * @param inputFluidSecondary {@link FluidStack} for secondary input
-	 * @param chance              double chance of the {@link ItemStack} output
 	 * @param energy              amount of FE to consume
 	 * @param time                duration of the recipe
 	 */
-	public HighPressureRefineryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
+	public HighPressureRefineryRecipe(FluidStack output, ChancedItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, int energy, int time){
 		super(TagOutput.EMPTY, IPRecipeTypes.HYDROTREATER, energy, time, HighPressureRefineryRecipe::multipliers);
 		this.output = output;
 		this.outputItem = outputItem;
 		this.inputFluid = inputFluid;
 		this.inputFluidSecondary = inputFluidSecondary;
-		this.chance = chance;
 		
 		this.fluidOutputList = Collections.singletonList(output);
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
 	}
 	
 	public boolean hasSecondaryItem(){
-		return this.outputItem != null && !this.outputItem.isEmpty();
+		return !this.outputItem.stack().isEmpty();
 	}
 	
 	@Override
@@ -139,8 +137,8 @@ public class HighPressureRefineryRecipe extends MultiblockRecipe{
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(){
 		NonNullList<ItemStack> list = NonNullList.create();
-		if(RANDOM.nextFloat() <= this.chance){
-			list.add(this.outputItem);
+		if(RANDOM.nextFloat() <= this.outputItem.chance()){
+			list.add(this.outputItem.stack());
 		}
 		return list;
 	}

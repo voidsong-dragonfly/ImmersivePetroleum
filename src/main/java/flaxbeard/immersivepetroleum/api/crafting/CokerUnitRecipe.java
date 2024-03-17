@@ -17,7 +17,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class CokerUnitRecipe extends MultiblockRecipe{
@@ -96,18 +95,18 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 	// Coke Output -> Item Out
 	// Diesel Output -> Fluid Out
 	
-	public final Lazy<ItemStack> outputItem;
+	public final ItemStack outputItem;
 	public final FluidStack outputFluid;
 	
 	public final IngredientWithSize inputItem;
 	public final FluidTagInput inputFluid;
 	
-	public CokerUnitRecipe(ResourceLocation id, Lazy<ItemStack> outputItem2, FluidStack outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
+	public CokerUnitRecipe(ItemStack outputItem, FluidStack outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
 		super(TagOutput.EMPTY, IPRecipeTypes.COKER, energy, time, CokerUnitRecipe::multipliers);
 		this.inputFluid = inputFluid;
 		this.inputItem = inputItem;
 		this.outputFluid = outputFluid;
-		this.outputItem = outputItem2;
+		this.outputItem = outputItem;
 	}
 	
 	@Override
@@ -118,7 +117,7 @@ public class CokerUnitRecipe extends MultiblockRecipe{
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(){
 		NonNullList<ItemStack> list = NonNullList.create();
-		list.add(this.outputItem.get());
+		list.add(this.outputItem);
 		return list;
 	}
 	

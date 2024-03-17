@@ -2,39 +2,40 @@ package flaxbeard.immersivepetroleum.common.crafting.serializers;
 
 import javax.annotation.Nonnull;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.conditions.ICondition.IContext;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecipe>{
 	
+	// @formatter:off
+	public static final Codec<CokerUnitRecipe> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+		ItemStack.CODEC.fieldOf("result").forGetter(r -> r.outputItem),
+		FluidStack.CODEC.fieldOf("resultfluid").forGetter(r -> r.outputFluid),
+		IngredientWithSize.CODEC.fieldOf("input").forGetter(r -> r.inputItem),
+		FluidTagInput.CODEC.fieldOf("inputfluid").forGetter(r -> r.inputFluid),
+		Codec.INT.fieldOf("energy").forGetter(r -> r.getBaseEnergy()),
+		Codec.INT.fieldOf("time").forGetter(r -> r.getBaseTime())
+	).apply(inst, (outputItem, outputFluid, inputItem, inputFluid, energy, time) -> {
+		return new CokerUnitRecipe(outputItem, outputFluid, inputItem, inputFluid, energy, time);
+	}));
+	// @formatter:on
+	
 	@Override
-	public CokerUnitRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
-		FluidStack outputFluid = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "resultfluid"));
-		FluidTagInput inputFluid = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "inputfluid"));
-		
-		Lazy<ItemStack> outputItem = readOutput(json.get("result"));
-		IngredientWithSize inputItem = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-		
-		int energy = GsonHelper.getAsInt(json, "energy");
-		int time = GsonHelper.getAsInt(json, "time");
-		
-		return new CokerUnitRecipe(recipeId, outputItem, outputFluid, inputItem, inputFluid, energy, time);
+	public Codec<CokerUnitRecipe> codec(){
+		return CODEC;
 	}
 	
 	@Override
-	public CokerUnitRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer){
+	public CokerUnitRecipe fromNetwork(@Nonnull FriendlyByteBuf buffer){
 		IngredientWithSize inputItem = IngredientWithSize.read(buffer);
 		ItemStack outputItem = buffer.readItem();
 		
@@ -44,13 +45,13 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 		int energy = buffer.readInt();
 		int time = buffer.readInt();
 		
-		return new CokerUnitRecipe(recipeId, Lazy.of(() -> outputItem), outputFluid, inputItem, inputFluid, energy, time);
+		return new CokerUnitRecipe(outputItem, outputFluid, inputItem, inputFluid, energy, time);
 	}
 	
 	@Override
 	public void toNetwork(@Nonnull FriendlyByteBuf buffer, CokerUnitRecipe recipe){
 		recipe.inputItem.write(buffer);
-		buffer.writeItem(recipe.outputItem.get());
+		buffer.writeItem(recipe.outputItem);
 		
 		recipe.inputFluid.write(buffer);
 		recipe.outputFluid.writeToPacket(buffer);
@@ -61,6 +62,6 @@ public class CokerUnitRecipeSerializer extends IERecipeSerializer<CokerUnitRecip
 	
 	@Override
 	public ItemStack getIcon(){
-		return new ItemStack(IPContent.Multiblock.COKERUNIT.get());
+		return IPContent.Multiblock.COKERUNIT.iconStack();
 	}
 }
