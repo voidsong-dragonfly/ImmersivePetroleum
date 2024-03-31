@@ -21,7 +21,6 @@ import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.util.commands.IslandCommand;
-import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.IPPeripheralProvider;
 import flaxbeard.immersivepetroleum.common.util.loot.IPLootFunctions;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.commands.CommandSourceStack;
@@ -100,7 +99,7 @@ public class ImmersivePetroleum{
 		proxy.init();
 		
 		if(ModList.get().isLoaded("computercraft")){
-			IPPeripheralProvider.init();
+			//IPPeripheralProvider.init();
 		}
 		
 		// ---------------------------------------------------------------------------------------------------------------------------------------------
