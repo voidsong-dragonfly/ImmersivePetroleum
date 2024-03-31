@@ -16,21 +16,21 @@ license="All rights reserved"
 
 [[dependencies.immersivepetroleum]]
 	modId="minecraft"
-	mandatory=true
+	type="required"
 	versionRange="[${mc_version}]"
 	ordering="NONE"
 	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
 	modId="neoforge"
-	mandatory=true
+	type="required"
 	versionRange="[${neoforge_version},)"
 	ordering="NONE"
 	side="BOTH"
 
 [[dependencies.immersivepetroleum]]
 	modId="immersiveengineering"
-	mandatory=true
+	type="required"
 	versionRange="[${ie_version},)"
 	ordering="BEFORE"
 	side="BOTH"
