@@ -3,19 +3,15 @@ package flaxbeard.immersivepetroleum.common.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider{
+// TODO Is this even nessesary anymore?
+public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider<Object, Object, Object>{
 	private static final Runnable EMPTY_RUN = () -> {};
 	
 	@Nonnull
@@ -37,6 +33,7 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		this.onChange.run();
 	}
 	
+	/*
 	LazyOptional<IItemHandler> handler = LazyOptional.of(() -> this);// CapabilityUtils.constantOptional(this);
 	
 	@Override
@@ -48,8 +45,14 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		
 		return LazyOptional.empty();
 	}
+	*/
 	
 	public NonNullList<ItemStack> getContainedItems(){
 		return this.stacks;
+	}
+
+	@Override
+	public @Nullable Object getCapability(Object object, Object context){
+		return null;
 	}
 }

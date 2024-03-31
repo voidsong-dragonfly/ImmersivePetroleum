@@ -6,7 +6,6 @@ import flaxbeard.immersivepetroleum.common.blocks.interfaces.IHasGUIInteraction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.registries.RegistryObject;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public interface IPMenuProvider<T extends BlockEntity & IPMenuProvider<T>> extends IHasGUIInteraction<T>{
