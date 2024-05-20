@@ -1,4 +1,4 @@
-package flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic;
+package flaxbeard.immersivepetroleum.common.blocks.multiblocks.util;
 
 import net.minecraft.nbt.CompoundTag;
 

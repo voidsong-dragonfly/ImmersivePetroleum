@@ -8,11 +8,11 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
-import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -48,9 +48,11 @@ public class PipeConfig extends Button{
 	protected ColumnPos tilePos;
 	protected int gridWidthScaled, gridHeightScaled;
 	protected int gridScale;
-	public PipeConfig(DerrickTileEntity tile, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
-		super(x, y, width, height, Component.empty(), NO_ACTION);
-		this.tilePos = Utils.toColumnPos(tile.getBlockPos());
+	public PipeConfig(DerrickLogic.State tile, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
+		super(x, y, width, height, Component.empty(), NO_ACTION, DEFAULT_NARRATION); // TODO Maybe add narration?
+		
+		//this.tilePos = Utils.toColumnPos(tile.getBlockPos()); // FIXME !!! This has to be gotten from somewhere
+		this.tilePos = new ColumnPos(0, 0); // Remove when above has been solved
 		
 		this.grid = new Grid(gridWidth, gridHeight);
 		copyGridFrom(tile.gridStorage);
@@ -72,7 +74,7 @@ public class PipeConfig extends Button{
 		updateTexture();
 	}
 	
-	public void reset(DerrickTileEntity tile){
+	public void reset(DerrickLogic.State tile){
 		copyGridFrom(tile.gridStorage);
 		updateTexture();
 	}
@@ -151,13 +153,15 @@ public class PipeConfig extends Button{
 	}
 	
 	@Override
-	public void render(PoseStack matrix, int mx, int my, float partialTicks){
+	public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick){
 		MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+		
+		PoseStack matrix = pGuiGraphics.pose();
 		
 		VertexConsumer builder = buffer.getBuffer(this.gridTextureRenderType);
 		matrix.pushPose();
 		{
-			matrix.translate(this.x, this.y, 0);
+			matrix.translate(this.getX(), this.getY(), 0);
 			Matrix4f mat = matrix.last().pose();
 			int x = this.grid.width * this.gridScale;
 			int y = this.grid.height * this.gridScale;
@@ -176,7 +180,7 @@ public class PipeConfig extends Button{
 			boolean flag = this.clicked(mouseX, mouseY);
 			if(flag){
 				this.playDownSound(Minecraft.getInstance().getSoundManager());
-				onGridClick((int) (mouseX - this.x) / this.gridScale, (int) (mouseY - this.y) / this.gridScale, button);
+				onGridClick((int) (mouseX - this.getX()) / this.gridScale, (int) (mouseY - this.getY()) / this.gridScale, button);
 				return true;
 			}
 		}

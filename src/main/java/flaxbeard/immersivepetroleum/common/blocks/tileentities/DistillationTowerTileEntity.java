@@ -295,7 +295,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<Di
 	@Nonnull
 	@Override
 	public BEContainerIP<? super DistillationTowerTileEntity, ?> getContainerType(){
-		return IPMenuTypes.DISTILLATION_TOWER;
+		return null;//IPMenuTypes.DISTILLATION_TOWER;
 	}
 	
 	@Override

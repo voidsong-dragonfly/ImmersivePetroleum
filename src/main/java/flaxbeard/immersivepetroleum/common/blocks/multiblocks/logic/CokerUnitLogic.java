@@ -22,7 +22,6 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.shapes.CokerUnitShape;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.util.IReadWriteNBT;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -169,9 +168,9 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 			this(new CokingChamber(64, 8000), new CokingChamber(64, 8000));
 		}
 		
-		protected void tick(){
-			this.primary.tick(null, CHAMBER_A);
-			this.secondary.tick(null, CHAMBER_B);
+		protected void tick(IMultiblockContext<CokerUnitLogic.State> context){
+			this.primary.tick(context, CHAMBER_A);
+			this.secondary.tick(context, CHAMBER_B);
 		}
 		
 		@Override
@@ -348,7 +347,7 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 				return ItemStack.EMPTY;
 			}
 			
-			return this.recipe.value().outputItem.get().copy();
+			return this.recipe.value().outputItem.copy();
 		}
 		
 		public FluidTank getTank(){
@@ -356,7 +355,7 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 		}
 		
 		/** returns true when the coker should update, false otherwise */
-		public boolean tick(CokerUnitTileEntity cokerunit, int chamberId){
+		public boolean tick(IMultiblockContext<CokerUnitLogic.State> context, int chamberId){
 			if(this.recipe == null){
 				return setStage(CokingState.STANDBY);
 			}
@@ -368,9 +367,9 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 					}
 				}
 				case PROCESSING -> {
-					if(this.inputAmount > 0 && !getInputItem().isEmpty() && (this.tank.getCapacity() - this.tank.getFluidAmount()) >= this.recipe.outputFluid.getAmount()){
-						if(cokerunit.energyStorage.getEnergyStored() >= this.recipe.value().getTotalProcessEnergy() / this.recipe.value().getTotalProcessTime()){
-							cokerunit.energyStorage.extractEnergy(this.recipe.value().getTotalProcessEnergy() / this.recipe.value().getTotalProcessTime(), false);
+					if(this.inputAmount > 0 && !getInputItem().isEmpty() && (this.tank.getCapacity() - this.tank.getFluidAmount()) >= this.recipe.value().outputFluid.getAmount()){
+						if(context.getState().energy.getEnergyStored() >= this.recipe.value().getTotalProcessEnergy() / this.recipe.value().getTotalProcessTime()){
+							context.getState().energy.extractEnergy(this.recipe.value().getTotalProcessEnergy() / this.recipe.value().getTotalProcessTime(), false);
 							
 							this.timer++;
 							if(this.timer >= (this.recipe.value().getTotalProcessTime() * this.recipe.value().inputItem.getCount())){
@@ -391,7 +390,7 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 				}
 				case DRAIN_RESIDUE -> {
 					if(this.tank.getFluidAmount() > 0){
-						FluidTank buffer = cokerunit.bufferTanks[TANK_OUTPUT];
+						FluidTank buffer = context.getState().bufferTanks.output;
 						FluidStack drained = this.tank.drain(25, FluidAction.SIMULATE);
 						
 						int accepted = buffer.fill(drained, FluidAction.SIMULATE);
@@ -414,9 +413,9 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 						
 						int max = getTotalAmount() * this.recipe.value().inputFluid.getAmount();
 						if(this.tank.getFluidAmount() < max){
-							FluidStack accepted = cokerunit.bufferTanks[TANK_INPUT].drain(this.recipe.value().inputFluid.getAmount(), FluidAction.SIMULATE);
+							FluidStack accepted = context.getState().bufferTanks.input.drain(this.recipe.value().inputFluid.getAmount(), FluidAction.SIMULATE);
 							if(accepted.getAmount() >= this.recipe.value().inputFluid.getAmount()){
-								cokerunit.bufferTanks[TANK_INPUT].drain(this.recipe.value().inputFluid.getAmount(), FluidAction.EXECUTE);
+								context.getState().bufferTanks.input.drain(this.recipe.value().inputFluid.getAmount(), FluidAction.EXECUTE);
 								this.tank.fill(accepted, FluidAction.EXECUTE);
 							}
 						}else if(this.tank.getFluidAmount() >= max){
@@ -432,15 +431,17 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 						this.timer = 0;
 						
 						if(this.outputAmount > 0){
-							Level world = cokerunit.getLevelNonnull();
+							IMultiblockLevel mbLevel = context.getLevel();
+							
+							Level world = mbLevel.getRawLevel();
 							int amount = Math.min(this.outputAmount, 1);
-							ItemStack copy = this.recipe.value().outputItem.get().copy();
+							ItemStack copy = this.recipe.value().outputItem.copy();
 							copy.setCount(amount);
 							
 							// Drop item(s) at the designated chamber output location
-							BlockPos itemOutPos = cokerunit.getBlockPosForPos(chamberId == 0 ? Chamber_A_OUT : Chamber_B_OUT);
+							BlockPos itemOutPos = mbLevel.toAbsolute(chamberId == 0 ? Chamber_A_OUT : Chamber_B_OUT);
 							Vec3 center = new Vec3(itemOutPos.getX() + 0.5, itemOutPos.getY() - 0.5, itemOutPos.getZ() + 0.5);
-							ItemEntity ent = new ItemEntity(cokerunit.getLevelNonnull(), center.x, center.y, center.z, copy);
+							ItemEntity ent = new ItemEntity(mbLevel.getRawLevel(), center.x, center.y, center.z, copy);
 							ent.setDeltaMovement(0.0, 0.0, 0.0); // Any movement has the potential to end with the stack bouncing all over the place
 							world.addFreshEntity(ent);
 							this.outputAmount -= amount;

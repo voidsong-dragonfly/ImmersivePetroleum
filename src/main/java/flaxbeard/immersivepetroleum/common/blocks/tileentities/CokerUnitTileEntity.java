@@ -520,7 +520,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Nonnull
 	@Override
 	public BEContainerIP<CokerUnitTileEntity, CokerUnitContainer> getContainerType(){
-		return IPMenuTypes.COKER;
+		return null;//IPMenuTypes.COKER;
 	}
 	
 	@Override

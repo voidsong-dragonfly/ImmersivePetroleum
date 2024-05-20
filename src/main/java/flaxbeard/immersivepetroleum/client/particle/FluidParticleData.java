@@ -9,10 +9,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -38,7 +38,7 @@ public class FluidParticleData implements ParticleOptions{
 	
 	private final Fluid fluid;
 	public FluidParticleData(String name){
-		this(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(name)));
+		this(BuiltInRegistries.FLUID.get(new ResourceLocation(name)));
 	}
 	
 	public FluidParticleData(Fluid fluid){

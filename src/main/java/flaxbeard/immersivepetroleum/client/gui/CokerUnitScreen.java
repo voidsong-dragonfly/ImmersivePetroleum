@@ -1,24 +1,19 @@
 package flaxbeard.immersivepetroleum.client.gui;
 
-import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CHAMBER_A;
-import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CHAMBER_B;
-import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.TANK_INPUT;
-import static flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.TANK_OUTPUT;
-
 import java.util.List;
 
 import javax.annotation.Nonnull;
-
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import flaxbeard.immersivepetroleum.client.gui.elements.CokerChamberInfoArea;
 import flaxbeard.immersivepetroleum.client.gui.elements.EnergyDisplay;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +22,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	public static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/coker.png");
 	
-	CokerUnitTileEntity tile;
+	CokerUnitLogic.State tile;
 	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title, GUI_TEXTURE);
 		this.tile = menu.getTile();
@@ -37,9 +32,15 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	}
 	
 	@Override
-	protected void renderLabels(PoseStack transform, int mouseX, int mouseY){
+	protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY){
 		// Render no labels
 	}
+	
+	@Override
+	protected List<InfoArea> makeInfoAreas(){
+		return super.makeInfoAreas();
+	}
+	
 	
 	@Nonnull
 	@Override

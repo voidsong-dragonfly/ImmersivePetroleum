@@ -30,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -212,7 +213,9 @@ public class DebugItem extends IPItemBase{
 					
 					player.displayClientMessage(Component.literal(dimensionRL.toString()), false);
 					
-					for(ReservoirType res:ReservoirType.map.values()){
+					for(RecipeHolder<ReservoirType> holder:ReservoirType.map.values()){
+						ReservoirType res = holder.value();
+						
 						BWList dims = res.getDimensions();
 						BWList biom = res.getBiomes();
 						

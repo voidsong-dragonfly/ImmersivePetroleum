@@ -633,7 +633,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	
 	@Override
 	public BEContainerIP<? super DerrickTileEntity, ?> getContainerType(){
-		return IPMenuTypes.DERRICK;
+		return null;//IPMenuTypes.DERRICK;
 	}
 	
 	@Override

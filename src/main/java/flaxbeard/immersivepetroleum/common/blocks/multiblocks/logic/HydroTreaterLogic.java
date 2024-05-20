@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFac
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.shapes.HydroTreaterShape;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.util.IReadWriteNBT;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.shapes.VoxelShape;

@@ -17,7 +17,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.crafting.RecipeWorker;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.shapes.DistillationTowerShape;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.util.IPoweredMultiblockRecipeProcessor;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.util.IMultiblockRecipeProcessor;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.util.IReadWriteNBT;
 import flaxbeard.immersivepetroleum.common.util.inventory.MultiFluidTankFiltered;
 import net.minecraft.core.BlockPos;
@@ -118,7 +118,7 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		return DistillationTowerShape.GETTER;
 	}
 	
-	public static class State implements IMultiblockState, IPoweredMultiblockRecipeProcessor{
+	public static class State implements IMultiblockState, IMultiblockRecipeProcessor{
 		public final AveragingEnergyStorage energy = new AveragingEnergyStorage(16000);
 		public final RSState rsState = RSState.enabledByDefault();
 		

@@ -330,7 +330,7 @@ public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<Hydrotr
 	@Nonnull
 	@Override
 	public BEContainerIP<? super HydrotreaterTileEntity, ?> getContainerType(){
-		return IPMenuTypes.HYDROTREATER;
+		return null;//IPMenuTypes.HYDROTREATER;
 	}
 	
 	@Override

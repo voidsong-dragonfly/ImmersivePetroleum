@@ -216,7 +216,7 @@ public class IPContent{
 		Items.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
 		Multiblock.forceClassLoad();
-		IPMenuTypes.forceClassLoad();
+		//IPMenuTypes.forceClassLoad();
 		Serializers.forceClassLoad();
 		IPEffects.forceClassLoad();
 		IPEntityTypes.forceClassLoad();

@@ -26,17 +26,12 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
-import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
-import flaxbeard.immersivepetroleum.client.gui.DerrickScreen;
-import flaxbeard.immersivepetroleum.client.gui.DistillationTowerScreen;
-import flaxbeard.immersivepetroleum.client.gui.HydrotreaterScreen;
 import flaxbeard.immersivepetroleum.client.particle.FluidParticleData;
 import flaxbeard.immersivepetroleum.client.render.SeismicResultRenderer;
 import flaxbeard.immersivepetroleum.client.render.debugging.DebugRenderHandler;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.CommonProxy;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
@@ -83,10 +78,10 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void registerContainersAndScreens(RegisterMenuScreensEvent event){
-		event.register(IPMenuTypes.DISTILLATION_TOWER.getType(), DistillationTowerScreen::new);
-		event.register(IPMenuTypes.COKER.getType(), CokerUnitScreen::new);
-		event.register(IPMenuTypes.DERRICK.getType(), DerrickScreen::new);
-		event.register(IPMenuTypes.HYDROTREATER.getType(), HydrotreaterScreen::new);
+//		event.register(IPMenuTypes.DISTILLATION_TOWER.getType(), DistillationTowerScreen::new);
+//		event.register(IPMenuTypes.COKER.getType(), CokerUnitScreen::new);
+//		event.register(IPMenuTypes.DERRICK.getType(), DerrickScreen::new);
+//		event.register(IPMenuTypes.HYDROTREATER.getType(), HydrotreaterScreen::new);
 	}
 	
 	@Override
