@@ -16,7 +16,6 @@ import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.register.IEBlocks.MetalDecoration;
 import blusunrize.immersiveengineering.common.register.IEFluids;
 import blusunrize.immersiveengineering.common.register.IEItems;
-import blusunrize.immersiveengineering.data.recipebuilder.FluidAwareShapedRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.ArcFurnaceRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.BottlingMachineRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.CrusherRecipeBuilder;
@@ -24,12 +23,13 @@ import blusunrize.immersiveengineering.data.recipes.builder.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.RefineryRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.SqueezerRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.IPTags;
-import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
-import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecipeBuilder;
-import flaxbeard.immersivepetroleum.api.crafting.builders.HighPressureRefineryRecipeBuilder;
-import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.data.builders.CokerUnitRecipeBuilder;
+import flaxbeard.immersivepetroleum.common.data.builders.DistillationTowerRecipeBuilder;
+import flaxbeard.immersivepetroleum.common.data.builders.HighPressureRefineryRecipeBuilder;
+import flaxbeard.immersivepetroleum.common.data.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
+import flaxbeard.immersivepetroleum.common.util.ChancedItemStack;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.data.PackOutput;
@@ -161,14 +161,16 @@ public class IPRecipes extends RecipeProvider{
 	
 	/** Contains everything related to Petcoke */
 	private void cokerRecipes(){
-		CokerUnitRecipeBuilder.builder(new ItemStack(IPContent.Items.PETCOKE.get(), 2), IPContent.Fluids.DIESEL_SULFUR.get(), 27)
-			.addInputItem(IPTags.Items.bitumen, 2)
-			.addInputFluid(FluidTags.WATER, 125)
-			.setTimeAndEnergy(30, 15360)
+		CokerUnitRecipeBuilder.builder()
+			.itemOutput(new ItemStack(IPContent.Items.PETCOKE.get(), 2))
+			.fluidOutput(new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 27))
+			.itemInput(new IngredientWithSize(IPTags.Items.bitumen, 2))
+			.fluidInput(new FluidTagInput(FluidTags.WATER, 125))
+			.setTime(30)
+			.setEnergy(15360)
 			.build(this.out, rl("coking/petcoke"));
 		
 		// Petcoke Compression and Decompression
-		
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IPContent.Blocks.PETCOKE.get())
 			.define('c', IPTags.Items.petcoke)
 			.pattern("ccc")
@@ -225,22 +227,31 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void hydrotreaterRecipes(){
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL.get(), 10), 80, 1)
-			.addInputFluid(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 10))
-			.addSecondaryInputFluid(FluidTags.WATER, 5)
-			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR), 0.05)
+		HighPressureRefineryRecipeBuilder.builder()
+			.fluidInput(new FluidTagInput(IPTags.Fluids.diesel_sulfur, 10))
+			.fluidInput(new FluidTagInput(FluidTags.WATER, 5))
+			.fluidOutput(new FluidStack(IPContent.Fluids.DIESEL.get(), 10))
+			.itemOutput(new ChancedItemStack(new ItemStack(IEItems.Ingredients.DUST_SULFUR.get()), 0.05))
+			.setEnergy(80)
+			.setTime(1)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20), 2560, 5)
-			.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 20))
-			.addSecondaryInputFluid(FluidTags.WATER, 5)
+		HighPressureRefineryRecipeBuilder.builder()
+			.fluidInput(new FluidTagInput(IPTags.Fluids.naphtha, 20))
+			.fluidInput(new FluidTagInput(FluidTags.WATER, 5))
+			.fluidOutput(new FluidStack(IPContent.Fluids.NAPHTHA_CRACKED.get(), 20))
+			.setEnergy(2560)
+			.setTime(5)
 			.build(out, rl("hydrotreater/naphtha_cracking"));
-		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.LUBRICANT_CRACKED.get(), 24), 2560, 5)
-			.addInputFluid(new FluidTagInput(IPTags.Fluids.lubricant, 24))
-			.addSecondaryInputFluid(FluidTags.WATER, 5)
-			.addItemWithChance(new ItemStack(IPContent.Items.PARAFFIN_WAX.get()), 0.024)
-			.build(out, rl("hydrotreater/lubricant_cracking"));
+
+		HighPressureRefineryRecipeBuilder.builder()
+				.fluidInput(new FluidTagInput(IPTags.Fluids.lubricant, 24))
+				.fluidInput(new FluidTagInput(FluidTags.WATER, 5))
+				.fluidOutput(new FluidStack(IPContent.Fluids.LUBRICANT_CRACKED.get(), 24))
+				.itemOutput(new ChancedItemStack(new ItemStack(IPContent.Items.PARAFFIN_WAX.get()), 0.024))
+				.setEnergy(2560)
+				.setTime(5)
+				.build(out, rl("hydrotreater/lubricant_cracking"));
 		
 		// Temporarly Disabled
 		// PNC Compat
@@ -334,7 +345,7 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void blockRecipes(){
-		FluidAwareShapedRecipeBuilder.builder(IPContent.Blocks.ASPHALT.get(), 8)
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IPContent.Blocks.ASPHALT.get(), 8)
 			.define('C', IPContent.Items.BITUMEN.get())
 			.define('S', Tags.Items.SAND)
 			.define('G', Tags.Items.GRAVEL)
@@ -360,8 +371,8 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
 			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
 			.save(this.out, rl("asphalt_slab"));
-		
-		FluidAwareShapedRecipeBuilder.builder(IPContent.Blocks.ASPHALT.get(), 1)
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IPContent.Blocks.ASPHALT.get(), 1)
 			.define('S', IPContent.Blocks.ASPHALT_SLAB.get())
 			.pattern("S")
 			.pattern("S")
@@ -459,8 +470,8 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_treated_planks", has(IETags.getItemTag(IETags.treatedWood)))
 			.unlockedBy("has_"+toPath(MetalDecoration.ENGINEERING_LIGHT), has(MetalDecoration.ENGINEERING_LIGHT))
 			.save(this.out);
-		
-		FluidAwareShapedRecipeBuilder.builder(IEItems.Misc.TOOL_UPGRADES.get(ToolUpgradeItem.ToolUpgrade.DRILL_LUBE))
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IEItems.Misc.TOOL_UPGRADES.get(ToolUpgradeItem.ToolUpgrade.DRILL_LUBE).get())
 			.pattern(" i ")
 			.pattern("ioi")
 			.pattern(" ip")
