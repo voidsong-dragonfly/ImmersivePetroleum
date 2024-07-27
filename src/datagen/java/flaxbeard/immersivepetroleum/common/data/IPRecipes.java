@@ -94,22 +94,37 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void reservoirs(){
-		ReservoirBuilder.builder("aquifer", Fluids.WATER, 5000.000, 10000.000, 0.025, 30)
+		ReservoirBuilder.builder()
+			.setFluid(Fluids.WATER)
+			.min(5000)
+			.max(10000)
+			.residual(0.025)
+			.weight(30)
 			.setDimensions(false, new ResourceLocation[]{
-					Level.OVERWORLD.location()
+				Level.OVERWORLD.location()
 			})
 			.equilibrium(2000)
 			.build(this.out, rl("reservoirs/aquifer"));
 		
-		ReservoirBuilder.builder("oil", IPContent.Fluids.CRUDEOIL.source().get(), 2500.000, 32500.000, 0.006, 40)
+		ReservoirBuilder.builder()
+			.setFluid(IPContent.Fluids.CRUDEOIL.source().get())
+			.min(2500)
+			.max(32500)
+			.residual(0.006)
+			.weight(40)
 			.setDimensions(true, new ResourceLocation[]{
-					Level.END.location()
+				Level.END.location()
 			})
 			.build(this.out, rl("reservoirs/oil"));
 		
-		ReservoirBuilder.builder("lava", Fluids.LAVA, 250.000, 1000.000, 0.0, 30)
+		ReservoirBuilder.builder()
+			.setFluid(Fluids.LAVA)
+			.min(250)
+			.max(1000)
+			.residual(0)
+			.weight(30)
 			.setDimensions(true, new ResourceLocation[]{
-					Level.END.location()
+				Level.END.location()
 			})
 			.build(this.out, rl("reservoirs/lava"));
 	}
