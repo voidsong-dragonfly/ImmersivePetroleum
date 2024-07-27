@@ -1,83 +1,34 @@
-package flaxbeard.immersivepetroleum.api.crafting.builders;
+package flaxbeard.immersivepetroleum.common.data.builders;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
-import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
+import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
-public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
-	private String fluid;
+public class ReservoirBuilder extends IPRecipeBuilder<ReservoirBuilder>{
+	private Fluid fluid;
 	private int fluidMinimum;
 	private int fluidMaximum;
-	private int fluidTrace;
+	private int fluidResidual;
 	private int equilibrium;
 	private int weight;
 	
 	private boolean isDimBlacklist = false;
-	private final JsonArray dimensions = new JsonArray();
+	private final List<ResourceLocation> dimensions = new ArrayList<>();
 	
 	private boolean isBioBlacklist = false;
-	private final JsonArray biomes = new JsonArray();
-	
-	private ReservoirBuilder(){
-		super(Serializers.RESERVOIR_SERIALIZER.get());
-		
-		addWriter(writer -> {
-			writer.addProperty("fluid", this.fluid);
-			writer.addProperty("fluidminimum", this.fluidMinimum);
-			writer.addProperty("fluidcapacity", this.fluidMaximum);
-			writer.addProperty("fluidtrace", this.fluidTrace);
-			writer.addProperty("weight", this.weight);
-			writer.addProperty("equilibrium", this.equilibrium);
-		});
-		
-		addWriter(writer -> {
-			JsonObject dimensions = new JsonObject();
-			dimensions.add("isBlacklist", new JsonPrimitive(this.isDimBlacklist));
-			dimensions.add("list", this.dimensions);
-			writer.add("dimensions", dimensions);
-		});
-		
-		addWriter(writer -> {
-			JsonObject biomes = new JsonObject();
-			biomes.add("isBlacklist", new JsonPrimitive(this.isBioBlacklist));
-			biomes.add("list", this.biomes);
-			writer.add("biomes", biomes);
-		});
-	}
-	
-	/**
-	 * Creates a new ReservoirType builder instance.
-	 * 
-	 * @param name The name of the reservoir
-	 * @return new {@link ReservoirBuilder} instance
-	 */
-	public static ReservoirBuilder builder(String name){
-		return new ReservoirBuilder().addWriter(writer -> writer.addProperty("name", name));
-	}
-	
-	/**
-	 * Creates a new ReservoirType builder instance. This is a shorthand.
-	 * 
-	 * @param name   The name of the reservoir
-	 * @param fluid  The type of fluid it holds
-	 * @param min    The minimum amount of fluid the reservoir can hold
-	 * @param max    The capacity of the reservoir
-	 * @param trace  Trace amount of the fluid after being depleted
-	 * @param weight chance for this reservoir to spawn
-	 * @return The completed {@link ReservoirBuilder} once all parameters are added
-	 */
-	public static ReservoirBuilder builder(String name, Fluid fluid, double min, double max, double trace, int weight){
-		return builder(name).setFluid(fluid).min(min).max(max).trace(trace).weight(weight);
+	private final List<ResourceLocation> biomes = new ArrayList<>();
+
+	private ReservoirBuilder() { }
+
+	public static ReservoirBuilder builder() {
+		return new ReservoirBuilder();
 	}
 	
 	/**
@@ -87,7 +38,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @return {@link ReservoirBuilder}
 	 */
 	public ReservoirBuilder setFluid(Fluid fluid){
-		this.fluid = RegistryUtils.getRegistryNameOf(fluid).toString();
+		this.fluid = fluid;
 		return this;
 	}
 	
@@ -128,8 +79,8 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @param amount The amount to set.
 	 * @return {@link ReservoirBuilder}
 	 */
-	public ReservoirBuilder trace(double amount){
-		this.fluidTrace = (int) Math.floor(amount * 1000D);
+	public ReservoirBuilder residual(double amount){
+		this.fluidResidual = (int) Math.floor(amount * 1000D);
 		return this;
 	}
 	
@@ -169,15 +120,15 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @throws IllegalArgumentException when it has already been set
 	 */
 	public ReservoirBuilder setDimensions(boolean isBlacklist, @Nonnull ResourceLocation[] dimensions){
-		if(this.dimensions.size() > 0){
+		if(!this.dimensions.isEmpty()){
 			throw new IllegalArgumentException("Dimensions list already set.");
 		}
 		Objects.requireNonNull(dimensions);
 		
 		this.isDimBlacklist = isBlacklist;
 		for(ResourceLocation rl:dimensions){
-			if(rl != null && !this.dimensions.contains(new JsonPrimitive(rl.toString()))){
-				this.dimensions.add(rl.toString());
+			if(rl != null && !this.dimensions.contains(rl)){
+				this.dimensions.add(rl);
 			}
 		}
 		
@@ -195,18 +146,26 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @throws IllegalArgumentException when it has already been set
 	 */
 	public ReservoirBuilder setBiomes(boolean isBlacklist, @Nonnull ResourceLocation[] biomes){
-		if(this.biomes.size() > 0){
+		if(!this.biomes.isEmpty()){
 			throw new IllegalArgumentException("Biomes list already set.");
 		}
 		Objects.requireNonNull(biomes);
 		
 		this.isBioBlacklist = isBlacklist;
 		for(ResourceLocation rl:biomes){
-			if(rl != null && !this.biomes.contains(new JsonPrimitive(rl.toString()))){
-				this.biomes.add(rl.toString());
+			if(rl != null && !this.biomes.contains(rl)){
+				this.biomes.add(rl);
 			}
 		}
 		
 		return this;
+	}
+
+	public void build(RecipeOutput out, ResourceLocation name)
+	{
+		ReservoirType recipe = new ReservoirType(name, fluid, fluidMinimum, fluidMaximum, fluidResidual, equilibrium, weight);
+		recipe.setBiomes(isBioBlacklist, biomes);
+		recipe.setDimensions(isDimBlacklist, dimensions);
+		out.accept(name, recipe, null, getConditions());
 	}
 }
