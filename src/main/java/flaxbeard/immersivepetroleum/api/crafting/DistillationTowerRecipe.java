@@ -1,9 +1,6 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Nullable;
 
@@ -61,24 +58,21 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
 	
 	protected final Lazy<NonNullList<ItemStack>> lazyOutputList;
 	protected final FluidTagInput input;
-	protected final FluidStack[] fluidOutput;
-	@Deprecated(forRemoval = true) protected ItemStack[] itemOutput;
-	@Deprecated(forRemoval = true) protected double[] chances;
-	protected final ChancedItemStack[] itemOutputs;
+	protected final List<FluidStack> fluidOutputs;
+	protected final List<ChancedItemStack> itemOutputs;
 	
-	public DistillationTowerRecipe(FluidStack[] fluidOutput, ChancedItemStack[] itemOutput, FluidTagInput input, int energy, int time){
+	public DistillationTowerRecipe(List<FluidStack> fluidOutput, List<ChancedItemStack> itemOutput, FluidTagInput input, int energy, int time){
 		super(TagOutput.EMPTY, IPRecipeTypes.DISTILLATION, energy, time, DistillationTowerRecipe::multipliers);
-		this.fluidOutput = fluidOutput;
+		this.fluidOutputs = fluidOutput;
 		this.itemOutputs = itemOutput;
 		
 		this.input = input;
 		this.fluidInputList = Collections.singletonList(input);
-		this.fluidOutputList = Arrays.asList(this.fluidOutput);
+		this.fluidOutputList = fluidOutput;
 		this.lazyOutputList = Lazy.of(() -> {
-			NonNullList<ItemStack> list = Arrays.asList(itemOutput).stream()
-				.map(m -> m.stack())
-				.collect(() -> NonNullList.withSize(itemOutput.length, ItemStack.EMPTY), NonNullList::add, NonNullList::addAll);
-			return list;
+            return itemOutput.stream()
+				.map(ChancedItemStack::stack)
+				.collect(() -> NonNullList.withSize(itemOutput.size(), ItemStack.EMPTY), NonNullList::add, NonNullList::addAll);
 		});
 	}
 	
@@ -99,13 +93,13 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
 	
 	@Override
 	public NonNullList<ItemStack> getActualItemOutputs(){
-		if(this.itemOutputs.length == 0)
+		if(this.itemOutputs.isEmpty())
 			return NonNullList.withSize(0, ItemStack.EMPTY);
 		
 		NonNullList<ItemStack> output = NonNullList.create();
-		for(int i = 0;i < this.itemOutputs.length;i++){
-			if(RANDOM.nextFloat() <= this.itemOutputs[i].chance()){
-				output.add(this.itemOutputs[i].stack());
+		for(ChancedItemStack stack : itemOutputs){
+			if(RANDOM.nextFloat() <= stack.chance()){
+				output.add(stack.stack());
 			}
 		}
 		
@@ -121,7 +115,7 @@ public class DistillationTowerRecipe extends MultiblockRecipe{
 		throw new UnsupportedOperationException();
 	}
 	
-	public ChancedItemStack[] getByproducts(){
+	public List<ChancedItemStack> getByproducts(){
 		return this.itemOutputs;
 	}
 }

@@ -1,22 +1,13 @@
-package flaxbeard.immersivepetroleum.api.crafting.builders;
+package flaxbeard.immersivepetroleum.common.data.builders;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
-import flaxbeard.immersivepetroleum.common.crafting.Serializers;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.level.material.Fluid;
+import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
+import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
+import flaxbeard.immersivepetroleum.common.util.ChancedItemStack;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
@@ -24,8 +15,57 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * 
  * @author TwistedGate
  */
-public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<DistillationTowerRecipeBuilder>{
-	
+public class DistillationTowerRecipeBuilder extends IPRecipeBuilder<DistillationTowerRecipeBuilder>{
+
+	private FluidTagInput fluidInput;
+	private final List<ChancedItemStack> itemOutputs = new ArrayList<>();
+	private final List <FluidStack> fluidOutputs = new ArrayList<>();
+	int energy;
+	int time;
+
+	private DistillationTowerRecipeBuilder(){ }
+
+	public static DistillationTowerRecipeBuilder builder(){
+		return new DistillationTowerRecipeBuilder();
+	}
+
+	public DistillationTowerRecipeBuilder itemOutput(ChancedItemStack output)
+	{
+		this.itemOutputs.add(output);
+		return this;
+	}
+
+	public DistillationTowerRecipeBuilder fluidOutput(FluidStack output)
+	{
+		this.fluidOutputs.add(output);
+		return this;
+	}
+
+	public DistillationTowerRecipeBuilder fluidInput(FluidTagInput input)
+	{
+		this.fluidInput = input;
+		return this;
+	}
+
+	public DistillationTowerRecipeBuilder setTime(int time)
+	{
+		this.time = time;
+		return this;
+	}
+
+	public DistillationTowerRecipeBuilder setEnergy(int amount)
+	{
+		this.energy = amount;
+		return this;
+	}
+
+	public void build(RecipeOutput out, ResourceLocation name)
+	{
+		DistillationTowerRecipe recipe = new DistillationTowerRecipe(fluidOutputs, itemOutputs, fluidInput, energy, time);
+		out.accept(name, recipe, null, getConditions());
+	}
+
+	/*
 	public static DistillationTowerRecipeBuilder builder(FluidStack... fluidOutput){
 		if(fluidOutput == null || fluidOutput.length == 0)
 			throw new IllegalArgumentException("Fluid output missing. It's required.");
@@ -35,7 +75,7 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 		return b;
 	}
 	
-	/** Temporary storage for byproducts */
+	/** Temporary storage for byproducts
 	private final List<Tuple<ItemStack, Double>> byproducts = new ArrayList<>();
 	
 	private DistillationTowerRecipeBuilder(){
@@ -56,7 +96,7 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 	 * @param byproduct the {@link ItemStack} byproduct to add to the recipe
 	 * @param chance    0 to 100 (clamped)
 	 * @return self for chaining
-	 */
+
 	public DistillationTowerRecipeBuilder addByproduct(ItemStack byproduct, int chance){
 		return addByproduct(byproduct, chance / 100D);
 	}
@@ -67,7 +107,7 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 	 * @param byproduct {@link ItemStack} to output as byproduct
 	 * @param chance    0.0 to 1.0 (clamped)
 	 * @return {@link DistillationTowerRecipeBuilder} self for chaining
-	 */
+
 	public DistillationTowerRecipeBuilder addByproduct(ItemStack byproduct, double chance){
 		this.byproducts.add(new Tuple<>(byproduct, Mth.clamp(chance, 0.0, 1.0)));
 		return this;
@@ -126,5 +166,5 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 		JsonObject itemJson = dummy.serializeItemStack(tuple.getA());
 		itemJson.addProperty("chance", tuple.getB().toString());
 		return itemJson;
-	}
+	}*/
 }

@@ -116,42 +116,41 @@ public class IPRecipes extends RecipeProvider{
 	
 	private void distillationRecipes(){
 		// setEnergy and setTime are 1024 and 1 by default. But still allows to be customized.
-		
-		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
-				new FluidStack(IPContent.Fluids.NAPHTHA.get(), 17),
-				new FluidStack(IPContent.Fluids.KEROSENE.get(), 18),
-				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 30),
-				new FluidStack(IPContent.Fluids.LUBRICANT.get(), 12),
-			})
-			.addByproduct(new ItemStack(IPContent.Items.BITUMEN.get()), 0.07)
-			.addInput(IPTags.Fluids.crudeOil, 50)
-			.setTimeAndEnergy(1, 1024)
+		DistillationTowerRecipeBuilder.builder()
+			.fluidOutput(new FluidStack(IPContent.Fluids.NAPHTHA.get(), 15))
+			.fluidOutput(new FluidStack(IPContent.Fluids.KEROSENE.get(), 18))
+			.fluidOutput(new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 30))
+			.fluidOutput(new FluidStack(IPContent.Fluids.LUBRICANT.get(), 12))
+			.fluidInput(new FluidTagInput(IPTags.Fluids.crudeOil, 50))
+			.itemOutput(new ChancedItemStack(new ItemStack(IPContent.Items.BITUMEN.get()), 0.07))
+			.setEnergy(1024)
+			.setTime(1)
 			.build(this.out, rl("distillationtower/oil"));
-		
-		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
-				new FluidStack(IPContent.Fluids.NAPHTHA.get(), 2),
-				new FluidStack(IPContent.Fluids.GASOLINE_ADDITIVES.get(), 3),
-				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 5),
-			})
-			.addInput(IPTags.Fluids.kerosene, 10)
-			.setTimeAndEnergy(1, 1024)
+
+		DistillationTowerRecipeBuilder.builder()
+			.fluidOutput(new FluidStack(IPContent.Fluids.NAPHTHA.get(), 2))
+			.fluidOutput(new FluidStack(IPContent.Fluids.GASOLINE_ADDITIVES.get(), 3))
+			.fluidOutput(new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 5))
+			.fluidInput(new FluidTagInput(IPTags.Fluids.kerosene, 10))
+			.setEnergy(1024)
+			.setTime(1)
 			.build(this.out, rl("distillationtower/kerosene"));
-		
-		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
-				new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6),
-				new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2),
-				new FluidStack(IPContent.Fluids.BENZENE.get(), 2),
-			})
-			.addInput(IPTags.Fluids.naphtha_cracked, 10)
-			.setTimeAndEnergy(1, 1024)
+
+		DistillationTowerRecipeBuilder.builder()
+			.fluidOutput(new FluidStack(IPContent.Fluids.ETHYLENE.get(), 6))
+			.fluidOutput(new FluidStack(IPContent.Fluids.PROPYLENE.get(), 2))
+			.fluidOutput(new FluidStack(IPContent.Fluids.BENZENE.get(), 2))
+			.fluidInput(new FluidTagInput(IPTags.Fluids.naphtha_cracked, 10))
+			.setEnergy(1024)
+			.setTime(1)
 			.build(this.out, rl("distillationtower/naphtha_cracking"));
-		
-		DistillationTowerRecipeBuilder.builder(new FluidStack[]{
-				new FluidStack(IPContent.Fluids.KEROSENE.get(), 6),
-				new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 10),
-			})
-			.addInput(IPTags.Fluids.lubricant_cracked, 12)
-			.setTimeAndEnergy(1, 1024)
+
+		DistillationTowerRecipeBuilder.builder()
+			.fluidOutput(new FluidStack(IPContent.Fluids.KEROSENE.get(), 6))
+			.fluidOutput(new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 10))
+			.fluidInput(new FluidTagInput(IPTags.Fluids.lubricant_cracked, 12))
+			.setEnergy(1024)
+			.setTime(1)
 			.build(this.out, rl("distillationtower/lubricant_cracking"));
 	}
 	
