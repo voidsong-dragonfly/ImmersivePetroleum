@@ -12,7 +12,6 @@ import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
@@ -28,11 +27,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -45,21 +42,9 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt){
-		if(!stack.isEmpty()){
-			return new FluidHandlerItemStack(stack, 8000);
-		}
-		
-		return null;
-	}
-	
-	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(@Nonnull ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
-		if(ForgeCapabilities.FLUID_HANDLER_ITEM == null)
-			return;
-		
-		FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
+        FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
 			if(!fluid.isEmpty() && fluid.getAmount() > 0){
 				Component out = ((MutableComponent) fluid.getDisplayName())
 						.append(Component.literal(": " + fluid.getAmount() + "/8000mB")).withStyle(ChatFormatting.GRAY);
@@ -79,36 +64,33 @@ public class OilCanItem extends IPItemBase{
 		Level world = context.getLevel();
 		BlockPos pos = context.getClickedPos();
 		
-		if(!world.isClientSide){
-			BlockEntity tileEntity = world.getBlockEntity(pos);
-			if(tileEntity != null){
-				IFluidHandler cap = tileEntity.getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null);
-				
-				if(cap != null && FluidUtil.interactWithFluidHandler(player, hand, cap)){
-					return InteractionResult.SUCCESS;
-				}else{
-					InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
-						if(handler instanceof FluidHandlerItemStack can){
-							FluidStack fs = can.getFluid();
-							
-							if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
-								int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
-								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
-									player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
-									if(!player.isCreative()){
-										can.drain(amountNeeded, FluidAction.EXECUTE);
-									}
-									Utils.unlockIPAdvancement(player, "main/oil_can");
-									return InteractionResult.SUCCESS;
+		if(!world.isClientSide) {
+			IFluidHandler cap = world.getCapability(Capabilities.FluidHandler.BLOCK, pos, context.getClickedFace());
+
+			if (cap != null && FluidUtil.interactWithFluidHandler(player, hand, cap)) {
+				return InteractionResult.SUCCESS;
+			} else {
+				InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
+					if (handler instanceof FluidHandlerItemStack can) {
+						FluidStack fs = can.getFluid();
+
+						if (!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())) {
+							int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
+							if (fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)) { // 30 Seconds
+								player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
+								if (!player.isCreative()) {
+									can.drain(amountNeeded, FluidAction.EXECUTE);
 								}
+								Utils.unlockIPAdvancement(player, "main/oil_can");
+								return InteractionResult.SUCCESS;
 							}
 						}
-						
-						return InteractionResult.PASS;
-					}).orElse(InteractionResult.PASS);
-					
-					return ret;
-				}
+					}
+
+					return InteractionResult.PASS;
+				}).orElse(InteractionResult.PASS);
+
+				return ret;
 			}
 		}
 		
