@@ -21,7 +21,7 @@ public class IPRenderTypes extends RenderStateShard{
 	static final ResourceLocation oilTankTexture = ResourceUtils.ip("textures/multiblock/oiltank.png");
 	
 	/**
-	 * Intended to only be used by {@link MultiblockDistillationTowerRenderer}
+	 * Intended to only be used by {@link DistillationTowerRenderer}
 	 */
 	public static final RenderType DISTILLATION_TOWER_ACTIVE;
 	public static final RenderType OIL_TANK;

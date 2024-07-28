@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 
 import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
@@ -14,11 +13,13 @@ import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntit
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
-public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackTileEntity>{
+public class PumpjackRenderer implements BlockEntityRenderer<PumpjackTileEntity>{
 	private static final Supplier<IPModel> pumpjackarm = IPModels.getSupplier(ModelPumpjack.ID);
 	
 	@Override
@@ -33,16 +34,16 @@ public class MultiblockPumpjackRenderer implements BlockEntityRenderer<PumpjackT
 			Direction rotation = te.getFacing();
 			switch(rotation){
 				case NORTH -> {
-					transform.mulPose(new Quaternion(0, 90F, 0, true));
+					transform.mulPose(new Quaternionf().rotateY(Mth.HALF_PI));
 					transform.translate(-6, 0, -1);
 				}
 				case EAST -> transform.translate(-5, 0, -1);
 				case SOUTH -> {
-					transform.mulPose(new Quaternion(0, 270F, 0, true));
+					transform.mulPose(new Quaternionf().rotateY(3*Mth.HALF_PI));
 					transform.translate(-5, 0, -2);
 				}
 				case WEST -> {
-					transform.mulPose(new Quaternion(0, 180F, 0, true));
+					transform.mulPose(new Quaternionf().rotateY(Mth.PI));
 					transform.translate(-6, 0, -2);
 				}
 				default -> {

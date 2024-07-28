@@ -2,11 +2,11 @@ package flaxbeard.immersivepetroleum.client.render;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DistillationTowerTileEntity;
@@ -18,10 +18,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
+import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
-public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<DistillationTowerTileEntity>{
+public class DistillationTowerRenderer implements BlockEntityRenderer<DistillationTowerTileEntity>{
 	@Override
 	public boolean shouldRenderOffScreen(@Nonnull DistillationTowerTileEntity te){
 		return true;
@@ -42,15 +43,15 @@ public class MultiblockDistillationTowerRenderer implements BlockEntityRenderer<
 							transform.translate(3, 0, 4);
 						}
 						case SOUTH -> {
-							transform.mulPose(new Quaternion(0F, 180F, 0F, true));
+							transform.mulPose(new Quaternionf().rotateY(Mth.PI));
 							transform.translate(2, 0, 3);
 						}
 						case EAST -> {
-							transform.mulPose(new Quaternion(0, 270F, 0, true));
+							transform.mulPose(new Quaternionf().rotateY(3*Mth.HALF_PI));
 							transform.translate(3, 0, 3);
 						}
 						case WEST -> {
-							transform.mulPose(new Quaternion(0, 90F, 0, true));
+							transform.mulPose(new Quaternionf().rotateY(Mth.HALF_PI));
 							transform.translate(2, 0, 4);
 						}
 						default -> {

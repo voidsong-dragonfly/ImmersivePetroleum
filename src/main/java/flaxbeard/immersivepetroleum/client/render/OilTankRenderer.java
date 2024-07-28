@@ -2,11 +2,11 @@ package flaxbeard.immersivepetroleum.client.render;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -23,6 +23,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.common.Mod.EventBusSubscriber;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.fluids.FluidStack;
+import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
@@ -44,15 +45,15 @@ public class OilTankRenderer implements BlockEntityRenderer<OilTankTileEntity>{
 		{
 			switch(te.getFacing()){
 				case EAST -> {
-					matrix.mulPose(new Quaternion(0, 270F, 0, true));
+					matrix.mulPose(new Quaternionf().rotateY(3*Mth.HALF_PI));
 					matrix.translate(0, 0, -1);
 				}
 				case SOUTH -> {
-					matrix.mulPose(new Quaternion(0F, 180F, 0F, true));
+					matrix.mulPose(new Quaternionf().rotateY(Mth.PI));
 					matrix.translate(-1, 0, -1);
 				}
 				case WEST -> {
-					matrix.mulPose(new Quaternion(0, 90F, 0, true));
+					matrix.mulPose(new Quaternionf().rotateY(Mth.HALF_PI));
 					matrix.translate(-1, 0, 0);
 				}
 				default -> {
@@ -100,7 +101,7 @@ public class OilTankRenderer implements BlockEntityRenderer<OilTankTileEntity>{
 							matrix.pushPose();
 							{
 								BlockPos p = port.posInMultiblock.subtract(te.posInMultiblock);
-								matrix.mulPose(new Quaternion(0, 180F, 0, true));
+								matrix.mulPose(new Quaternionf().rotateY(Mth.PI));
 								matrix.translate(p.getX() - 1, p.getY(), -p.getZ() - 1);
 								quad(matrix, buffer, master.getPortStateFor(port), port.posInMultiblock.getX() == 4, combinedLight, combinedOverlay);
 							}

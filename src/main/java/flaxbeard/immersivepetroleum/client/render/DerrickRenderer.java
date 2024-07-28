@@ -4,12 +4,13 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.util.Mth;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
@@ -46,7 +47,7 @@ public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 			float rot = te.rotation + (te.drilling? 10 * partialTicks : 0);
 			
 			matrix.translate(0.5, 1.0, 0.5);
-			matrix.mulPose(new Quaternion(Y_AXIS, rot, true));
+			matrix.mulPose(new Quaternionf().rotateY(rot* Mth.DEG_TO_RAD));
 			renderObj(DRILL, bufferIn, matrix, combinedLightIn, combinedOverlayIn);
 			
 			float pipeHeight = -(rot / 360F);
