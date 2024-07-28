@@ -1,11 +1,11 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 
 import flaxbeard.immersivepetroleum.client.render.dyn.DynamicTextureWrapper;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderItemInFrameEvent;
+import org.joml.Quaternionf;
 
 /**
  * @author TwistedGate
@@ -55,7 +56,7 @@ public class SeismicResultRenderer{
 						int light = event.getPackedLight();
 						int rot = event.getItemFrameEntity().getRotation();
 						float scale = 1F / SurveyScan.SCAN_SIZE;
-						matrix.mulPose(new Quaternion(0, 0, 180F - -rot * 45F, true));
+						matrix.mulPose(new Quaternionf().rotateZ((180F+rot*45F)*Mth.DEG_TO_RAD));
 						matrix.translate(-0.5F, -0.5F, -0.00625F);
 						matrix.scale(scale, scale, 1F);
 						

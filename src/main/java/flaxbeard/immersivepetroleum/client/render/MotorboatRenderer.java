@@ -2,11 +2,11 @@ package flaxbeard.immersivepetroleum.client.render;
 
 import javax.annotation.Nonnull;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 
 import flaxbeard.immersivepetroleum.client.model.ModelMotorboat;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
@@ -67,13 +67,13 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				this.modelBoat.propeller.xRot = entity.propellerXRot * Mth.DEG_TO_RAD;
 				
 				float pr = entity.isEmergency() ? 0F : entity.propellerYRotation;
-				if(entity.isLeftInDown() && !entity.isRightInDown() && pr > -1)
+				if(entity.isLeftDown() && !entity.isRightDown() && pr > -1)
 					pr = pr - 0.1F * partialTicks;
 				
-				if(entity.isRightInDown() && !entity.isLeftInDown() && pr < 1)
+				if(entity.isRightDown() && !entity.isLeftDown() && pr < 1)
 					pr = pr + 0.1F * partialTicks;
 				
-				if(!entity.isLeftInDown() && !entity.isRightInDown())
+				if(!entity.isLeftDown() && !entity.isRightDown())
 					pr = (float) (pr * Math.pow(0.7, partialTicks));
 				
 				this.modelBoat.propellerAssembly.yRot = (float) Math.toRadians(pr * 15);
@@ -98,15 +98,15 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 				this.modelBoat.ruddersBase.render(matrix, vbuilder_armored, packedLight, OverlayTexture.NO_OVERLAY);
 				
 				float pr = entity.propellerYRotation;
-				if(entity.isLeftInDown() && !entity.isRightInDown() && pr > -1){
+				if(entity.isLeftDown() && !entity.isRightDown() && pr > -1){
 					pr = pr - 0.1F * partialTicks;
 				}
 				
-				if(entity.isRightInDown() && !entity.isLeftInDown() && pr < 1){
+				if(entity.isRightDown() && !entity.isLeftDown() && pr < 1){
 					pr = pr + 0.1F * partialTicks;
 				}
 				
-				if(!entity.isLeftInDown() && !entity.isRightInDown()){
+				if(!entity.isLeftDown() && !entity.isRightDown()){
 					pr = (float) (pr * Math.pow(0.7F, partialTicks));
 				}
 				
@@ -142,7 +142,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 	}
 	
 	public void setupRotation(MotorboatEntity boat, float entityYaw, float partialTicks, PoseStack matrix){
-		matrix.mulPose(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
+		matrix.mulPose(new Quaternionf().rotateY(Mth.PI-entityYaw));
 		float f = (float) boat.getHurtTime() - partialTicks;
 		float f1 = boat.getDamage() - partialTicks;
 		
@@ -151,14 +151,14 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 		}
 		
 		if(f > 0.0F){
-			matrix.mulPose(new Quaternion(Mth.sin(f) * f * f1 / 10.0F * (float) boat.getHurtDir(), 0.0F, 0.0F, true));
+			matrix.mulPose(new Quaternionf().rotateX((Mth.sin(f)*f*f1/10.0F*(float)boat.getHurtDir())*Mth.DEG_TO_RAD));
 		}
 		
 		if(boat.isBoosting){
-			matrix.mulPose(new Quaternion(3, 0, 0, true));
+			matrix.mulPose(new Quaternionf().rotateXYZ(3*Mth.DEG_TO_RAD, 0, 0));
 		}
 		
 		matrix.scale(-1.0F, -1.0F, 1.0F);
-		matrix.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+		matrix.mulPose(new Quaternionf().rotateY(Mth.HALF_PI));
 	}
 }

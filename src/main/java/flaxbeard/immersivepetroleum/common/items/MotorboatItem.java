@@ -36,11 +36,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -50,12 +48,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	public MotorboatItem(){
 		super(new Item.Properties().stacksTo(1));
 	}
-	
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt){
-		return new IPItemStackHandler(4);
-	}
-	
+
 	@Override
 	public CompoundTag getUpgrades(ItemStack stack){
 		return stack.hasTag() ? stack.getOrCreateTag().getCompound("upgrades") : new CompoundTag();
@@ -65,25 +58,25 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	public void clearUpgrades(ItemStack stack){
 		ItemUtils.removeTag(stack, "upgrades");
 	}
-	
+
 	protected NonNullList<ItemStack> getContainedItems(ItemStack stack){
-		IItemHandler handler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
-		
+		IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
+
 		if(handler == null){
 			ImmersivePetroleum.log.debug("No valid inventory handler found for " + stack);
 			return NonNullList.create();
 		}
-		
+
 		if(handler instanceof IPItemStackHandler ipStackHandler){
 			return ipStackHandler.getContainedItems();
 		}
-		
+
 		ImmersivePetroleum.log.warn("Inefficiently getting contained items. Why does " + stack + " have a non-IP IItemHandler?");
 		NonNullList<ItemStack> inv = NonNullList.withSize(handler.getSlots(), ItemStack.EMPTY);
 		for(int i = 0;i < handler.getSlots();++i){
 			inv.set(i, handler.getStackInSlot(i));
 		}
-		
+
 		return inv;
 	}
 	
@@ -105,12 +98,12 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 		
 		clearUpgrades(stack);
 		
-		LazyOptional<IItemHandler> lazy = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
-		lazy.ifPresent(handler -> {
+		IItemHandler capability = stack.getCapability(Capabilities.ItemHandler.ITEM);
+		if(capability!=null){
 			CompoundTag nbt = new CompoundTag();
 			
-			for(int i = 0;i < handler.getSlots();i++){
-				ItemStack u = handler.getStackInSlot(i);
+			for(int i = 0;i < capability.getSlots();i++){
+				ItemStack u = capability.getStackInSlot(i);
 				if(u.getItem() instanceof IUpgrade upg){
 					if(upg.getUpgradeTypes(u).contains(UPGRADE_TYPE) && upg.canApplyUpgrades(stack, u)){
 						upg.applyUpgrades(stack, u, nbt);
@@ -120,7 +113,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			
 			stack.getOrCreateTag().put("upgrades", nbt);
 			finishUpgradeRecalculation(stack);
-		});
+		}
 	}
 	
 	@Override
@@ -158,27 +151,27 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn){
-		if(stack.hasTag()){
+	public void appendHoverText(ItemStack stack, Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
+		if (stack.hasTag()) {
 			CompoundTag tag = stack.getTag();
-			
-			if(tag.contains("tank")){
+
+			if (tag.contains("tank")) {
 				FluidStack fs = FluidStack.loadFluidStackFromNBT(tag.getCompound("tank"));
-				if(fs != null){
+				if (fs != null) {
 					tooltip.add(((MutableComponent) fs.getDisplayName()).append(": " + fs.getAmount() + "mB").withStyle(ChatFormatting.GRAY));
 				}
 			}
 		}
-		
-		stack.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-			for(int i = 0;i < handler.getSlots();i++){
-				if(handler.getStackInSlot(i).isEmpty())
+
+		IItemHandler capability = stack.getCapability(Capabilities.ItemHandler.ITEM);
+		if (capability != null) {
+			for (int i = 0; i < capability.getSlots(); i++) {
+				if (capability.getStackInSlot(i).isEmpty())
 					continue;
-				
-				tooltip.add(Component.translatable("desc.immersivepetroleum.flavour.speedboat.upgrade", i + 1).append(handler.getStackInSlot(i).getHoverName()));
+
+				tooltip.add(Component.translatable("desc.immersivepetroleum.flavour.speedboat.upgrade", i + 1).append(capability.getStackInSlot(i).getHoverName()));
 			}
-		});
-		
+		}
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 	
@@ -222,7 +215,7 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 			return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
 		}else{
 			Vec3 hit = raytraceresult.getLocation();
-			Block block = worldIn.getBlockState(new BlockPos(hit.add(0, .5, 0))).getBlock();
+			Block block = worldIn.getBlockState(new BlockPos((int)hit.x, (int)(hit.y+0.5), (int)hit.z)).getBlock();
 			boolean flag1 = block == Blocks.WATER;
 			MotorboatEntity entityboat = new MotorboatEntity(worldIn, hit.x, flag1 ? hit.y - 0.12D : hit.y, hit.z);
 			{

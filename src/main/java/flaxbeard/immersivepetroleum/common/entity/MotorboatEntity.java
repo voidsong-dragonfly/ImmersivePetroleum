@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.joml.Vector3f;
 
 import com.google.common.collect.Lists;
@@ -30,7 +32,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -43,7 +44,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageEffects;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
@@ -62,21 +62,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.network.NetworkHooks;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
+public class MotorboatEntity extends Boat implements IEntityWithComplexSpawn {
 	
 	public static EntityDataAccessor<Byte> getFlags(){
 		return DATA_SHARED_FLAGS_ID;
@@ -191,7 +187,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	}
 	
 	public void setUpgrades(NonNullList<ItemStack> stacks){
-		if(stacks != null && stacks.size() > 0){
+		if(stacks != null && !stacks.isEmpty()){
 			ItemStack o0 = stacks.get(0);
 			ItemStack o1 = stacks.get(1);
 			ItemStack o2 = stacks.get(2);
@@ -202,23 +198,23 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			this.entityData.set(UPGRADE_3, o3);
 		}
 	}
-	
+
 	public boolean isLeftDown(){
 		return this.inputLeft;
 	}
-	
+
 	public boolean isRightDown(){
 		return this.inputRight;
 	}
-	
+
 	public boolean isForwardDown(){
 		return this.inputUp;
 	}
-	
+
 	public boolean isBackDown(){
 		return this.inputDown;
 	}
-	
+
 	@Override
 	public void onSyncedDataUpdated(@Nonnull EntityDataAccessor<?> key){
 		super.onSyncedDataUpdated(key);
@@ -250,7 +246,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			this.entityData.set(TANK_FLUID, "");
 			this.entityData.set(TANK_AMOUNT, 0);
 		}else{
-			this.entityData.set(TANK_FLUID, stack.getFluid() == null ? "" : RegistryUtils.getRegistryNameOf(stack.getFluid()).toString());
+			this.entityData.set(TANK_FLUID, RegistryUtils.getRegistryNameOf(stack.getFluid()).toString());
 			this.entityData.set(TANK_AMOUNT, stack.getAmount());
 		}
 	}
@@ -259,14 +255,10 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		String fluidName = this.entityData.get(TANK_FLUID);
 		int amount = this.entityData.get(TANK_AMOUNT);
 		
-		if(fluidName == null || fluidName.isEmpty() || amount == 0)
+		if(fluidName.isEmpty() || amount == 0)
 			return FluidStack.EMPTY;
-		
-		Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(fluidName));
-		if(fluid == null)
-			return FluidStack.EMPTY;
-		
-		return new FluidStack(fluid, amount);
+
+        return new FluidStack(BuiltInRegistries.FLUID.get(new ResourceLocation(fluidName)), amount);
 	}
 	
 	/*
@@ -314,7 +306,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		if(isInvulnerableTo(source) || (this.isFireproof && source.type().effects() == DamageEffects.BURNING)){
 			return false;
 		}else if(!this.level().isClientSide && isAlive()){
-			if(source instanceof IndirectEntityDamageSource && source.getDirectEntity() != null && hasPassenger(source.getDirectEntity())){
+			if(source.isIndirect() && source.getDirectEntity() != null && hasPassenger(source.getDirectEntity())){
 				return false;
 			}else{
 				setHurtDir(-getHurtDir());
@@ -328,8 +320,8 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 						MotorboatItem item = (MotorboatItem) getDropItem();
 						ItemStack stack = new ItemStack(item, 1);
 						
-						IItemHandler handler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElse(null);
-						if(handler != null && handler instanceof IPItemStackHandler){
+						IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
+						if(handler instanceof IPItemStackHandler){
 							NonNullList<ItemStack> upgrades = getUpgrades();
 							for(int i = 0;i < handler.getSlots();i++){
 								handler.insertItem(i, upgrades.get(i), false);
@@ -341,7 +333,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 						if(isPlayer){
 							Player player = (Player) source.getDirectEntity();
 							if(!player.addItem(stack)){
-								ItemEntity itemEntity = new ItemEntity(this.level, player.getX(), player.getY(), player.getZ(), stack);
+								ItemEntity itemEntity = new ItemEntity(level(), player.getX(), player.getY(), player.getZ(), stack);
 								itemEntity.setNoPickUpDelay();
 								this.level().addFreshEntity(itemEntity);
 							}
@@ -539,9 +531,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				float moving = (this.inputUp || this.inputDown) ? (this.isBoosting ? .9F : .7F) : 0.5F;
 				if(this.lastMoving != moving){
 					this.lastMoving = moving;
-					ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator.get(), this, false, .5f, 0.5F);
+					ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator.value(), this, false, .5f, 0.5F);
 				}
-				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator.get(), this, this.isVehicle() && this.getContainedFluid() != FluidStack.EMPTY && this.getContainedFluid().getAmount() > 0, this.inputUp || this.inputDown ? .5f : .3f, moving);
+				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator.value(), this, this.isVehicle() && this.getContainedFluid() != FluidStack.EMPTY && this.getContainedFluid().getAmount() > 0, this.inputUp || this.inputDown ? .5f : .3f, moving);
 				
 				if(this.inputUp && this.level().random.nextInt(2) == 0){
 					if(isInLava()){
@@ -578,7 +570,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 							double d0 = i == 1 ? -vec3.z : vec3.z;
 							double d1 = i == 1 ? vec3.x : -vec3.x;
 							this.level().playSound((Player) null, this.getX() + d0, this.getY(), this.getZ() + d1, soundevent, this.getSoundSource(), 1.0F, 0.8F + 0.4F * this.random.nextFloat());
-							this.level().gameEvent(this.getControllingPassenger(), GameEvent.SPLASH, new BlockPos(this.getX() + d0, this.getY(), this.getZ() + d1));
+							this.level().gameEvent(this.getControllingPassenger(), GameEvent.SPLASH, new BlockPos((int)(this.getX() + d0), (int)this.getY(), (int)(this.getZ() + d1)));
 						}
 					}
 					
@@ -655,7 +647,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 									float sim = vec2.dot(vec);
 									if(sim > .5f){
 										Vec3 motion = entity.getDeltaMovement();
-										entity.hurt(DamageSource.playerAttack(player), 4);
+										entity.hurt(level().damageSources().playerAttack(player), 4);
 										entity.setDeltaMovement(new Vec3(motion.x + (vec2.x() * .75F), motion.y, motion.z + (vec2.y() * .75F)));
 									}
 								}
@@ -835,7 +827,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					blockpos.set(l1, k1, i2);
 					FluidState fluidstate = this.level().getFluidState(blockpos);
 					if(fluidstate.is(FluidTags.WATER) || (this.isFireproof && fluidstate.is(FluidTags.LAVA))){
-						f = Math.max(f, fluidstate.getHeight(this.level, blockpos));
+						f = Math.max(f, fluidstate.getHeight(level(), blockpos));
 					}
 					
 					if(f >= 1.0F){
@@ -871,7 +863,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 					blockpos.set(k1, l1, i2);
 					FluidState fluidstate = this.level().getFluidState(blockpos);
 					if(fluidstate.is(FluidTags.WATER) || (this.isFireproof && fluidstate.is(FluidTags.LAVA))){
-						float f = (float) l1 + fluidstate.getHeight(this.level, blockpos);
+						float f = (float) l1 + fluidstate.getHeight(level(), blockpos);
 						this.waterLevel = Math.max(f, this.waterLevel);
 						flag |= aabb.minY < (double) f;
 					}
@@ -900,7 +892,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				for(int i2 = i1;i2 < j1;++i2){
 					blockpos.set(k1, l1, i2);
 					FluidState fluidstate = this.level().getFluidState(blockpos);
-					if((fluidstate.is(FluidTags.WATER) || ((this.isFireproof && fluidstate.is(FluidTags.LAVA)))) && d0 < (double) ((float) blockpos.getY() + fluidstate.getHeight(this.level, blockpos))){
+					if((fluidstate.is(FluidTags.WATER) || ((this.isFireproof && fluidstate.is(FluidTags.LAVA)))) && d0 < (double) ((float) blockpos.getY() + fluidstate.getHeight(level(), blockpos))){
 						if(!fluidstate.isSource()){
 							return Boat.Status.UNDER_FLOWING_WATER;
 						}
@@ -914,22 +906,6 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		return flag ? Boat.Status.UNDER_WATER : null;
 	}
 	
-	public boolean isLeftInDown(){
-		return this.inputLeft;
-	}
-	
-	public boolean isRightInDown(){
-		return this.inputRight;
-	}
-	
-	public boolean isForwardInDown(){
-		return this.inputUp;
-	}
-	
-	public boolean isBackInDown(){
-		return this.inputDown;
-	}
-	
 	@Override
 	public boolean getSharedFlag(int flag){
 		return super.getSharedFlag(flag);
@@ -939,13 +915,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public void setSharedFlag(int flag, boolean set){
 		super.setSharedFlag(flag, set);
 	}
-	
-	@Override
-	@Nonnull
-	public Packet<?> getAddEntityPacket(){
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
-	
+
 	@Override
 	public void readSpawnData(FriendlyByteBuf buffer){
 		String fluid = buffer.readUtf();

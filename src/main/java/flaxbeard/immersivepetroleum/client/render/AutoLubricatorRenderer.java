@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
@@ -14,10 +13,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
+import org.joml.Quaternionf;
 
 public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricatorTileEntity>{
 	
@@ -51,17 +52,17 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 				
 				float h = height * level;
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
-				transform.mulPose(new Quaternion(0, 90, 0, true));
+				transform.mulPose(new Quaternionf().rotateY(Mth.HALF_PI));
 				transform.translate(-7.98, 0, 0);
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
-				transform.mulPose(new Quaternion(0, 90, 0, true));
+				transform.mulPose(new Quaternionf().rotateY(Mth.HALF_PI));
 				transform.translate(-7.98, 0, 0);
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
-				transform.mulPose(new Quaternion(0, 90, 0, true));
+				transform.mulPose(new Quaternionf().rotateY(Mth.HALF_PI));
 				transform.translate(-7.98, 0, 0);
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				if(h < height){
-					transform.mulPose(new Quaternion(90, 0, 0, true));
+					transform.mulPose(new Quaternionf().rotateX(Mth.HALF_PI));
 					transform.translate(0, 0, -h);
 					GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, 8);
 				}
