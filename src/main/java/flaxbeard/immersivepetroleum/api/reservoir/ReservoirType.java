@@ -39,7 +39,7 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	public static Map<ResourceLocation, RecipeHolder<ReservoirType>> map = new HashMap<>();
 	
-	public final ResourceLocation name;
+	public final String name;
 	public final ResourceLocation fluidLocation;
 	public final int weight;
 	
@@ -64,7 +64,7 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @param equilibrium   Maximum amount of fluid that residuals regenerate at
 	 * @param weight        The weight for this reservoir
 	 */
-	public ReservoirType(ResourceLocation name, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int equilibrium, int weight){
+	public ReservoirType(String name, ResourceLocation fluidLocation, int minSize, int maxSize, int residual, int equilibrium, int weight){
 		this(name, BuiltInRegistries.FLUID.get(fluidLocation), minSize, maxSize, residual, equilibrium, weight);
 	}
 	
@@ -79,7 +79,7 @@ public class ReservoirType extends IESerializableRecipe{
 	 * @param equilibrium   Maximum amount of fluid that residuals regenerate at
 	 * @param weight   The weight for this reservoir
 	 */
-	public ReservoirType(ResourceLocation name, Fluid fluid, int minSize, int maxSize, int residual, int equilibrium, int weight){
+	public ReservoirType(String name, Fluid fluid, int minSize, int maxSize, int residual, int equilibrium, int weight){
 		super(new TagOutput(ItemStack.EMPTY), IPRecipeTypes.RESERVOIR);
 		this.name = name;
 		this.fluidLocation = RegistryUtils.getRegistryNameOf(fluid);
@@ -94,7 +94,7 @@ public class ReservoirType extends IESerializableRecipe{
 	public ReservoirType(CompoundTag nbt){
 		super(new TagOutput(ItemStack.EMPTY), IPRecipeTypes.RESERVOIR);
 		
-		this.name = new ResourceLocation(nbt.getString("name"));
+		this.name = nbt.getString("name");
 		
 		this.fluidLocation = new ResourceLocation(nbt.getString("fluid"));
 		this.fluid = BuiltInRegistries.FLUID.get(this.fluidLocation);
@@ -120,7 +120,7 @@ public class ReservoirType extends IESerializableRecipe{
 	}
 	
 	public CompoundTag writeToNBT(CompoundTag nbt){
-		nbt.putString("name", this.name.toString());
+		nbt.putString("name", this.name);
 		nbt.putString("fluid", this.fluidLocation.toString());
 		
 		nbt.putInt("minSize", this.minSize);

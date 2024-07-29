@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
 public class ReservoirBuilder extends IPRecipeBuilder<ReservoirBuilder>{
+	private String name;
 	private Fluid fluid;
 	private int fluidMinimum;
 	private int fluidMaximum;
@@ -30,7 +31,12 @@ public class ReservoirBuilder extends IPRecipeBuilder<ReservoirBuilder>{
 	public static ReservoirBuilder builder() {
 		return new ReservoirBuilder();
 	}
-	
+
+	public ReservoirBuilder setName(String name){
+		this.name = name;
+		return this;
+	}
+
 	/**
 	 * Sets the fluid for this Reservoir.
 	 * 
@@ -161,11 +167,11 @@ public class ReservoirBuilder extends IPRecipeBuilder<ReservoirBuilder>{
 		return this;
 	}
 
-	public void build(RecipeOutput out, ResourceLocation name)
+	public void build(RecipeOutput out, ResourceLocation loc)
 	{
 		ReservoirType recipe = new ReservoirType(name, fluid, fluidMinimum, fluidMaximum, fluidResidual, equilibrium, weight);
 		recipe.setBiomes(isBioBlacklist, biomes);
 		recipe.setDimensions(isDimBlacklist, dimensions);
-		out.accept(name, recipe, null, getConditions());
+		out.accept(loc, recipe, null, getConditions());
 	}
 }

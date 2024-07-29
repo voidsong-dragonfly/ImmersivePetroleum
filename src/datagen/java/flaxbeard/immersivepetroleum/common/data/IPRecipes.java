@@ -95,6 +95,7 @@ public class IPRecipes extends RecipeProvider{
 	
 	private void reservoirs(){
 		ReservoirBuilder.builder()
+			.setName("aquifer")
 			.setFluid(Fluids.WATER)
 			.min(5000)
 			.max(10000)
@@ -107,6 +108,7 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("reservoirs/aquifer"));
 		
 		ReservoirBuilder.builder()
+			.setName("oil")
 			.setFluid(IPContent.Fluids.CRUDEOIL.source().get())
 			.min(2500)
 			.max(32500)
@@ -118,6 +120,7 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("reservoirs/oil"));
 		
 		ReservoirBuilder.builder()
+			.setName("lava")
 			.setFluid(Fluids.LAVA)
 			.min(250)
 			.max(1000)
