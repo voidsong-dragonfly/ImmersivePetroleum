@@ -1,5 +1,11 @@
 package flaxbeard.immersivepetroleum;
 
+import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
+import flaxbeard.immersivepetroleum.common.util.IPItemStackHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,6 +73,7 @@ public class ImmersivePetroleum{
 		NeoForge.EVENT_BUS.addListener(this::worldLoad);
 		NeoForge.EVENT_BUS.addListener(this::serverStarting);
 		NeoForge.EVENT_BUS.addListener(this::registerCommand);
+		NeoForge.EVENT_BUS.addListener(this::registerCapabilities);
 		NeoForge.EVENT_BUS.addListener(this::addReloadListeners);
 		
 		IPRegisters.addRegistersToEventBus(modBus); // TODO Might need to be moved to be *under* IPContent.modConstruction
@@ -126,6 +133,11 @@ public class ImmersivePetroleum{
 		ip.then(IslandCommand.create());
 		
 		event.getDispatcher().register(ip);
+	}
+
+	private void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerItem(MotorboatItem.MOTORBOAT_INV, (itemStack, context) -> new IPItemStackHandler(4, itemStack.getCapability(Capabilities.ItemHandler.ITEM)), IPContent.Items.SPEEDBOAT.get());
+		event.registerItem(Capabilities.FluidHandler.ITEM, (itemStack, context) -> new FluidHandlerItemStack(itemStack, 8000), IPContent.Items.OIL_CAN.get());
 	}
 	
 	public void addReloadListeners(AddReloadListenerEvent event){

@@ -18,6 +18,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,6 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -48,6 +50,10 @@ public class MotorboatItem extends IPItemBase implements IUpgradeableTool{
 	public MotorboatItem(){
 		super(new Item.Properties().stacksTo(1));
 	}
+
+	public static final ItemCapability<IItemHandler, Void> MOTORBOAT_INV =
+		ItemCapability.createVoid(new ResourceLocation(ImmersivePetroleum.MODID, "item_inventory"),
+		IItemHandler.class);
 
 	@Override
 	public CompoundTag getUpgrades(ItemStack stack){

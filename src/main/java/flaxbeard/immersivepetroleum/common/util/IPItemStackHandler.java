@@ -8,16 +8,19 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-// TODO Is this even nessesary anymore?
-public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider<Object, Object, Object>{
+public class IPItemStackHandler extends ItemStackHandler{
 	private static final Runnable EMPTY_RUN = () -> {};
 	
 	@Nonnull
 	private Runnable onChange = EMPTY_RUN;
-	public IPItemStackHandler(int invSize){
+	public IPItemStackHandler(int invSize, IItemHandler other){
 		super(invSize);
+		if(other instanceof IPItemStackHandler)
+			for(int i = 0; i < Math.min(getSlots(), other.getSlots()); ++i)
+				setStackInSlot(i, other.getStackInSlot(i));
 	}
 	
 	public void setTile(BlockEntity tile){
@@ -33,26 +36,7 @@ public class IPItemStackHandler extends ItemStackHandler implements ICapabilityP
 		this.onChange.run();
 	}
 	
-	/*
-	LazyOptional<IItemHandler> handler = LazyOptional.of(() -> this);// CapabilityUtils.constantOptional(this);
-	
-	@Override
-	@Nonnull
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
-		if(capability == ForgeCapabilities.ITEM_HANDLER){
-			return this.handler.cast();
-		}
-		
-		return LazyOptional.empty();
-	}
-	*/
-	
 	public NonNullList<ItemStack> getContainedItems(){
 		return this.stacks;
-	}
-
-	@Override
-	public @Nullable Object getCapability(Object object, Object context){
-		return null;
 	}
 }
