@@ -59,7 +59,6 @@ import flaxbeard.immersivepetroleum.common.items.SurveyResultItem;
 import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
-import flaxbeard.immersivepetroleum.common.util.IPCreativeTabs;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.util.damageSources.IPDamageSources;
 import flaxbeard.immersivepetroleum.common.util.sounds.IPSounds;
@@ -236,7 +235,7 @@ public class IPContent{
 		IPSounds.forceClassLoad();
 		IPDamageSources.forceClassLoad();
 		WorldGenFeatures.forceClassLoad();
-		IPCreativeTabs.forceClassLoad();
+		IPCreativeTab.forceClassLoad();
 	}
 	
 	public static void preInit(){

@@ -1,8 +1,9 @@
 package flaxbeard.immersivepetroleum.common.items;
 
+import flaxbeard.immersivepetroleum.common.IPCreativeTab;
 import net.minecraft.world.item.Item;
 
-public class IPItemBase extends Item{
+public class IPItemBase extends Item implements IPCreativeTab.IMightShowUpInCreativeTab{
 	/** For basic items */
 	public IPItemBase(){
 		this(new Item.Properties());

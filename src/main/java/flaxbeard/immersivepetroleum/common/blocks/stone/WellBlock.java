@@ -32,6 +32,11 @@ public class WellBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
+	public boolean addSelfToCreativeTab(){
+		return false;
+	}
+	
+	@Override
 	public BlockEntity newBlockEntity(@Nonnull BlockPos pPos, @Nonnull BlockState pState){
 		return IPTileTypes.WELL.get().create(pPos, pState);
 	}

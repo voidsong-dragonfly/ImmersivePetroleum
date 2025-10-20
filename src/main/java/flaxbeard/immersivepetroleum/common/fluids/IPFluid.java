@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.fluids;
 
 import com.google.common.collect.ImmutableList;
+import flaxbeard.immersivepetroleum.common.IPCreativeTab;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.Util;
@@ -365,7 +366,7 @@ public class IPFluid extends FlowingFluid{
 		}
 	}
 	
-	public static class IPBucketItem extends BucketItem{
+	public static class IPBucketItem extends BucketItem implements IPCreativeTab.IMightShowUpInCreativeTab{
 		private static final Item.Properties PROPS = new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET);
 		
 		private int burnTime;

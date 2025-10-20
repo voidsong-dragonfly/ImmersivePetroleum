@@ -18,9 +18,22 @@ public class IPCreativeTab{
 	
 	private static void fill(CreativeModeTab.ItemDisplayParameters parms, CreativeModeTab.Output out){
 		for(RegistryObject<Item> holder: IPRegisters.ITEM_REGISTER.getEntries()){
-			//if(item instanceof IMightShowUpInCreativeTab i && i.addSelfToCreativeTab()){
-			out.accept(holder.get());
-			//}
+			Item item = holder.get();
+			
+			if(item instanceof IMightShowUpInCreativeTab i && i.addSelfToCreativeTab()){
+				out.accept(holder.get());
+			}
+		}
+	}
+	
+	/**
+	 * I find it amusing doing it this way
+	 *
+	 * @author TwistedGate
+	 */
+	public interface IMightShowUpInCreativeTab{
+		default boolean addSelfToCreativeTab(){
+			return true;
 		}
 	}
 	

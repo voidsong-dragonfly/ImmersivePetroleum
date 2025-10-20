@@ -51,6 +51,11 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
+	public boolean addSelfToCreativeTab(){
+		return false;
+	}
+	
+	@Override
 	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor){
 		/*
 		int d = pos.getY() - neighbor.getY();

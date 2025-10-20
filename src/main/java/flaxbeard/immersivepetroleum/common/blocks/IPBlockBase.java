@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
+import flaxbeard.immersivepetroleum.common.IPCreativeTab;
 import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlacementReader;
 import flaxbeard.immersivepetroleum.common.blocks.interfaces.IPlayerInteraction;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPClientTickableTile;
@@ -27,7 +28,7 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class IPBlockBase extends Block{
+public class IPBlockBase extends Block implements IPCreativeTab.IMightShowUpInCreativeTab{
 	public IPBlockBase(Block.Properties props){
 		super(props);
 	}

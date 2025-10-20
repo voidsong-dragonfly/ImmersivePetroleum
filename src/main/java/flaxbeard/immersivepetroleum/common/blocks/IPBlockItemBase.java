@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks;
 
 import blusunrize.immersiveengineering.api.Lib;
+import flaxbeard.immersivepetroleum.common.IPCreativeTab;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,7 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class IPBlockItemBase extends BlockItem{
+public class IPBlockItemBase extends BlockItem implements IPCreativeTab.IMightShowUpInCreativeTab{
 	public IPBlockItemBase(Block blockIn, Properties builder){
 		super(blockIn, builder);
 	}

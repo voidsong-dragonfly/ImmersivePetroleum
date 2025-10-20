@@ -82,6 +82,12 @@ public class DebugItem extends IPItemBase{
 	}
 	
 	@Override
+	public boolean addSelfToCreativeTab(){
+		// This has no business being in the Tab
+		return false;
+	}
+	
+	@Override
 	@Nonnull
 	public InteractionResultHolder<ItemStack> use(Level worldIn, @Nonnull Player playerIn, @Nonnull InteractionHand handIn){
 		if(!worldIn.isClientSide){

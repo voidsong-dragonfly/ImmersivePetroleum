@@ -64,6 +64,12 @@ public class FlarestackBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
+	public boolean addSelfToCreativeTab(){
+		// Only FlarestackBlockItem should
+		return false;
+	}
+	
+	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(SLAVE);
 	}

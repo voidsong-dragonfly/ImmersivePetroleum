@@ -65,6 +65,12 @@ public class AutoLubricatorBlock extends IPBlockBase implements EntityBlock{
 	}
 	
 	@Override
+	public boolean addSelfToCreativeTab(){
+		// Only AutoLubricatorBlockItem should
+		return false;
+	}
+	
+	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
 		builder.add(FACING, SLAVE);
 	}

@@ -32,6 +32,12 @@ public class SurveyResultItem extends IPItemBase{
 	}
 	
 	@Override
+	public boolean addSelfToCreativeTab(){
+		// This has no business being in the Tab
+		return false;
+	}
+	
+	@Override
 	@Nonnull
 	public Component getName(@Nonnull ItemStack stack){
 		String selfKey = getDescriptionId(stack);
