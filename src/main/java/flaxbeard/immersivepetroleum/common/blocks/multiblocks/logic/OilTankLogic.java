@@ -1,5 +1,6 @@
 package flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic;
 
+import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -14,20 +15,28 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
+import blusunrize.immersiveengineering.client.utils.TextUtils;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.interfaces.MBOverlayText;
 import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
 import blusunrize.immersiveengineering.common.util.LayeredComparatorOutput;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableSet;
+import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.OilTankLogic.State;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.shapes.OilTankShape;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -37,14 +46,17 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 
-public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServerTickableComponent<OilTankLogic.State>, IClientTickableComponent<OilTankLogic.State>{
+public class OilTankLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<State>, MBOverlayText<State>{
+	public static final int EQUALIZING_THRESHOLD = 1;
 	
 	public enum PortState implements StringRepresentable{
 		INPUT, OUTPUT;
@@ -106,8 +118,8 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 	public static final BlockPos[] Redstone_IN = new BlockPos[]{new BlockPos(2, 2, 5), new BlockPos(2, 2, 2)};
 	
 	@Override
-	public State createInitialState(IInitialMultiblockContext<OilTankLogic.State> capabilitySource){
-		return new OilTankLogic.State(capabilitySource);
+	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
+		return new State(capabilitySource);
 	}
 	
 	@Override
@@ -115,26 +127,22 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 	}
 	
 	@Override
-	public void tickServer(IMultiblockContext<OilTankLogic.State> ctx){
-		int threshold = 1;
+	public void tickServer(IMultiblockContext<State> ctx){
+		final State state = ctx.getState();
+		final IMultiblockLevel level = ctx.getLevel();
 		
-		OilTankLogic.State state = ctx.getState();
-		IMultiblockLevel level = ctx.getLevel();
-		
-		//@formatter:off
-		PortState portStateA = state.getPortStateFor(Port.DYNAMIC_A),
-				portStateB = state.getPortStateFor(Port.DYNAMIC_B),
-				portStateC = state.getPortStateFor(Port.DYNAMIC_C),
-				portStateD = state.getPortStateFor(Port.DYNAMIC_D);
-		//@formatter:on
+		final PortState portStateA = state.getPortStateFor(Port.DYNAMIC_A);
+		final PortState portStateB = state.getPortStateFor(Port.DYNAMIC_B);
+		final PortState portStateC = state.getPortStateFor(Port.DYNAMIC_C);
+		final PortState portStateD = state.getPortStateFor(Port.DYNAMIC_D);
 		
 		boolean wasBalancing = false;
 		if((portStateA == PortState.OUTPUT && portStateC == PortState.INPUT) || (portStateA == PortState.INPUT && portStateC == PortState.OUTPUT)){
-			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_A, threshold, FluidType.BUCKET_VOLUME);
+			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_A, EQUALIZING_THRESHOLD, FluidType.BUCKET_VOLUME);
 		}
 		
 		if((portStateB == PortState.OUTPUT && portStateD == PortState.INPUT) || (portStateB == PortState.INPUT && portStateD == PortState.OUTPUT)){
-			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_B, threshold, FluidType.BUCKET_VOLUME);
+			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_B, EQUALIZING_THRESHOLD, FluidType.BUCKET_VOLUME);
 		}
 		
 		if(state.rsState.isEnabled(ctx)){
@@ -149,7 +157,7 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 							int accepted = out.fill(fs, IFluidHandler.FluidAction.SIMULATE);
 							if(accepted > 0){
 								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), false), IFluidHandler.FluidAction.EXECUTE);
-								state.tank.drain(Utils.copyFluidStackWithAmount(state.tank.getFluid(), drained, false), IFluidHandler.FluidAction.EXECUTE);
+								state.tank.drain(FluidUtils.copyFluidStackWithAmount(state.tank.getFluid(), drained, false), IFluidHandler.FluidAction.EXECUTE);
 							}
 						}
 					});
@@ -163,7 +171,7 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap){
-		final OilTankLogic.State state = ctx.getState();
+		final State state = ctx.getState();
 		
 		if(cap == ForgeCapabilities.FLUID_HANDLER){
 			for(Port port: Port.values()){
@@ -179,12 +187,51 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 	}
 	
 	@Override
+	public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient){
+		if(ExternalModContent.isIEItem_Hammer(player.getItemInHand(hand))){
+			if(hammering(ctx, posInMultiblock, isClient))
+				return InteractionResult.SUCCESS;
+		}
+		
+		if(FluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)){
+			ctx.markDirtyAndSync();
+			return InteractionResult.SUCCESS;
+		}
+		
+		return InteractionResult.PASS;
+	}
+	
+	private boolean hammering(IMultiblockContext<State> ctx, BlockPos posInMultiblock, boolean isClient){
+		if(!isClient){
+			for(Port port: Port.DYNAMIC_PORTS){
+				if(port.matches(posInMultiblock)){
+					ctx.getState().togglePortState(port);
+					ctx.markDirtyAndSync();
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	@Nullable
+	@Override
+	public List<Component> getOverlayText(State state, Player player, boolean b){
+		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
+			return List.of(TextUtils.formatFluidStack(state.tank.getFluid()));
+		}
+		
+		return List.of();
+	}
+	
+	@Override
 	public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType){
 		return OilTankShape.GETTER;
 	}
 	
 	public static class State implements IMultiblockState{
-		public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
+		public final RedstoneControl.RSState rsState = RedstoneControl.RSState.disabledByDefault();
 		
 		public final FluidTank tank = new FluidTank(1024 * FluidType.BUCKET_VOLUME, f -> !f.getFluid().getFluidType().isLighterThanAir());
 		public final EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
@@ -193,12 +240,11 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 		
 		private final StoredCapability<IFluidHandler> fluidInput;
 		private final StoredCapability<IFluidHandler> fluidOutput;
-		//private final List<CapabilityReference<IFluidHandler>>
 		public State(IInitialMultiblockContext<State> context){
 			final BlockPos masterPos = IPContent.Multiblock.OILTANK.masterPosInMB();
 			final Updater update = (ctx, layer, value) -> {
 				final IMultiblockLevel level = ctx.getLevel();
-				ctx.setComparatorOutputFor(masterPos, value);
+				ctx.setComparatorOutputFor(layer, value);
 				final BlockPos absPos = level.toAbsolute(masterPos);
 				final BlockState stateAt = level.getBlockState(masterPos);
 				level.getRawLevel().updateNeighborsAt(absPos, stateAt.getBlock());
@@ -206,29 +252,32 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 			
 			//@formatter:off
 			this.comparatorHelper = new LayeredComparatorOutput<>(
-				this.tank.getCapacity(),
-				3,
+				this.tank.getCapacity(), 3,
 				(ctx, value) -> update.update(ctx, masterPos, value),
 				(ctx, layer, value) -> {
-				for(int z = -2;z <= 2;z++){
-					for(int x = -2;x <= 2;x++){
-						BlockPos pos = masterPos.offset(x, layer, z);
-						update.update(ctx, pos, value);
+					for(int z = -2;z <= 2;z++){
+						for(int x = -2;x <= 2;x++){
+							if(x == 0 && z == 0)
+								continue;
+							
+							BlockPos pos = masterPos.offset(x, layer, z);
+							update.update(ctx, pos, value);
+						}
 					}
 				}
-			});
+			);
 			//@formatter:on
 			
 			for(Port port: Port.values()){
 				if(port == Port.DYNAMIC_B || port == Port.DYNAMIC_C || port == Port.BOTTOM){
-					portConfig.put(port, PortState.OUTPUT);
+					this.portConfig.put(port, PortState.OUTPUT);
 				}else{
-					portConfig.put(port, PortState.INPUT);
+					this.portConfig.put(port, PortState.INPUT);
 				}
 			}
 			
-			this.fluidInput = new StoredCapability<>(ArrayFluidHandler.fillOnly(tank, context.getMarkDirtyRunnable()));
-			this.fluidOutput = new StoredCapability<>(ArrayFluidHandler.drainOnly(tank, context.getMarkDirtyRunnable()));
+			this.fluidInput = new StoredCapability<>(ArrayFluidHandler.fillOnly(this.tank, context.getMarkDirtyRunnable()));
+			this.fluidOutput = new StoredCapability<>(ArrayFluidHandler.drainOnly(this.tank, context.getMarkDirtyRunnable()));
 		}
 		
 		@Override
@@ -238,7 +287,8 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 			for(Port port: Port.DYNAMIC_PORTS){
 				nbt.putInt(port.getSerializedName(), getPortStateFor(port).ordinal());
 			}
-			rsState.writeSaveNBT(nbt);
+			
+			this.rsState.writeSaveNBT(nbt);
 		}
 		
 		@Override
@@ -246,9 +296,10 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 			this.tank.readFromNBT(nbt.getCompound("tank"));
 			
 			for(Port port: Port.DYNAMIC_PORTS){
-				portConfig.put(port, PortState.values()[nbt.getInt(port.getSerializedName())]);
+				this.portConfig.put(port, PortState.values()[nbt.getInt(port.getSerializedName())]);
 			}
-			rsState.readSaveNBT(nbt);
+			
+			this.rsState.readSaveNBT(nbt);
 		}
 		
 		@Override
@@ -265,15 +316,18 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 			return this.portConfig.get(port);
 		}
 		
-		private boolean equalize(IMultiblockContext<OilTankLogic.State> ctx, Port port, int threshold, int maxTransfer){
+		public void togglePortState(Port port){
+			this.portConfig.compute(port, (k, next) -> next.next());
+		}
+		
+		private boolean equalize(IMultiblockContext<State> ctx, Port port, int threshold, int maxTransfer){
 			IMultiblockLevel level = ctx.getLevel();
 			Direction facing = getPortDirection(level.getOrientation(), port);
 			BlockPos pos = level.toAbsolute(port.posInMultiblock.posInMultiblock()).relative(facing);
 			BlockEntity te = level.getRawLevel().getBlockEntity(pos);
 			
-			if(te instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof OilTankLogic.State){
-				
-				IMultiblockContext<OilTankLogic.State> otherState = multiblockBE.getHelper().asType(IPContent.Multiblock.OILTANK).getContext();
+			if(te instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof State){
+				IMultiblockContext<State> otherState = multiblockBE.getHelper().asType(IPContent.Multiblock.OILTANK).getContext();
 				
 				int diff = otherState.getState().tank.getFluidAmount() - this.tank.getFluidAmount();
 				int amount = Math.min(Math.abs(diff) / 2, maxTransfer);
@@ -284,8 +338,7 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 			return false;
 		}
 		
-		private boolean transfer(IMultiblockContext<OilTankLogic.State> src, IMultiblockContext<OilTankLogic.State> dst, int amount){
-			
+		private boolean transfer(IMultiblockContext<State> src, IMultiblockContext<State> dst, int amount){
 			State srcState = src.getState();
 			State dstState = dst.getState();
 			
@@ -305,7 +358,6 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 		}
 		
 		private Direction getPortDirection(MultiblockOrientation orientation, Port port){
-			
 			boolean isMirrored = orientation.mirrored();
 			Direction front = orientation.front();
 			switch(port){
@@ -323,15 +375,6 @@ public class OilTankLogic implements IMultiblockLogic<OilTankLogic.State>, IServ
 				}
 			}
 		}
-		
-		/*
-		public boolean isLadder(){
-			int x = posInMultiblock.getX();
-			int z = posInMultiblock.getZ();
-			
-			return x == 3 && z == 0;
-		}
-		*/
 		
 		interface Updater{
 			void update(IMultiblockContext<?> ctx, BlockPos pos, int value);

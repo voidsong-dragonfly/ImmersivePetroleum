@@ -14,6 +14,7 @@ public class ExternalModContent{
 	private static RegistryObject<Block> IE_REDSTONE_ENGINEERING_BLOCK;
 	
 	// Items
+	private static RegistryObject<Item> IE_ITEM_HAMMER;
 	private static RegistryObject<Item> IE_ITEM_PIPE;
 	private static RegistryObject<Item> IE_ITEM_BUCKSHOT;
 	private static RegistryObject<Item> IE_ITEM_EMPTY_SHELL;
@@ -24,6 +25,7 @@ public class ExternalModContent{
 	public static void init(){
 		IE_REDSTONE_ENGINEERING_BLOCK = RegistryObject.create(ResourceUtils.ie("rs_engineering"), ForgeRegistries.BLOCKS);
 		
+		IE_ITEM_HAMMER = RegistryObject.create(ResourceUtils.ie("hammer"), ForgeRegistries.ITEMS);
 		IE_ITEM_PIPE = RegistryObject.create(ResourceUtils.ie("fluid_pipe"), ForgeRegistries.ITEMS);
 		IE_ITEM_BUCKSHOT = RegistryObject.create(ResourceUtils.ie("buckshot"), ForgeRegistries.ITEMS);
 		IE_ITEM_EMPTY_SHELL = RegistryObject.create(ResourceUtils.ie("empty_shell"), ForgeRegistries.ITEMS);
@@ -54,6 +56,10 @@ public class ExternalModContent{
 		return IE_ITEM_PIPE.get();
 	}
 	
+	public static Item getIEItem_Hammer(){
+		return IE_ITEM_HAMMER.get();
+	}
+	
 	public static boolean isIEBlock_RedstoneEngineering(Block block){
 		return block.equals(getIEBlock_RedstoneEngineering());
 	}
@@ -80,5 +86,13 @@ public class ExternalModContent{
 	
 	public static boolean isIEItem_Pipe(Item item){
 		return item.equals(getIEItem_Pipe());
+	}
+	
+	public static boolean isIEItem_Hammer(ItemStack stack){
+		return isIEItem_Hammer(stack.getItem());
+	}
+	
+	public static boolean isIEItem_Hammer(Item item){
+		return item.equals(getIEItem_Hammer());
 	}
 }
