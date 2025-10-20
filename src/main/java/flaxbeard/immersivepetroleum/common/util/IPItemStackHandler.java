@@ -1,8 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
@@ -14,6 +11,9 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class IPItemStackHandler extends ItemStackHandler implements ICapabilityProvider{
 	private static final Runnable EMPTY_RUN = () -> {};

@@ -47,14 +47,14 @@ public class DerrickSettingsScreen extends Screen{
 		
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
-
+		
 		BlockEntity tile = this.derrickScreen.getMenu().level.getBlockEntity(DerrickContainer.getPos(this.derrickScreen.getMenu().pos.get()));
-		if (tile instanceof IMultiblockBE<?> be && be.getHelper().getState() instanceof DerrickLogic.State)
-		{
+		if(tile instanceof IMultiblockBE<?> be && be.getHelper().getState() instanceof DerrickLogic.State){
 			this.pipeConfig = new PipeConfig(be.getHelper().asType(IPContent.Multiblock.DERRICK), this.guiLeft + 10, this.guiTop + 10, 138, 138, 69, 69, 2);
 			addRenderableWidget(this.pipeConfig);
-
+			
 			// IDEA Users: these lambdas are like this for readability: Don't Change Them!
+			//@formatter:off
 			final Component set = Component.translatable("gui.immersivepetroleum.derrick.settings.button.set");
 			addRenderableWidget(Button.builder(set, b ->
 			{
@@ -62,7 +62,7 @@ public class DerrickSettingsScreen extends Screen{
 			}).		bounds(this.guiLeft + (this.xSize / 2) - 65, this.guiTop + this.ySize - 25, 40, 20).
 					tooltip(Tooltip.create(Component.translatable("gui.immersivepetroleum.derrick.settings.button.set.desc"))).
 					build());
-
+			
 			final Component reset = Component.translatable("gui.immersivepetroleum.derrick.settings.button.reset");
 			addRenderableWidget(Button.builder(reset, b -> {
 				this.pipeConfig.reset(be.getHelper().asType(IPContent.Multiblock.DERRICK));
@@ -70,7 +70,7 @@ public class DerrickSettingsScreen extends Screen{
 					bounds(this.guiLeft + (this.xSize / 2) - 20, this.guiTop + this.ySize - 25, 40, 20).
 					tooltip(Tooltip.create(Component.translatable("gui.immersivepetroleum.derrick.settings.button.reset.desc"))).
 					build());
-
+			
 			final Component close = Component.translatable("gui.immersivepetroleum.derrick.settings.button.close");
 			addRenderableWidget(Button.builder(close, b -> {
 				DerrickSettingsScreen.this.onClose();
@@ -78,6 +78,7 @@ public class DerrickSettingsScreen extends Screen{
 					bounds(this.guiLeft + (this.xSize / 2) + 25, this.guiTop + this.ySize - 25, 40, 20).
 					tooltip(Tooltip.create(Component.translatable("gui.immersivepetroleum.derrick.settings.button.close.desc"))).
 					build());
+			//@formatter:on
 		}
 	}
 	
@@ -118,24 +119,23 @@ public class DerrickSettingsScreen extends Screen{
 				
 				tooltip.add(d.withStyle(ChatFormatting.UNDERLINE));
 			}
-
+			
 			BlockEntity tile = this.derrickScreen.getMenu().level.getBlockEntity(DerrickContainer.getPos(this.derrickScreen.getMenu().pos.get()));
-			if (tile instanceof IMultiblockBE<?> be && be.getHelper().getState() instanceof DerrickLogic.State)
-			{
+			if(tile instanceof IMultiblockBE<?> be && be.getHelper().getState() instanceof DerrickLogic.State){
 				ColumnPos tilePos = Utils.toColumnPos(be.getHelper().getPositionInMB());
 				tooltip.add(Component.literal(String.format(Locale.ENGLISH, "X: %d §7(%d)", (tilePos.x() + px), px)));
 				tooltip.add(Component.literal(String.format(Locale.ENGLISH, "Z: %d §7(%d)", (tilePos.z() + py), py)));
 			}
-
+			
 			int i = this.pipeConfig.getGrid().get(x, y);
-			if (i > PipeConfig.EMPTY) {
-				switch (i) {
+			if(i > PipeConfig.EMPTY){
+				switch(i){
 					case PipeConfig.PIPE_NORMAL -> tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.normal"));
 					case PipeConfig.PIPE_PERFORATED -> tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.perforated"));
 					case PipeConfig.PIPE_PERFORATED_FIXED -> tooltip.add(Component.translatable("gui.immersivepetroleum.derrick.settings.pipe.perforated_fixed"));
 				}
 			}
-
+			
 			int xa = this.pipeConfig.getX() + (x * this.pipeConfig.getGridScale());
 			int ya = this.pipeConfig.getY() + (y * this.pipeConfig.getGridScale());
 			guiGraphics.fill(xa, ya, xa + this.pipeConfig.getGridScale(), ya + this.pipeConfig.getGridScale(), 0x7FFFFFFF);

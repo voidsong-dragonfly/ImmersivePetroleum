@@ -52,14 +52,11 @@ public class MessageDerrick implements INetMessage{
 				ServerLevel world = Objects.requireNonNull(con.getSender()).serverLevel();
 				if(world.isAreaLoaded(this.derrickPos, 2)){
 					BlockEntity te = world.getBlockEntity(this.derrickPos);
-
+					
 					if(te instanceof IMultiblockBE<?> derrick && derrick.getHelper().getContext().getState() instanceof DerrickLogic.State){
-
 						DerrickLogic.State state = derrick.getHelper().asType(IPContent.Multiblock.DERRICK).getState();
 						IMultiblockContext<DerrickLogic.State> ctx = derrick.getHelper().asType(IPContent.Multiblock.DERRICK).getContext();
-
-
-
+						
 						state.gridStorage = PipeConfig.Grid.fromCompound(this.nbt);
 						ctx.markDirtyAndSync();
 						ctx.requestMasterBESync();

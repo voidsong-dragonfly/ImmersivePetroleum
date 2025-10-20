@@ -1,11 +1,11 @@
 package flaxbeard.immersivepetroleum.common.shaderscases;
 
-import java.util.Collection;
-
 import blusunrize.immersiveengineering.api.shader.ShaderCase;
 import blusunrize.immersiveengineering.api.shader.ShaderLayer;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Collection;
 
 public class ShaderCaseProjector extends ShaderCase{
 	public static final ResourceLocation TYPE = ResourceUtils.ip("projector");

@@ -1,11 +1,10 @@
 package flaxbeard.immersivepetroleum.common.util.inventory;
 
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import net.minecraftforge.fluids.FluidStack;
+
+import javax.annotation.Nonnull;
+import java.util.function.Function;
 
 public class MultiFluidTankFiltered extends MultiFluidTank{
 	

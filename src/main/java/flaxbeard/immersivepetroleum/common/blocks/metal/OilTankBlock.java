@@ -1,8 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
 @Deprecated(forRemoval = true)
-public class OilTankBlock //extends IPMetalMultiblock<OilTankTileEntity>
-	{
+public class OilTankBlock /*extends IPMetalMultiblock<OilTankTileEntity>*/{
 	/*public OilTankBlock(){
 		super(IPTileTypes.OILTANK);
 	}

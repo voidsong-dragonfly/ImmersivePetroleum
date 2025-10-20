@@ -24,17 +24,15 @@ import java.util.List;
 import static flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillation_tower.DistillationTowerLogic.*;
 
 public class DistillationTowerContainer extends MultiblockAwareGuiContainer {
-
+	
 	public final ItemStackHandler handler;
 	public final IEnergyStorage energy;
 	public final GetterAndSetter<List<FluidStack>> input;
 	public final GetterAndSetter<List<FluidStack>> output;
-
-	public static DistillationTowerContainer makeServer(
-			MenuType<?> type, int id, Inventory player, MultiblockMenuContext<DistillationTowerLogic.State> ctx)
-	{
+	
+	public static DistillationTowerContainer makeServer(MenuType<?> type, int id, Inventory player, MultiblockMenuContext<DistillationTowerLogic.State> ctx){
 		State state = ctx.mbContext().getState();
-
+		
 		return new DistillationTowerContainer(
 				multiblockCtx(type, id, ctx), player,
 				new ItemStackHandler(state.inventory),
@@ -43,9 +41,8 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer {
 				GetterAndSetter.getterOnly(() -> state.getInternalTanks()[1].fluids),
 				state.getEnergy());
 	}
-
-	public static DistillationTowerContainer makeClient(MenuType<?> type, int id, Inventory player)
-	{
+	
+	public static DistillationTowerContainer makeClient(MenuType<?> type, int id, Inventory player){
 		return new DistillationTowerContainer(clientCtx(type, id), player,
 				new ItemStackHandler(INV_3 + 1),
 				new MultiFluidTankFiltered[]{ new MultiFluidTankFiltered(24000), new MultiFluidTankFiltered(24000)},
@@ -53,14 +50,14 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer {
 				GetterAndSetter.standalone(List.of()),
 				new AveragingEnergyStorage(16000));
 	}
+	
 	private DistillationTowerContainer(MenuContext ctx, Inventory playerInventory, ItemStackHandler handler, MultiFluidTankFiltered[] tanks, GetterAndSetter<List<FluidStack>> input, GetterAndSetter<List<FluidStack>> output, AveragingEnergyStorage energy){
 		super(ctx, DistillationTowerMultiblock.INSTANCE);
 		this.handler = handler;
 		this.energy = energy;
 		this.input = input;
 		this.output = output;
-
-
+		
 		addSlot(new IPSlot(handler, INV_0, 12, 17){
 			@Override
 			public boolean mayPlace(@Nonnull ItemStack stack){
@@ -88,7 +85,7 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer {
 		
 		addPlayerInventorySlots(playerInventory, 8, 85);
 		addPlayerHotbarSlots(playerInventory, 8, 143);
-
+		
 		addGenericData(new GenericContainerData<>(GenericDataSerializers.FLUID_STACKS, input));
 		addGenericData(new GenericContainerData<>(GenericDataSerializers.FLUID_STACKS, output));
 		addGenericData(GenericContainerData.energy(energy));

@@ -1,8 +1,9 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
-public class CokerUnitBlock //extends IPMetalMultiblock<CokerUnitTileEntity>
-{
-/*	public CokerUnitBlock(){
+@Deprecated(forRemoval = true)
+public class CokerUnitBlock /*extends IPMetalMultiblock<CokerUnitTileEntity>*/{
+	/*
+	public CokerUnitBlock(){
 		super(IPTileTypes.COKER);
 	}
 	
@@ -13,5 +14,6 @@ public class CokerUnitBlock //extends IPMetalMultiblock<CokerUnitTileEntity>
 			return true;
 		}
 		return false;
-	}*/
+	}
+	*/
 }

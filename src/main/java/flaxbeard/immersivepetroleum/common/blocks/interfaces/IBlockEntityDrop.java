@@ -1,11 +1,10 @@
 package flaxbeard.immersivepetroleum.common.blocks.interfaces;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public interface IBlockEntityDrop{
 	@Nonnull

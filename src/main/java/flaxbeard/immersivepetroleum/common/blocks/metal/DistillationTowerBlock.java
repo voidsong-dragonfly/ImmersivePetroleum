@@ -1,8 +1,9 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
-public class DistillationTowerBlock //extends IPMetalMultiblock<DistillationTowerTileEntity>
-{
-	/*public DistillationTowerBlock(){
+@Deprecated(forRemoval = true)
+public class DistillationTowerBlock /*extends IPMetalMultiblock<DistillationTowerTileEntity>*/{
+	/*
+	public DistillationTowerBlock(){
 		super(IPTileTypes.TOWER);
 	}
 	
@@ -13,5 +14,6 @@ public class DistillationTowerBlock //extends IPMetalMultiblock<DistillationTowe
 			return true;
 		}
 		return false;
-	}*/
+	}
+	*/
 }

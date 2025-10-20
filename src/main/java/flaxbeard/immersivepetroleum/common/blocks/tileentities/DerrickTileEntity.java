@@ -8,7 +8,7 @@ public class DerrickTileEntity{ /*extends PoweredMultiblockBlockEntity<DerrickTi
 	public enum Inventory{
 		/** Item Pipe Input */
 		/*INPUT;
-
+		
 		public int id(){
 			return ordinal();
 		}
@@ -96,7 +96,7 @@ public class DerrickTileEntity{ /*extends PoweredMultiblockBlockEntity<DerrickTi
 		ReservoirIsland island = ReservoirHandler.getIsland(getLevelNonnull(), getBlockPos());
 		if(island == null || this.worldPosition.getY() < getLevelNonnull().getSeaLevel())
 			return 10;
-
+		
 		return island.getFlowFromPressure(getLevelNonnull(), getBlockPos());
 	}
 	
@@ -188,7 +188,7 @@ public class DerrickTileEntity{ /*extends PoweredMultiblockBlockEntity<DerrickTi
 	public void tickServer(){
 		if(isDummy())
 			return;
-
+			
 		if(!this.level.isAreaLoaded(getBlockPos(), 2))
 			return;
 		

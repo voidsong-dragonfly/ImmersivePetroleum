@@ -12,21 +12,23 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-public class HighPressureRefineryRecipe extends IPMultiblockRecipe {
+public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 	
 	public static Map<ResourceLocation, HighPressureRefineryRecipe> recipes = new HashMap<>();
-
+	
 	private static final RandomSource RANDOM = RandomSource.create();
-
+	
 	public static HighPressureRefineryRecipe findRecipe(@Nonnull FluidStack input, @Nonnull FluidStack secondary){
 		Objects.requireNonNull(input);
 		Objects.requireNonNull(secondary);
-
-		for(HighPressureRefineryRecipe recipe : recipes.values()){
-			//final HighPressureRefineryRecipe recipe = (HighPressureRefineryRecipe) holder.getRecipeUsed();
-
+		
+		for(HighPressureRefineryRecipe recipe: recipes.values()){
 			if(secondary.isEmpty()){
 				if(recipe.inputFluidSecondary == null && (recipe.inputFluid != null && recipe.inputFluid.test(input))){
 					return recipe;
@@ -39,14 +41,12 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe {
 		}
 		return null;
 	}
-
+	
 	public static boolean hasRecipeWithInput(@Nonnull FluidStack fluid, boolean ignoreAmount){
 		Objects.requireNonNull(fluid);
-
+		
 		if(!fluid.isEmpty()){
-			for(HighPressureRefineryRecipe recipe : recipes.values()){
-				//final HighPressureRefineryRecipe recipe = (HighPressureRefineryRecipe) holder.getRecipeUsed();
-
+			for(HighPressureRefineryRecipe recipe: recipes.values()){
 				if(recipe.inputFluid != null){
 					if((!ignoreAmount && recipe.inputFluid.test(fluid)) || (ignoreAmount && recipe.inputFluid.testIgnoringAmount(fluid))){
 						return true;
@@ -61,8 +61,7 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe {
 		Objects.requireNonNull(fluid);
 		
 		if(!fluid.isEmpty()){
-			for(HighPressureRefineryRecipe recipe :recipes.values()){
-				//final HighPressureRefineryRecipe recipe = (HighPressureRefineryRecipe) holder.getRecipeUsed();
+			for(HighPressureRefineryRecipe recipe: recipes.values()){
 				if(recipe.inputFluidSecondary != null){
 					if((!ignoreAmount && recipe.inputFluidSecondary.test(fluid)) || (ignoreAmount && recipe.inputFluidSecondary.testIgnoringAmount(fluid))){
 						return true;
@@ -72,15 +71,16 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe {
 		}
 		return false;
 	}
+	
 	public final ItemStack outputItem;
 	public final double chance;
-
+	
 	public final FluidStack output;
-
+	
 	public final FluidTagInput inputFluid;
 	@Nullable
 	public final FluidTagInput inputFluidSecondary;
-
+	
 	/**
 	 * @param id                  {@link ResourceLocation} ID to create the recipe with
 	 * @param output              {@link FluidStack} to output
@@ -98,41 +98,41 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe {
 		this.inputFluid = inputFluid;
 		this.inputFluidSecondary = inputFluidSecondary;
 		this.chance = chance;
-
+		
 		this.fluidOutputList = Collections.singletonList(output);
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
-
+		
 		timeAndEnergy(time, energy);
 		modifyTimeAndEnergy(IPServerConfig.REFINING.hydrotreater_timeModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
 	}
-
+	
 	public boolean hasSecondaryItem(){
 		return this.outputItem != null && !this.outputItem.isEmpty();
 	}
-
+	
 	@Override
 	public int getMultipleProcessTicks(){
 		return 0;
 	}
-
+	
 	public FluidTagInput getInputFluid(){
 		return this.inputFluid;
 	}
-
+	
 	@Nullable
 	public FluidTagInput getSecondaryInputFluid(){
 		return this.inputFluidSecondary;
 	}
-
+	
 	@Override
-	public NonNullList<ItemStack> getActualItemOutputs() {
+	public NonNullList<ItemStack> getActualItemOutputs(){
 		NonNullList<ItemStack> list = NonNullList.create();
-		if (RANDOM.nextFloat() <= chance) {
+		if(RANDOM.nextFloat() <= chance){
 			list.add(this.outputItem);
 		}
 		return list;
 	}
-
+	
 	@Override
 	protected IERecipeSerializer<HighPressureRefineryRecipe> getIESerializer(){
 		return Serializers.HYDROTREATER_SERIALIZER.get();

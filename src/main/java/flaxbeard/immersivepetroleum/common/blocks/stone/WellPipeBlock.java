@@ -28,10 +28,15 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	public static final BooleanProperty BROKEN = BooleanProperty.create("broken");
 	
 	public WellPipeBlock(){
-		super(Block.Properties.copy(Blocks.STONE).mapColor(MapColor.PODZOL).strength(75.0F, 10.0F).sound(SoundType.STONE).requiresCorrectToolForDrops().noLootTable());
+		super(Block.Properties.copy(Blocks.STONE)
+			.mapColor(MapColor.PODZOL)
+			.strength(75.0F, 10.0F)
+			.sound(SoundType.STONE)
+			.requiresCorrectToolForDrops()
+			.noLootTable());
 		
 		registerDefaultState(getStateDefinition().any()
-				.setValue(BROKEN, false));
+			.setValue(BROKEN, false));
 	}
 	
 	@Override
@@ -47,9 +52,11 @@ public class WellPipeBlock extends IPBlockBase implements EntityBlock{
 	
 	@Override
 	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor){
-//		int d = pos.getY() - neighbor.getY();
-//		if(d > 0 && world.getBlockState(pos.up()).getBlock() != this){
-//		}
+		/*
+		int d = pos.getY() - neighbor.getY();
+		if(d > 0 && world.getBlockState(pos.up()).getBlock() != this){
+		}
+		*/
 	}
 	
 	@Override

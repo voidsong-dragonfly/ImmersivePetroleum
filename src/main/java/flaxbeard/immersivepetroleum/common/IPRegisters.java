@@ -70,7 +70,7 @@ public class IPRegisters{
 	public static final DeferredRegister<FluidType> FLUID_TYPE = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, ImmersivePetroleum.MODID);
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ImmersivePetroleum.MODID);
 	public static final DeferredRegister<Feature<?>> FEATURE_REGISTER = DeferredRegister.create(ForgeRegistries.FEATURES, ImmersivePetroleum.MODID);
-
+	
 	private static final List<Consumer<IEventBus>> MOD_BUS_CALLBACKS = new ArrayList<>();
 	
 	public static void addRegistersToEventBus(IEventBus eventBus){
@@ -88,14 +88,14 @@ public class IPRegisters{
 		FLUID_TYPE.register(eventBus);
 		CREATIVE_TABS.register(eventBus);
 		FEATURE_REGISTER.register(eventBus);
-
+		
 		//MOD_BUS_CALLBACKS.forEach(e -> e.accept(eventBus));
 	}
-
+	
 	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMetalMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure){
 		return registerMetalMultiblock(name, logic, structure, null);
 	}
-
+	
 	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMetalMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, @Nullable Consumer<MultiblockBuilder<S>> extras){
 		// @formatter:off
 		BlockBehaviour.Properties prop = BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
@@ -106,57 +106,46 @@ public class IPRegisters{
 				.dynamicShape()
 				.pushReaction(PushReaction.BLOCK);
 		// @formatter:on
-
+		
 		return registerMultiblock(name, logic, structure, extras, prop);
 	}
-
+	
 	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, @Nullable Consumer<MultiblockBuilder<S>> extras, BlockBehaviour.Properties prop){
-		MultiblockBuilder<S> builder = new MultiblockBuilder<>(logic, name)
-				.structure(structure)
-				.defaultBEs(TE_REGISTER)
-				.customBlock(BLOCK_REGISTER, ITEM_REGISTER,
-						mb -> new IPMultiblockBase<>(prop, mb),
-						MultiblockItem::new);
-				//.defaultBlock(BLOCK_REGISTER, ITEM_REGISTER, prop);
-
+		MultiblockBuilder<S> builder = new MultiblockBuilder<>(logic, name).structure(structure).defaultBEs(TE_REGISTER).customBlock(BLOCK_REGISTER, ITEM_REGISTER, mb -> new IPMultiblockBase<>(prop, mb), MultiblockItem::new);
+		//.defaultBlock(BLOCK_REGISTER, ITEM_REGISTER, prop);
+		
 		if(extras != null){
 			extras.accept(builder);
 		}
-
+		
 		return builder.build();//builder.build(MOD_BUS_CALLBACKS::add);
 	}
-
-	protected static class MultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, MultiblockBuilder<S>> {
+	
+	protected static class MultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, MultiblockBuilder<S>>{
 		public MultiblockBuilder(IMultiblockLogic<S> logic, String name){
 			super(logic, ResourceUtils.ip(name));
 		}
-
+		
 		public MultiblockBuilder<S> redstone(IMultiblockComponent.StateWrapper<S, RedstoneControl.RSState> getState, BlockPos... positions){
 			redstoneAware();
 			return selfWrappingComponent(new RedstoneControl<>(getState, positions));
 		}
-
+		
 		public MultiblockBuilder<S> comparator(ComparatorManager<S> comparator){
 			withComparator();
 			return super.selfWrappingComponent(comparator);
 		}
-
-		public MultiblockBuilder<S> gui(IEMenuTypes.MultiblockContainer<S, ?> menu)
-		{
+		
+		public MultiblockBuilder<S> gui(IEMenuTypes.MultiblockContainer<S, ?> menu){
 			return component(new MultiblockGui<>(menu));
 		}
-
+		
 		@Override
 		protected MultiblockBuilder<S> self(){
 			return this;
 		}
 	}
-
-	/*@Deprecated
-	public static <T extends Block> RegistryObject<Block, T> registerMultiblockBlock(String name, Supplier<T> blockConstructor){
-		throw new UnsupportedOperationException();
-	}*/
-
+	
 	public static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor){
 		return registerBlock(name, blockConstructor, null);
 	}
@@ -224,9 +213,8 @@ public class IPRegisters{
 	public static <EType extends EntityType<?>> RegistryObject<EType> registerEntityType(String name, Function<ResourceLocation, EType> entityType){
 		return ENTITY_TYPE.register(name, () -> entityType.apply(ResourceUtils.ip(name)));
 	}
-
-	public static RegistryObject<CreativeModeTab> registerCreativeTab(String name, Supplier<CreativeModeTab> tab)
-	{
+	
+	public static RegistryObject<CreativeModeTab> registerCreativeTab(String name, Supplier<CreativeModeTab> tab){
 		return CREATIVE_TABS.register(name, tab);
 	}
 	

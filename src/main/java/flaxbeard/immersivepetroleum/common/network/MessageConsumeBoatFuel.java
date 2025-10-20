@@ -1,13 +1,13 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.util.function.Supplier;
-
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class MessageConsumeBoatFuel implements INetMessage{
 	public int amount;

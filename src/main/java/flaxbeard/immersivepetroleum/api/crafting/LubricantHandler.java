@@ -1,16 +1,14 @@
 package flaxbeard.immersivepetroleum.api.crafting;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class LubricantHandler{
 	static final Set<Pair<TagKey<Fluid>, Integer>> lubricants = new HashSet<>();
@@ -29,7 +27,7 @@ public class LubricantHandler{
 	
 	/**
 	 * Convenience method.
-	 * 
+	 *
 	 * @param toCheck Fluid to check
 	 * @return mB of this Fluid used to lubricate
 	 * @see #getLubeAmount(Fluid)
@@ -41,13 +39,13 @@ public class LubricantHandler{
 	/**
 	 * Gets amount of this Fluid that is used every four ticks for the Automatic Lubricator. 0 if not valid lube. 100 * this result is used for the
 	 * Lubricant Can
-	 * 
+	 *
 	 * @param toCheck Fluid to check
 	 * @return mB of this Fluid used to lubricate
 	 */
 	@SuppressWarnings("deprecation")
 	public static int getLubeAmount(@Nonnull Fluid toCheck){
-		for(Map.Entry<TagKey<Fluid>, Integer> entry:lubricants){
+		for(Map.Entry<TagKey<Fluid>, Integer> entry: lubricants){
 			if(toCheck.is(entry.getKey())){
 				return entry.getValue();
 			}
@@ -58,7 +56,7 @@ public class LubricantHandler{
 	
 	/**
 	 * Convenience method.
-	 * 
+	 *
 	 * @param toCheck Fluid to check
 	 * @return Whether the Fluid is a lubricant
 	 * @see #isValidLube(Fluid)
@@ -69,7 +67,7 @@ public class LubricantHandler{
 	
 	/**
 	 * Whether the given Fluid is a valid lubricant
-	 * 
+	 *
 	 * @param toCheck Fluid to check
 	 * @return Whether the Fluid is a lubricant
 	 */

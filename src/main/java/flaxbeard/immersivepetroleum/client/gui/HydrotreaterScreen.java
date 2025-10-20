@@ -20,7 +20,7 @@ public class HydrotreaterScreen extends IEContainerScreen<HydrotreaterContainer>
 	
 	public HydrotreaterScreen(HydrotreaterContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title, GUI_TEXTURE);
-
+		
 		this.imageWidth = 140;
 		this.imageHeight = 69;
 	}

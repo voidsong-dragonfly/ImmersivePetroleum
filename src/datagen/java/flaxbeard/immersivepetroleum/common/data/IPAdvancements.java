@@ -30,7 +30,7 @@ public class IPAdvancements extends ForgeAdvancementProvider {
 	public IPAdvancements(DataGenerator generatorIn, CompletableFuture<HolderLookup.Provider> pRegistries, ExistingFileHelper helper){
 		super(generatorIn.getPackOutput(), pRegistries, helper, List.of(IPAdvancements::registerAdvancements) );
 	}
-
+	
 	private static void registerAdvancements(HolderLookup.Provider lookup, Consumer<Advancement> consumer, ExistingFileHelper fileHelper){
 		Advancement start = Advancement.Builder.advancement()
 			.display(IPContent.Blocks.SEISMIC_SURVEY.get(),
@@ -108,7 +108,7 @@ public class IPAdvancements extends ForgeAdvancementProvider {
 		
 		advancement(naphtha_distillates, IEBlocks.StoneDecoration.DUROPLAST.get().asItem(), "duroplast", FrameType.CHALLENGE, true, true, false)
 			.addCriterion("benzene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.BENZENE.bucket().get()))
-			.addCriterion("propylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.PROPYLENE.bucket().get()))    //These are here to make sure the player made their duroplast from naphtha
+			.addCriterion("propylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.PROPYLENE.bucket().get())) // These are here to make sure the player made their duroplast from naphtha
 			.addCriterion("ethylene", InventoryChangeTrigger.TriggerInstance.hasItems(IPContent.Fluids.ETHYLENE.bucket().get()))
 			.addCriterion("duroplast_block", InventoryChangeTrigger.TriggerInstance.hasItems(IEBlocks.StoneDecoration.DUROPLAST.get().asItem()))
 			.save(consumer, ResourceUtils.ip("main/duroplast"), fileHelper);

@@ -18,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class IPMetalMultiblock<T extends IMultiblockState & IPCommonTickableTile> extends MultiblockPartBlock<T> {
+public class IPMetalMultiblock<T extends IMultiblockState & IPCommonTickableTile> extends MultiblockPartBlock<T>{
 	//private final MultiblockBEType<T> multiblockBEType;
-
+	
 	public IPMetalMultiblock(MultiblockRegistration<T> te){
 		super(Block.Properties.of()
 				.mapColor(MapColor.METAL)
@@ -35,10 +35,12 @@ public class IPMetalMultiblock<T extends IMultiblockState & IPCommonTickableTile
 		//this.multiblockBEType = te;
 	}
 	
-	/*@Override
+	/*
+	@Override
 	public <E extends BlockEntity> BlockEntityTicker<E> getTicker(@Nonnull Level world, @Nonnull BlockState state, @Nonnull BlockEntityType<E> type){
 		return IPBlockBase.createCommonTicker(world.isClientSide, type, multiblockBEType.master());
-	}*/
+	}
+	*/
 	
 	@Override
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit){
@@ -50,6 +52,7 @@ public class IPMetalMultiblock<T extends IMultiblockState & IPCommonTickableTile
 					return InteractionResult.FAIL;
 				}
 				
+				// TODO Check that this is somewhere in a working state
 				/*if(!player.isShiftKeyDown()){
 					if(player instanceof ServerPlayer serverPlayer){
 						if(menuProvider instanceof IHasGUIInteraction<?> interaction){

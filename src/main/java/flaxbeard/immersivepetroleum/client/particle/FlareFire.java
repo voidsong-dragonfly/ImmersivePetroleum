@@ -44,7 +44,7 @@ public class FlareFire extends SimpleAnimatedParticle{
 		this.oRoll = 360.0F * world.random.nextFloat();
 		this.roll = this.oRoll + (this.rotation * world.random.nextFloat());
 		
-		// These arent actualy used, setting them to 0 anyway though just incase
+		// These aren't actually used, setting them to 0 anyway though just in case
 		this.xd = this.yd = this.zd = 0.0;
 	}
 	
@@ -85,7 +85,7 @@ public class FlareFire extends SimpleAnimatedParticle{
 	}
 	
 	/**
-	 * Global presudo-wind for the flarestack flame
+	 * Global pseudo-wind for the Flarestack flame
 	 * 
 	 * @author TwistedGate
 	 */

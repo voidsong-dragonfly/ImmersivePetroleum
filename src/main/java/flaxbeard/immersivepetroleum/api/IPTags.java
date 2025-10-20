@@ -1,12 +1,6 @@
 package flaxbeard.immersivepetroleum.api;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.BiConsumer;
-
 import com.google.common.base.Preconditions;
-
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -17,7 +11,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
-public class 	IPTags{
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+
+public class IPTags{
 	private static final Map<TagKey<Block>, TagKey<Item>> toItemTag = new HashMap<>();
 	
 	public static class Blocks{
@@ -76,7 +75,7 @@ public class 	IPTags{
 	}
 	
 	public static void forAllBlocktags(BiConsumer<TagKey<Block>, TagKey<Item>> out){
-		for(Entry<TagKey<Block>, TagKey<Item>> entry:toItemTag.entrySet())
+		for(Entry<TagKey<Block>, TagKey<Item>> entry: toItemTag.entrySet())
 			out.accept(entry.getKey(), entry.getValue());
 	}
 	

@@ -49,9 +49,9 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 	
 	static void lists(RecipeManager recipeManager){
 		Collection<Recipe<?>> recipes = recipeManager.getRecipes();
-		if(recipes.size() == 0){
+		
+		if(recipes.isEmpty())
 			return;
-		}
 		
 		ImmersivePetroleum.log.info("Loading Distillation Recipes.");
 		DistillationTowerRecipe.recipes = filterRecipes(recipes, DistillationTowerRecipe.class, IPRecipeTypes.DISTILLATION);

@@ -24,7 +24,12 @@ import java.util.function.Supplier;
 public class ParaffinWaxBlock extends IPBlockBase{
 	
 	public ParaffinWaxBlock(){
-		super(Properties.copy(Blocks.PACKED_ICE).mapColor(MapColor.COLOR_YELLOW).strength(0.5F, 0.4F).sound(SoundType.HONEY_BLOCK).speedFactor(0.95F).friction(1.05F));
+		super(Properties.copy(Blocks.PACKED_ICE)
+			.mapColor(MapColor.COLOR_YELLOW)
+			.strength(0.5F, 0.4F)
+			.sound(SoundType.HONEY_BLOCK)
+			.speedFactor(0.95F)
+			.friction(1.05F));
 	}
 	
 	@Override

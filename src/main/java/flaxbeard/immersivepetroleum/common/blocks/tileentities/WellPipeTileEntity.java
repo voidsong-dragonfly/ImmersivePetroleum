@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
@@ -55,7 +56,7 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 	}
 	
 	/**
-	 * Returns true if a Derrick or Pumpjack are "connected" to the Well and Where.
+	 * Returns if a Derrick or Pumpjack are "connected" to the Well and Where.
 	 */
 	public Pair<Boolean, BlockPos> hasValidConnection(){
 		BlockPos pos = null;
@@ -63,10 +64,15 @@ public class WellPipeTileEntity extends IPTileEntityBase{
 			pos = new BlockPos(this.worldPosition.getX(), y, this.worldPosition.getZ());
 			BlockEntity teHigh = this.level.getBlockEntity(pos);
 			
-			if (teHigh instanceof IMultiblockBE<?> mb && (mb.getHelper().getState() instanceof PumpjackLogic.State && mb.getHelper().getPositionInMB().equals(IPContent.Multiblock.PUMPJACK.masterPosInMB()) ||
-					mb.getHelper().getState() instanceof DerrickLogic.State && mb.getHelper().getPositionInMB().equals(IPContent.Multiblock.DERRICK.masterPosInMB()))){
-			//if((teHigh instanceof PumpjackTileEntity pumpjack && pumpjack.offsetToMaster.equals(BlockPos.ZERO)) || (teHigh instanceof DerrickTileEntity derrick && derrick.offsetToMaster.equals(BlockPos.ZERO))){
-				return Pair.of(true, pos);
+			if(teHigh instanceof IMultiblockBE<?> mb){
+				IMultiblockState mbState = mb.getHelper().getState();
+				BlockPos positionInMB = mb.getHelper().getPositionInMB();
+				
+				if(mbState instanceof PumpjackLogic.State && positionInMB.equals(IPContent.Multiblock.PUMPJACK.masterPosInMB()))
+					return Pair.of(true, pos);
+				
+				if(mbState instanceof DerrickLogic.State && positionInMB.equals(IPContent.Multiblock.DERRICK.masterPosInMB()))
+					return Pair.of(true, pos);
 			}
 			
 			if(!(teHigh instanceof WellPipeTileEntity)){

@@ -261,7 +261,7 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		return split;
 	}
-
+	
 	private void loadTemplateFor(TemplateMultiblock mb)
 	{
 		final ResourceLocation name = mb.getUniqueName();
@@ -289,7 +289,7 @@ public class IPBlockStates extends BlockStateProvider{
 			throw new RuntimeException("Failed on "+name, e);
 		}
 	}
-
+	
 	private void autolubricator(){
 		ResourceLocation texture = modLoc("models/lubricator");
 		
@@ -337,8 +337,8 @@ public class IPBlockStates extends BlockStateProvider{
 			.with(FlarestackBlock.SLAVE, true)
 			.setModels(emptyModel);
 	}
-
-
+	
+	
 	private void seismicsurvey(){
 		ResourceLocation texture = modLoc("block/obj/seismic_survey_tool");
 		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("seismic_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture));
@@ -416,10 +416,10 @@ public class IPBlockStates extends BlockStateProvider{
 				PartialBlockstate partialState = builder.partialState()
 						//.with(isSlave, slave)
 						.with(facing, dir);
-
+				
 				if(mirroredState != null)
 					partialState = partialState.with(mirroredState, mirrored);
-
+				
 				partialState.setModels(new ConfiguredModel(model, angleX, angleY, true));
 			}
 	}

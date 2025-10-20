@@ -152,7 +152,6 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity>{
 		}
 		
 		if(boat.isBoosting){
-			//FIXME: check is this in radians
 			matrix.mulPose(Axis.XP.rotationDegrees(3));
 		}
 		

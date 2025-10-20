@@ -1,8 +1,9 @@
 package flaxbeard.immersivepetroleum.common.blocks.metal;
 
-public class DerrickBlock //extends IPMetalMultiblock<DerrickTileEntity>
-{
-	/*public DerrickBlock(){
+@Deprecated(forRemoval = true)
+public class DerrickBlock /*extends IPMetalMultiblock<DerrickTileEntity>*/{
+	/*
+	public DerrickBlock(){
 		super(IPTileTypes.DERRICK);
 	}
 	
@@ -13,5 +14,6 @@ public class DerrickBlock //extends IPMetalMultiblock<DerrickTileEntity>
 			return true;
 		}
 		return false;
-	}*/
+	}
+	*/
 }

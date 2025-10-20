@@ -149,11 +149,11 @@ public class ClientProxy extends CommonProxy{
 		// Crash prevention
 		if(tesr == null)
 			return;
-
+			
 		if(te instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof PumpjackLogic.State){
 			IMultiblockBEHelper<PumpjackLogic.State> helper = multiblockBE.getHelper().asType(IPContent.Multiblock.PUMPJACK);
 			PumpjackLogic.State state = helper.getState();
-
+			
 			transform.pushPose();
 			transform.mulPose(Axis.YN.rotationDegrees(90));
 			transform.translate(1, 1, -2);
@@ -233,7 +233,7 @@ public class ClientProxy extends CommonProxy{
 	public void handleTileSound(SoundEvent soundEvent, BlockEntity te, boolean active, float volume, float pitch){
 		// TODO Sound: Perhaps give some MBs some audio
 	}
-
+	
 	public void setupManualPages(){
 		handleReservoirManual(ResourceUtils.ip("reservoir"), 0);
 		flarestack(ResourceUtils.ip("flarestack"), 12);
@@ -274,7 +274,7 @@ public class ClientProxy extends CommonProxy{
 		man.addEntry(man.getRoot().getOrCreateSubnode(ResourceUtils.ip("petroleum")), builder.create(), priority);
 	}
 	
-
+	
 	
 	private static void handleReservoirManual(ResourceLocation location, int priority){
 		ManualInstance man = ManualHelper.getManual();
@@ -329,7 +329,7 @@ public class ClientProxy extends CommonProxy{
 				StringBuilder strBuilder = new StringBuilder();
 				
 				reservoir.getDimensions().forEach(rl -> {
-					strBuilder.append((strBuilder.length() > 0) ? ", " : "").append("<dim;").append(rl).append(">");
+					strBuilder.append((!strBuilder.isEmpty()) ? ", " : "").append("<dim;").append(rl).append(">");
 				});
 				
 				if(reservoir.getDimensions().isBlacklist()){
@@ -366,13 +366,13 @@ public class ClientProxy extends CommonProxy{
 			
 			String repRate = "";
 			if(reservoir.residual > 0){
-				if (reservoir.equilibrium > 0)
-					repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName, Utils.fDecimal(reservoir.equilibrium/1000));
+				if(reservoir.equilibrium > 0)
+					repRate = I18n.get("ie.manual.entry.reservoirs.replenish", reservoir.residual, fluidName, Utils.fDecimal(reservoir.equilibrium / 1000));
 				else
-				    repRate = I18n.get("ie.manual.entry.reservoirs.replenish_depleted", reservoir.residual, fluidName);
+					repRate = I18n.get("ie.manual.entry.reservoirs.replenish_depleted", reservoir.residual, fluidName);
 			}
 			contentBuilder.append("<&").append(reservoir.getId().toString()).append(">");
-			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBWList, fluidName, Utils.fDecimal(reservoir.minSize/1000), Utils.fDecimal(reservoir.maxSize/1000), repRate, bioBWList));
+			contentBuilder.append(I18n.get("ie.manual.entry.reservoirs.content", dimBWList, fluidName, Utils.fDecimal(reservoir.minSize / 1000), Utils.fDecimal(reservoir.maxSize / 1000), repRate, bioBWList));
 			
 			if(i < (reservoirs.length - 1))
 				contentBuilder.append("<np>");

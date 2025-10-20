@@ -20,8 +20,7 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
-public class MultiblockDistillationTowerRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<DistillationTowerLogic.State>>
-{
+public class MultiblockDistillationTowerRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<DistillationTowerLogic.State>>{
 	@Override
 	public boolean shouldRenderOffScreen(@Nonnull MultiblockBlockEntityMaster<DistillationTowerLogic.State> te){
 		return true;
@@ -29,8 +28,7 @@ public class MultiblockDistillationTowerRenderer extends IEBlockEntityRenderer<M
 	
 	@Override
 	public void render(@Nonnull MultiblockBlockEntityMaster<DistillationTowerLogic.State> te, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(!te.isRemoved() || te.getLevel().hasChunkAt(te.getBlockPos()))
-		{
+		if(!te.isRemoved() || te.getLevel().hasChunkAt(te.getBlockPos())){
 			if(te.getHelper().getState().wasActive){
 				combinedOverlayIn = OverlayTexture.NO_OVERLAY;
 				
@@ -114,7 +112,7 @@ public class MultiblockDistillationTowerRenderer extends IEBlockEntityRenderer<M
 							
 							buf.vertex(mat, -0.0015F, 0.5F, w / 16F)			.color(br, br, br, 1.0F).uv(u0, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							buf.vertex(mat, -0.0015F, 0.5F + h / 16F, w / 16F)	.color(br, br, br, 1.0F).uv(u0, v0).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
-							buf.vertex(mat, -0.0015F, 0.5F + h / 16F, 0.0F)	.color(br, br, br, 1.0F).uv(u1, v0).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
+							buf.vertex(mat, -0.0015F, 0.5F + h / 16F, 0.0F)		.color(br, br, br, 1.0F).uv(u1, v0).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							buf.vertex(mat, -0.0015F, 0.5F, 0.0F)				.color(br, br, br, 1.0F).uv(u1, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							
 							// Active Boiler Front
@@ -124,7 +122,7 @@ public class MultiblockDistillationTowerRenderer extends IEBlockEntityRenderer<M
 							
 							buf.vertex(mat, 1.0015F, 0.5F + h / 16F, 0.0F)		.color(br, br, br, 1.0F).uv(u0, v0).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							buf.vertex(mat, 1.0015F, 0.5F + h / 16F, w / 16F)	.color(br, br, br, 1.0F).uv(u1, v0).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
-							buf.vertex(mat, 1.0015F, 0.5F, w / 16F)			.color(br, br, br, 1.0F).uv(u1, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
+							buf.vertex(mat, 1.0015F, 0.5F, w / 16F)				.color(br, br, br, 1.0F).uv(u1, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							buf.vertex(mat, 1.0015F, 0.5F, 0.0F)				.color(br, br, br, 1.0F).uv(u0, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							
 							// Active Boiler Side
@@ -132,7 +130,7 @@ public class MultiblockDistillationTowerRenderer extends IEBlockEntityRenderer<M
 							w = 16; h = 24;
 							uw = w / 256F; vh = h / 256F; u0 = ux / 256F; v0 = vy / 256F; u1 = u0 + uw; v1 = v0 + vh;
 							
-							buf.vertex(mat, w / 16F, 0.5F, 2.0015F)			.color(br, br, br, 1.0F).uv(u0, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
+							buf.vertex(mat, w / 16F, 0.5F, 2.0015F)				.color(br, br, br, 1.0F).uv(u0, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							buf.vertex(mat, w / 16F, 0.5F + h / 16F, 2.0015F)	.color(br, br, br, 1.0F).uv(u0, v0).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							buf.vertex(mat, 0.0F, 0.5F + h / 16F, 2.0015F)		.color(br, br, br, 1.0F).uv(u1, v0).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();
 							buf.vertex(mat, 0.0F, 0.5F, 2.0015F)				.color(br, br, br, 1.0F).uv(u1, v1).overlayCoords(combinedOverlayIn).uv2(combinedLightIn).normal(1, 1, 1).endVertex();

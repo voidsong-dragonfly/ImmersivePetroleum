@@ -44,12 +44,12 @@ public class CokerUnitRecipeCategory extends IPRecipeCategory<CokerUnitRecipe>{
 		int inputAmount = recipe.inputFluid.getAmount();
 		int outputAmount = recipe.outputFluid.getAmount();
 		int guiTankSize = Math.max(inputAmount, outputAmount);
-
+		
 		builder.addSlot(RecipeIngredientRole.INPUT, 2, 2)
 			.setFluidRenderer(guiTankSize, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0)
 			.addIngredients(ForgeTypes.FLUID_STACK, recipe.inputFluid.getMatchingFluidStacks());
-
+		
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 50, 2)
 			.setFluidRenderer(guiTankSize, false, 20, 51)
 			.setOverlay(this.tankOverlay, 0, 0)

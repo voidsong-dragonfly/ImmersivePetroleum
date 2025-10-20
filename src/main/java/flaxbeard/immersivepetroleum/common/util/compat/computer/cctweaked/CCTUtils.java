@@ -1,12 +1,12 @@
 package flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CCTUtils{
 	public static Map<String, Object> itemToMap(ItemStack stack){

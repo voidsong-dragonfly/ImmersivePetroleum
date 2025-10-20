@@ -87,23 +87,23 @@ public class IPServerConfig{
 			distillationTower_energyModifier = builder
 				.comment("A modifier to apply to the energy costs of every Distillation Tower recipe", "Default: 1.0")
 				.define("distillationTower_energyModifier", 1.0);
-	
+			
 			distillationTower_timeModifier = builder
 				.comment("A modifier to apply to the time of every Distillation recipe. Can't be lower than 1", "Default: 1.0")
 				.define("distillationTower_timeModifier", 1.0);
-	
+			
 			cokerUnit_energyModifier = builder
 				.comment("A modifier to apply to the energy costs of every Coker Tower recipe", "Default: 1.0")
 				.define("cokerUnit_energyModifier", 1.0);
-	
+			
 			cokerUnit_timeModifier = builder
 				.comment("A modifier to apply to the time of every Coker recipe. Can't be lower than 1", "Default: 1.0")
 				.define("cokerUnit_timeModifier", 1.0);
-	
+			
 			hydrotreater_energyModifier = builder
 				.comment("A modifier to apply to the energy costs of every High-Pressure Refinery Unit recipe", "Default: 1.0")
 				.define("hydrotreater_energyModifier", 1.0);
-	
+			
 			hydrotreater_timeModifier = builder
 				.comment("A modifier to apply to the time of every High-Pressure Refinery Unit recipe. Can't be lower than 1", "Default: 1.0")
 				.define("hydrotreater_timeModifier", 1.0);
@@ -120,8 +120,8 @@ public class IPServerConfig{
 			fuels = builder
 				.comment("List of Portable Generator fuels. Format: fluid_name, mb_used_per_second, flux_produced_per_tick")
 				.defineList("generator_fuels",
-				    List.of("immersivepetroleum:naphtha, 9, 256",
-						    "immersivepetroleum:gasoline, 6, 256",
+				List.of("immersivepetroleum:naphtha, 9, 256",
+							"immersivepetroleum:gasoline, 6, 256",
 							"immersivepetroleum:benzene, 6, 256"), o -> true);
 			
 			builder.pop();

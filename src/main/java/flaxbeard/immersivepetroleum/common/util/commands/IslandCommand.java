@@ -53,12 +53,14 @@ public class IslandCommand{
 	}
 	
 	private static int get(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
+		//@formatter:off
 		CommandUtils.sendTranslated(context.getSource(),
 				"chat.immersivepetroleum.command.reservoir.get",
 				island.getAmount(),
 				Utils.fDecimal(island.getAmount() / (double) island.getCapacity() * 100),
 				new FluidStack(island.getFluid(), 1).getDisplayName()
 		);
+		//@formatter:on
 		return Command.SINGLE_SUCCESS;
 	}
 	
@@ -74,20 +76,22 @@ public class IslandCommand{
 		
 		ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
 		
+		//@formatter:off
 		RegionData[] regions = {
 				storage.getRegionData(new RegionPos(srcPos, 1, -1)),
 				storage.getRegionData(new RegionPos(srcPos, 1, 1)),
 				storage.getRegionData(new RegionPos(srcPos, -1, -1)),
 				storage.getRegionData(new RegionPos(srcPos, -1, 1))
 		};
+		//@formatter:on
 		
 		final ResourceKey<Level> dimKey = source.getLevel().dimension();
-		for (RegionData rd : regions) {
-			if (rd != null) {
+		for(RegionData rd: regions){
+			if(rd != null){
 				Multimap<ResourceKey<Level>, ReservoirIsland> islands = rd.getReservoirIslandList();
-				synchronized (islands) {
+				synchronized(islands){
 					islands.get(dimKey).forEach(island -> {
-						if (island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr) {
+						if(island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr){
 							nearby.add(island);
 						}
 					});
@@ -104,7 +108,7 @@ public class IslandCommand{
 		ReservoirIsland closestIsland = null;
 		double smallestDistance = rangeSqr;
 		ColumnPos p = null;
-		for(ReservoirIsland island:nearby){
+		for(ReservoirIsland island: nearby){
 			AxisAlignedIslandBB IAABB = island.getBoundingBox();
 			for(int z = IAABB.minZ() + 1;z < IAABB.maxZ();z++){
 				for(int x = IAABB.minX() + 1;x < IAABB.maxX();x++){
@@ -142,17 +146,12 @@ public class IslandCommand{
 		
 		final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + p.x() + " ~ " + p.z());
 		final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.coordinates.tooltip"));
-
+		
 		ReservoirIsland finalClosestIsland = closestIsland;
 		ColumnPos finalP = p;
-		source.sendSuccess(() -> Component.translatable("chat.immersivepetroleum.command.reservoir.locate",
-				finalClosestIsland.getType().name,
-				ComponentUtils.wrapInSquareBrackets(Component.literal(finalP.x() + " " + finalP.z())).withStyle((s) -> {
-					return s.withColor(ChatFormatting.GREEN)
-							.withItalic(true)
-							.withClickEvent(clickEvent)
-							.withHoverEvent(hoverEvent);
-				})), true);
+		source.sendSuccess(() -> Component.translatable("chat.immersivepetroleum.command.reservoir.locate", finalClosestIsland.getType().name, ComponentUtils.wrapInSquareBrackets(Component.literal(finalP.x() + " " + finalP.z())).withStyle((s) -> {
+			return s.withColor(ChatFormatting.GREEN).withItalic(true).withClickEvent(clickEvent).withHoverEvent(hoverEvent);
+		})), true);
 		
 		return Command.SINGLE_SUCCESS;
 	}
@@ -192,7 +191,7 @@ public class IslandCommand{
 	private static int setReservoirType(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		String name = context.getArgument("name", String.class);
 		ReservoirType reservoir = null;
-		for(ReservoirType res:ReservoirType.map.values()){
+		for(ReservoirType res: ReservoirType.map.values()){
 			if(res.name.equalsIgnoreCase(name))
 				reservoir = res;
 		}

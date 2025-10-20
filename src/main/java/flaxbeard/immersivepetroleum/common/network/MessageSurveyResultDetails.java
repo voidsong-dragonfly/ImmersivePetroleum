@@ -16,7 +16,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent.Context;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static flaxbeard.immersivepetroleum.common.util.survey.SurveyScan.SCAN_RADIUS;
@@ -73,8 +78,8 @@ public class MessageSurveyResultDetails{
 			final List<ReservoirIsland> islandCache = new ArrayList<>();
 			final BitSet set = new BitSet(SCAN_SIZE * SCAN_SIZE);
 			final int r = SCAN_RADIUS;
-			for(int j = -r,a = 0;j <= r;j++,a++){
-				for(int i = -r,b = 0;i <= r;i++,b++){
+			for(int j = -r, a = 0;j <= r;j++, a++){
+				for(int i = -r, b = 0;i <= r;i++, b++){
 					int x = this.x - i;
 					int z = this.z - j;
 					

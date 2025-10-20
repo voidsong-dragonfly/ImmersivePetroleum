@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
-public class OilTankRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<OilTankLogic.State>> {
+public class OilTankRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<OilTankLogic.State>>{
 	@Override
 	public boolean shouldRenderOffScreen(@Nonnull MultiblockBlockEntityMaster<OilTankLogic.State> te){
 		return true;
@@ -69,19 +69,19 @@ public class OilTankRenderer extends IEBlockEntityRenderer<MultiblockBlockEntity
 				builder.vertex(mat, 0F, 1F, 0.0F).color(34, 34, 34, 255).endVertex();
 				builder.vertex(mat, 0F, -0.5F, 0.0F).color(34, 34, 34, 255).endVertex();
 				
-					FluidStack fs = te.getHelper().getState().tank.getFluid();
-					if(!fs.isEmpty()){
-						matrix.pushPose();
-						{
-							matrix.translate(0.25, 0.875, 0.0025F);
-							matrix.scale(0.0625F, -0.0625F, 0.0625F);
-							
-							float h = fs.getAmount() / (float) te.getHelper().getState().tank.getCapacity();
-							GuiHelper.drawRepeatedFluidSprite(buffer.getBuffer(RenderType.solid()), matrix, fs, 0, 0 + (1 - h) * 16, 16, h * 16);
-						}
-						matrix.popPose();
+				FluidStack fs = te.getHelper().getState().tank.getFluid();
+				if(!fs.isEmpty()){
+					matrix.pushPose();
+					{
+						matrix.translate(0.25, 0.875, 0.0025F);
+						matrix.scale(0.0625F, -0.0625F, 0.0625F);
+						
+						float h = fs.getAmount() / (float) te.getHelper().getState().tank.getCapacity();
+						GuiHelper.drawRepeatedFluidSprite(buffer.getBuffer(RenderType.solid()), matrix, fs, 0, 0 + (1 - h) * 16, 16, h * 16);
 					}
-
+					matrix.popPose();
+				}
+				
 			}
 			matrix.popPose();
 			
@@ -89,28 +89,28 @@ public class OilTankRenderer extends IEBlockEntityRenderer<MultiblockBlockEntity
 			{
 				// Dynamic Fluid IO Ports
 				if(te.getHelper().getContext().getLevel().getOrientation().mirrored()){
-						for(OilTankLogic.Port port:OilTankLogic.Port.DYNAMIC_PORTS){
-							matrix.pushPose();
-							{
-								BlockPos p = port.posInMultiblock.posInMultiblock().subtract(te.getHelper().getPositionInMB());
-								matrix.mulPose(Axis.YP.rotationDegrees(180F));
-								matrix.translate(p.getX() - 1, p.getY(), -p.getZ() - 1);
-								quad(matrix, buffer, te.getHelper().getState().getPortStateFor(port), port.posInMultiblock.posInMultiblock().getX() == 4, combinedLight, combinedOverlay);
-							}
-							matrix.popPose();
+					for(OilTankLogic.Port port: OilTankLogic.Port.DYNAMIC_PORTS){
+						matrix.pushPose();
+						{
+							BlockPos p = port.posInMultiblock.posInMultiblock().subtract(te.getHelper().getPositionInMB());
+							matrix.mulPose(Axis.YP.rotationDegrees(180F));
+							matrix.translate(p.getX() - 1, p.getY(), -p.getZ() - 1);
+							quad(matrix, buffer, te.getHelper().getState().getPortStateFor(port), port.posInMultiblock.posInMultiblock().getX() == 4, combinedLight, combinedOverlay);
 						}
-
+						matrix.popPose();
+					}
+					
 				}else{
-						for(OilTankLogic.Port port:OilTankLogic.Port.DYNAMIC_PORTS){
-							matrix.pushPose();
-							{
-								BlockPos p = port.posInMultiblock.posInMultiblock().subtract(te.getHelper().getPositionInMB());
-								matrix.translate(p.getX(), p.getY(), p.getZ());
-								quad(matrix, buffer, te.getHelper().getState().getPortStateFor(port), port.posInMultiblock.posInMultiblock().getX() == 4, combinedLight, combinedOverlay);
-							}
-							matrix.popPose();
+					for(OilTankLogic.Port port: OilTankLogic.Port.DYNAMIC_PORTS){
+						matrix.pushPose();
+						{
+							BlockPos p = port.posInMultiblock.posInMultiblock().subtract(te.getHelper().getPositionInMB());
+							matrix.translate(p.getX(), p.getY(), p.getZ());
+							quad(matrix, buffer, te.getHelper().getState().getPortStateFor(port), port.posInMultiblock.posInMultiblock().getX() == 4, combinedLight, combinedOverlay);
 						}
-
+						matrix.popPose();
+					}
+					
 				}
 			}
 			matrix.popPose();

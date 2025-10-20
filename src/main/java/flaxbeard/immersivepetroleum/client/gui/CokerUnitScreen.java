@@ -25,7 +25,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	
 	public CokerUnitScreen(CokerUnitContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title, GUI_TEXTURE);
-
+		
 		this.imageWidth = 200;
 		this.imageHeight = 187;
 	}
@@ -37,14 +37,12 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 	
 	@Nonnull
 	@Override
-	protected List<InfoArea> makeInfoAreas()
-	{
+	protected List<InfoArea> makeInfoAreas(){
 		BlockEntity masterCoker = this.menu.level.getBlockEntity(DerrickContainer.getPos(this.menu.pos.get()));
-
-		if(masterCoker instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof CokerUnitLogic.State state)
-		{
+		
+		if(masterCoker instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof CokerUnitLogic.State state){
 			CokerUnitLogic.Chambers chambers = state.chambers;
-
+			
 			return List.of(
 					new FluidInfoArea(
 							this.getMenu().tanks.input(),

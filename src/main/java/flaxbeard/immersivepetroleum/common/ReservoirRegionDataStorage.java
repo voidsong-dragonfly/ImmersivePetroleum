@@ -17,6 +17,7 @@ import net.minecraft.server.level.ColumnPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraftforge.event.level.LevelEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -93,7 +94,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 		log.debug("Loaded regions file.");
 	}
 	
-	/** Marks itself and all regions as dirty. (Only to be used by {@link CommonEventHandler#onUnload(net.minecraftforge.event.world.WorldEvent.Unload)}) */
+	/** Marks itself and all regions as dirty. (Only to be used by {@link CommonEventHandler#onUnload(LevelEvent.Unload)}) */
 	public void markAllDirty(){
 		setDirty();
 		this.regions.values().forEach(RegionData::setDirty);
@@ -321,18 +322,17 @@ public class ReservoirRegionDataStorage extends SavedData{
 		
 		@Override
 		public int hashCode(){
-			return Objects.hash(regionPos);
+			return Objects.hash(this.regionPos);
 		}
 		
 		@Override
 		public boolean equals(Object obj){
-			if(this == obj){
+			if(this == obj)
 				return true;
-			}
-			if(!(obj instanceof RegionData)){
+			
+			if(!(obj instanceof RegionData other))
 				return false;
-			}
-			RegionData other = (RegionData) obj;
+			
 			return Objects.equals(this.regionPos, other.regionPos);
 		}
 		

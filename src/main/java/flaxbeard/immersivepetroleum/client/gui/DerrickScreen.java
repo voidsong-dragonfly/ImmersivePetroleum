@@ -51,11 +51,11 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	protected void init(){
 		this.leftPos = (this.width - this.imageWidth) / 2;
 		this.topPos = (this.height - this.imageHeight) / 2;
-
+		
 		this.cfgButton = new Button.Builder(Component.translatable("gui.immersivepetroleum.derrick.msg.config"), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this))).
 				bounds(this.leftPos + 125, this.topPos + 52, 50, 20).
 				tooltip(Tooltip.create(Component.translatable("gui.immersivepetroleum.derrick.msg.set_in_stone"))).build();
-
+		
 		addRenderableWidget(this.cfgButton);
 		this.areas = List.of(
 			new FluidInfoArea(getMenu().tank, new Rect2i(leftPos + 11, topPos + 16, 16, 47), 200, 0, 20, 51, GUI_TEXTURE),
@@ -87,27 +87,26 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			drawInfoTextCenteredMultiLine(guiGraphics, I18n.get("gui.immersivepetroleum.derrick.msg.water_table"), 0xEF0000);
 			return;
 		}
-
+		
 		BlockEntity tile = this.getMenu().level.getBlockEntity(DerrickContainer.getPos(this.getMenu().pos.get()));
-
-		if(tile instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof DerrickLogic.State state)
-		{
+		
+		if(tile instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof DerrickLogic.State state){
 			IMultiblockLevel level = multiblockBE.getHelper().getContext().getLevel();
 			IMultiblockContext<DerrickLogic.State> ctx = multiblockBE.getHelper().asType(IPContent.Multiblock.DERRICK).getContext();
-
+			
 			WellTileEntity well = state.getWell(level, level.toAbsolute(IPContent.Multiblock.DERRICK.masterPosInMB()));
 			if(well != null){
 				if(this.cfgButton.active && well.wellPipeLength > 0){
 					this.cfgButton.active = false;
 				}
-
+				
 				// Possible display prototypes
 				if(well.wellPipeLength < well.getMaxPipeLength()){
 					if(!state.rsState.isEnabled(ctx)){
 						drawInfoTextCentered(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.disabled"), 0, 0xEF0000);
 						return;
 					}
-
+					
 					if(state.drilling){
 						String str = String.format(Locale.ROOT, "(%d%%)", (int) (100 * well.wellPipeLength / (float) well.getMaxPipeLength()));
 						drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.drilling", str), 0);
@@ -116,7 +115,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 						drawInfoTextCentered(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.out_of_pipes"), 3, 0xEF0000);
 						return;
 					}
-
+					
 					if(getMenu().tank.isEmpty()){
 						int realPipeLength = (level.getAbsoluteOrigin().getY() - 1) - well.getBlockPos().getY();
 						int concreteNeeded = (DerrickLogic.REQUIRED_CONCRETE_AMOUNT * (realPipeLength - well.wellPipeLength));
@@ -125,7 +124,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 							drawInfoText(guiGraphics, ExternalModContent.getIEFluid_Concrete(1).getDisplayName(), 1, 0xEF0000);
 							return;
 						}
-
+						
 						int waterNeeded = DerrickLogic.REQUIRED_WATER_AMOUNT * (well.getMaxPipeLength() - well.wellPipeLength);
 						if(waterNeeded > 0){
 							drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(waterNeeded) + "mB"), 0, 0xEF0000);

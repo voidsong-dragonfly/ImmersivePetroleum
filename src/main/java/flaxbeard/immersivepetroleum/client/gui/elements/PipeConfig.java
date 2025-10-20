@@ -50,10 +50,10 @@ public class PipeConfig extends Button{
 	public PipeConfig(IMultiblockBEHelper<DerrickLogic.State> tile, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
 		super(x, y, width, height, Component.empty(), NO_ACTION, DEFAULT_NARRATION);
 		this.tilePos = Utils.toColumnPos(tile.getContext().getLevel().getAbsoluteOrigin());
-
+		
 		this.grid = new Grid(gridWidth, gridHeight);
 		copyGridFrom(tile.getState().gridStorage);
-
+		
 		this.gridWidthScaled = gridWidth * gridScale;
 		this.gridHeightScaled = gridHeight * gridScale;
 		this.gridScale = Mth.clamp(gridScale, 1, Integer.MAX_VALUE);

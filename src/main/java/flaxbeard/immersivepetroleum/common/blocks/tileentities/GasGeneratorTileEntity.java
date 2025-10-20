@@ -203,11 +203,18 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	@Override
 	public Component[] getOverlayText(Player player, @Nonnull HitResult mop, boolean hammer){
 		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
-			Component s = null;
+			Component s = switch(tank.getFluid().isEmpty() ? 0 : 1){
+				case 0 -> Component.translatable(Lib.GUI + "empty");
+				case 1 ->
+					((MutableComponent) tank.getFluid().getDisplayName()).append(": " + tank.getFluidAmount() + "mB");
+				default -> null;
+			};
+			/*
 			if(tank.getFluid().getAmount() > 0)
 				s = ((MutableComponent) tank.getFluid().getDisplayName()).append(": " + tank.getFluidAmount() + "mB");
 			else
 				s = Component.translatable(Lib.GUI + "empty");
+			*/
 			return new Component[]{s};
 		}
 		return null;
@@ -225,7 +232,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			Utils.unlockIPAdvancement(player, "main/gas_generator");
 			return InteractionResult.SUCCESS;
 		}else if(player.isShiftKeyDown()){
-			boolean added = false;
+			boolean added;
 			if(player.getInventory().getSelected().isEmpty()){
 				added = true;
 				player.getInventory().setItem(player.getInventory().selected, getFirstBlockEntityDrop());
@@ -233,9 +240,9 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 				added = player.getInventory().add(getFirstBlockEntityDrop());
 			}
 			
-			if(added){
+			if(added)
 				this.level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
-			}
+			
 			return InteractionResult.SUCCESS;
 		}
 		
@@ -260,6 +267,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		
 		if(!nbt.isEmpty())
 			stack.setTag(nbt);
+		
 		return ImmutableList.of(stack);
 	}
 	
@@ -312,7 +320,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		boolean lastActive = this.isActive;
 		this.isActive = false;
 		if(!this.level.hasNeighborSignal(this.worldPosition)){
-			if (fluidTick == 0){
+			if(fluidTick == 0){
 				Fluid fluid = this.tank.getFluid().getFluid();
 				int amount = FuelHandler.getGeneratorFuelUse(fluid);
 				if(amount > 0 && this.tank.getFluidAmount() >= amount){
@@ -322,7 +330,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 				}
 			}
 			
-			if (fluidTick > 0) {
+			if(fluidTick > 0){
 				if(this.energyStorage.receiveEnergy(currentFlux, true) >= currentFlux){
 					this.energyStorage.receiveEnergy(currentFlux, false);
 					this.isActive = true;
@@ -331,9 +339,9 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			}
 		}
 		
-		if(lastActive != this.isActive || (!this.level.isClientSide && this.isActive)){
+		if(lastActive != this.isActive || (!this.level.isClientSide && this.isActive))
 			setChanged();
-		}
+		
 	}
 	
 	@Override
@@ -355,9 +363,8 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	
 	@Override
 	public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vec3i offset){
-		if(level.getBlockState(target.position()).getBlock() != level.getBlockState(getBlockPos()).getBlock()){
+		if(level.getBlockState(target.position()).getBlock() != level.getBlockState(getBlockPos()).getBlock())
 			return false;
-		}
 		
 		return this.wireType == null && (cableType.getCategory().equals(WireType.LV_CATEGORY) || cableType.getCategory().equals(WireType.MV_CATEGORY));
 	}

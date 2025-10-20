@@ -1,13 +1,13 @@
 package flaxbeard.immersivepetroleum.api.reservoir;
 
-import java.util.Objects;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 
+import java.util.Objects;
+
 /**
  * Simple BoundingBox for ReservoirIslands
- * 
+ *
  * @author TwistedGate
  */
 public class AxisAlignedIslandBB{
@@ -25,12 +25,7 @@ public class AxisAlignedIslandBB{
 	}
 	
 	public AxisAlignedIslandBB(CompoundTag nbt){
-		this(
-			nbt.getInt("minX"),
-			nbt.getInt("minZ"),
-			nbt.getInt("maxX"),
-			nbt.getInt("maxZ")
-		);
+		this(nbt.getInt("minX"), nbt.getInt("minZ"), nbt.getInt("maxX"), nbt.getInt("maxZ"));
 	}
 	
 	public int minX(){
@@ -77,13 +72,12 @@ public class AxisAlignedIslandBB{
 	
 	@Override
 	public boolean equals(Object obj){
-		if(this == obj){
+		if(this == obj)
 			return true;
-		}
-		if(!(obj instanceof AxisAlignedIslandBB)){
+		
+		if(!(obj instanceof AxisAlignedIslandBB other))
 			return false;
-		}
-		AxisAlignedIslandBB other = (AxisAlignedIslandBB) obj;
+		
 		return this.maxX == other.maxX && this.maxZ == other.maxZ && this.minX == other.minX && this.minZ == other.minZ;
 	}
 	
@@ -92,7 +86,7 @@ public class AxisAlignedIslandBB{
 		return String.format("IslandAxisAlignedBB [minX = %d, minZ = %d, maxX = %d, maxZ = %d]", this.minX, this.minZ, this.maxX, this.maxZ);
 	}
 	
-	/** @deprecated Use constructor instead. {@link #IslandAxisAlignedBB(CompoundTag)} */
+	/** @deprecated Use constructor instead. {@link #AxisAlignedIslandBB(CompoundTag)} */
 	@Deprecated(forRemoval = true)
 	public static AxisAlignedIslandBB readFromNBT(CompoundTag nbt){
 		return new AxisAlignedIslandBB(nbt);

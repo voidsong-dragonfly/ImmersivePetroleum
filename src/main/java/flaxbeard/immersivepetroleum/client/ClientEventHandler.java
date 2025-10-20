@@ -173,24 +173,22 @@ public class ClientEventHandler{
 		if(MCUtil.getPlayer() != null && event.getOverlay().id() == VanillaGuiOverlay.HOTBAR.id()){
 			Player player = MCUtil.getPlayer();
 			
-			if(MCUtil.getHitResult() != null){
-				HitResult result = MCUtil.getHitResult();
-				
-				if(result.getType() == HitResult.Type.ENTITY){
-					if(result instanceof EntityHitResult eHit){
-						if(eHit.getEntity() instanceof MotorboatEntity motorboat){
-							String[] text = motorboat.getOverlayText(player, result);
-							
-							if(text != null && text.length > 0){
-								Font font = ClientUtils.font();
-								int col = 0xffffff;
-								for(int i = 0;i < text.length;i++){
-									if(text[i] != null){
-										int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
-										int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
-										event.getGuiGraphics().drawString(font, text[i], fx, fy, col);
-									}
-								}
+			HitResult result = MCUtil.getHitResult();
+			if(result == null || result.getType() != HitResult.Type.ENTITY)
+				return;
+			
+			if(result instanceof EntityHitResult eHit){
+				if(eHit.getEntity() instanceof MotorboatEntity motorboat){
+					String[] text = motorboat.getOverlayText(player, result);
+					
+					if(text != null && text.length > 0){
+						Font font = ClientUtils.font();
+						int col = 0xffffff;
+						for(int i = 0;i < text.length;i++){
+							if(text[i] != null){
+								int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
+								int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
+								event.getGuiGraphics().drawString(font, text[i], fx, fy, col);
 							}
 						}
 					}

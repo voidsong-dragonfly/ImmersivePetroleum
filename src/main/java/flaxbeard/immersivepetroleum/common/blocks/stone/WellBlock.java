@@ -19,7 +19,11 @@ import java.util.function.Supplier;
 
 public class WellBlock extends IPBlockBase implements EntityBlock{
 	public WellBlock(){
-		super(Block.Properties.copy(Blocks.STONE).strength(-1.0F, 3600000.0F).noLootTable().isValidSpawn((s, r, p, e) -> false).requiresCorrectToolForDrops());
+		super(Block.Properties.copy(Blocks.STONE)
+			.strength(-1.0F, 3600000.0F)
+			.noLootTable()
+			.isValidSpawn((s, r, p, e) -> false)
+			.requiresCorrectToolForDrops());
 	}
 	
 	@Override

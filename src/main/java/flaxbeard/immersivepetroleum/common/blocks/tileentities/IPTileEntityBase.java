@@ -1,9 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -12,6 +8,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public abstract class IPTileEntityBase extends BlockEntity{
 	public IPTileEntityBase(BlockEntityType<?> blockEntityType, BlockPos pWorldPosition, BlockState pBlockState){

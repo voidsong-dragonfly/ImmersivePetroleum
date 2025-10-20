@@ -1,12 +1,11 @@
 package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 
-import org.openzen.zencode.java.ZenCodeType.Method;
-import org.openzen.zencode.java.ZenCodeType.Name;
-
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.tag.type.KnownTag;
-
+import flaxbeard.immersivepetroleum.api.crafting.FlarestackHandler;
 import net.minecraft.world.level.material.Fluid;
+import org.openzen.zencode.java.ZenCodeType.Method;
+import org.openzen.zencode.java.ZenCodeType.Name;
 
 @ZenRegister
 @Name("mods.immersivepetroleum.Flarestack")
@@ -14,7 +13,7 @@ public class FlarestackRegistryTweaker{
 	
 	/**
 	 * Adds a fluid tag to the Flarestacks "burnable fluids" list
-	 * 
+	 *
 	 * @param tag The fluidtag to be added
 	 * @docParam tag <tag:fluids:minecraft:water>
 	 */
@@ -24,6 +23,6 @@ public class FlarestackRegistryTweaker{
 			//CraftTweakerAPI.logError("§cFlarestackHandler: Expected fluidtag as input fluid!§r");
 		}
 		
-		//FlarestackHandler.register((Tag<Fluid>) tag.getInternal().);
+		FlarestackHandler.register(tag.getTagKey());
 	}
 }

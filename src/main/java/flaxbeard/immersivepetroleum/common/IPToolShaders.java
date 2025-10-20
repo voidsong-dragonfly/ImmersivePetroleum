@@ -1,8 +1,5 @@
 package flaxbeard.immersivepetroleum.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.shader.ShaderCase;
 import blusunrize.immersiveengineering.api.shader.ShaderLayer;
@@ -14,6 +11,9 @@ import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Ingredient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IPToolShaders{
 	

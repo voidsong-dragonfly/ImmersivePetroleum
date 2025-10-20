@@ -41,7 +41,7 @@ public class DistillationTowerRecipeBuilder extends IEFinishedRecipe<Distillatio
 	private DistillationTowerRecipeBuilder(){
 		super(Serializers.DISTILLATION_SERIALIZER.get());
 		addWriter(jsonObject -> {
-			if(this.byproducts.size() > 0){
+			if(!this.byproducts.isEmpty()){
 				final JsonArray main = new JsonArray();
 				this.byproducts.forEach(by -> main.add(serializerItemStackWithChance(by)));
 				jsonObject.add("byproducts", main);

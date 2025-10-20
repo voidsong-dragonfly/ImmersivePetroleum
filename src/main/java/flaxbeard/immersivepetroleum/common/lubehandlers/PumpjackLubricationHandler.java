@@ -48,9 +48,9 @@ public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblo
 	public BlockEntity isPlacedCorrectly(Level world, AutoLubricatorTileEntity lubricator, Direction facing){
 		BlockPos target = lubricator.getBlockPos().relative(facing);
 		BlockEntity te = world.getBlockEntity(target);
-
+		
 		if(te instanceof MultiblockBlockEntityMaster<?> master){
-
+			
 			if(master != null){
 				Direction f = master.getHelper().getContext().getLevel().getOrientation().mirrored() ? facing : facing.getOpposite();
 				if(master.getHelper().getContext().getLevel().getOrientation().front().getClockWise() == f){
@@ -70,7 +70,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblo
 	@Override
 	public void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, IMultiblockBEHelper<PumpjackLogic.State> mbte){
 		if(ticks % 4 == 0){
-			if (mbte instanceof IMultiblockBEHelperMaster<PumpjackLogic.State> master)
+			if(mbte instanceof IMultiblockBEHelperMaster<PumpjackLogic.State> master)
 				master.tickServer();
 		}
 	}
@@ -137,7 +137,7 @@ public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblo
 		matrix.translate(0, -1, 0);
 		Vec3i offset = mbte.getPositionInMB().subtract(lubricator.getBlockPos());
 		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
-
+		
 		MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
 		Direction rotation = orientation.front();
 		switch(rotation){

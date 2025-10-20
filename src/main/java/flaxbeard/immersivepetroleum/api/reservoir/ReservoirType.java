@@ -174,7 +174,7 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	static Set<ResourceLocation> toSet(ListTag nbtList){
 		Set<ResourceLocation> set = new HashSet<>();
-		if(nbtList.size() > 0){
+		if(!nbtList.isEmpty()){
 			nbtList.forEach(tag -> {
 				if(tag instanceof StringTag){
 					set.add(new ResourceLocation(tag.getAsString()));
@@ -186,7 +186,7 @@ public class ReservoirType extends IESerializableRecipe{
 	
 	static ListTag toNbt(Set<ResourceLocation> set){
 		ListTag nbtList = new ListTag();
-		if(set.size() > 0){
+		if(!set.isEmpty()){
 			set.forEach(rl -> nbtList.add(StringTag.valueOf(rl.toString())));
 		}
 		return nbtList;
@@ -272,7 +272,7 @@ public class ReservoirType extends IESerializableRecipe{
 		
 		private ListTag toNbtList(){
 			ListTag nbtList = new ListTag();
-			if(this.set.size() > 0){
+			if(hasEntries()){
 				this.set.forEach(rl -> nbtList.add(StringTag.valueOf(rl.toString())));
 			}
 			return nbtList;

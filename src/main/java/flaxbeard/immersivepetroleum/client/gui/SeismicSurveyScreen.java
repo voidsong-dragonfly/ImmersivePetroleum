@@ -102,7 +102,7 @@ public class SeismicSurveyScreen extends Screen{
 		
 		DynamicTextureWrapper wrapper = DynamicTextureWrapper.getOrCreate(SurveyScan.SCAN_SIZE, SurveyScan.SCAN_SIZE, this.scan);
 		if(wrapper == null)
-			return; // I hope this never happens..
+			return; // I hope this never happens.
 		
 		final List<Component> tooltip = new ArrayList<>();
 		

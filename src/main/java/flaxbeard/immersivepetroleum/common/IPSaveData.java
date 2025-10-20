@@ -1,13 +1,13 @@
 package flaxbeard.immersivepetroleum.common;
 
-import javax.annotation.Nonnull;
-
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.saveddata.SavedData;
+
+import javax.annotation.Nonnull;
 
 public class IPSaveData extends SavedData{
 	public static final String dataName = "ImmersivePetroleum-SaveData";
@@ -34,7 +34,7 @@ public class IPSaveData extends SavedData{
 	@Nonnull
 	public CompoundTag save(@Nonnull CompoundTag nbt){
 		ListTag lubricatedList = new ListTag();
-		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
+		for(LubricatedTileInfo info: LubricatedHandler.lubricatedTiles){
 			if(info != null){
 				CompoundTag tag = info.writeToNBT();
 				lubricatedList.add(tag);

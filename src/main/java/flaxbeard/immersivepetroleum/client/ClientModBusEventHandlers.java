@@ -1,7 +1,13 @@
 package flaxbeard.immersivepetroleum.client;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
-import flaxbeard.immersivepetroleum.client.render.*;
+import flaxbeard.immersivepetroleum.client.render.AutoLubricatorRenderer;
+import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
+import flaxbeard.immersivepetroleum.client.render.MotorboatRenderer;
+import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRenderer;
+import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
+import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
+import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.entity.IPEntityTypes;
@@ -36,22 +42,14 @@ public class ClientModBusEventHandlers{
 		registerEntityRenderingHandler(ev, IPEntityTypes.MOTORBOAT, MotorboatRenderer::new);
 		registerEntityRenderingHandler(ev, IPEntityTypes.MOLOTOV, ThrownItemRenderer::new);
 	}
-
-	private static <T extends BlockEntity>
-	void registerBERenderNoContext(
-			RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render
-	)
-	{
+	
+	private static <T extends BlockEntity> void registerBERenderNoContext(RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, Supplier<BlockEntityRenderer<T>> render){
 		registerBERenderNoContext(event, type.get(), render);
 	}
-	private static <T extends BlockEntity>
-	void registerBERenderNoContext(
-			RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render
-	)
-	{
+	private static <T extends BlockEntity> void registerBERenderNoContext(RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render){
 		event.registerBlockEntityRenderer(type, $ -> render.get());
 	}
-
+	
 	private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){
 		ev.registerBlockEntityRenderer(type, ctx -> factory.get());
 	}

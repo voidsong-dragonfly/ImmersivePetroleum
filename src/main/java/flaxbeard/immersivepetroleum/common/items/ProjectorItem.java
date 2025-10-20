@@ -208,12 +208,14 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 		return nameCache.get(multiblock.getClass());
 	}
 	
-	/*@Override
+	/*
+	@Override
 	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
 		if(this.allowedIn(group)){
 			items.add(new ItemStack(this, 1));
 		}
-	}*/
+	}
+	*/
 	
 	@Override
 	@Nonnull
@@ -781,35 +783,35 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 	public enum RenderLayer{
 		ALL, BAD, PERFECT
 	}
-
+	
 	@Override
 	public CompoundTag getUpgrades(ItemStack stack){
 		return stack.hasTag() ? stack.getOrCreateTag().getCompound("upgrades") : new CompoundTag();
 	}
-
+	
 	@Override
 	public void clearUpgrades(ItemStack stack){
 		ItemUtils.removeTag(stack, "upgrades");
 	}
-
+	
 	@Override
 	public boolean canTakeFromWorkbench(ItemStack stack){
 		return true;
 	}
-
+	
 	@Override
 	public boolean canModify(ItemStack stack){
 		return true;
 	}
-
+	
 	@Override
 	public void recalculateUpgrades(ItemStack stack, Level w, Player player){
 	}
-
+	
 	@Override
 	public void removeFromWorkbench(Player player, ItemStack stack){
 	}
-
+	
 	@Override
 	public void finishUpgradeRecalculation(ItemStack stack){
 	}

@@ -20,14 +20,25 @@ import flaxbeard.immersivepetroleum.common.blocks.IPBlockItemBase;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.SeismicSurveyBlock;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.*;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.CokerUnitMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DerrickMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.HydroTreaterMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.OilTankMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.OilTankLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.PumpjackLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillation_tower.DistillationTowerLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.hydro_treater.HydroTreaterLogic;
-import flaxbeard.immersivepetroleum.common.blocks.stone.*;
+import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltSlab;
+import flaxbeard.immersivepetroleum.common.blocks.stone.AsphaltStairs;
+import flaxbeard.immersivepetroleum.common.blocks.stone.ParaffinWaxBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.PetcokeBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.WellBlock;
+import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.entity.IPEntityTypes;
@@ -36,7 +47,15 @@ import flaxbeard.immersivepetroleum.common.fluids.DieselFluid;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid.IPFluidEntry;
 import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid.NapalmFluidBlock;
-import flaxbeard.immersivepetroleum.common.items.*;
+import flaxbeard.immersivepetroleum.common.items.DebugItem;
+import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
+import flaxbeard.immersivepetroleum.common.items.IPItemBase;
+import flaxbeard.immersivepetroleum.common.items.IPUpgradeItem;
+import flaxbeard.immersivepetroleum.common.items.MolotovItem;
+import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
+import flaxbeard.immersivepetroleum.common.items.OilCanItem;
+import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
+import flaxbeard.immersivepetroleum.common.items.SurveyResultItem;
 import flaxbeard.immersivepetroleum.common.lubehandlers.CrusherLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.ExcavatorLubricationHandler;
 import flaxbeard.immersivepetroleum.common.lubehandlers.PumpjackLubricationHandler;
@@ -65,7 +84,7 @@ import org.apache.logging.log4j.Logger;
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPContent{
 	public static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/Content");
-
+	
 	public static class Multiblock{
 		public static final MultiblockRegistration<DistillationTowerLogic.State> DISTILLATIONTOWER = IPRegisters.registerMetalMultiblock(
 				"distillation_tower", new DistillationTowerLogic(), () -> DistillationTowerMultiblock.INSTANCE,
@@ -91,10 +110,10 @@ public class IPContent{
 				"oiltank", new OilTankLogic(), () -> OilTankMultiblock.INSTANCE,
 				builder -> builder.redstone(st -> st.rsState, OilTankLogic.Redstone_IN).withComparator()
 		);
-
-		private static void forceClassLoad(){
-
-		}
+		
+		//@formatter:off
+		private static void forceClassLoad(){}
+		//@formatter:on
 	}
 	
 	public static class Fluids{
@@ -115,8 +134,9 @@ public class IPContent{
 		
 		public static final IPFluidEntry NAPALM = IPFluid.makeFluid("napalm", 1000, 4000, 0.0105, NapalmFluidBlock::new);
 		
-		private static void forceClassLoad(){
-		}
+		//@formatter:off
+		private static void forceClassLoad(){}
+		//@formatter:on
 	}
 	
 	public static class Blocks{
@@ -169,8 +189,9 @@ public class IPContent{
 		public static final RegistryObject<Item> MOLOTOV = IPRegisters.registerItem("molotov", () -> new MolotovItem(false));
 		public static final RegistryObject<Item> MOLOTOV_LIT = IPRegisters.registerItem("molotov_lit", () -> new MolotovItem(true));
 		
-		private static void forceClassLoad(){
-		}
+		//@formatter:off
+		private static void forceClassLoad(){}
+		//@formatter:on
 	}
 	
 	public static class BoatUpgrades{
@@ -180,8 +201,9 @@ public class IPContent{
 		public static final RegistryObject<IPUpgradeItem> RUDDERS = createBoatUpgrade("rudders");
 		public static final RegistryObject<IPUpgradeItem> PADDLES = createBoatUpgrade("paddles");
 		
-		private static void forceClassLoad(){
-		}
+		//@formatter:off
+		private static void forceClassLoad(){}
+		//@formatter:on
 		
 		private static <T extends Item> RegistryObject<IPUpgradeItem> createBoatUpgrade(String name){
 			return IPRegisters.registerItem("upgrade_" + name, () -> new IPUpgradeItem(MotorboatItem.UPGRADE_TYPE));
@@ -189,15 +211,15 @@ public class IPContent{
 	}
 	
 	public static final RegistryObject<Item> DEBUGITEM = IPRegisters.registerItem("debug", DebugItem::new);
-
-	public static class WorldGenFeatures
-	{
+	
+	public static class WorldGenFeatures{
 		public static final RegistryObject<FeatureReservoir> RESERVOIR_FEATURE = IPRegisters.FEATURE_REGISTER.register("reservoir", FeatureReservoir::new);
-
-		public static void forceClassLoad()
-		{ }
+		
+		//@formatter:off
+		private static void forceClassLoad(){}
+		//@formatter:on
 	}
-
+	
 	/** block/item/fluid population */
 	public static void modConstruction(){
 		Fluids.forceClassLoad();
@@ -225,7 +247,7 @@ public class IPContent{
 		//event.enqueueWork(IPWorldGen::registerReservoirGen);
 		
 		Fluids.CRUDEOIL.setEffect(IEPotions.FLAMMABLE.get(), 100, 1);
-		Fluids.DIESEL.setEffect(IEPotions.FLAMMABLE.get(), 40, 1); // Realisticly diesel can not be ignited with an open flame..
+		Fluids.DIESEL.setEffect(IEPotions.FLAMMABLE.get(), 40, 1); // Realistic diesel can not be ignited with an open flame.
 		Fluids.DIESEL_SULFUR.setEffect(IEPotions.FLAMMABLE.get(), 40, 1);
 		Fluids.GASOLINE.setEffect(IEPotions.FLAMMABLE.get(), 120, 2);
 		Fluids.KEROSENE.setEffect(IEPotions.FLAMMABLE.get(), 120, 2);

@@ -77,7 +77,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 				}
 			}
 		}
-
+		
 		if(recipe.getInputFluid() != null){
 			builder.addSlot(RecipeIngredientRole.INPUT, 11, 21)
 				.setFluidRenderer(outputTotal, false, 16, 47)
@@ -135,7 +135,7 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 		
 		int time = recipe.getTotalProcessTime();
 		int energy = recipe.getTotalProcessEnergy() / time;
-
+		
 		guiGraphics.pose().pushPose();
 		{
 			guiGraphics.pose().translate(23, 0, 0);

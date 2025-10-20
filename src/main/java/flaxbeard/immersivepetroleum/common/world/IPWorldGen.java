@@ -14,14 +14,14 @@ import java.util.Map;
 
 @Deprecated(forRemoval = true)
 public class IPWorldGen{
-//	public static Map<String, Holder<PlacedFeature>> features = new HashMap<>();
-
-	/*public static void registerReservoirGen(){
-		Holder<PlacedFeature> reservoirFeature = register(RESERVOIR_FEATURE.getId(), RESERVOIR_FEATURE, new NoneFeatureConfiguration());
-		features.put(RESERVOIR_FEATURE.getId().getPath(), reservoirFeature);
-	}*/
+	//public static Map<String, Holder<PlacedFeature>> features = new HashMap<>();
 	
 	/*
+	/public static void registerReservoirGen(){
+		Holder<PlacedFeature> reservoirFeature = register(RESERVOIR_FEATURE.getId(), RESERVOIR_FEATURE, new NoneFeatureConfiguration());
+		features.put(RESERVOIR_FEATURE.getId().getPath(), reservoirFeature);
+	}
+	
 	@SubscribeEvent
 	public void onBiomeLoad(BiomeLoadingEvent event){
 		BiomeGenerationSettingsBuilder generation = event.getGeneration();
@@ -29,10 +29,10 @@ public class IPWorldGen{
 			generation.addFeature(Decoration.UNDERGROUND_ORES, entry.getValue());
 		}
 	}
-	*/
 	
-	/*private static <Cfg extends FeatureConfiguration, F extends Feature<Cfg>> Holder<PlacedFeature> register(ResourceLocation rl, RegistryObject<F> feature, Cfg cfg){
+	private static <Cfg extends FeatureConfiguration, F extends Feature<Cfg>> Holder<PlacedFeature> register(ResourceLocation rl, RegistryObject<F> feature, Cfg cfg){
 		Holder<ConfiguredFeature<?, ?>> configured = BuiltInRegistries.register(Registries.CONFIGURED_FEATURE, rl, new ConfiguredFeature<>(feature.get(), cfg));
 		return BuiltInRegistries.register(Registries.PLACED_FEATURE, rl, new PlacedFeature(configured, List.of()));
-	}*/
+	}
+	*/
 }

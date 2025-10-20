@@ -60,9 +60,9 @@ public class ReservoirHandler{
 				ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(new BlockPos(x, 64, z)).value());
 				
 				final ColumnPos current = new ColumnPos(x, z);
-				if(storage.existsAt(current)){
+				if(storage.existsAt(current))
 					return;
-				}
+				
 				
 				ReservoirType reservoir = null;
 				int totalWeight = getTotalWeight(dimensionRL, biomeRL);
@@ -128,9 +128,9 @@ public class ReservoirHandler{
 	
 	/** May only be called on the server-side. Returns null on client-side. */
 	public static ReservoirIsland getIsland(Level world, ColumnPos pos){
-		if(world.isClientSide){
+		if(world.isClientSide)
 			return null;
-		}
+		
 		
 		ResourceKey<Level> dimension = world.dimension();
 		Pair<ResourceKey<Level>, ColumnPos> cacheKey = Pair.of(dimension, pos);
@@ -154,9 +154,9 @@ public class ReservoirHandler{
 	
 	/** <i>This should not be called too much.</i> May only be called on the server-side, returns null on client-side. */
 	public static ReservoirIsland getIslandNoCache(Level world, ColumnPos pos){
-		if(world.isClientSide){
+		if(world.isClientSide)
 			return null;
-		}
+		
 		
 		ReservoirIsland island = ReservoirRegionDataStorage.get().getIsland(world, pos);
 		return island;
@@ -192,9 +192,9 @@ public class ReservoirHandler{
 		}
 		
 		double noise = Math.abs(generator.getValue(x * scale, z * scale, false));
-		if(noise > d0){
+		if(noise > d0)
 			return (noise - d0) / d1;
-		}
+		
 		
 		return -1D;
 	}
@@ -282,7 +282,7 @@ public class ReservoirHandler{
 		List<ColumnPos> list = new ArrayList<>();
 		list.add(poly.remove(0));
 		int a = 0;
-		while(poly.size() > 0){
+		while(!poly.isEmpty()){
 			final ColumnPos col = list.get(a);
 			
 			if(moveNext(col, poly, list)){

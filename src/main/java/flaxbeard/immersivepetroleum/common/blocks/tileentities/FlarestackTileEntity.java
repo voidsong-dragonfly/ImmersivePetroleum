@@ -33,7 +33,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTickableTile, IEBlockInterfaces.ISoundBE{
-
 	
 	protected boolean isRedstoneInverted;
 	protected boolean isActive;

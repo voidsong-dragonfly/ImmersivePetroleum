@@ -73,10 +73,7 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 		transform.pushPose();
 		{
 			BlockPos target = te.getBlockPos().relative(te.getFacing());
-			BlockEntity test = te.getLevel().getBlockEntity(target);
-
-			if (test instanceof IMultiblockBE<?> tile)
-			{
+			if(te.getLevel().getBlockEntity(target) instanceof IMultiblockBE<?> tile){
 				ILubricationHandler handler = LubricatedHandler.getHandlerForTile(tile.getHelper());
 				if(handler != null){
 					BlockEntity master = handler.isPlacedCorrectly(te.getLevel(), te, te.getFacing());

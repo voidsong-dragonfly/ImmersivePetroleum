@@ -93,10 +93,11 @@ public class IPFluid extends FlowingFluid{
 		return entry;
 	}
 	
-	
-	/*protected static Material createMaterial(MaterialColor color){
+	/*
+	protected static Material createMaterial(MaterialColor color){
 		return new Material(color, true, false, false, false, false, true, PushReaction.DESTROY);
-	}*/
+	}
+	*/
 	
 	private static IPFluidEntry staticEntry;
 	private static IPFluid makeFluid(Function<IPFluidEntry, ? extends IPFluid> make, IPFluid.IPFluidEntry entry){
@@ -127,12 +128,12 @@ public class IPFluid extends FlowingFluid{
 	public boolean canConvertToSource(FluidState state, Level level, BlockPos pos){
 		return false;
 	}
-
+	
 	@Override
-	protected boolean canConvertToSource(Level pLevel) {
+	protected boolean canConvertToSource(Level pLevel){
 		return false;
 	}
-
+	
 	public boolean hasCustomSlowdown(){
 		return false;
 	}
@@ -225,27 +226,15 @@ public class IPFluid extends FlowingFluid{
 			block().get().setEffect(effect, duration, level);
 		}
 		
-		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(
-			String name,
-			Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock,
-			@Nullable Consumer<FluidType.Properties> buildAttributes
-		){
+		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(String name, Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock, @Nullable Consumer<FluidType.Properties> buildAttributes){
 			return make(name, 0, makeSource, makeFlowing, makeBlock, buildAttributes, ImmutableList.of());
 		}
 		
-		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(
-			String name,
-			Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock,
-			@Nullable Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties
-		){
+		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(String name, Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock, @Nullable Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties){
 			return make(name, 0, makeSource, makeFlowing, makeBlock, buildAttributes, properties);
 		}
 		
-		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(
-			String name, int burnTime,
-			Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock,
-			@Nullable Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties
-		){
+		protected static <S extends IPFluid, F extends IPFluid, B extends IPFluidBlock> IPFluidEntry make(String name, int burnTime, Function<IPFluidEntry, S> makeSource, Function<IPFluidEntry, F> makeFlowing, BiFunction<IPFluidEntry, BlockBehaviour.Properties, B> makeBlock, @Nullable Consumer<FluidType.Properties> buildAttributes, List<Property<?>> properties){
 			FluidType.Properties builder = FluidType.Properties.create();
 			if(buildAttributes != null){
 				buildAttributes.accept(builder);

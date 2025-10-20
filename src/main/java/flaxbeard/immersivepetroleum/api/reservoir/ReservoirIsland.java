@@ -175,7 +175,7 @@ public class ReservoirIsland{
 	 * @param level needed to check game time
 	 * @return boolean on whether reservoir is below hydrostatic equilibrium
 	 */
-	public boolean belowHydrostaticEquilibrium(@Nonnull Level level) {
+	public boolean belowHydrostaticEquilibrium(@Nonnull Level level){
 		return this.reservoir.residual > 0 && this.amount <= this.reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime();
 	}
 	
@@ -184,7 +184,7 @@ public class ReservoirIsland{
 	 *
 	 * @param level needed to check game time
 	 */
-	public void equalizeHydrostaticPressure(@Nonnull Level level) {
+	public void equalizeHydrostaticPressure(@Nonnull Level level){
 		if(this.amount <= this.reservoir.equilibrium && this.lastEquilibriumTick != level.getGameTime()){
 			this.lastEquilibriumTick = level.getGameTime();
 			this.amount += this.reservoir.residual;

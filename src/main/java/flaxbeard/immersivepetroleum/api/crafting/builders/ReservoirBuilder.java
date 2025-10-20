@@ -85,8 +85,8 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @param fluid The fluid to set.
 	 * @return {@link ReservoirBuilder}
 	 */
-	public ReservoirBuilder setFluid(Fluid fluid){
-		this.fluid = RegistryUtils.getRegistryNameOf(fluid).toString();
+	public ReservoirBuilder setFluid(@Nonnull Fluid fluid){
+		this.fluid = Objects.requireNonNull(RegistryUtils.getRegistryNameOf(fluid)).toString();
 		return this;
 	}
 	
@@ -168,7 +168,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @throws IllegalArgumentException when it has already been set
 	 */
 	public ReservoirBuilder setDimensions(boolean isBlacklist, @Nonnull ResourceLocation[] dimensions){
-		if(this.dimensions.size() > 0){
+		if(!this.dimensions.isEmpty()){
 			throw new IllegalArgumentException("Dimensions list already set.");
 		}
 		Objects.requireNonNull(dimensions);
@@ -194,7 +194,7 @@ public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	 * @throws IllegalArgumentException when it has already been set
 	 */
 	public ReservoirBuilder setBiomes(boolean isBlacklist, @Nonnull ResourceLocation[] biomes){
-		if(this.biomes.size() > 0){
+		if(!this.biomes.isEmpty()){
 			throw new IllegalArgumentException("Biomes list already set.");
 		}
 		Objects.requireNonNull(biomes);

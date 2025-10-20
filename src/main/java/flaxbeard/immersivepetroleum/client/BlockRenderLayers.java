@@ -15,7 +15,7 @@ public class BlockRenderLayers{
 	
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event){
-		for(IPFluid.IPFluidEntry f:IPFluid.FLUIDS){
+		for(IPFluid.IPFluidEntry f: IPFluid.FLUIDS){
 			setRenderLayer(f, RenderType.translucent());
 		}
 	}

@@ -14,11 +14,10 @@ public class IPEntityTypes{
 		return ret;
 	});
 	
-
+	
 	public static final RegistryObject<EntityType<MolotovItemEntity>> MOLOTOV = createType();
 	
 	private static RegistryObject<EntityType<MolotovItemEntity>> createType(){
-		
 		return IPRegisters.registerEntityType("molotov", s -> {
 			EntityType<MolotovItemEntity> ret = EntityType.Builder.<MolotovItemEntity> of(MolotovItemEntity::new, MobCategory.MISC)
 					.sized(0.25F, 0.25F)

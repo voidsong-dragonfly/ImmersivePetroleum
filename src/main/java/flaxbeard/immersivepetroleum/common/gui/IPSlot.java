@@ -12,9 +12,9 @@ import net.minecraftforge.items.SlotItemHandler;
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
-public class IPSlot extends SlotItemHandler {
+public class IPSlot extends SlotItemHandler{
 	private final Predicate<ItemStack> consumer;
-
+	
 	public IPSlot(IItemHandler inventoryIn, int index, int xPosition, int yPosition){
 		super(inventoryIn, index, xPosition, yPosition);
 		this.consumer = null;

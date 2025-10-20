@@ -11,7 +11,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Based on the old events from Flaxbeard
- * 
+ *
  * @author TwistedGate
  */
 @Cancelable

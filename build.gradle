@@ -17,9 +17,9 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17'
 //----------------------------------------------------------------------------------------------------------------------
 
-version = '4.2.0-30'
+version = '${version_immersivepetroleum}'
 group = 'flaxbeard.immersivepetroleum'
-archivesBaseName = 'ImmersivePetroleum-1.20.1'
+archivesBaseName = 'ImmersivePetroleum-${version_minecraft}'
 
 repositories {
 	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }			// IE & CT Files

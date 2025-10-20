@@ -9,14 +9,15 @@ import net.minecraft.world.level.material.PushReaction;
 
 import java.util.function.Supplier;
 
+@Deprecated(forRemoval = true)
 public class BlockDummy extends IPBlockBase{
 	//private static final Material Material = new Material(MaterialColor.METAL, false, false, true, true, false, false, PushReaction.BLOCK);
 	
 	public BlockDummy(){
-		super(Block.Properties.of().
-				mapColor(MapColor.METAL).
-				pushReaction(PushReaction.BLOCK).
-				noOcclusion());
+		super(Block.Properties.of()
+			.mapColor(MapColor.METAL)
+			.pushReaction(PushReaction.BLOCK)
+			.noOcclusion());
 	}
 	
 	@Override

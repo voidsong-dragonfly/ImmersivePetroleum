@@ -1,9 +1,5 @@
 package flaxbeard.immersivepetroleum.common.network;
 
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -14,21 +10,26 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
+import javax.annotation.Nonnull;
+import java.util.function.Function;
+
 public class IPPacketHandler{
 	public static final String NET_VERSION = "1";
+	//@formatter:off
 	public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder
 			.named(ResourceUtils.ip("main"))
 			.networkProtocolVersion(() -> NET_VERSION)
 			.serverAcceptedVersions(NET_VERSION::equals)
 			.clientAcceptedVersions(NET_VERSION::equals)
 			.simpleChannel();
+	//@formatter:on
 	
 	public static void preInit(){
 		registerMessage(MessageDebugSync.class, MessageDebugSync::new);
 		registerMessage(MessageConsumeBoatFuel.class, MessageConsumeBoatFuel::new);
 		registerMessage(MessageProjectorSync.class, MessageProjectorSync::new);
 		registerMessage(MessageDerrick.class, MessageDerrick::new);
-
+		
 		registerMessage(MessageSurveyResultDetails.ClientToServer.class, MessageSurveyResultDetails.ClientToServer::new);
 		registerMessage(MessageSurveyResultDetails.ServerToClient.class, MessageSurveyResultDetails.ServerToClient::new);
 	}
@@ -43,7 +44,7 @@ public class IPPacketHandler{
 	
 	/**
 	 * Sends a server message directly to the player. Will not do anything if the provided instance is not a {@link ServerPlayer} instance
-	 * 
+	 *
 	 * @param player  The {@link Player} to send to
 	 * @param message The message to send
 	 */
@@ -63,7 +64,6 @@ public class IPPacketHandler{
 	
 	/**
 	 * Sends a packet to everyone in the specified dimension.
-	 * 
 	 * <pre>
 	 * Server -> Client
 	 * </pre>

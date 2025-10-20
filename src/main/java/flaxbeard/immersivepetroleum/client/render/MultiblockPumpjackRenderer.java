@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
-public class MultiblockPumpjackRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<PumpjackLogic.State>> {
+public class MultiblockPumpjackRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<PumpjackLogic.State>>{
 	private static final Supplier<IPModel> pumpjackarm = IPModels.getSupplier(ModelPumpjack.ID);
 	
 	@Override
@@ -27,8 +27,7 @@ public class MultiblockPumpjackRenderer extends IEBlockEntityRenderer<Multiblock
 	
 	@Override
 	public void render(@Nonnull MultiblockBlockEntityMaster<PumpjackLogic.State> te, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn){
-		if(!te.isRemoved() || te.getLevel().hasChunkAt(te.getBlockPos()))
-		{
+		if(!te.isRemoved() || te.getLevel().hasChunkAt(te.getBlockPos())){
 			transform.pushPose();
 			Direction rotation = te.getHelper().getContext().getLevel().getOrientation().front();
 			switch(rotation){

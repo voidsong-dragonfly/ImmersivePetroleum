@@ -81,10 +81,6 @@ public class DebugItem extends IPItemBase{
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 	
-	/*@Override
-	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
-	}*/
-	
 	@Override
 	@Nonnull
 	public InteractionResultHolder<ItemStack> use(Level worldIn, @Nonnull Player playerIn, @Nonnull InteractionHand handIn){

@@ -83,31 +83,30 @@ public class OilCanItem extends IPItemBase{
 			if(tileEntity != null){
 				IFluidHandler cap = tileEntity.getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null);
 				
-				if(cap != null && FluidUtil.interactWithFluidHandler(player, hand, cap)){
+				if(cap != null && FluidUtil.interactWithFluidHandler(player, hand, cap))
 					return InteractionResult.SUCCESS;
-				}else{
-					InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
-						if(handler instanceof FluidHandlerItemStack can){
-							FluidStack fs = can.getFluid();
-							
-							if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
-								int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
-								if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
-									player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
-									if(!player.isCreative()){
-										can.drain(amountNeeded, FluidAction.EXECUTE);
-									}
-									Utils.unlockIPAdvancement(player, "main/oil_can");
-									return InteractionResult.SUCCESS;
+				
+				InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
+					if(handler instanceof FluidHandlerItemStack can){
+						FluidStack fs = can.getFluid();
+						
+						if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
+							int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
+							if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
+								player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
+								if(!player.isCreative()){
+									can.drain(amountNeeded, FluidAction.EXECUTE);
 								}
+								Utils.unlockIPAdvancement(player, "main/oil_can");
+								return InteractionResult.SUCCESS;
 							}
 						}
-						
-						return InteractionResult.PASS;
-					}).orElse(InteractionResult.PASS);
+					}
 					
-					return ret;
-				}
+					return InteractionResult.PASS;
+				}).orElse(InteractionResult.PASS);
+				
+				return ret;
 			}
 		}
 		

@@ -8,34 +8,27 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
 public class HydrotreaterContainer extends MultiblockAwareGuiContainer{
-
+	
 	public final AveragingEnergyStorage energy;
-
+	
 	public final HydroTreaterLogic.Tanks tanks;
-
-	public static HydrotreaterContainer makeServer(
-			MenuType<?> type, int id, Inventory player, MultiblockMenuContext<HydroTreaterLogic.State> ctx)
-	{
+	
+	public static HydrotreaterContainer makeServer(MenuType<?> type, int id, Inventory player, MultiblockMenuContext<HydroTreaterLogic.State> ctx){
 		HydroTreaterLogic.State state = ctx.mbContext().getState();
-
-		return new HydrotreaterContainer(
-				multiblockCtx(type, id, ctx), player,
-				state.energy,
-				state.tanks);
+		
+		return new HydrotreaterContainer(multiblockCtx(type, id, ctx), player, state.energy, state.tanks);
 	}
-
-	public static HydrotreaterContainer makeClient(MenuType<?> type, int id, Inventory player)
-	{
-		return new HydrotreaterContainer(clientCtx(type, id), player,
-				new AveragingEnergyStorage(8000),
-				new HydroTreaterLogic.Tanks());
+	
+	public static HydrotreaterContainer makeClient(MenuType<?> type, int id, Inventory player){
+		return new HydrotreaterContainer(clientCtx(type, id), player, new AveragingEnergyStorage(8000), new HydroTreaterLogic.Tanks());
 	}
+	
 	public HydrotreaterContainer(MenuContext ctx, Inventory playerInventory, AveragingEnergyStorage energy, HydroTreaterLogic.Tanks tanks){
 		super(ctx, HydroTreaterMultiblock.INSTANCE);
-
+		
 		this.energy = energy;
 		this.tanks = tanks;
-
+		
 		addGenericData(GenericContainerData.energy(energy));
 		addGenericData(GenericContainerData.fluid(tanks.primary()));
 		addGenericData(GenericContainerData.fluid(tanks.secondary()));

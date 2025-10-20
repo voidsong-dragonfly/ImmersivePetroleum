@@ -58,8 +58,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 		BlockPos target = lubricator.getBlockPos().relative(facing);
 		BlockEntity te = world.getBlockEntity(target);
 		
-		if(te instanceof IMultiblockBEHelper<?> master)
-		{
+		if(te instanceof IMultiblockBEHelper<?> master){
 			MultiblockOrientation orientation = master.getContext().getLevel().getOrientation();
 			Direction dir = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
 			if(dir == facing){
@@ -86,7 +85,7 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 	public void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
 		BlockPos wheelPos = mbte.getContext().getLevel().toAbsolute(ExcavatorLogic.WHEEL_CENTER);
 		BlockEntity center = world.getBlockEntity(wheelPos);
-
+		
 		if(center instanceof MultiblockBlockEntityMaster<?> wheel){
 			@SuppressWarnings("unchecked")
 			MultiblockBlockEntityMaster<BucketWheelLogic.State> wheelBE = (MultiblockBlockEntityMaster<BucketWheelLogic.State>) wheel;
@@ -134,14 +133,11 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 	}
 	
 	@Override
-	public Tuple<BlockPos, Direction> getGhostBlockPosition(Level world, IMultiblockBEHelper<ExcavatorLogic.State> mbte)
-	{
+	public Tuple<BlockPos, Direction> getGhostBlockPosition(Level world, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
 		MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
-		BlockPos pos = mbte.getPositionInMB()
-				.relative(orientation.front(), 4)
-				.relative(orientation.mirrored() ? orientation.front().getCounterClockWise() : orientation.front().getClockWise(), 2);
-			Direction f = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
-			return new Tuple<>(pos, f);
+		BlockPos pos = mbte.getPositionInMB().relative(orientation.front(), 4).relative(orientation.mirrored() ? orientation.front().getCounterClockWise() : orientation.front().getClockWise(), 2);
+		Direction f = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
+		return new Tuple<>(pos, f);
 	}
 	
 	private static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/lube_pipe.png");

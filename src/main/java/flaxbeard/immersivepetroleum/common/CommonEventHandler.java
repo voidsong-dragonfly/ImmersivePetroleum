@@ -139,8 +139,7 @@ public class CommonEventHandler{
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
 			if(info.world == world.dimension() && world.isAreaLoaded(info.pos, 0)){
 				BlockEntity te = world.getBlockEntity(info.pos);
-				if (te instanceof IMultiblockBEHelper<?> helper)
-				{
+				if(te instanceof IMultiblockBEHelper<?> helper){
 					ILubricationHandler lubeHandler = LubricatedHandler.getHandlerForTile(helper);
 					if(lubeHandler != null){
 						if(lubeHandler.isMachineEnabled(world, helper)){
@@ -150,24 +149,24 @@ public class CommonEventHandler{
 								lubeHandler.lubricateServer((ServerLevel) world, info.lubricant, info.ticks, helper);
 							}
 						}
-
+						
 						if(world.isClientSide){
 							if(te instanceof IMultiblockBE<?> part){
-
+								
 								Vec3i size = lubeHandler.getStructureDimensions();
 								int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
 								for(int i = 0;i < numBlocks;i++){
 									BlockPos pos = part.getHelper().getContext().getLevel().toAbsolute(BlockPos.containing(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
-
+									
 									if(world.getBlockState(pos).getBlock() != Blocks.AIR && world.getBlockEntity(pos) instanceof IMultiblockBE<?> part2 && part2.getHelper().getContext().getState() == part.getHelper().getContext().getState()){
 										for(Direction facing:Direction.Plane.HORIZONTAL){
 											if(world.random.nextInt(30) == 0){
 												Vec3i direction = facing.getNormal();
-
+												
 												float x = (pos.getX() + .5f) + (direction.getX() * .65f);
 												float y = pos.getY() + 1;
 												float z = (pos.getZ() + .5f) + (direction.getZ() * .65f);
-
+												
 												world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, 0, 0, 0);
 											}
 										}
@@ -175,7 +174,7 @@ public class CommonEventHandler{
 								}
 							}
 						}
-
+						
 						if(info.ticks-- <= 0)
 							toRemove.add(info);
 					}
@@ -233,29 +232,29 @@ public class CommonEventHandler{
 			return;
 		
 		ResourceLocation d = event.level.dimension().location();
-
-		switch (event.phase) {
+		
+		switch(event.phase){
 			case START -> {
-				if (napalmPositions.get(d) != null) {
+				if(napalmPositions.get(d) != null){
 					List<BlockPos> trList = toRemove.computeIfAbsent(d, f -> new ArrayList<>());
-
+					
 					new ArrayList<>(napalmPositions.get(d)).forEach(pos -> {
 						BlockState state = event.level.getBlockState(pos);
-						if (state.getBlock() instanceof LiquidBlock fluidBlock && fluidBlock == IPContent.Fluids.NAPALM.block().get()) {
+						if(state.getBlock() instanceof LiquidBlock fluidBlock && fluidBlock == IPContent.Fluids.NAPALM.block().get()){
 							NapalmFluid.processFire(IPContent.Fluids.NAPALM, event.level, pos);
 						}
 						trList.add(pos);
 					});
 				}
-
+				
 			}
 			case END -> {
-				if (toRemove.get(d) != null && napalmPositions.get(d) != null) {
+				if(toRemove.get(d) != null && napalmPositions.get(d) != null){
 					List<BlockPos> list = new ArrayList<>(toRemove.get(d));
 					napalmPositions.get(d).removeAll(list);
 					toRemove.get(d).clear();
 				}
-
+				
 			}
 		}
 	}

@@ -54,16 +54,11 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 	}
 	
 	public AutoLubricatorTileEntity master(){
-		if(this.isSlave){
-			BlockEntity te = this.getLevel().getBlockEntity(getBlockPos().below());
-			if(te instanceof AutoLubricatorTileEntity autolube){
-				return autolube;
-			}else{
-				return null;
-			}
-		}else{
+		if(!this.isSlave)
 			return this;
-		}
+		
+		BlockEntity te = this.getLevel().getBlockEntity(getBlockPos().below());
+		return te instanceof AutoLubricatorTileEntity autolube ? autolube : null;
 	}
 	
 	@Override
@@ -71,9 +66,7 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 		this.isSlave = compound.getBoolean("slave");
 		
 		Direction facing = Direction.byName(compound.getString("facing"));
-		if(facing.get2DDataValue() == -1)
-			this.facing = Direction.NORTH;
-		this.facing = facing;
+		this.facing = facing.get2DDataValue() == -1 ? Direction.NORTH : facing;
 		
 		this.tank.readFromNBT(compound.getCompound("tank"));
 	}
@@ -101,22 +94,20 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 	
 	@Override
 	public void readOnPlacement(LivingEntity placer, ItemStack stack){
-		if(stack.hasTag()){
+		if(stack.hasTag())
 			readTank(stack.getTag());
-		}
+		
 		
 		if(placer instanceof Player player){
 			BlockPos target = this.worldPosition.relative(this.facing);
 			BlockEntity te = this.level.getBlockEntity(target);
 			
-			if (te instanceof IMultiblockBE<?> me)
-			{
+			if(te instanceof IMultiblockBE<?> me){
 				ILubricationHandler<?, ?> handler = LubricatedHandler.getHandlerForTile(me.getHelper());
 				if(handler != null && handler.isPlacedCorrectly(this.level, this, this.facing) != null){
 					Utils.unlockIPAdvancement(player, "main/auto_lubricator");
 				}
 			}
-
 		}
 	}
 	
@@ -124,9 +115,9 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 	@Nonnull
 	public List<ItemStack> getBlockEntityDrop(LootContext context){
 		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
-		if(state.getValue(AutoLubricatorBlock.SLAVE)){
+		if(state.getValue(AutoLubricatorBlock.SLAVE))
 			return List.of(ItemStack.EMPTY);
-		}
+		
 		
 		ItemStack stack = new ItemStack(state.getBlock());
 		
@@ -207,12 +198,20 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 		if(Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))){
 			AutoLubricatorTileEntity master = master();
 			if(master != null){
+				Component s = switch(master.tank.isEmpty() ? 0 : 1){
+					case 0 -> Component.translatable(Lib.GUI + "empty");
+					case 1 ->
+						((MutableComponent) master.tank.getFluid().getDisplayName()).append(": " + master.tank.getFluidAmount() + "mB");
+					default -> null;
+				};
+				
+				/*
 				Component s = null;
-				if(!master.tank.isEmpty()){
+				if(!master.tank.isEmpty())
 					s = ((MutableComponent) master.tank.getFluid().getDisplayName()).append(": " + master.tank.getFluidAmount() + "mB");
-				}else{
+				else
 					s = Component.translatable(Lib.GUI + "empty");
-				}
+				*/
 				return new Component[]{s};
 			}
 		}
@@ -251,17 +250,14 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 			BlockPos target = this.worldPosition.relative(this.facing);
 			BlockEntity te = this.level.getBlockEntity(target);
 			
-			if (te instanceof IMultiblockBE<?> mb)
-			{
+			if(te instanceof IMultiblockBE<?> mb){
 				ILubricationHandler handler = LubricatedHandler.getHandlerForTile(mb.getHelper());
 				if(handler != null){
 					BlockEntity master = handler.isPlacedCorrectly(this.level, this, this.facing);
-					if (master instanceof IMultiblockBE<?> masterMB)
-					{
-						if(handler.isMachineEnabled(this.level, masterMB.getHelper()))
-						{
+					if(master instanceof IMultiblockBE<?> masterMB){
+						if(handler.isMachineEnabled(this.level, masterMB.getHelper())){
 							handler.lubricateClient((ClientLevel) this.level, this.tank.getFluid().getFluid(), this.count, masterMB.getHelper());
-
+							
 							if(this.countClient++ % 50 == 0){
 								this.countClient = this.level.random.nextInt(40);
 								handler.spawnLubricantParticles((ClientLevel) this.level, this, this.facing, masterMB.getHelper());
@@ -276,30 +272,28 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 	@Override
 	@SuppressWarnings("rawtypes, unchecked")
 	public void tickServer(){
-		if(this.isSlave){
+		if(this.isSlave)
 			return;
-		}
+		
 		
 		if(!this.tank.isEmpty() && LubricantHandler.isValidLube(this.tank.getFluid()) && this.tank.getFluidAmount() >= LubricantHandler.getLubeAmount(this.tank.getFluid())){
 			BlockPos target = this.worldPosition.relative(this.facing);
 			BlockEntity te = this.level.getBlockEntity(target);
-
-			if (te instanceof IMultiblockBE<?> mb)
-			{
-			ILubricationHandler handler = LubricatedHandler.getHandlerForTile(mb.getHelper());
-			if(handler != null) {
-				BlockEntity master = handler.isPlacedCorrectly(this.level, this, this.facing);
-				if (master instanceof IMultiblockBE<?> masterMB && handler.isMachineEnabled(this.level, masterMB.getHelper())) {
-					handler.lubricateServer((ServerLevel) this.level, this.tank.getFluid().getFluid(), this.count, masterMB.getHelper());
-
-					if (this.count++ % 4 == 0) {
-						this.tank.drain(LubricantHandler.getLubeAmount(this.tank.getFluid()), FluidAction.EXECUTE);
+			
+			if(te instanceof IMultiblockBE<?> mb){
+				ILubricationHandler handler = LubricatedHandler.getHandlerForTile(mb.getHelper());
+				if(handler != null){
+					BlockEntity master = handler.isPlacedCorrectly(this.level, this, this.facing);
+					if(master instanceof IMultiblockBE<?> masterMB && handler.isMachineEnabled(this.level, masterMB.getHelper())){
+						handler.lubricateServer((ServerLevel) this.level, this.tank.getFluid().getFluid(), this.count, masterMB.getHelper());
+						
+						if(this.count++ % 4 == 0){
+							this.tank.drain(LubricantHandler.getLubeAmount(this.tank.getFluid()), FluidAction.EXECUTE);
+						}
+						
+						setChanged();
 					}
-
-					setChanged();
 				}
-
-			}
 			}
 		}
 		

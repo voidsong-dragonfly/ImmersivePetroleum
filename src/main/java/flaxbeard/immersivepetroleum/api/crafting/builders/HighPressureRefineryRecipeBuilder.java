@@ -1,9 +1,8 @@
 package flaxbeard.immersivepetroleum.api.crafting.builders;
 
-import com.google.gson.JsonObject;
-
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.google.gson.JsonObject;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -14,8 +13,8 @@ public class HighPressureRefineryRecipeBuilder extends IEFinishedRecipe<HighPres
 	
 	public static HighPressureRefineryRecipeBuilder builder(FluidStack fluidOutput, int energy, int time){
 		return new HighPressureRefineryRecipeBuilder()
-				.setTimeAndEnergy(time, energy)
-				.addResultFluid(fluidOutput);
+			.setTimeAndEnergy(time, energy)
+			.addResultFluid(fluidOutput);
 	}
 	
 	protected HighPressureRefineryRecipeBuilder(){

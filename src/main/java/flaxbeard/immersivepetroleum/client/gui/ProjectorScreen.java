@@ -206,25 +206,27 @@ public class ProjectorScreen extends Screen{
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		this.searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
 		
-		/*for(Renderable rawWidget:this.renderables){
+		/*
+		for(Renderable rawWidget:this.renderables){
 			if(rawWidget instanceof AbstractWidget widget && widget.isHoveredOrFocused()){
 				guiGraphics.renderTooltip(this.font, widget.getTooltip()., mouseX, mouseY);
 				break;
 			}
-		}*/
+		}
+		*/
 		
 		renderDirectionDisplay(guiGraphics, mouseX, mouseY);
 		
 		if(this.settings.getMultiblock() != null){
 			IMultiblock mb = this.settings.getMultiblock();
-
+			
 			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			try{
 				
 				this.rotation += 1.5F * partialTicks;
 				
 				Vec3i size = mb.getSize(null);
-
+				
 				guiGraphics.pose().pushPose();
 				{
 					guiGraphics.pose().translate(this.guiLeft + 190, this.guiTop + 80, 64);
@@ -278,7 +280,7 @@ public class ProjectorScreen extends Screen{
 		int x = this.guiLeft + 115;
 		int y = this.guiTop + 82;
 		
-		// Idealy it'd be: N-S-E-W
+		// Ideally it'd be: N-S-E-W
 		Direction dir = Direction.from2DDataValue(this.settings.getRotation().ordinal());
 		Component dirText = Component.literal(dir.toString().toUpperCase().substring(0, 1));
 		guiGraphics.drawCenteredString(this.font, dirText, x + 5, y + 1, -1);
@@ -364,12 +366,14 @@ public class ProjectorScreen extends Screen{
 			this.hoverText = hoverText;
 		}
 		
-		/*@Override
+		/*
+		@Override
 		public void renderToolTip(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY){
 			if(this.hoverText != null){
 				ProjectorScreen.this.renderTooltip(matrixStack, this.hoverText, mouseX, mouseY);
 			}
-		}*/
+		}
+		*/
 	}
 	
 	class SearchField extends EditBox{
@@ -444,7 +448,7 @@ public class ProjectorScreen extends Screen{
 			}
 			guiGraphics.blit(GUI_TEXTURE, this.getX(), this.getY(), this.xOverlay, this.yOverlay, this.iconSize, this.iconSize);
 		}
-
+		
 		@Override
 		public void onPress(){
 			this.action.accept(this);
@@ -457,9 +461,9 @@ public class ProjectorScreen extends Screen{
 		public void setSelected(boolean isSelected){
 			this.selected = isSelected;
 		}
-
+		
 		@Override
-		protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+		protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput){
 		}
 	}
 }

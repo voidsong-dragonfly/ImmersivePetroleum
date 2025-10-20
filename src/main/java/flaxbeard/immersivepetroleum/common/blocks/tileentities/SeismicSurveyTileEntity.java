@@ -135,7 +135,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 						double dst = Math.sqrt(player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
 						if(dst < 4.0){
 							double scale = 1.0 - Mth.clamp(dst / 3D, 0.0, 1.0);
-
+							
 							player.animateHurt(Math.random() < 0.5 ? 180F : 0F);
 							player.hurtDuration = 40;
 							player.hurtTime = 40 + (int) (30 * scale);
@@ -188,7 +188,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 						}
 						
 					}else{
-						// Try find one nearby instead.
+						// Try to find one nearby instead.
 						
 						info = new SurveyScan(world, pos);
 					}

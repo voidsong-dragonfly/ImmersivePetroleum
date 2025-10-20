@@ -19,9 +19,7 @@ import net.minecraftforge.client.model.data.ModelData;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class DerrickRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<DerrickLogic.State>> {
-	//static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);
-	
+public class DerrickRenderer extends IEBlockEntityRenderer<MultiblockBlockEntityMaster<DerrickLogic.State>>{
 	public static final ResourceLocation DRILL = ResourceUtils.ip("multiblock/dyn/derrick_drill");
 	public static final ResourceLocation PIPE_SEGMENT = ResourceUtils.ip("multiblock/dyn/derrick_pipe_segment");
 	public static final ResourceLocation PIPE_TOP = ResourceUtils.ip("multiblock/dyn/derrick_pipe_top");
@@ -40,7 +38,7 @@ public class DerrickRenderer extends IEBlockEntityRenderer<MultiblockBlockEntity
 		
 		matrix.pushPose();
 		{
-			float rot = te.getHelper().getState().rotation + (te.getHelper().getState().drilling? 10 * partialTicks : 0);
+			float rot = te.getHelper().getState().rotation + (te.getHelper().getState().drilling ? 10 * partialTicks : 0);
 			
 			matrix.translate(0.5, 1.0, 0.5);
 			matrix.mulPose(Axis.YP.rotationDegrees(rot));
@@ -68,7 +66,7 @@ public class DerrickRenderer extends IEBlockEntityRenderer<MultiblockBlockEntity
 		List<BakedQuad> quads = MCUtil.getModel(modelRL).getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
 		Pose last = matrix.last();
 		VertexConsumer solid = bufferIn.getBuffer(RenderType.solid());
-		for(BakedQuad quad:quads){
+		for(BakedQuad quad: quads){
 			solid.putBulkData(last, quad, 1.0F, 1.0F, 1.0F, light, overlay);
 		}
 	}

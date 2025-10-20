@@ -28,7 +28,12 @@ import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.OilTankLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillation_tower.DistillationTowerLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.hydro_treater.HydroTreaterLogic;
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.*;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.IPTileEntityBase;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.ChatFormatting;
@@ -132,11 +137,11 @@ public class DebugRenderHandler{
 									{
 										IMultiblockBEHelper<?> helper = generic.getHelper();
 										BlockPos tPos = generic.getHelper().getPositionInMB();
-
+										
 										if(!(helper instanceof IMultiblockBEHelperMaster<?>)){
 											IMultiblockLevel level = generic.getHelper().getContext().getLevel();
 											BlockEntity be = level.getRawLevel().getBlockEntity(generic.getHelper().getContext().getLevel().getAbsoluteOrigin());
-											if (be instanceof IMultiblockBE<?> master)
+											if(be instanceof IMultiblockBE<?> master)
 												generic = master;
 										}
 										Block block = generic.getHelper().getMultiblock().block().get();
@@ -151,7 +156,7 @@ public class DebugRenderHandler{
 										}catch(UnsupportedOperationException e){
 											// Don't care, skip if this is thrown
 										}
-
+										
 										if(generic.getHelper().getContext().getState() instanceof ProcessContext<?> poweredGeneric){
 											/*FIXME: need method to find is this active*/
 											//name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
@@ -168,9 +173,9 @@ public class DebugRenderHandler{
 										
 										debugOut.add(name);
 									}
-
+									
 									IMultiblockState state = generic.getHelper().getContext().getState();
-
+									
 									if(state instanceof DistillationTowerLogic.State){
 										distillationtower(debugOut, generic.getHelper().asType(IPContent.Multiblock.DISTILLATIONTOWER));
 										
@@ -487,14 +492,14 @@ public class DebugRenderHandler{
 	
 	private static void renderOverlay(GuiGraphics guiGraphics, List<Component> debugOut){
 		Minecraft mc = Minecraft.getInstance();
-
+		
 		guiGraphics.pose().pushPose();
 		{
 			MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 			for(int i = 0;i < debugOut.size();i++){
 				int w = mc.font.width(debugOut.get(i).getString());
 				int yOff = i * (mc.font.lineHeight + 2);
-
+				
 				guiGraphics.pose().pushPose();
 				{
 					guiGraphics.pose().translate(0, 0, 1);
@@ -509,12 +514,11 @@ public class DebugRenderHandler{
 		guiGraphics.pose().popPose();
 	}
 	
-	private static void distillationtower(List<Component> text, IMultiblockBEHelper<DistillationTowerLogic.State> tower)
-	{
+	private static void distillationtower(List<Component> text, IMultiblockBEHelper<DistillationTowerLogic.State> tower){
 		if(!(tower instanceof IMultiblockBEHelperMaster<DistillationTowerLogic.State>)){
 			IMultiblockLevel level = tower.getContext().getLevel();
 			BlockEntity be = level.getRawLevel().getBlockEntity(tower.getContext().getLevel().getAbsoluteOrigin());
-			if (be instanceof IMultiblockBE<?> master)
+			if(be instanceof IMultiblockBE<?> master)
 				tower = master.getHelper().asType(IPContent.Multiblock.DISTILLATIONTOWER);
 		}
 		
@@ -537,7 +541,7 @@ public class DebugRenderHandler{
 		if(!(coker instanceof IMultiblockBEHelperMaster<CokerUnitLogic.State>)){
 			IMultiblockLevel level = coker.getContext().getLevel();
 			BlockEntity be = level.getRawLevel().getBlockEntity(coker.getContext().getLevel().getAbsoluteOrigin());
-			if (be instanceof IMultiblockBE<?> master)
+			if(be instanceof IMultiblockBE<?> master)
 				coker = master.getHelper().asType(IPContent.Multiblock.COKERUNIT);
 		}
 		
@@ -552,7 +556,7 @@ public class DebugRenderHandler{
 			FluidStack fs = tank.getFluid();
 			text.add(toText("Out Buffer: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 		}
-
+		
 		for(int i = 0;i < coker.getState().chambers.asArray().length;i++){
 			CokerUnitLogic.CokingChamber chamber = coker.getState().chambers.asArray()[i];
 			FluidTank tank = chamber.getTank();
@@ -573,7 +577,7 @@ public class DebugRenderHandler{
 		if(!(treater instanceof IMultiblockBEHelperMaster<HydroTreaterLogic.State>)){
 			IMultiblockLevel level = treater.getContext().getLevel();
 			BlockEntity be = level.getRawLevel().getBlockEntity(treater.getContext().getLevel().getAbsoluteOrigin());
-			if (be instanceof IMultiblockBE<?> master)
+			if(be instanceof IMultiblockBE<?> master)
 				treater = master.getHelper().asType(IPContent.Multiblock.HYDROTREATER);
 		}
 		
@@ -595,11 +599,11 @@ public class DebugRenderHandler{
 				break;
 			}
 		}
-
+		
 		if(!(tank instanceof IMultiblockBEHelperMaster<OilTankLogic.State>)){
 			IMultiblockLevel level = tank.getContext().getLevel();
 			BlockEntity be = level.getRawLevel().getBlockEntity(tank.getContext().getLevel().getAbsoluteOrigin());
-			if (be instanceof IMultiblockBE<?> master)
+			if(be instanceof IMultiblockBE<?> master)
 				tank = master.getHelper().asType(IPContent.Multiblock.OILTANK);
 		}
 		
@@ -620,7 +624,7 @@ public class DebugRenderHandler{
 		if(!(derrick instanceof IMultiblockBEHelperMaster<DerrickLogic.State>)){
 			IMultiblockLevel level = derrick.getContext().getLevel();
 			BlockEntity be = level.getRawLevel().getBlockEntity(derrick.getContext().getLevel().getAbsoluteOrigin());
-			if (be instanceof IMultiblockBE<?> master)
+			if(be instanceof IMultiblockBE<?> master)
 				derrick = master.getHelper().asType(IPContent.Multiblock.DERRICK);
 		}
 		
