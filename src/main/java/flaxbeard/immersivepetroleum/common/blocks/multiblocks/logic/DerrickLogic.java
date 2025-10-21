@@ -63,6 +63,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -141,6 +142,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 				level.getRawLevel().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, PARTICLESTATES[r]), x, y, z, xa, ya, za);
 			}
 		}
+		
 		if(state.spilling){
 			ClientProxy.spawnSpillParticles(level.getRawLevel(), level.toAbsolute(IPContent.Multiblock.DERRICK.masterPosInMB()), state.fluidSpilled, 5, 1.25F, state.clientFlow);
 		}
@@ -266,8 +268,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		}
 		
 		if(wasActive || lastDrilling != state.drilling || lastSpilling != state.spilling){
-			context.markMasterDirty();
-			context.requestMasterBESync();
+			context.markDirtyAndSync();
 		}
 	}
 	
@@ -367,6 +368,12 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		return state.inventory.set(inv.id(), stack);
 	}
 	
+	@Override
+	public void dropExtraItems(State state, Consumer<ItemStack> drop){
+		if(!state.inventory.get(0).isEmpty())
+			drop.accept(state.inventory.get(0));
+	}
+	
 	private boolean advanceTimer(DerrickLogic.State state){
 		if(state.timer-- <= 0){
 			state.timer = 10;
@@ -401,18 +408,11 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 			BlockPos outPos = level.toAbsolute(FLUID_OUT.posInMultiblock()).relative(facing, 1);
 			BlockEntity target = level.getRawLevel().getBlockEntity(outPos);
 			if(target != null){
-				boolean iePipe = level.getRawLevel().getBlockEntity(outPos) instanceof IFluidPipe;
+				boolean isIEPipe = target instanceof IFluidPipe;
+				
 				LazyOptional<IFluidHandler> output = target.getCapability(ForgeCapabilities.FLUID_HANDLER, mirrored ? front.getClockWise() : front.getCounterClockWise());
-				state.spilling = output.map(out -> {
-					FluidStack fluid = FluidHelper.copyFluid(extracted, extracted.getAmount(), iePipe);
-					int accepted = out.fill(fluid, IFluidHandler.FluidAction.SIMULATE);
-					if(accepted > 0){
-						int drained = out.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), iePipe), IFluidHandler.FluidAction.EXECUTE);
-						return fluid.getAmount() - drained > 0;
-					}else{
-						return true;
-					}
-				}).orElse(true);
+				
+				state.spilling = output.map(out -> iterativeOutput(out, extracted, isIEPipe)).orElse(true);
 				
 			}else{
 				state.spilling = true;
@@ -427,36 +427,61 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		}
 	}
 	
+	/**
+	 * <b>This is a hack!</b><br>
+	 * <br>
+	 * Transfer on IE Pipes is limited to 1000mB in a single tick.
+	 * So this outputs multiple times with <b>10</b> attempts max or until everything is transferred
+	 */
+	private static boolean iterativeOutput(IFluidHandler out, FluidStack extracted, boolean isIEPipe){
+		FluidStack fluid = FluidHelper.copyFluid(extracted, extracted.getAmount(), isIEPipe);
+		
+		int drainedTotal = 0;
+		int attempt = 0;
+		for(;attempt < 10 && fluid.getAmount() > 0;attempt++){
+			int accepted = out.fill(fluid, IFluidHandler.FluidAction.SIMULATE);
+			if(accepted == 0)
+				return true;
+			
+			int drained = out.fill(FluidHelper.copyFluid(fluid, Math.min(fluid.getAmount(), accepted), isIEPipe), IFluidHandler.FluidAction.EXECUTE);
+			fluid = FluidHelper.copyFluid(extracted, fluid.getAmount() - drained, isIEPipe);
+			drainedTotal += drained;
+		}
+		
+		return (extracted.getAmount() - drainedTotal) > 0;
+	}
+	
 	public static void transferGridDataToWell(BlockPos masterPos, DerrickLogic.State state, @Nullable WellTileEntity well){
-		if(well != null){
-			int additionalPipes = 0;
-			List<ColumnPos> list = new ArrayList<>();
-			PipeConfig.Grid grid = state.gridStorage;
-			for(int j = 0;j < grid.getHeight();j++){
-				for(int i = 0;i < grid.getWidth();i++){
-					int type = grid.get(i, j);
-					
-					if(type > 0){
-						switch(type){
-							case PipeConfig.PIPE_PERFORATED:
-							case PipeConfig.PIPE_PERFORATED_FIXED:{
-								int x = i - (grid.getWidth() / 2);
-								int z = j - (grid.getHeight() / 2);
-								ColumnPos pos = new ColumnPos(masterPos.getX() + x, masterPos.getZ() + z);
-								list.add(pos);
-							}
-							case PipeConfig.PIPE_NORMAL:{
-								additionalPipes++;
-							}
+		if(well == null)
+			return;
+		
+		int additionalPipes = 0;
+		List<ColumnPos> list = new ArrayList<>();
+		PipeConfig.Grid grid = state.gridStorage;
+		for(int j = 0;j < grid.getHeight();j++){
+			for(int i = 0;i < grid.getWidth();i++){
+				int type = grid.get(i, j);
+				
+				if(type > 0){
+					switch(type){
+						case PipeConfig.PIPE_PERFORATED:
+						case PipeConfig.PIPE_PERFORATED_FIXED:{
+							int x = i - (grid.getWidth() / 2);
+							int z = j - (grid.getHeight() / 2);
+							ColumnPos pos = new ColumnPos(masterPos.getX() + x, masterPos.getZ() + z);
+							list.add(pos);
+						}
+						case PipeConfig.PIPE_NORMAL:{
+							additionalPipes++;
 						}
 					}
 				}
 			}
-			
-			well.tappedIslands = list;
-			well.additionalPipes = additionalPipes;
-			well.setChanged();
 		}
+		
+		well.tappedIslands = list;
+		well.additionalPipes = additionalPipes;
+		well.setChanged();
 	}
 	
 	private FluidStack getExtractedFluidStack(@Nonnull WellTileEntity well){
@@ -486,9 +511,11 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 				return state.fluidHandler.cast(ctx);
 			}else if(position.equalsOrNullFace(FLUID_OUT))
 				return state.emptyHandler.cast(ctx);
+			
 		}else if(cap == ForgeCapabilities.ENERGY)
 			if(position.equalsOrNullFace(Energy_IN))
 				return state.energyHandler.cast(ctx);
+		
 		return LazyOptional.empty();
 	}
 	
@@ -552,6 +579,8 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 			
 			this.tank.readFromNBT(nbt.getCompound("tank"));
 			
+			this.rsState.readSaveNBT(nbt);
+			
 			ContainerHelper.loadAllItems(nbt, this.inventory);
 		}
 		
@@ -567,6 +596,8 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 			if(this.gridStorage != null){
 				nbt.put("grid", this.gridStorage.toCompound());
 			}
+			
+			this.rsState.writeSaveNBT(nbt);
 			
 			ContainerHelper.saveAllItems(nbt, this.inventory);
 		}

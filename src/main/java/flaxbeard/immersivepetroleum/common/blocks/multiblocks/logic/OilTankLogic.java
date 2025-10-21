@@ -138,27 +138,29 @@ public class OilTankLogic implements IMultiblockLogic<State>, IServerTickableCom
 		
 		boolean wasBalancing = false;
 		if((portStateA == PortState.OUTPUT && portStateC == PortState.INPUT) || (portStateA == PortState.INPUT && portStateC == PortState.OUTPUT)){
-			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_A, EQUALIZING_THRESHOLD, FluidType.BUCKET_VOLUME);
+			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_A, EQUALIZING_THRESHOLD, FluidType.BUCKET_VOLUME * 10);
 		}
 		
 		if((portStateB == PortState.OUTPUT && portStateD == PortState.INPUT) || (portStateB == PortState.INPUT && portStateD == PortState.OUTPUT)){
-			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_B, EQUALIZING_THRESHOLD, FluidType.BUCKET_VOLUME);
+			wasBalancing |= state.equalize(ctx, Port.DYNAMIC_B, EQUALIZING_THRESHOLD, FluidType.BUCKET_VOLUME * 10);
 		}
 		
-		if(state.rsState.isEnabled(ctx)){
+		if(state.rsState.isEnabled(ctx) && state.tank.getFluidAmount() > 0){
 			for(Port port: Port.values()){
+				// Early exit in case this tank emptied while in this loop
+				if(state.tank.getFluidAmount() == 0)
+					break;
+				
 				if((!wasBalancing && state.getPortStateFor(port) == PortState.OUTPUT) || (wasBalancing && port == Port.BOTTOM)){
 					Direction facing = state.getPortDirection(level.getOrientation(), port);
 					BlockPos pos = level.toAbsolute(port.posInMultiblock.posInMultiblock()).relative(facing);
 					
 					FluidUtil.getFluidHandler(level.getRawLevel(), pos, facing.getOpposite()).ifPresent(out -> {
-						if(state.tank.getFluidAmount() > 0){
-							FluidStack fs = FluidHelper.copyFluid(state.tank.getFluid(), Math.min(state.tank.getFluidAmount(), 432), false);
-							int accepted = out.fill(fs, IFluidHandler.FluidAction.SIMULATE);
-							if(accepted > 0){
-								int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), false), IFluidHandler.FluidAction.EXECUTE);
-								state.tank.drain(FluidUtils.copyFluidStackWithAmount(state.tank.getFluid(), drained, false), IFluidHandler.FluidAction.EXECUTE);
-							}
+						FluidStack fs = FluidHelper.copyFluid(state.tank.getFluid(), Math.min(state.tank.getFluidAmount(), 432), false);
+						int accepted = out.fill(fs, IFluidHandler.FluidAction.SIMULATE);
+						if(accepted > 0){
+							int drained = out.fill(FluidHelper.copyFluid(fs, Math.min(fs.getAmount(), accepted), false), IFluidHandler.FluidAction.EXECUTE);
+							state.tank.drain(FluidUtils.copyFluidStackWithAmount(state.tank.getFluid(), drained, false), IFluidHandler.FluidAction.EXECUTE);
 						}
 					});
 				}

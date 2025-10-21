@@ -111,8 +111,12 @@ public class IPRegisters{
 	}
 	
 	public static <S extends IMultiblockState> MultiblockRegistration<S> registerMultiblock(String name, IMultiblockLogic<S> logic, Supplier<TemplateMultiblock> structure, @Nullable Consumer<MultiblockBuilder<S>> extras, BlockBehaviour.Properties prop){
-		MultiblockBuilder<S> builder = new MultiblockBuilder<>(logic, name).structure(structure).defaultBEs(TE_REGISTER).customBlock(BLOCK_REGISTER, ITEM_REGISTER, mb -> new IPMultiblockBase<>(prop, mb), MultiblockItem::new);
-		//.defaultBlock(BLOCK_REGISTER, ITEM_REGISTER, prop);
+		//@formatter:off
+		MultiblockBuilder<S> builder = new MultiblockBuilder<>(logic, name)
+			.structure(structure)
+			.defaultBEs(TE_REGISTER)
+			.customBlock(BLOCK_REGISTER, ITEM_REGISTER, mb -> new IPMultiblockBase<>(prop, mb), MultiblockItem::new);
+		//@formatter:on
 		
 		if(extras != null){
 			extras.accept(builder);

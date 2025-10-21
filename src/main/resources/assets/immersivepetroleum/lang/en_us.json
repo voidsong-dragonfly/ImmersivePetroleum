@@ -158,6 +158,7 @@
 	"gui.immersivepetroleum.derrick.msg.disabled": "Disabled via Controller",
 	"gui.immersivepetroleum.derrick.msg.drilling": "Drilling... %1$s",
 	"gui.immersivepetroleum.derrick.msg.out_of_pipes": "Out Of Pipes",
+	"gui.immersivepetroleum.derrick.msg.not_enough_power": "Not enough Power",
 	"gui.immersivepetroleum.derrick.msg.missing": "Missing %1$s",
 	"gui.immersivepetroleum.derrick.msg.completed": "Drilling Completed!<br>Have a nice day :3",
 	"gui.immersivepetroleum.derrick.msg.safety_valve": "! WARNING !<br>SAFETY VALVE OPEN<br>PRESSURE TOO HIGH",

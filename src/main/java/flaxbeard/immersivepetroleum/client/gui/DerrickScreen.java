@@ -6,11 +6,11 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockB
 import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
+import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
@@ -35,14 +35,14 @@ import java.util.Optional;
 
 public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	static final ResourceLocation GUI_TEXTURE = ResourceUtils.ip("textures/gui/derrick.png");
-	static final int colour_nixieTubeText = 0xff9900;
+	static final int TEXT_COLOUR_NIXIETUBE = 0xFF9900;
+	static final int TEXT_COLOUR_ERROR = 0xEF0000;
 	Button cfgButton;
 	private List<InfoArea> areas;
 	
 	public DerrickScreen(DerrickContainer inventorySlotsIn, Inventory inv, Component title){
 		super(inventorySlotsIn, inv, title);
 		
-		// TODO GUI may either get bigger or smaller as i figure this out
 		this.imageWidth = 200;
 		this.imageHeight = 164;
 	}
@@ -52,15 +52,19 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.leftPos = (this.width - this.imageWidth) / 2;
 		this.topPos = (this.height - this.imageHeight) / 2;
 		
-		this.cfgButton = new Button.Builder(Component.translatable("gui.immersivepetroleum.derrick.msg.config"), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this))).
-				bounds(this.leftPos + 125, this.topPos + 52, 50, 20).
-				tooltip(Tooltip.create(Component.translatable("gui.immersivepetroleum.derrick.msg.set_in_stone"))).build();
+		//@formatter:off
+		this.cfgButton = new Button.Builder(Component.translatable("gui.immersivepetroleum.derrick.msg.config"), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this)))
+			.bounds(this.leftPos + 125, this.topPos + 52, 50, 20)
+			.build();
+		//@formatter:on
 		
 		addRenderableWidget(this.cfgButton);
+		//@formatter:off
 		this.areas = List.of(
 			new FluidInfoArea(getMenu().tank, new Rect2i(leftPos + 11, topPos + 16, 16, 47), 200, 0, 20, 51, GUI_TEXTURE),
 			new EnergyInfoArea(leftPos + 185, topPos + 19, getMenu().energy)
 		);
+		//@formatter:on
 	}
 	
 	@Override
@@ -72,7 +76,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		
 		List<Component> tooltip = new ArrayList<>();
 		
-		for(InfoArea area:areas){
+		for(InfoArea area: areas){
 			area.fillTooltip(mx, my, tooltip);
 		}
 		
@@ -84,7 +88,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	@Override
 	protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int x, int y){
 		if(DerrickContainer.getPos(this.getMenu().pos.get()).getY() <= 62){
-			drawInfoTextCenteredMultiLine(guiGraphics, I18n.get("gui.immersivepetroleum.derrick.msg.water_table"), 0xEF0000);
+			drawInfoTextCenteredMultiLine(guiGraphics, I18n.get("gui.immersivepetroleum.derrick.msg.water_table"), TEXT_COLOUR_ERROR);
 			return;
 		}
 		
@@ -98,21 +102,20 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			if(well != null){
 				if(this.cfgButton.active && well.wellPipeLength > 0){
 					this.cfgButton.active = false;
+					this.cfgButton.setTooltip(Tooltip.create(Component.translatable("gui.immersivepetroleum.derrick.msg.set_in_stone")));
 				}
 				
-				// Possible display prototypes
 				if(well.wellPipeLength < well.getMaxPipeLength()){
 					if(!state.rsState.isEnabled(ctx)){
-						drawInfoTextCentered(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.disabled"), 0, 0xEF0000);
+						drawInfoTextCentered(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.disabled"), 0, TEXT_COLOUR_ERROR);
 						return;
 					}
 					
 					if(state.drilling){
 						String str = String.format(Locale.ROOT, "(%d%%)", (int) (100 * well.wellPipeLength / (float) well.getMaxPipeLength()));
-						drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.drilling", str), 0);
-						return;
+						drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.drilling", str), TEXT_COLOUR_NIXIETUBE);
 					}else if(well.pipes <= 0 && !this.menu.getSlot(0).hasItem()){
-						drawInfoTextCentered(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.out_of_pipes"), 3, 0xEF0000);
+						drawInfoTextCentered(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.out_of_pipes"), 1, TEXT_COLOUR_ERROR);
 						return;
 					}
 					
@@ -120,23 +123,29 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 						int realPipeLength = (level.getAbsoluteOrigin().getY() - 1) - well.getBlockPos().getY();
 						int concreteNeeded = (DerrickLogic.REQUIRED_CONCRETE_AMOUNT * (realPipeLength - well.wellPipeLength));
 						if(concreteNeeded > 0){
-							drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(concreteNeeded) + "mB"), 0, 0xEF0000);
-							drawInfoText(guiGraphics, ExternalModContent.getIEFluid_Concrete(1).getDisplayName(), 1, 0xEF0000);
+							drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(concreteNeeded) + "mB"), 0, TEXT_COLOUR_ERROR);
+							drawInfoText(guiGraphics, ExternalModContent.getIEFluid_Concrete(1).getDisplayName(), 1, TEXT_COLOUR_ERROR);
 							return;
 						}
 						
 						int waterNeeded = DerrickLogic.REQUIRED_WATER_AMOUNT * (well.getMaxPipeLength() - well.wellPipeLength);
 						if(waterNeeded > 0){
-							drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(waterNeeded) + "mB"), 0, 0xEF0000);
-							drawInfoText(guiGraphics, new FluidStack(Fluids.WATER, 1).getDisplayName(), 1, 0xEF0000);
+							drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(waterNeeded) + "mB"), 0, TEXT_COLOUR_ERROR);
+							drawInfoText(guiGraphics, new FluidStack(Fluids.WATER, 1).getDisplayName(), 1, TEXT_COLOUR_ERROR);
 							return;
 						}
 					}
+					
+					if(getMenu().energy.getEnergyStored() < IPServerConfig.EXTRACTION.derrick_consumption.get()){
+						drawInfoTextCentered(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.not_enough_power"), 3, TEXT_COLOUR_ERROR);
+						return;
+					}
+					
 				}else{
 					if(state.spilling){
-						drawInfoTextCenteredMultiLine(guiGraphics, I18n.get("gui.immersivepetroleum.derrick.msg.safety_valve"), 0xEF0000);
+						drawInfoTextCenteredMultiLine(guiGraphics, I18n.get("gui.immersivepetroleum.derrick.msg.safety_valve"), TEXT_COLOUR_ERROR);
 					}else{
-						drawInfoTextCenteredMultiLine(guiGraphics, I18n.get("gui.immersivepetroleum.derrick.msg.completed"), colour_nixieTubeText);
+						drawInfoTextCenteredMultiLine(guiGraphics, I18n.get("gui.immersivepetroleum.derrick.msg.completed"), TEXT_COLOUR_NIXIETUBE);
 					}
 				}
 			}
@@ -144,7 +153,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	}
 	
 	private void drawInfoText(GuiGraphics guiGraphics, Component text, int line){
-		drawInfoText(guiGraphics, text, line, colour_nixieTubeText);
+		drawInfoText(guiGraphics, text, line, TEXT_COLOUR_NIXIETUBE);
 	}
 	
 	private void drawInfoText(GuiGraphics guiGraphics, Component text, int line, int color){
@@ -153,7 +162,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	
 	@SuppressWarnings("unused")
 	private void drawInfoTextCentered(GuiGraphics guiGraphics, Component text, int line){
-		drawInfoTextCentered(guiGraphics, text, line, colour_nixieTubeText);
+		drawInfoTextCentered(guiGraphics, text, line, TEXT_COLOUR_NIXIETUBE);
 	}
 	
 	private void drawInfoTextCentered(GuiGraphics guiGraphics, Component text, int line, int color){

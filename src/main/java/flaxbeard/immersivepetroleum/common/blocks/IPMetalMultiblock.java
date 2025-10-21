@@ -52,7 +52,7 @@ public class IPMetalMultiblock<T extends IMultiblockState & IPCommonTickableTile
 					return InteractionResult.FAIL;
 				}
 				
-				// TODO Check that this is somewhere in a working state
+				// TODO Get this working again (ICanSkipGUI)
 				/*if(!player.isShiftKeyDown()){
 					if(player instanceof ServerPlayer serverPlayer){
 						if(menuProvider instanceof IHasGUIInteraction<?> interaction){
