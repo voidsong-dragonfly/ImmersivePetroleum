@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillatio
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
@@ -24,16 +25,12 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 public class DistillationTowerProcess extends MultiblockProcessInMachine<DistillationTowerRecipe>{
-	private final DistillationTowerLogic.Tanks tanks;
-	
-	public DistillationTowerProcess(DistillationTowerRecipe recipe, DistillationTowerLogic.Tanks tanks, int... inputSlots){
+	public DistillationTowerProcess(DistillationTowerRecipe recipe, int... inputSlots){
 		super(recipe, inputSlots);
-		this.tanks = tanks;
 	}
 	
-	public DistillationTowerProcess(BiFunction<Level, ResourceLocation, DistillationTowerRecipe> recipe, CompoundTag data, DistillationTowerLogic.Tanks tanks){
+	public DistillationTowerProcess(BiFunction<Level, ResourceLocation, DistillationTowerRecipe> recipe, CompoundTag data){
 		super(recipe, data);
-		this.tanks = tanks;
 	}
 	
 	@Override
@@ -41,43 +38,38 @@ public class DistillationTowerProcess extends MultiblockProcessInMachine<Distill
 		return Collections.emptyList();
 	}
 	
-	/*
 	@Override
-	public boolean canProcess(ProcessContext.ProcessContextInMachine<DistillationTowerRecipe> context, Level level){
-	
-	}
-	*/
-	
-	@Override
-	protected void outputItem(ProcessContext.ProcessContextInMachine<DistillationTowerRecipe> context, ItemStack output, IMultiblockLevel level){
-		MultiblockOrientation orientation = level.getOrientation();
+	protected void outputItem(ProcessContext.ProcessContextInMachine<DistillationTowerRecipe> context, ItemStack output, IMultiblockLevel mbLevel){
+		final Level rawLevel = mbLevel.getRawLevel();
 		
-		Direction outputdir = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
-		BlockPos outputpos = level.toAbsolute(DistillationTowerLogic.Item_OUT).relative(outputdir);
+		MultiblockOrientation orientation = mbLevel.getOrientation();
 		
-		BlockEntity te = level.getBlockEntity(outputpos);
+		Direction outDir = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
+		BlockPos outPos = mbLevel.toAbsolute(DistillationTowerLogic.Item_OUT).relative(outDir);
+		
+		BlockEntity te = rawLevel.getBlockEntity(outPos);
 		if(te != null){
-			LazyOptional<IItemHandler> handler = te.getCapability(ForgeCapabilities.ITEM_HANDLER, outputdir.getOpposite());
+			LazyOptional<IItemHandler> handler = te.getCapability(ForgeCapabilities.ITEM_HANDLER, outDir.getOpposite());
 			ItemStack finalOutput = output;
 			output = handler.map(outputHandler -> ItemHandlerHelper.insertItem(outputHandler, finalOutput, false)).orElse(ItemStack.EMPTY);
 		}
 		
 		if(!output.isEmpty()){
-			double x = outputpos.getX() + 0.5;
-			double y = outputpos.getY() + 0.25;
-			double z = outputpos.getZ() + 0.5;
+			double x = outPos.getX() + 0.5;
+			double y = outPos.getY() + 0.25;
+			double z = outPos.getZ() + 0.5;
 			
 			Direction facing = orientation.mirrored() ? orientation.front().getOpposite() : orientation.front();
 			if(facing != Direction.EAST && facing != Direction.WEST){
-				x = outputpos.getX() + (facing == Direction.SOUTH ? 0.15 : 0.85);
+				x = outPos.getX() + (facing == Direction.SOUTH ? 0.15 : 0.85);
 			}
 			if(facing != Direction.NORTH && facing != Direction.SOUTH){
-				z = outputpos.getZ() + (facing == Direction.WEST ? 0.15 : 0.85);
+				z = outPos.getZ() + (facing == Direction.WEST ? 0.15 : 0.85);
 			}
 			
-			ItemEntity ei = new ItemEntity(level.getRawLevel(), x, y, z, output.copy());
-			ei.setDeltaMovement(0.075 * outputdir.getStepX(), 0.025, 0.075 * outputdir.getStepZ());
-			level.getRawLevel().addFreshEntity(ei);
+			ItemEntity ei = new ItemEntity(rawLevel, x, y, z, output.copy());
+			ei.setDeltaMovement(0.075 * outDir.getStepX(), 0.025, 0.075 * outDir.getStepZ());
+			rawLevel.addFreshEntity(ei);
 		}
 	}
 }

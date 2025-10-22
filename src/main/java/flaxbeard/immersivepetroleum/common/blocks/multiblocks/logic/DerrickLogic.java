@@ -256,6 +256,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 					}
 				}
 			}
+			
 			if(well != null && well.wellPipeLength == well.getMaxPipeLength())
 				outputReservoirFluid(level, state, level.toAbsolute(FLUID_OUT.posInMultiblock()), context);
 		}
@@ -567,6 +568,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 			this.drilling = nbt.getBoolean("drilling");
 			this.spilling = nbt.getBoolean("spilling");
 			this.clientFlow = nbt.getInt("spillflow");
+			
 			try{
 				this.fluidSpilled = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillingfluid")));
 			}catch(ResourceLocationException rle){
@@ -602,19 +604,14 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 			ContainerHelper.saveAllItems(nbt, this.inventory);
 		}
 		
-		//TODO: I don't think this is the proper method. But looks like it works.
 		@Override
 		public void readSyncNBT(CompoundTag nbt){
 			readSaveNBT(nbt);
-			//this.drilling = nbt.getBoolean("drilling");
-			//this.spilling = nbt.getBoolean("spilling");
 		}
 		
 		@Override
 		public void writeSyncNBT(CompoundTag nbt){
 			writeSaveNBT(nbt);
-			//nbt.putBoolean("drilling", this.drilling);
-			//nbt.putBoolean("spilling", this.spilling);
 		}
 		
 		private int getReservoirFlow(){

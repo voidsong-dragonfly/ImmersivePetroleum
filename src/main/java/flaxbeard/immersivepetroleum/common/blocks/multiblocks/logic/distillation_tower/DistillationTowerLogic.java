@@ -99,18 +99,23 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		final IMultiblockLevel level = context.getLevel();
 		final boolean rsEnabled = state.rsState.isEnabled(context);
 		
+		boolean update = false;
+		
+		if(state.wasActive && state.cooldownTicks == 0){
+			state.wasActive = false;
+			update = true;
+		}
+		
 		if(state.cooldownTicks > 0){
 			state.cooldownTicks--;
 		}
-		
-		boolean update = false;
 		
 		if(rsEnabled){
 			if(state.energy.getEnergyStored() > 0 && state.processor.getQueueSize() < state.processor.getMaxQueueSize()){
 				if(state.tanks.input().getFluidAmount() > 0){
 					DistillationTowerRecipe recipe = DistillationTowerRecipe.findRecipe(state.tanks.input().getFluid());
 					if(recipe != null && state.tanks.input().getFluidAmount() >= recipe.getInputFluid().getAmount() && state.energy.getEnergyStored() >= recipe.getTotalProcessEnergy() / recipe.getTotalProcessTime()){
-						MultiblockProcessInMachine<DistillationTowerRecipe> process = new DistillationTowerProcess(recipe, state.tanks).setInputTanks(TANK_INPUT);
+						MultiblockProcessInMachine<DistillationTowerRecipe> process = new DistillationTowerProcess(recipe).setInputTanks(TANK_INPUT);
 						if(state.processor.addProcessToQueue(process, level.getRawLevel(), true)){
 							state.processor.addProcessToQueue(process, level.getRawLevel(), false);
 							update = true;
@@ -123,10 +128,8 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 				state.wasActive = true;
 				state.cooldownTicks = 10;
 				update = true;
-			}else if(state.wasActive){
-				state.wasActive = false;
-				update = true;
 			}
+			
 			state.processor.tickServer(state, level, state.wasActive);
 		}
 		
@@ -187,7 +190,7 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 			BlockPos outPos = level.toAbsolute(Fluid_OUT.posInMultiblock()).relative(orientation.front().getOpposite());
 			update |= FluidUtil.getFluidHandler(level.getRawLevel(), outPos, orientation.front()).map(output -> {
 				boolean ret = false;
-				if(state.tanks.input().fluids.size() > 0){
+				if(!state.tanks.input().fluids.isEmpty()){
 					List<FluidStack> toDrain = new ArrayList<>();
 					boolean iePipe = level.getRawLevel().getBlockEntity(outPos) instanceof IFluidPipe;
 					
@@ -249,6 +252,8 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		
 		public NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 		public final Tanks tanks = new Tanks();
+		
+		/** Flickering avoidance for the "On" Texture overlay */
 		public int cooldownTicks = 0;
 		public boolean wasActive = false;
 		
@@ -295,10 +300,12 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 			this.tanks.readNBT(nbt.getCompound("tanks"));
 			this.energy.deserializeNBT(nbt.getCompound("energy"));
 			this.cooldownTicks = nbt.getInt("cooldownTicks");
-			this.processor.fromNBT(nbt.getCompound("recipeworker"), (getRecipe, data) -> new DistillationTowerProcess(getRecipe, data, tanks));
+			this.processor.fromNBT(nbt.getCompound("recipeworker"), DistillationTowerProcess::new);
 			
 			this.inventory = readInventory(nbt.getCompound("inventory"));
-			rsState.readSaveNBT(nbt);
+			this.rsState.readSaveNBT(nbt);
+			
+			this.wasActive = nbt.getBoolean("wasActive");
 		}
 		
 		@Override
@@ -309,29 +316,19 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 			nbt.put("recipeworker", this.processor.toNBT());
 			
 			nbt.put("inventory", writeInventory(this.inventory));
-			rsState.writeSaveNBT(nbt);
+			this.rsState.writeSaveNBT(nbt);
+			
+			nbt.putBoolean("wasActive", this.wasActive);
 		}
 		
 		@Override
 		public void readSyncNBT(CompoundTag nbt){
-			this.tanks.readNBT(nbt.getCompound("tanks"));
-			this.energy.deserializeNBT(nbt.getCompound("energy"));
-			this.cooldownTicks = nbt.getInt("cooldownTicks");
-			this.processor.fromNBT(nbt.getCompound("recipeworker"), (getRecipe, data) -> new DistillationTowerProcess(getRecipe, data, tanks));
-			
-			this.inventory = readInventory(nbt.getCompound("inventory"));
-			rsState.readSyncNBT(nbt);
+			readSaveNBT(nbt);
 		}
 		
 		@Override
 		public void writeSyncNBT(CompoundTag nbt){
-			nbt.put("tanks", this.tanks.writeNBT());
-			nbt.put("energy", this.energy.serializeNBT());
-			nbt.putInt("cooldownTicks", this.cooldownTicks);
-			nbt.put("recipeworker", this.processor.toNBT());
-			
-			nbt.put("inventory", writeInventory(this.inventory));
-			rsState.writeSyncNBT(nbt);
+			writeSaveNBT(nbt);
 		}
 		
 		protected NonNullList<ItemStack> readInventory(CompoundTag nbt){
