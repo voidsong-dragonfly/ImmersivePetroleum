@@ -86,13 +86,12 @@ public class CokerUnitRecipe extends IPMultiblockRecipe{
 	public final FluidTagInput inputFluid;
 	
 	public CokerUnitRecipe(ResourceLocation id, Lazy<ItemStack> outputItem2, FluidStack outputFluid, IngredientWithSize inputItem, FluidTagInput inputFluid, int energy, int time){
-		super(ItemStack.EMPTY, IPRecipeTypes.COKER, id);
+		super(IPRecipeTypes.COKER, id, time, energy);
 		this.inputFluid = inputFluid;
 		this.inputItem = inputItem;
 		this.outputFluid = outputFluid;
 		this.outputItem = outputItem2.get();
 		
-		timeAndEnergy(time, energy);
 		modifyTimeAndEnergy(IPServerConfig.REFINING.cokerUnit_timeModifier::get, IPServerConfig.REFINING.cokerUnit_energyModifier::get);
 	}
 	

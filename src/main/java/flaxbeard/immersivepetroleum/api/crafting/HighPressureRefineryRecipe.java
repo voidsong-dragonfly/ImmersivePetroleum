@@ -92,7 +92,7 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 	 * @param time                duration of the recipe
 	 */
 	public HighPressureRefineryRecipe(ResourceLocation id, FluidStack output, ItemStack outputItem, FluidTagInput inputFluid, @Nullable FluidTagInput inputFluidSecondary, double chance, int energy, int time){
-		super(ItemStack.EMPTY, IPRecipeTypes.HYDROTREATER, id);
+		super(IPRecipeTypes.HYDROTREATER, id, time, energy);
 		this.output = output;
 		this.outputItem = outputItem;
 		this.inputFluid = inputFluid;
@@ -102,7 +102,6 @@ public class HighPressureRefineryRecipe extends IPMultiblockRecipe{
 		this.fluidOutputList = Collections.singletonList(output);
 		this.fluidInputList = Arrays.asList(inputFluidSecondary != null ? new FluidTagInput[]{inputFluid, inputFluidSecondary} : new FluidTagInput[]{inputFluid});
 		
-		timeAndEnergy(time, energy);
 		modifyTimeAndEnergy(IPServerConfig.REFINING.hydrotreater_timeModifier::get, IPServerConfig.REFINING.hydrotreater_energyModifier::get);
 	}
 	

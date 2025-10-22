@@ -52,7 +52,7 @@ public class DistillationTowerRecipe extends IPMultiblockRecipe{
 	protected final double[] chances;
 	
 	public DistillationTowerRecipe(ResourceLocation id, FluidStack[] fluidOutput, ItemStack[] itemOutput, FluidTagInput input, int energy, int time, double[] chances){
-		super(ItemStack.EMPTY, IPRecipeTypes.DISTILLATION, id);
+		super(IPRecipeTypes.DISTILLATION, id, time, energy);
 		this.fluidOutput = fluidOutput;
 		this.itemOutput = itemOutput;
 		this.chances = chances;
@@ -62,7 +62,6 @@ public class DistillationTowerRecipe extends IPMultiblockRecipe{
 		this.fluidOutputList = Arrays.asList(this.fluidOutput);
 		this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, itemOutput));
 		
-		timeAndEnergy(time, energy);
 		modifyTimeAndEnergy(IPServerConfig.REFINING.distillationTower_timeModifier::get, IPServerConfig.REFINING.distillationTower_energyModifier::get);
 	}
 	
