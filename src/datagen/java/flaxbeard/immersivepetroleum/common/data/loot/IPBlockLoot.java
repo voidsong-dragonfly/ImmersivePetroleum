@@ -31,8 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class IPBlockLoot extends BlockLootSubProvider
-{
+public class IPBlockLoot extends BlockLootSubProvider{
 	private static final Set<Item> EXPLOSION_RESISTANT = Stream.of(
 					Blocks.DRAGON_EGG,
 					Blocks.BEACON,
@@ -67,10 +66,9 @@ public class IPBlockLoot extends BlockLootSubProvider
 	public IPBlockLoot() {
 		super(EXPLOSION_RESISTANT, FeatureFlags.REGISTRY.allFlags());
 	}
-
+	
 	@Override
-	protected void generate()
-	{
+	protected void generate(){
 		registerSelfDropping(IPContent.Blocks.ASPHALT.get());
 		createSlabItemTable(IPContent.Blocks.ASPHALT_SLAB.get());
 		registerSelfDropping(IPContent.Blocks.ASPHALT_STAIR.get());
@@ -89,10 +87,9 @@ public class IPBlockLoot extends BlockLootSubProvider
 		registerMultiblock(IPContent.Multiblock.DERRICK.block().get());
 		registerMultiblock(IPContent.Multiblock.OILTANK.block().get());
 	}
-
+	
 	@Override
-	protected Iterable<Block> getKnownBlocks()
-	{
+	protected Iterable<Block> getKnownBlocks(){
 		return IPRegisters.BLOCK_REGISTER.getEntries().
 				stream().
 				map(RegistryObject::get).

@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.data;
 
-
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.data.models.NongeneratedModels;
@@ -10,7 +9,12 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.blocks.metal.FlarestackBlock;
 import flaxbeard.immersivepetroleum.common.blocks.metal.GasGeneratorBlock;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.*;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.CokerUnitMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DerrickMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DistillationTowerMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.HydroTreaterMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.OilTankMultiblock;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
@@ -34,7 +38,12 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -262,8 +271,7 @@ public class IPBlockStates extends BlockStateProvider{
 		return split;
 	}
 	
-	private void loadTemplateFor(TemplateMultiblock mb)
-	{
+	private void loadTemplateFor(TemplateMultiblock mb){
 		final ResourceLocation name = mb.getUniqueName();
 		if(TemplateMultiblock.SYNCED_CLIENT_TEMPLATES.containsKey(name))
 			return;
@@ -274,19 +282,16 @@ public class IPBlockStates extends BlockStateProvider{
 				name.getNamespace(),
 				filePath.substring(slash+1)
 		);
-		try
-		{
+		try{
 			final Resource resource = exFileHelper.getResource(shortLoc, PackType.SERVER_DATA, "", prefix);
-			try(final InputStream input = resource.open())
-			{
+			try(final InputStream input = resource.open()){
 				final CompoundTag nbt = NbtIo.readCompressed(input);
 				final StructureTemplate template = new StructureTemplate();
 				template.load(BuiltInRegistries.BLOCK.asLookup(), nbt);
 				TemplateMultiblock.SYNCED_CLIENT_TEMPLATES.put(name, template);
 			}
-		} catch(IOException e)
-		{
-			throw new RuntimeException("Failed on "+name, e);
+		}catch(IOException e){
+			throw new RuntimeException("Failed on " + name, e);
 		}
 	}
 	
@@ -379,14 +384,10 @@ public class IPBlockStates extends BlockStateProvider{
 		}
 	}
 	
-	/**
-	 * From {@link blusunrize.immersiveengineering.common.data.BlockStates}
-	 */
 	private void createMultiblock(Block b, ModelFile masterModel, ModelFile mirroredModel, ResourceLocation particleTexture){
 		createMultiblock(b, masterModel, mirroredModel, IEProperties.MULTIBLOCKSLAVE, IEProperties.FACING_HORIZONTAL, IEProperties.MIRRORED, 180, particleTexture);
 	}
 	
-	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} */
 	private void createMultiblock(Block b, ModelFile masterModel, @Nullable ModelFile mirroredModel, Property<Boolean> isSlave, EnumProperty<Direction> facing, @Nullable Property<Boolean> mirroredState, int rotationOffset, ResourceLocation particleTex){
 		Preconditions.checkArgument((mirroredModel == null) == (mirroredState == null));
 		VariantBlockStateBuilder builder = getVariantBuilder(b);
@@ -424,7 +425,7 @@ public class IPBlockStates extends BlockStateProvider{
 			}
 	}
 	
-	/** From {@link blusunrize.immersiveengineering.common.data.BlockStates} */
+	/** From {@link blusunrize.immersiveengineering.data.blockstates.ExtendedBlockstateProvider} */
 	private int getAngle(Direction dir, int offset){
 		return (int) ((dir.toYRot() + offset) % 360);
 	}

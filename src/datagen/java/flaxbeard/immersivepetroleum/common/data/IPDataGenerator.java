@@ -55,7 +55,7 @@ public class IPDataGenerator{
 				}
 			}
 
-			generator.addProvider(true, new IPMultiblockTextutesAttach(generator.getPackOutput(), exhelper));
+			generator.addProvider(true, new IPMultiblockTexturesAttach(generator.getPackOutput(), exhelper));
 			//IPBiomeModifierProvider.method(generator, exhelper, d -> generator.addProvider(true, d));
 		}
 	}
