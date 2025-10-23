@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
 import blusunrize.immersiveengineering.common.gui.sync.GetterAndSetter;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.CokerUnitMultiblock;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.coker.CokerUnitLogic;
 import flaxbeard.immersivepetroleum.common.gui.IPSlot.FluidContainer.FluidFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;

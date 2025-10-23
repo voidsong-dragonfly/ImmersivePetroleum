@@ -103,7 +103,7 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 								inputAmounts = new int[]{recipe.getInputFluid().getAmount()};
 							}
 							
-							MultiblockProcessInMachine<HighPressureRefineryRecipe> process = new HydroTreaterProcess(recipe, state.tanks).setInputTanks(inputs).setInputAmounts(inputAmounts);
+							MultiblockProcessInMachine<HighPressureRefineryRecipe> process = new HydroTreaterProcess(recipe).setInputTanks(inputs).setInputAmounts(inputAmounts);
 							if(state.processor.addProcessToQueue(process, level, true)){
 								state.processor.addProcessToQueue(process, level, false);
 								update = true;
@@ -200,41 +200,35 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 			nbt.put("tanks", this.tanks.writeNBT());
 			nbt.put("energy", this.energy.serializeNBT());
 			nbt.put("processor", this.processor.toNBT());
-			rsState.writeSaveNBT(nbt);
+			this.rsState.writeSaveNBT(nbt);
 		}
 		
 		@Override
 		public void readSaveNBT(CompoundTag nbt){
 			this.tanks.readNBT(nbt.getCompound("tanks"));
 			this.energy.deserializeNBT(nbt.getCompound("energy"));
-			this.processor.fromNBT(nbt.get("processor"), (getRecipe, data) -> new HydroTreaterProcess(getRecipe, data, tanks));
-			rsState.readSaveNBT(nbt);
+			this.processor.fromNBT(nbt.get("processor"), HydroTreaterProcess::new);
+			this.rsState.readSaveNBT(nbt);
 		}
 		
 		@Override
 		public void writeSyncNBT(CompoundTag nbt){
-			nbt.put("tanks", this.tanks.writeNBT());
-			nbt.put("energy", this.energy.serializeNBT());
-			nbt.put("processor", this.processor.toNBT());
-			rsState.writeSyncNBT(nbt);
+			writeSaveNBT(nbt);
 		}
 		
 		@Override
 		public void readSyncNBT(CompoundTag nbt){
-			this.tanks.readNBT(nbt.getCompound("tanks"));
-			this.energy.deserializeNBT(nbt.getCompound("energy"));
-			this.processor.fromNBT(nbt.get("processor"), (getRecipe, data) -> new HydroTreaterProcess(getRecipe, data, tanks));
-			rsState.readSyncNBT(nbt);
+			readSaveNBT(nbt);
 		}
 		
 		@Override
 		public AveragingEnergyStorage getEnergy(){
-			return energy;
+			return this.energy;
 		}
 		
 		@Override
 		public IFluidTank[] getInternalTanks(){
-			return tanks.asArray();
+			return this.tanks.asArray();
 		}
 		
 		@Override

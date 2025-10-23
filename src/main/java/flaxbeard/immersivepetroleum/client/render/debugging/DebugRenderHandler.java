@@ -23,9 +23,10 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionPos;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.coker.CokerUnitLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.OilTankLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.coker.CokingChamber;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillation_tower.DistillationTowerLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.hydro_treater.HydroTreaterLogic;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
@@ -557,8 +558,8 @@ public class DebugRenderHandler{
 			text.add(toText("Out Buffer: " + (fs.getAmount() + "/" + tank.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
 		}
 		
-		for(int i = 0;i < coker.getState().chambers.asArray().length;i++){
-			CokerUnitLogic.CokingChamber chamber = coker.getState().chambers.asArray()[i];
+		for(int i = 0;i < coker.getState().chambers.get().length;i++){
+			CokingChamber chamber = coker.getState().chambers.get()[i];
 			FluidTank tank = chamber.getTank();
 			FluidStack fs = tank.getFluid();
 			

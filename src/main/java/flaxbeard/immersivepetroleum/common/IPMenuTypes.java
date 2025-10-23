@@ -1,7 +1,7 @@
 package flaxbeard.immersivepetroleum.common;
 
 import blusunrize.immersiveengineering.common.register.IEMenuTypes;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.coker.CokerUnitLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillation_tower.DistillationTowerLogic;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.hydro_treater.HydroTreaterLogic;

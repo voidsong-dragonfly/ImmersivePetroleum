@@ -3,7 +3,7 @@ package flaxbeard.immersivepetroleum.client.gui.elements;
 import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import flaxbeard.immersivepetroleum.client.gui.CokerUnitScreen;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.coker.CokingChamber;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -11,10 +11,10 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 
 public class CokerChamberInfoArea extends InfoArea{
-	private final CokerUnitLogic.CokingChamber chamber;
+	private final CokingChamber chamber;
 	private final FluidInfoArea fluidDisplay;
 	
-	public CokerChamberInfoArea(CokerUnitLogic.CokingChamber chamber, Rect2i area){
+	public CokerChamberInfoArea(CokingChamber chamber, Rect2i area){
 		super(area);
 		this.chamber = chamber;
 		this.fluidDisplay = new FluidInfoArea(

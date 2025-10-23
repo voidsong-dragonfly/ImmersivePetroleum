@@ -349,7 +349,7 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		}
 	}
 	
-	public static record Tanks(MultiFluidTankFiltered input, MultiFluidTankFiltered output) implements IReadWriteNBT{
+	public record Tanks(MultiFluidTankFiltered input, MultiFluidTankFiltered output) implements IReadWriteNBT{
 		public static final int CAPACITY = 24 * FluidType.BUCKET_VOLUME;
 		
 		public Tanks(){

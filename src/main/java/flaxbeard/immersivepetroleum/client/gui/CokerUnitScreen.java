@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.client.gui.info.FluidInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
 import flaxbeard.immersivepetroleum.client.gui.elements.CokerChamberInfoArea;
 import flaxbeard.immersivepetroleum.client.gui.elements.EnergyDisplay;
-import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.CokerUnitLogic;
+import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.coker.CokerUnitLogic;
 import flaxbeard.immersivepetroleum.common.gui.CokerUnitContainer;
 import flaxbeard.immersivepetroleum.common.gui.DerrickContainer;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
@@ -41,8 +41,7 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 		BlockEntity masterCoker = this.menu.level.getBlockEntity(DerrickContainer.getPos(this.menu.pos.get()));
 		
 		if(masterCoker instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper().getContext().getState() instanceof CokerUnitLogic.State state){
-			CokerUnitLogic.Chambers chambers = state.chambers;
-			
+			//@formatter:off
 			return List.of(
 					new FluidInfoArea(
 							this.getMenu().tanks.input(),
@@ -57,9 +56,10 @@ public class CokerUnitScreen extends IEContainerScreen<CokerUnitContainer>{
 							GUI_TEXTURE
 					),
 					new EnergyDisplay(this.leftPos + 168, this.topPos + 67, 7, 21, this.getMenu().energy),
-					new CokerChamberInfoArea(chambers.primary(), new Rect2i(this.leftPos + 74, this.topPos + 24, 6, 38)),
-					new CokerChamberInfoArea(chambers.secondary(), new Rect2i(this.leftPos + 120, this.topPos + 24, 6, 38))
+					new CokerChamberInfoArea(state.chambers.primary(), new Rect2i(this.leftPos + 74, this.topPos + 24, 6, 38)),
+					new CokerChamberInfoArea(state.chambers.secondary(), new Rect2i(this.leftPos + 120, this.topPos + 24, 6, 38))
 			);
+			//@formatter:off
 		}
 		return List.of();
 	}

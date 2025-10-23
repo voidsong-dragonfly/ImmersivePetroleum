@@ -22,58 +22,49 @@ import java.util.function.BiFunction;
 
 public class HydroTreaterProcess extends MultiblockProcessInMachine<HighPressureRefineryRecipe>{
 	
-	private final HydroTreaterLogic.Tanks tanks;
-	
-	public HydroTreaterProcess(HighPressureRefineryRecipe recipe, HydroTreaterLogic.Tanks tanks, int... inputSlots){
+	public HydroTreaterProcess(HighPressureRefineryRecipe recipe, int... inputSlots){
 		super(recipe, inputSlots);
-		this.tanks = tanks;
 	}
 	
-	public HydroTreaterProcess(BiFunction<Level, ResourceLocation, HighPressureRefineryRecipe> recipe, CompoundTag data, HydroTreaterLogic.Tanks tanks){
+	public HydroTreaterProcess(BiFunction<Level, ResourceLocation, HighPressureRefineryRecipe> recipe, CompoundTag data){
 		super(recipe, data);
-		this.tanks = tanks;
 	}
 	
-	/*
 	@Override
-	public boolean canProcess(ProcessContext.ProcessContextInMachine<HighPressureRefineryRecipe> context, Level level){
-	
-	}
-	*/
-	
-	@Override
-	protected void outputItem(ProcessContext.ProcessContextInMachine<HighPressureRefineryRecipe> ctx, ItemStack output, IMultiblockLevel level){
+	protected void outputItem(ProcessContext.ProcessContextInMachine<HighPressureRefineryRecipe> ctx, ItemStack output, IMultiblockLevel mbLevel){
 		if(output == null || output.isEmpty())
 			return;
 		
-		MultiblockOrientation orientation = level.getOrientation();
+		final Level rawLevel = mbLevel.getRawLevel();
 		
-		Direction outputdir = (orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise());
-		BlockPos outputpos = level.toAbsolute(HydroTreaterLogic.Item_OUT).relative(outputdir);
+		MultiblockOrientation orientation = mbLevel.getOrientation();
 		
-		BlockEntity te = level.getBlockEntity(outputpos);
+		Direction outDir = (orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise());
+		BlockPos outPos = mbLevel.toAbsolute(HydroTreaterLogic.Item_OUT).relative(outDir);
+		
+		BlockEntity te = rawLevel.getBlockEntity(outPos);
 		if(te != null){
-			LazyOptional<IItemHandler> handler = te.getCapability(ForgeCapabilities.ITEM_HANDLER, outputdir.getOpposite());
+			LazyOptional<IItemHandler> handler = te.getCapability(ForgeCapabilities.ITEM_HANDLER, outDir.getOpposite());
 			ItemStack finalOutput = output;
 			output = handler.map(itemHandler -> ItemHandlerHelper.insertItem(itemHandler, finalOutput, false)).orElse(ItemStack.EMPTY);
 		}
 		
 		if(!output.isEmpty()){
-			double x = outputpos.getX() + 0.5;
-			double y = outputpos.getY() + 0.25;
-			double z = outputpos.getZ() + 0.5;
+			double x = outPos.getX() + 0.5;
+			double y = outPos.getY() + 0.25;
+			double z = outPos.getZ() + 0.5;
 			
 			Direction facing = orientation.mirrored() ? orientation.front().getOpposite() : orientation.front();
 			if(facing != Direction.EAST && facing != Direction.WEST){
-				x = outputpos.getX() + (facing == Direction.SOUTH ? 0.15 : 0.85);
+				x = outPos.getX() + (facing == Direction.SOUTH ? 0.15 : 0.85);
 			}
 			if(facing != Direction.NORTH && facing != Direction.SOUTH){
-				z = outputpos.getZ() + (facing == Direction.WEST ? 0.15 : 0.85);
+				z = outPos.getZ() + (facing == Direction.WEST ? 0.15 : 0.85);
 			}
 			
-			ItemEntity ei = new ItemEntity(level.getRawLevel(), x, y, z, output.copy());
-			ei.setDeltaMovement(0.075 * outputdir.getStepX(), 0.025, 0.075 * outputdir.getStepZ());
-			level.getRawLevel().addFreshEntity(ei);
+			ItemEntity ei = new ItemEntity(rawLevel, x, y, z, output.copy());
+			ei.setDeltaMovement(0.075 * outDir.getStepX(), 0.025, 0.075 * outDir.getStepZ());
+			rawLevel.addFreshEntity(ei);
 		}
 	}
 }

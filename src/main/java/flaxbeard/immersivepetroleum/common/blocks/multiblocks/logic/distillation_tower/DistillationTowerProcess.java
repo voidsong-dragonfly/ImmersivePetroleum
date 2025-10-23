@@ -40,6 +40,9 @@ public class DistillationTowerProcess extends MultiblockProcessInMachine<Distill
 	
 	@Override
 	protected void outputItem(ProcessContext.ProcessContextInMachine<DistillationTowerRecipe> context, ItemStack output, IMultiblockLevel mbLevel){
+		if(output == null || output.isEmpty())
+			return;
+		
 		final Level rawLevel = mbLevel.getRawLevel();
 		
 		MultiblockOrientation orientation = mbLevel.getOrientation();
