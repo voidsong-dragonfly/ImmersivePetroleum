@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.api.crafting.builders;
 
-import java.util.Objects;
-
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
@@ -11,6 +9,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.Objects;
 
 public class CokerUnitRecipeBuilder extends IEFinishedRecipe<CokerUnitRecipeBuilder>{
 	public static CokerUnitRecipeBuilder builder(ItemStack output, TagKey<Fluid> outputFluid, int fluidOutAmount){

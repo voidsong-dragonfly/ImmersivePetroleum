@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.common.blocks.tileentities;
 
-import javax.annotation.Nonnull;
-
 import blusunrize.immersiveengineering.common.items.BulletItem;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
@@ -27,6 +25,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author TwistedGate

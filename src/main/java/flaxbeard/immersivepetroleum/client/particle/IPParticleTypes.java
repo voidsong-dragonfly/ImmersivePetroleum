@@ -1,14 +1,13 @@
 package flaxbeard.immersivepetroleum.client.particle;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.serialization.Codec;
-
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nonnull;
 
 public class IPParticleTypes{
 	public static final RegistryObject<SimpleParticleType> FLARE_FIRE = createBasicParticle("flare_fire", false);

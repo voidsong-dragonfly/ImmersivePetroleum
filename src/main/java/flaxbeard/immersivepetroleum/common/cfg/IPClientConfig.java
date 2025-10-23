@@ -1,8 +1,5 @@
 package flaxbeard.immersivepetroleum.common.cfg;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -10,6 +7,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPClientConfig{

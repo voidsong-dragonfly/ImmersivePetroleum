@@ -1,13 +1,11 @@
 package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 
-import org.openzen.zencode.java.ZenCodeType.Method;
-import org.openzen.zencode.java.ZenCodeType.Name;
-
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
-
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import net.minecraftforge.fluids.FluidStack;
+import org.openzen.zencode.java.ZenCodeType.Method;
+import org.openzen.zencode.java.ZenCodeType.Name;
 
 @ZenRegister
 @Name("mods.immersivepetroleum.FuelRegistry")

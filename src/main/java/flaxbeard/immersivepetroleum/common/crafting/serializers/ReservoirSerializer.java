@@ -1,14 +1,8 @@
 package flaxbeard.immersivepetroleum.common.crafting.serializers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,6 +10,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 	@Override

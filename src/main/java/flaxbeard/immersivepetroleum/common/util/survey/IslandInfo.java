@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.survey;
 
-import javax.annotation.Nonnull;
-
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
@@ -14,6 +12,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import javax.annotation.Nonnull;
 
 public class IslandInfo implements ISurveyInfo{
 	public static final String TAG_KEY = "islandscan";

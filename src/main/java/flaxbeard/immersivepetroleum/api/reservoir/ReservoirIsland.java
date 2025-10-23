@@ -1,12 +1,5 @@
 package flaxbeard.immersivepetroleum.api.reservoir;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
@@ -19,6 +12,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Every instance of this class is it's own little ecosystem.

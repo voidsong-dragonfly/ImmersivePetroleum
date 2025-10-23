@@ -1,8 +1,8 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import java.util.function.IntConsumer;
-
 import net.minecraft.util.Mth;
+
+import java.util.function.IntConsumer;
 
 /**
  * (pretty much) a carbon copy of <a href=

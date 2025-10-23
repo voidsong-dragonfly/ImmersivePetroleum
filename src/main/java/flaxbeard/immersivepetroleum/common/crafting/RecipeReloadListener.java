@@ -1,11 +1,5 @@
 package flaxbeard.immersivepetroleum.common.crafting;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
@@ -24,6 +18,11 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RecipeReloadListener implements ResourceManagerReloadListener{
 	private final ReloadableServerResources dataPackRegistries;

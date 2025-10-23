@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import java.util.function.Consumer;
-
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.world.effect.MobEffect;
@@ -10,6 +8,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.function.Consumer;
 
 public class IPEffects{
 	

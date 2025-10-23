@@ -1,13 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.projector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -21,6 +13,13 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * Class for handling projection placement<br>

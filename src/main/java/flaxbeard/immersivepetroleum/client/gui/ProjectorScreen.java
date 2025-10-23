@@ -7,7 +7,6 @@ import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler.IMultib
 import blusunrize.immersiveengineering.api.utils.TemplateWorldCreator;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Axis;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.gui.elements.GuiReactiveList;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;

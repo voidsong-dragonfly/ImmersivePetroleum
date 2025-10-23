@@ -1,11 +1,11 @@
 package flaxbeard.immersivepetroleum.common.cfg;
 
-import java.util.List;
-
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.List;
 
 public class ConfigUtils{
 	

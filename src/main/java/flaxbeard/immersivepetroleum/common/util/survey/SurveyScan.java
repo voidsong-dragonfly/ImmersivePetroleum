@@ -1,12 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.survey;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import net.minecraft.core.BlockPos;
@@ -15,6 +8,12 @@ import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class SurveyScan implements ISurveyInfo{
 	public static final String TAG_KEY = "surveyscan";

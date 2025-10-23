@@ -1,13 +1,8 @@
 package flaxbeard.immersivepetroleum.client.render;
 
-import java.util.OptionalDouble;
-
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.IPShaders;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
@@ -15,6 +10,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.opengl.GL11;
+
+import java.util.OptionalDouble;
 
 public class IPRenderTypes extends RenderStateShard{
 	static final ResourceLocation activeTexture = ResourceUtils.ip("textures/multiblock/distillation_tower_active.png");

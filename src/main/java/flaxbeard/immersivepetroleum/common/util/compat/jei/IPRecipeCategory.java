@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.compat.jei;
 
-import javax.annotation.Nonnull;
-
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -12,6 +10,8 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public abstract class IPRecipeCategory<T> implements IRecipeCategory<T>{
 	public String localizedName;

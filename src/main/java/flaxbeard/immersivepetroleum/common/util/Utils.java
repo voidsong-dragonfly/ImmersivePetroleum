@@ -1,8 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import java.text.DecimalFormat;
-import java.util.function.Consumer;
-
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.PlayerAdvancements;
@@ -16,6 +13,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+
+import java.text.DecimalFormat;
+import java.util.function.Consumer;
 
 /**
  * General purpose Utilities

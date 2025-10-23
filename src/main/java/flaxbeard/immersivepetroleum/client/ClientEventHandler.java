@@ -4,7 +4,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockB
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.ItemOverlayUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
-import blusunrize.immersiveengineering.common.items.*;
+import blusunrize.immersiveengineering.common.items.BuzzsawItem;
+import blusunrize.immersiveengineering.common.items.ChemthrowerItem;
+import blusunrize.immersiveengineering.common.items.DrillItem;
+import blusunrize.immersiveengineering.common.items.IEShieldItem;
+import blusunrize.immersiveengineering.common.items.RailgunItem;
+import blusunrize.immersiveengineering.common.items.RevolverItem;
+import blusunrize.immersiveengineering.common.items.SpeedloaderItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;

@@ -1,21 +1,19 @@
 package flaxbeard.immersivepetroleum.common.util.compat.crafttweaker;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openzen.zencode.java.ZenCodeType;
-import org.openzen.zencode.java.ZenCodeType.Constructor;
-import org.openzen.zencode.java.ZenCodeType.Method;
-import org.openzen.zencode.java.ZenCodeType.Name;
-
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.fluid.IFluidStack;
-
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
+import org.openzen.zencode.java.ZenCodeType;
+import org.openzen.zencode.java.ZenCodeType.Constructor;
+import org.openzen.zencode.java.ZenCodeType.Method;
+import org.openzen.zencode.java.ZenCodeType.Name;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ZenRegister
 @Name("mods.immersivepetroleum.ReservoirRegistry")

@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import blusunrize.immersiveengineering.common.gui.sync.GenericDataSerializers;
 import blusunrize.immersiveengineering.common.gui.sync.GetterAndSetter;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.ExternalModContent;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.DerrickMultiblock;
 import flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic;

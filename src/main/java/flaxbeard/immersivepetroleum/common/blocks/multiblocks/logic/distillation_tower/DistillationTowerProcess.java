@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillatio
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;

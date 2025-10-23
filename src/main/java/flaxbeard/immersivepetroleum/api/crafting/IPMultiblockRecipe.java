@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.api.crafting;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;

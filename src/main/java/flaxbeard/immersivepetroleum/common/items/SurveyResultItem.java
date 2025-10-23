@@ -1,10 +1,5 @@
 package flaxbeard.immersivepetroleum.common.items;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
-
 import flaxbeard.immersivepetroleum.client.gui.SeismicSurveyScreen;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.survey.ISurveyInfo;
@@ -22,6 +17,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author TwistedGate

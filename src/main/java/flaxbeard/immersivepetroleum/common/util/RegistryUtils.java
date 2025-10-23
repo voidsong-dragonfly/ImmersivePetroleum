@@ -1,7 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -16,6 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import javax.annotation.Nullable;
 
 public class RegistryUtils{
 	@Nullable

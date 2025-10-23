@@ -1,18 +1,16 @@
 package flaxbeard.immersivepetroleum.api.crafting.builders;
 
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
+import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	private String fluid;

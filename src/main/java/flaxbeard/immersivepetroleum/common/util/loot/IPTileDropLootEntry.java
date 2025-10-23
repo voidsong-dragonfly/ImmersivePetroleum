@@ -1,12 +1,7 @@
 package flaxbeard.immersivepetroleum.common.util.loot;
 
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-
 import flaxbeard.immersivepetroleum.common.blocks.interfaces.IBlockEntityDrop;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +13,9 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+
+import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 public class IPTileDropLootEntry extends LootPoolSingletonContainer{
 	public static final ResourceLocation ID = ResourceUtils.ip("tile_drop");

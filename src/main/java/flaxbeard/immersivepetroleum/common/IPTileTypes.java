@@ -1,6 +1,11 @@
 package flaxbeard.immersivepetroleum.common;
 
-import flaxbeard.immersivepetroleum.common.blocks.tileentities.*;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.FlarestackTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.GasGeneratorTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.SeismicSurveyTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellPipeTileEntity;
+import flaxbeard.immersivepetroleum.common.blocks.tileentities.WellTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.RegistryObject;
 
