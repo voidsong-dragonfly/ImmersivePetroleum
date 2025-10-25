@@ -2,8 +2,10 @@ package flaxbeard.immersivepetroleum.api.crafting;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -34,10 +36,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class LubricatedHandler{
@@ -58,6 +62,26 @@ public class LubricatedHandler{
 		
 		@OnlyIn(Dist.CLIENT)
 		void renderPipes(AutoLubricatorTileEntity lubricator, E mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay);
+		
+		@Nullable
+		default MultiblockBlockEntityMaster<?> getMultiblockMaster(Level world, BlockPos pos){
+			BlockEntity te = world.getBlockEntity(pos);
+			
+			if(te instanceof IMultiblockBE<?> mbBE){
+				IMultiblockBEHelper<?> helper = mbBE.getHelper();
+				
+				if(!(helper instanceof IMultiblockBEHelperMaster<?>) && helper.getContext() != null){
+					BlockPos masterPos = helper.getContext().getLevel().toAbsolute(helper.getMultiblock().masterPosInMB());
+					BlockEntity be = world.getBlockEntity(masterPos);
+					
+					if(be instanceof MultiblockBlockEntityMaster<?> master){
+						return master;
+					}
+				}
+			}
+			
+			return null;
+		}
 	}
 	
 	static final Map<Class<? extends IMultiblockLogic<? extends IMultiblockState>>, ILubricationHandler<? extends IMultiblockBEHelper<?>, ? extends IMultiblockState>> lubricationHandlers = new HashMap<>();
@@ -67,16 +91,16 @@ public class LubricatedHandler{
 		lubricationHandlers.put(tileClass, instance);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T extends IMultiblockBEHelper<B>, B extends IMultiblockState> ILubricationHandler<T, B> getHandlerForTile(T te){
 		if(te != null){
-			@SuppressWarnings("unchecked")
-			Class<? extends IMultiblockBEHelper<? extends IMultiblockState>> teClass = (Class<? extends IMultiblockBEHelper<? extends IMultiblockState>>) te.getClass();
-			if(lubricationHandlers.containsKey(teClass)){
-				@SuppressWarnings("unchecked")
-				ILubricationHandler<T, B> tmp = (ILubricationHandler<T, B>) lubricationHandlers.get(teClass);
-				return tmp;
-			}
+			final IMultiblockLogic<B> logic = te.getMultiblock().logic();
+			
+			ILubricationHandler<?, ?> handler = lubricationHandlers.get(logic.getClass());
+			if(handler != null)
+				return (ILubricationHandler<T, B>) handler;
 		}
+		
 		return null;
 	}
 	

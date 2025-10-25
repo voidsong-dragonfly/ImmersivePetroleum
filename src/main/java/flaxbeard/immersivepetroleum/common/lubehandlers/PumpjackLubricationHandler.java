@@ -29,6 +29,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblockBEHelper<PumpjackLogic.State>, PumpjackLogic.State>{
@@ -46,16 +47,14 @@ public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblo
 	
 	@Override
 	public BlockEntity isPlacedCorrectly(Level world, AutoLubricatorTileEntity lubricator, Direction facing){
-		BlockPos target = lubricator.getBlockPos().relative(facing);
-		BlockEntity te = world.getBlockEntity(target);
+		final BlockPos target = lubricator.getBlockPos().relative(facing);
 		
-		if(te instanceof MultiblockBlockEntityMaster<?> master){
+		MultiblockBlockEntityMaster<?> mbMaster = getMultiblockMaster(world, target);
+		if(mbMaster != null){
+			MultiblockOrientation orientation = mbMaster.getHelper().getContext().getLevel().getOrientation();
 			
-			if(master != null){
-				Direction f = master.getHelper().getContext().getLevel().getOrientation().mirrored() ? facing : facing.getOpposite();
-				if(master.getHelper().getContext().getLevel().getOrientation().front().getClockWise() == f){
-					return master;
-				}
+			if(orientation.front().getClockWise() == (orientation.mirrored() ? facing : facing.getOpposite())){
+				return mbMaster;
 			}
 		}
 		
@@ -134,34 +133,32 @@ public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblo
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderPipes(AutoLubricatorTileEntity lubricator, IMultiblockBEHelper<PumpjackLogic.State> mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
-		matrix.translate(0, -1, 0);
-		Vec3i offset = mbte.getPositionInMB().subtract(lubricator.getBlockPos());
-		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
+		if(mbte.getContext() == null)
+			return;
 		
-		MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
-		Direction rotation = orientation.front();
-		switch(rotation){
-			case NORTH -> {
-				matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90F));
-				matrix.translate(-6, 1, -1);
-			}
-			case SOUTH -> {
-				matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270F));
-				matrix.translate(-5, 1, -2);
-			}
-			case EAST -> {
-				matrix.translate(-5, 1, -1);
-			}
-			case WEST -> {
-				matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180F));
-				matrix.translate(-6, 1, -2);
-			}
-			default -> {
-			}
+		final MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
+		final boolean mirrored = orientation.mirrored();
+		final Direction rotation = orientation.front();
+		
+		if(rotation == Direction.NORTH){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90F));
+			matrix.translate(-2, 0, mirrored ? 1 : -3);
+			
+		}else if(rotation == Direction.SOUTH){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270F));
+			matrix.translate(-1, 0, mirrored ? 0 : -4);
+			
+		}else if(rotation == Direction.EAST){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(0F));
+			matrix.translate(-1, 0, mirrored ? 1 : -3);
+			
+		}else if(rotation == Direction.WEST){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180F));
+			matrix.translate(-2, 0, mirrored ? 0 : -4);
 		}
 		
 		IPModel model;
-		if(orientation.mirrored()){
+		if(mirrored){
 			if(pipes_mirrored == null)
 				pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Pumpjack.ID_MIRRORED);
 			

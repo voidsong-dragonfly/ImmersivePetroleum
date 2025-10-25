@@ -55,14 +55,15 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 	
 	@Override
 	public BlockEntity isPlacedCorrectly(Level world, AutoLubricatorTileEntity lubricator, Direction facing){
-		BlockPos target = lubricator.getBlockPos().relative(facing);
-		BlockEntity te = world.getBlockEntity(target);
+		final BlockPos target = lubricator.getBlockPos().relative(facing);
 		
-		if(te instanceof IMultiblockBEHelper<?> master){
-			MultiblockOrientation orientation = master.getContext().getLevel().getOrientation();
+		MultiblockBlockEntityMaster<?> mbMaster = getMultiblockMaster(world, target);
+		if(mbMaster != null){
+			MultiblockOrientation orientation = mbMaster.getHelper().getContext().getLevel().getOrientation();
 			Direction dir = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
+			
 			if(dir == facing){
-				return te;
+				return mbMaster;
 			}
 		}
 		
@@ -147,34 +148,32 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void renderPipes(AutoLubricatorTileEntity lubricator, IMultiblockBEHelper<ExcavatorLogic.State> mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
-		matrix.translate(0, -1, 0);
-		Vec3i offset = mbte.getPositionInMB().subtract(lubricator.getBlockPos());
-		matrix.translate(offset.getX(), offset.getY(), offset.getZ());
+		if(mbte.getContext() == null)
+			return;
 		
-		MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();;
-		Direction rotation = orientation.front();
-		switch(rotation){
-			case NORTH -> {
-				matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90F));
-				matrix.translate(-1, 0, -1);
-			}
-			case SOUTH -> {
-				matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270F));
-				matrix.translate(0, 0, -2);
-			}
-			case EAST -> {
-				matrix.translate(0, 0, -1);
-			}
-			case WEST -> {
-				matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180F));
-				matrix.translate(-1, 0, -2);
-			}
-			default -> {
-			}
+		final MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
+		final boolean mirrored = orientation.mirrored();
+		final Direction rotation = orientation.front();
+		
+		if(rotation == Direction.NORTH){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90F));
+			matrix.translate(-5, 0, mirrored ? 1 : -3);
+			
+		}else if(rotation == Direction.SOUTH){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270F));
+			matrix.translate(-4, 0, mirrored ? 0 : -4);
+			
+		}else if(rotation == Direction.EAST){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(0F));
+			matrix.translate(-4, 0, mirrored ? 1 : -3);
+			
+		}else if(rotation == Direction.WEST){
+			matrix.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180F));
+			matrix.translate(-5, 0, mirrored ? 0 : -4);
 		}
 		
-		IPModel model = null;
-		if(orientation.mirrored()){
+		IPModel model;
+		if(mirrored){
 			if(pipes_mirrored == null)
 				pipes_mirrored = IPModels.getSupplier(ModelLubricantPipes.Excavator.ID_MIRRORED);
 			
