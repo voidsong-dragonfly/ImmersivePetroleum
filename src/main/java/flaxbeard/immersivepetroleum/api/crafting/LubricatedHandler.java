@@ -20,7 +20,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,12 +40,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class LubricatedHandler{
 	public interface ILubricationHandler<E extends IMultiblockBEHelper<B>, B extends IMultiblockState>{
-		Tuple<BlockPos, Direction> getGhostBlockPosition(Level world, E mbte);
+		GhostInfo getGhostBlockPosition(Level world, E mbte);
 		
 		Vec3i getStructureDimensions();
 		
@@ -82,6 +80,8 @@ public class LubricatedHandler{
 			
 			return null;
 		}
+		
+		record GhostInfo(BlockPos position, Direction facing){}
 	}
 	
 	static final Map<Class<? extends IMultiblockLogic<? extends IMultiblockState>>, ILubricationHandler<? extends IMultiblockBEHelper<?>, ? extends IMultiblockState>> lubricationHandlers = new HashMap<>();

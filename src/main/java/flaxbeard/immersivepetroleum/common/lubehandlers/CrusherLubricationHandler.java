@@ -30,7 +30,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class CrusherLubricationHandler implements ILubricationHandler<IMultiblockBEHelper<CrusherLogic.State>, CrusherLogic.State>{
@@ -115,12 +114,15 @@ public class CrusherLubricationHandler implements ILubricationHandler<IMultibloc
 	}
 	
 	@Override
-	public Tuple<BlockPos, Direction> getGhostBlockPosition(Level world, IMultiblockBEHelper<CrusherLogic.State> mbte){
-		IMultiblockLevel level = mbte.getContext().getLevel();
-		BlockPos pos = mbte.getPositionInMB().relative(level.getOrientation().front(), 2);
-		Direction f = level.getOrientation().front().getOpposite();
+	public GhostInfo getGhostBlockPosition(Level world, IMultiblockBEHelper<CrusherLogic.State> mbte){
+		if(mbte.getContext() == null)
+			return null;
 		
-		return new Tuple<>(pos, f);
+		IMultiblockLevel level = mbte.getContext().getLevel();
+		
+		BlockPos position = level.toAbsolute(new BlockPos(2, 0, -1));
+		Direction facing = level.getOrientation().front().getOpposite();
+		return new GhostInfo(position, facing);
 	}
 	
 	private static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/lube_pipe.png");

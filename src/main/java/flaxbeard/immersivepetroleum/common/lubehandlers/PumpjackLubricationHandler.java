@@ -2,6 +2,7 @@ package flaxbeard.immersivepetroleum.common.lubehandlers;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblockBEHelper<PumpjackLogic.State>, PumpjackLogic.State>{
@@ -110,16 +110,18 @@ public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblo
 	}
 	
 	@Override
-	public Tuple<BlockPos, Direction> getGhostBlockPosition(Level world, IMultiblockBEHelper<PumpjackLogic.State> mbte){
-		MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
-		Direction mbFacing = orientation.front().getOpposite();
-		BlockPos pos = mbte.getPositionInMB()
-				.relative(Direction.UP)
-				.relative(mbFacing, 4)
-				.relative(orientation.mirrored() ? mbFacing.getClockWise() : mbFacing.getCounterClockWise(), 2);
-			
-		Direction f = (orientation.mirrored() ? orientation.front().getOpposite() : orientation.front()).getCounterClockWise();
-		return new Tuple<>(pos, f);
+	public GhostInfo getGhostBlockPosition(Level world, IMultiblockBEHelper<PumpjackLogic.State> mbte){
+		if(mbte.getContext() == null)
+			return null;
+		
+		IMultiblockLevel level = mbte.getContext().getLevel();
+		
+		BlockPos position = level.toAbsolute(new BlockPos(3, 0, 4));
+		
+		MultiblockOrientation orientation = level.getOrientation();
+		Direction facing = (orientation.mirrored() ? orientation.front().getOpposite() : orientation.front()).getCounterClockWise();
+		
+		return new GhostInfo(position, facing);
 	}
 	
 	private static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/lube_pipe.png");

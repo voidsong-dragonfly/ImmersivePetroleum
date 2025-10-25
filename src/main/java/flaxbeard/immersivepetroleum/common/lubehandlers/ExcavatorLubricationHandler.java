@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.BucketWheelLogic;
@@ -134,11 +135,18 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 	}
 	
 	@Override
-	public Tuple<BlockPos, Direction> getGhostBlockPosition(Level world, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
-		MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
-		BlockPos pos = mbte.getPositionInMB().relative(orientation.front(), 4).relative(orientation.mirrored() ? orientation.front().getCounterClockWise() : orientation.front().getClockWise(), 2);
-		Direction f = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
-		return new Tuple<>(pos, f);
+	public GhostInfo getGhostBlockPosition(Level world, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
+		if(mbte.getContext() == null)
+			return null;
+		
+		IMultiblockLevel level = mbte.getContext().getLevel();
+		
+		BlockPos position = level.toAbsolute(new BlockPos(3, 0, 1));
+		
+		MultiblockOrientation orientation = level.getOrientation();
+		Direction facing = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
+		
+		return new GhostInfo(position, facing);
 	}
 	
 	private static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/lube_pipe.png");

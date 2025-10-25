@@ -93,36 +93,40 @@ public class ClientEventHandler{
 					Vec3 renderView = MCUtil.getGameRenderer().getMainCamera().getPosition();
 					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
 					
-					final Level playerLevel = mc.player.level();
+					// TODO ! EXTREMELY IMPORTANT !
+					/*
+						This is in dire need for optimization
+						NEEDS filtering for already checked multiblocks somehow
+					 */
+					final Level level = mc.player.level();
 					final BlockPos base = mc.player.blockPosition();
-					for(int x = -16;x <= 16;x++){
-						for(int z = -16;z <= 16;z++){
-							for(int y = -16;y <= 16;y++){
+					final RenderType renderType = RenderType.translucent();
+					int x, y, z;
+					for(x = -16;x <= 16;x++){
+						for(z = -16;z <= 16;z++){
+							for(y = -16;y <= 16;y++){
 								BlockPos pos = base.offset(x, y, z);
-								BlockEntity te = playerLevel.getBlockEntity(pos);
+								BlockEntity te = level.getBlockEntity(pos);
 								
 								if(te instanceof IMultiblockBE<?> multiblockBE){
 									ILubricationHandler handler = LubricatedHandler.getHandlerForTile(multiblockBE.getHelper());
 									
 									if(handler != null){
-										Tuple<BlockPos, Direction> target = handler.getGhostBlockPosition(playerLevel, multiblockBE.getHelper());
+										ILubricationHandler.GhostInfo ghost = handler.getGhostBlockPosition(level, multiblockBE.getHelper());
 										
-										if(target != null){
-											BlockPos targetPos = target.getA();
-											Direction targetFacing = target.getB();
-											BlockState targetState = playerLevel.getBlockState(targetPos);
-											BlockState targetStateUp = playerLevel.getBlockState(targetPos.above());
+										if(ghost != null){
+											BlockState targetState = level.getBlockState(ghost.position());
 											
-											if(targetState.is(BlockTags.REPLACEABLE) && targetStateUp.is(BlockTags.REPLACEABLE)){
-												VertexConsumer vBuilder = buffer.getBuffer(RenderType.translucent());
+											if(targetState.is(BlockTags.REPLACEABLE) && level.getBlockState(ghost.position().above()).is(BlockTags.REPLACEABLE)){
+												VertexConsumer vBuilder = buffer.getBuffer(renderType);
 												
 												matrix.pushPose();
 												{
-													matrix.translate(targetPos.getX(), targetPos.getY() - 1, targetPos.getZ());
+													matrix.translate(ghost.position().getX(), ghost.position().getY(), ghost.position().getZ());
 													
-													BlockState state = IPContent.Blocks.AUTO_LUBRICATOR.get().defaultBlockState().setValue(AutoLubricatorBlock.FACING, targetFacing);
+													BlockState state = IPContent.Blocks.AUTO_LUBRICATOR.get().defaultBlockState().setValue(AutoLubricatorBlock.FACING, ghost.facing());
 													BakedModel model = blockDispatcher.getBlockModel(state);
-													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
+													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, renderType);
 													
 												}
 												matrix.popPose();
