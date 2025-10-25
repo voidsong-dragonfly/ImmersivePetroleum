@@ -38,7 +38,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class PumpjackLogic implements IMultiblockLogic<PumpjackLogic.State>, IServerTickableComponent<PumpjackLogic.State>, IClientTickableComponent<PumpjackLogic.State>{
+import static flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.PumpjackLogic.State;
+
+public class PumpjackLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<State>{
 	
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
 	public static final BlockPos REDSTONE_IN = new BlockPos(0, 1, 5);
@@ -58,13 +60,13 @@ public class PumpjackLogic implements IMultiblockLogic<PumpjackLogic.State>, ISe
 	public static final BlockPos DOWN_PORT = new BlockPos(1, 0, 0);
 	
 	@Override
-	public PumpjackLogic.State createInitialState(IInitialMultiblockContext<PumpjackLogic.State> capabilitySource){
-		return new PumpjackLogic.State(capabilitySource);
+	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
+		return new State(capabilitySource);
 	}
 	
 	@Override
 	public void tickClient(IMultiblockContext<State> context){
-		final PumpjackLogic.State state = context.getState();
+		final State state = context.getState();
 		
 		if(state.wasActive){
 			state.activeTicks++;
@@ -72,8 +74,8 @@ public class PumpjackLogic implements IMultiblockLogic<PumpjackLogic.State>, ISe
 	}
 	
 	@Override
-	public void tickServer(IMultiblockContext<PumpjackLogic.State> context){
-		final PumpjackLogic.State state = context.getState();
+	public void tickServer(IMultiblockContext<State> context){
+		final State state = context.getState();
 		final IMultiblockLevel level = context.getLevel();
 		final boolean rsEnabled = state.rsState.isEnabled(context);
 		
@@ -155,24 +157,18 @@ public class PumpjackLogic implements IMultiblockLogic<PumpjackLogic.State>, ISe
 	@Override
 	public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap){
 		final State state = ctx.getState();
-		final IMultiblockLevel level = ctx.getLevel();
 		
 		if(cap == ForgeCapabilities.FLUID_HANDLER){
-			// East Port
-			if(position.equalsOrNullFace(EAST_PORT)){
-				return state.fakeFluidHandler.cast(ctx);
-				
-			}
-			// West Port
-			if(position.equalsOrNullFace(WEST_PORT)){
-				return state.fakeFluidHandler.cast(ctx);
-			}
+			if(position.equalsOrNullFace(EAST_PORT))
+				return state.fakeFluidHandler.cast(ctx); // East Port
+			
+			if(position.equalsOrNullFace(WEST_PORT))
+				return state.fakeFluidHandler.cast(ctx); // West Port
 		}
 		
 		if(cap == ForgeCapabilities.ENERGY){
-			if(ENERGY_IN.equalsOrNullFace(position)){
+			if(position.equalsOrNullFace(ENERGY_IN))
 				return state.energyStorage.cast(ctx);
-			}
 		}
 		
 		return LazyOptional.empty();
@@ -185,17 +181,19 @@ public class PumpjackLogic implements IMultiblockLogic<PumpjackLogic.State>, ISe
 	
 	public static class State implements IMultiblockState{
 		public static final FluidTank FAKE_TANK = new FluidTank(0);
-		private final StoredCapability<IFluidHandler> fakeFluidHandler = new StoredCapability<>(FAKE_TANK);
 		
 		public final AveragingEnergyStorage energy = new AveragingEnergyStorage(16000);
-		private final StoredCapability<IEnergyStorage> energyStorage = new StoredCapability<>(energy);
 		public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
 		
 		public boolean wasActive = false;
 		public float activeTicks = 0;
 		
+		private final StoredCapability<IFluidHandler> fakeFluidHandler = new StoredCapability<>(FAKE_TANK);
+		private final StoredCapability<IEnergyStorage> energyStorage = new StoredCapability<>(energy);
+		
 		private final CapabilityReference<@Nullable IFluidHandler> east_port_output;
 		private final CapabilityReference<@Nullable IFluidHandler> west_port_output;
+		
 		public State(IInitialMultiblockContext<State> context){
 			this.east_port_output = context.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, EAST_PORT_OFFSET);
 			this.west_port_output = context.getCapabilityAt(ForgeCapabilities.FLUID_HANDLER, WEST_PORT_OFFSET);

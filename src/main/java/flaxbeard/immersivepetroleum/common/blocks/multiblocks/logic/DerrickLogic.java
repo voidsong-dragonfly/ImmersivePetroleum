@@ -67,7 +67,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServerTickableComponent<DerrickLogic.State>, IClientTickableComponent<DerrickLogic.State>{
+import static flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.DerrickLogic.State;
+
+public class DerrickLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<State>{
 	public static final int REQUIRED_WATER_AMOUNT = 125;
 	public static final int REQUIRED_CONCRETE_AMOUNT = 125;
 	
@@ -96,9 +98,9 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 	public static final BlockPos Redstone_IN = new BlockPos(0, 1, 1);
 	
 	@Override
-	public State createInitialState(IInitialMultiblockContext<DerrickLogic.State> capabilitySource){
-		InitialMultiblockContext<DerrickLogic.State> capSource = (InitialMultiblockContext<DerrickLogic.State>) capabilitySource;
-		return new DerrickLogic.State(capabilitySource, capSource.masterBE().getBlockPos());
+	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
+		InitialMultiblockContext<State> capSource = (InitialMultiblockContext<State>) capabilitySource;
+		return new State(capabilitySource, capSource.masterBE().getBlockPos());
 	}
 	
 	//@formatter:off
@@ -115,8 +117,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 	
 	@Override
 	public void tickClient(IMultiblockContext<State> context){
-		
-		final DerrickLogic.State state = context.getState();
+		final State state = context.getState();
 		final IMultiblockLevel level = context.getLevel();
 		
 		/*
@@ -149,8 +150,8 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 	}
 	
 	@Override
-	public void tickServer(IMultiblockContext<DerrickLogic.State> context){
-		final DerrickLogic.State state = context.getState();
+	public void tickServer(IMultiblockContext<State> context){
+		final State state = context.getState();
 		final IMultiblockLevel level = context.getLevel();
 		final boolean rsEnabled = state.rsState.isEnabled(context);
 		
@@ -274,7 +275,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 	}
 	
 	// Only accept as much Concrete and Water as needed
-	private static boolean acceptsFluid(Supplier<Level> level, DerrickLogic.State state, BlockPos inPos, FluidStack fs){
+	private static boolean acceptsFluid(Supplier<Level> level, State state, BlockPos inPos, FluidStack fs){
 		if(fs.isEmpty())
 			return false;
 		
@@ -318,7 +319,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		return false;
 	}
 	
-	public static WellTileEntity createAndGetWell(Supplier<Level> level, DerrickLogic.State state, BlockPos inPos, boolean popList){
+	public static WellTileEntity createAndGetWell(Supplier<Level> level, State state, BlockPos inPos, boolean popList){
 		Level rawLevel = level.get();
 		
 		if(state.wellCache != null && state.wellCache.isRemoved()){
@@ -361,11 +362,11 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		return state.wellCache;
 	}
 	
-	public ItemStack getInventory(DerrickLogic.State state, DerrickLogic.Inventory inv){
+	public ItemStack getInventory(State state, Inventory inv){
 		return state.inventory.get(inv.id());
 	}
 	
-	public ItemStack setInventory(DerrickLogic.State state, DerrickLogic.Inventory inv, ItemStack stack){
+	public ItemStack setInventory(State state, Inventory inv, ItemStack stack){
 		return state.inventory.set(inv.id(), stack);
 	}
 	
@@ -375,7 +376,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 			drop.accept(state.inventory.get(0));
 	}
 	
-	private boolean advanceTimer(DerrickLogic.State state){
+	private boolean advanceTimer(State state){
 		if(state.timer-- <= 0){
 			state.timer = 10;
 			return true;
@@ -396,7 +397,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		}
 	}
 	
-	private void outputReservoirFluid(IMultiblockLevel level, DerrickLogic.State state, BlockPos inPos, IMultiblockContext<DerrickLogic.State> ctx){
+	private void outputReservoirFluid(IMultiblockLevel level, State state, BlockPos inPos, IMultiblockContext<State> ctx){
 		WellTileEntity well = createAndGetWell(() -> level.getRawLevel(), state, inPos, true);
 		boolean mirrored = level.getOrientation().mirrored();
 		Direction front = level.getOrientation().front();
@@ -452,7 +453,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		return (extracted.getAmount() - drainedTotal) > 0;
 	}
 	
-	public static void transferGridDataToWell(BlockPos masterPos, DerrickLogic.State state, @Nullable WellTileEntity well){
+	public static void transferGridDataToWell(BlockPos masterPos, State state, @Nullable WellTileEntity well){
 		if(well == null)
 			return;
 		
@@ -506,11 +507,13 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap){
-		State state = ctx.getState();
+		final State state = ctx.getState();
+		
 		if(cap == ForgeCapabilities.FLUID_HANDLER){
-			if(position.equalsOrNullFace(Fluid_IN)){
+			if(position.equalsOrNullFace(Fluid_IN))
 				return state.fluidHandler.cast(ctx);
-			}else if(position.equalsOrNullFace(FLUID_OUT))
+				
+			else if(position.equalsOrNullFace(FLUID_OUT))
 				return state.emptyHandler.cast(ctx);
 			
 		}else if(cap == ForgeCapabilities.ENERGY)
@@ -536,7 +539,7 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		public boolean drilling;
 		public boolean spilling;
 		private Fluid fluidSpilled = Fluids.EMPTY;
-		public final FluidTank tank; //new FluidTank(8000, fluidStack -> fluidStack.getFluid().is(FluidTags.WATER) || fluidStack.getFluid().is(IETags.fluidConcrete));
+		public final FluidTank tank;
 		public final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 		private WellTileEntity wellCache = null;
 		
@@ -547,18 +550,17 @@ public class DerrickLogic implements IMultiblockLogic<DerrickLogic.State>, IServ
 		private Supplier<Level> level;
 		public BlockPos originPos;
 		
-		private final StoredCapability<IEnergyStorage> energyHandler;
+		private final StoredCapability<IEnergyStorage> energyHandler = new StoredCapability<>(this.energy);
 		private final StoredCapability<IFluidHandler> fluidHandler;
 		private final StoredCapability<IFluidHandler> emptyHandler;
 		private final StoredCapability<IItemHandler> itemHandler;
 		
 		public State(IInitialMultiblockContext<State> context, BlockPos pos){
-			this.energyHandler = new StoredCapability<>(energy);
 			this.emptyHandler = new StoredCapability<>(ArrayFluidHandler.drainOnly(DUMMY_TANK, context.getMarkDirtyRunnable()));
-			this.itemHandler = new StoredCapability<>(new ItemStackHandler(inventory));
+			this.itemHandler = new StoredCapability<>(new ItemStackHandler(this.inventory));
 			this.level = context.levelSupplier();
 			this.originPos = pos;
-			this.tank = new FluidTank(8000, fluidStack -> DerrickLogic.acceptsFluid(level, this, pos, fluidStack));
+			this.tank = new FluidTank(8000, fluidStack -> acceptsFluid(level, this, pos, fluidStack));
 			this.fluidHandler = new StoredCapability<>(ArrayFluidHandler.fillOnly(tank, context.getMarkDirtyRunnable()));
 			
 		}

@@ -49,7 +49,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowerLogic.State>, IServerTickableComponent<DistillationTowerLogic.State>, IClientTickableComponent<DistillationTowerLogic.State>{
+import static flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.distillation_tower.DistillationTowerLogic.State;
+
+public class DistillationTowerLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<State>{
 	
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;
@@ -86,7 +88,7 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 	
 	@Override
 	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
-		return new DistillationTowerLogic.State(capabilitySource);
+		return new State(capabilitySource);
 	}
 	
 	@Override
@@ -94,8 +96,8 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 	}
 	
 	@Override
-	public void tickServer(IMultiblockContext<DistillationTowerLogic.State> context){
-		final DistillationTowerLogic.State state = context.getState();
+	public void tickServer(IMultiblockContext<State> context){
+		final State state = context.getState();
 		final IMultiblockLevel level = context.getLevel();
 		final boolean rsEnabled = state.rsState.isEnabled(context);
 		
@@ -226,12 +228,15 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap){
-		DistillationTowerLogic.State state = ctx.getState();
+		final State state = ctx.getState();
+		
 		if(cap == ForgeCapabilities.FLUID_HANDLER){
 			if(position.equalsOrNullFace(Fluid_IN))
 				return state.fluidInput.cast(ctx);
+			
 			else if(position.equalsOrNullFace(Fluid_OUT))
 				return state.fluidOutput.cast(ctx);
+			
 		}else if(cap == ForgeCapabilities.ENERGY)
 			if(position.equalsOrNullFace(ENERGY_IN))
 				return state.energyHandler.cast(ctx);
@@ -245,6 +250,7 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 	}
 	
 	public static class State implements IMultiblockState, ProcessContext.ProcessContextInMachine<DistillationTowerRecipe>{
+		
 		public final AveragingEnergyStorage energy = new AveragingEnergyStorage(16000);
 		public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
 		
@@ -257,9 +263,9 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 		public int cooldownTicks = 0;
 		public boolean wasActive = false;
 		
+		private final StoredCapability<IEnergyStorage> energyHandler = new StoredCapability<>(energy);
 		private final StoredCapability<IFluidHandler> fluidInput;
 		private final StoredCapability<IFluidHandler> fluidOutput;
-		private final StoredCapability<IEnergyStorage> energyHandler;
 		
 		public State(IInitialMultiblockContext<State> context){
 			
@@ -267,7 +273,6 @@ public class DistillationTowerLogic implements IMultiblockLogic<DistillationTowe
 			
 			fluidInput = new StoredCapability<>(ArrayFluidHandler.fillOnly(tanks.input(), context.getMarkDirtyRunnable()));
 			fluidOutput = new StoredCapability<>(ArrayFluidHandler.drainOnly(tanks.output(), context.getMarkDirtyRunnable()));
-			energyHandler = new StoredCapability<>(energy);
 		}
 		
 		@Override

@@ -41,8 +41,10 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import java.util.function.Function;
 
+import static flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.hydro_treater.HydroTreaterLogic.State;
+
 // TODO
-public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.State>, IServerTickableComponent<HydroTreaterLogic.State>, IClientTickableComponent<HydroTreaterLogic.State>{
+public class HydroTreaterLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<State>{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;
 	
@@ -72,8 +74,8 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 	public static final BlockPos Redstone_IN = new BlockPos(0, 1, 3);
 	
 	@Override
-	public State createInitialState(IInitialMultiblockContext<HydroTreaterLogic.State> capabilitySource){
-		return new HydroTreaterLogic.State(capabilitySource);
+	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
+		return new State(capabilitySource);
 	}
 	
 	@Override
@@ -81,7 +83,7 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 	}
 	
 	@Override
-	public void tickServer(IMultiblockContext<HydroTreaterLogic.State> context){
+	public void tickServer(IMultiblockContext<State> context){
 		boolean update = false;
 		
 		State state = context.getState();
@@ -145,18 +147,21 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap){
-		State state = ctx.getState();
+		final State state = ctx.getState();
 		
-		if(cap == ForgeCapabilities.ENERGY && Energy_IN.equalsOrNullFace(position))
-			return state.energyCap.cast(ctx);
-		else if(cap == ForgeCapabilities.FLUID_HANDLER){
-			if(Fluid_IN_A.equalsOrNullFace(position)){
+		if(cap == ForgeCapabilities.ENERGY){
+			if(position.equalsOrNullFace(Energy_IN))
+				return state.energyCap.cast(ctx);
+			
+		}else if(cap == ForgeCapabilities.FLUID_HANDLER){
+			if(position.equalsOrNullFace(Fluid_IN_A))
 				return state.fluidInputMain.cast(ctx);
-			}else if(Fluid_IN_B.equalsOrNullFace(position)){
+			
+			else if(position.equalsOrNullFace(Fluid_IN_B))
 				return state.fluidInputSecondary.cast(ctx);
-			}else if(Fluid_OUT.equalsOrNullFace(position)){
+			
+			else if(position.equalsOrNullFace(Fluid_OUT))
 				return state.fluidOutput.cast(ctx);
-			}
 		}
 		
 		return LazyOptional.empty();
@@ -180,11 +185,13 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 		
 		public final MultiblockProcessor.InMachineProcessor<HighPressureRefineryRecipe> processor;
 		
-		private final CapabilityReference<IFluidHandler> outputRef;
+		private final StoredCapability<IEnergyStorage> energyCap = new StoredCapability<>(this.energy);
 		private final StoredCapability<IFluidHandler> fluidInputMain;
 		private final StoredCapability<IFluidHandler> fluidInputSecondary;
 		private final StoredCapability<IFluidHandler> fluidOutput;
-		private final StoredCapability<IEnergyStorage> energyCap;
+		
+		private final CapabilityReference<IFluidHandler> outputRef;
+		
 		public State(IInitialMultiblockContext<State> context){
 			this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0, 1, context.getMarkDirtyRunnable(), HydroTreaterLogic::getRecipeForId);
 			
@@ -192,7 +199,6 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 			this.fluidInputMain = new StoredCapability<>(ArrayFluidHandler.fillOnly(tanks.primary(), context.getMarkDirtyRunnable()));
 			this.fluidInputSecondary = new StoredCapability<>(ArrayFluidHandler.fillOnly(tanks.secondary(), context.getMarkDirtyRunnable()));
 			this.fluidOutput = new StoredCapability<>(ArrayFluidHandler.drainOnly(tanks.output(), context.getMarkDirtyRunnable()));
-			this.energyCap = new StoredCapability<>(this.energy);
 		}
 		
 		@Override
@@ -233,7 +239,7 @@ public class HydroTreaterLogic implements IMultiblockLogic<HydroTreaterLogic.Sta
 		
 		@Override
 		public int[] getOutputTanks(){
-			return new int[]{HydroTreaterLogic.TANK_OUTPUT};
+			return new int[]{TANK_OUTPUT};
 		}
 		
 		@Override

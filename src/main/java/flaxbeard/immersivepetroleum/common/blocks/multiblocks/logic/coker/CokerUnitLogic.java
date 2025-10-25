@@ -46,7 +46,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, IServerTickableComponent<CokerUnitLogic.State>, IClientTickableComponent<CokerUnitLogic.State>{
+import static flaxbeard.immersivepetroleum.common.blocks.multiblocks.logic.coker.CokerUnitLogic.State;
+
+public class CokerUnitLogic implements IMultiblockLogic<State>, IServerTickableComponent<State>, IClientTickableComponent<State>{
 	
 	public enum Inventory{
 		/** Inventory Item Input */
@@ -100,8 +102,8 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 	
 	@Override
 	public State createInitialState(IInitialMultiblockContext<State> capabilitySource){
-		InitialMultiblockContext<CokerUnitLogic.State> capSource = (InitialMultiblockContext<CokerUnitLogic.State>) capabilitySource;
-		return new CokerUnitLogic.State(capabilitySource, capSource.masterBE().getBlockPos());
+		InitialMultiblockContext<State> capSource = (InitialMultiblockContext<State>) capabilitySource;
+		return new State(capabilitySource, capSource.masterBE().getBlockPos());
 	}
 	
 	@Override
@@ -133,8 +135,8 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 	}
 	
 	@Override
-	public void tickServer(IMultiblockContext<CokerUnitLogic.State> context){
-		final CokerUnitLogic.State state = context.getState();
+	public void tickServer(IMultiblockContext<State> context){
+		final State state = context.getState();
 		final IMultiblockLevel level = context.getLevel();
 		final boolean rsEnabled = state.rsState.isEnabled(context);
 		
@@ -278,16 +280,19 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap){
-		State state = ctx.getState();
+		final State state = ctx.getState();
+		
 		if(cap == ForgeCapabilities.ITEM_HANDLER){
-			if(position.equalsOrNullFace(Item_IN)){
+			if(position.equalsOrNullFace(Item_IN))
 				return state.itemInput.cast(ctx);
-			}
+			
 		}else if(cap == ForgeCapabilities.FLUID_HANDLER){
 			if(position.equalsOrNullFace(Fluid_OUT))
 				return state.fluidOutput.cast(ctx);
+			
 			else if(position.equalsOrNullFace(Fluid_IN))
 				return state.fluidInput.cast(ctx);
+			
 		}else if(cap == ForgeCapabilities.ENERGY){
 			if(position.equalsOrNullFace(Energy_IN[0]) || position.equalsOrNullFace(Energy_IN[1]))
 				return state.energyCap.cast(ctx);
@@ -312,28 +317,15 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 		public final BufferTanks bufferTanks = new BufferTanks();
 		public final Chambers chambers = new Chambers();
 		
-		private final StoredCapability<IItemHandler> itemInput;
+		private final StoredCapability<IItemHandler> itemInput = new StoredCapability<>(new FilteredItemStackhandler(this.inventory));
+		private final StoredCapability<IEnergyStorage> energyCap = new StoredCapability<>(this.energy);
 		private final StoredCapability<IFluidHandler> fluidInput;
 		private final StoredCapability<IFluidHandler> fluidOutput;
-		private final StoredCapability<IEnergyStorage> energyCap;
 		public BlockPos masterPos;
+		
 		public State(IInitialMultiblockContext<State> context, BlockPos pos){
 			this.masterPos = pos;
 			
-			ItemStackHandler itemStackHandler = new ItemStackHandler(this.inventory){
-				@Override
-				public boolean isItemValid(int slot, @NotNull ItemStack stack){
-					if(slot == Inventory.INPUT.id()){
-						ItemStack existing = getStackInSlot(slot);
-						return (!existing.isEmpty() && ItemStack.isSameItem(existing, stack)) || CokerUnitRecipe.hasRecipeWithInput(stack, true);
-					}
-					
-					return false;
-				}
-			};
-			
-			this.itemInput = new StoredCapability<>(itemStackHandler);
-			this.energyCap = new StoredCapability<>(this.energy);
 			this.fluidInput = new StoredCapability<>(ArrayFluidHandler.fillOnly(this.bufferTanks.input(), context.getMarkDirtyRunnable()));
 			this.fluidOutput = new StoredCapability<>(ArrayFluidHandler.drainOnly(this.bufferTanks.output(), context.getMarkDirtyRunnable()));
 		}
@@ -396,6 +388,22 @@ public class CokerUnitLogic implements IMultiblockLogic<CokerUnitLogic.State>, I
 			ItemStack copy = stack.copy();
 			copy.setCount(amount);
 			return copy;
+		}
+	}
+	
+	private static class FilteredItemStackhandler extends ItemStackHandler{
+		public FilteredItemStackhandler(NonNullList<ItemStack> inventory){
+			super(inventory);
+		}
+		
+		@Override
+		public boolean isItemValid(int slot, @NotNull ItemStack stack){
+			if(slot == Inventory.INPUT.id()){
+				ItemStack existing = getStackInSlot(slot);
+				return (!existing.isEmpty() && ItemStack.isSameItem(existing, stack)) || CokerUnitRecipe.hasRecipeWithInput(stack, true);
+			}
+			
+			return false;
 		}
 	}
 	

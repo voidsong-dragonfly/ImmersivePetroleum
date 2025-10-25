@@ -1,10 +1,13 @@
 package flaxbeard.immersivepetroleum.client.render.debugging;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
@@ -68,6 +71,9 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -135,62 +141,51 @@ public class DebugRenderHandler{
 									}
 									
 								}else if(te instanceof IMultiblockBE<?> generic){
+									final IMultiblockBEHelper<?> masterHelper = masterOf(generic.getHelper());
+									final IMultiblockState masterState = masterHelper.getContext().getState();
 									{
-										IMultiblockBEHelper<?> helper = generic.getHelper();
-										BlockPos tPos = generic.getHelper().getPositionInMB();
+										IMultiblockBEHelper<?> genericHelper = generic.getHelper();
 										
-										if(!(helper instanceof IMultiblockBEHelperMaster<?>)){
-											IMultiblockLevel level = generic.getHelper().getContext().getLevel();
-											BlockEntity be = level.getRawLevel().getBlockEntity(generic.getHelper().getContext().getLevel().getAbsoluteOrigin());
-											if(be instanceof IMultiblockBE<?> master)
-												generic = master;
-										}
-										Block block = generic.getHelper().getMultiblock().block().get();
-										
+										BlockPos tPos = genericHelper.getPositionInMB();
 										debugOut.add(toText("Template XYZ: " + tPos.getX() + ", " + tPos.getY() + ", " + tPos.getZ()));
 										
+										Block block = genericHelper.getMultiblock().block().get();
 										MutableComponent name = toTranslation(block.getDescriptionId()).withStyle(ChatFormatting.GOLD);
-										
-										try{
-											//FIXME: add right check to redstone generic.isRedstoned > 0
-											name.append(toText(generic.getHelper().getMultiblock().redstoneInputAware() ? " (Redstoned)" : "").withStyle(ChatFormatting.RED));
-										}catch(UnsupportedOperationException e){
-											// Don't care, skip if this is thrown
-										}
-										
-										if(generic.getHelper().getContext().getState() instanceof ProcessContext<?> poweredGeneric){
-											/*FIXME: need method to find is this active*/
-											//name.append(toText(poweredGeneric.shouldRenderAsActive() ? " (Active)" : "").withStyle(ChatFormatting.GREEN));
-											debugOut.add(toText(poweredGeneric.getEnergy().getEnergyStored() + "/" + poweredGeneric.getEnergy().getMaxEnergyStored() + "RF"));
-										}
 										
 										synchronized(LubricatedHandler.lubricatedTiles){
 											for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
-												if(info.pos.equals(generic.getHelper().getPositionInMB())){
+												if(info.pos.equals(masterHelper.getPositionInMB())){
 													name.append(toText(" (Lubricated " + info.ticks + ")").withStyle(ChatFormatting.YELLOW));
 												}
 											}
 										}
 										
 										debugOut.add(name);
+										
+										// FIXME Both work sometimes, that's not enough!
+										if(masterState instanceof ProcessContext<?> poweredGeneric){
+											debugOut.add(toText(poweredGeneric.getEnergy().getEnergyStored() + "/" + poweredGeneric.getEnergy().getMaxEnergyStored() + " RF"));
+										}else{
+											// Fallback
+											masterHelper.getCapability(ForgeCapabilities.ENERGY, null)
+												.ifPresent(energy -> energyCapabilityDebugDisplay(energy, debugOut));
+										}
 									}
 									
-									IMultiblockState state = generic.getHelper().getContext().getState();
-									
-									if(state instanceof DistillationTowerLogic.State){
-										distillationtower(debugOut, generic.getHelper().asType(IPContent.Multiblock.DISTILLATIONTOWER));
+									if(masterState instanceof DistillationTowerLogic.State){
+										distillationtower(debugOut, masterHelper.asType(IPContent.Multiblock.DISTILLATIONTOWER));
 										
-									}else if(state instanceof CokerUnitLogic.State){
-										cokerunit(debugOut, generic.getHelper().asType(IPContent.Multiblock.COKERUNIT));
+									}else if(masterState instanceof CokerUnitLogic.State){
+										cokerunit(debugOut, masterHelper.asType(IPContent.Multiblock.COKERUNIT));
 										
-									}else if(state instanceof HydroTreaterLogic.State){
-										hydrotreater(debugOut, generic.getHelper().asType(IPContent.Multiblock.HYDROTREATER));
+									}else if(masterState instanceof HydroTreaterLogic.State){
+										hydrotreater(debugOut, masterHelper.asType(IPContent.Multiblock.HYDROTREATER));
 										
-									}else if(state instanceof OilTankLogic.State){
-										oiltank(debugOut, generic.getHelper().asType(IPContent.Multiblock.OILTANK));
+									}else if(masterState instanceof OilTankLogic.State){
+										oiltank(debugOut, masterHelper.asType(IPContent.Multiblock.OILTANK));
 										
-									}else if(state instanceof DerrickLogic.State){
-										derrick(debugOut, generic.getHelper().asType(IPContent.Multiblock.DERRICK));
+									}else if(masterState instanceof DerrickLogic.State){
+										derrick(debugOut, masterHelper.asType(IPContent.Multiblock.DERRICK));
 									}
 								}
 							}else{
@@ -271,6 +266,11 @@ public class DebugRenderHandler{
 				}
 			}
 		}
+	}
+	
+	private static void energyCapabilityDebugDisplay(IEnergyStorage energy, List<Component> debugOut){
+		debugOut.add(toText("Has Energy Capability!").withStyle(ChatFormatting.BLUE));
+		debugOut.add(toText(energy.getEnergyStored() + "/" + energy.getMaxEnergyStored() + " RF").withStyle(ChatFormatting.BLUE));
 	}
 	
 	@SubscribeEvent
@@ -516,21 +516,16 @@ public class DebugRenderHandler{
 	}
 	
 	private static void distillationtower(List<Component> text, IMultiblockBEHelper<DistillationTowerLogic.State> tower){
-		if(!(tower instanceof IMultiblockBEHelperMaster<DistillationTowerLogic.State>)){
-			IMultiblockLevel level = tower.getContext().getLevel();
-			BlockEntity be = level.getRawLevel().getBlockEntity(tower.getContext().getLevel().getAbsoluteOrigin());
-			if(be instanceof IMultiblockBE<?> master)
-				tower = master.getHelper().asType(IPContent.Multiblock.DISTILLATIONTOWER);
-		}
+		tower = masterOf(tower);
 		
 		for(int i = 0;i < tower.getState().tanks.asArray().length;i++){
 			text.add(toText("Tank " + (i + 1)).withStyle(ChatFormatting.UNDERLINE));
 			
 			MultiFluidTank tank = tower.getState().tanks.asArray()[i];
-			if(tank.fluids.size() > 0){
+			if(!tank.fluids.isEmpty()){
 				for(int j = 0;j < tank.fluids.size();j++){
-					FluidStack fstack = tank.fluids.get(j);
-					text.add(toText("  " + fstack.getDisplayName().getString() + " (" + fstack.getAmount() + "mB)"));
+					FluidStack fs = tank.fluids.get(j);
+					text.add(toText("  " + fs.getDisplayName().getString() + " (" + fs.getAmount() + "mB)"));
 				}
 			}else{
 				text.add(toText("  Empty"));
@@ -539,12 +534,7 @@ public class DebugRenderHandler{
 	}
 	
 	private static void cokerunit(List<Component> text, IMultiblockBEHelper<CokerUnitLogic.State> coker){
-		if(!(coker instanceof IMultiblockBEHelperMaster<CokerUnitLogic.State>)){
-			IMultiblockLevel level = coker.getContext().getLevel();
-			BlockEntity be = level.getRawLevel().getBlockEntity(coker.getContext().getLevel().getAbsoluteOrigin());
-			if(be instanceof IMultiblockBE<?> master)
-				coker = master.getHelper().asType(IPContent.Multiblock.COKERUNIT);
-		}
+		coker = masterOf(coker);
 		
 		{
 			FluidTank tank = coker.getState().bufferTanks.input();
@@ -575,12 +565,7 @@ public class DebugRenderHandler{
 	}
 	
 	private static void hydrotreater(List<Component> text, IMultiblockBEHelper<HydroTreaterLogic.State> treater){
-		if(!(treater instanceof IMultiblockBEHelperMaster<HydroTreaterLogic.State>)){
-			IMultiblockLevel level = treater.getContext().getLevel();
-			BlockEntity be = level.getRawLevel().getBlockEntity(treater.getContext().getLevel().getAbsoluteOrigin());
-			if(be instanceof IMultiblockBE<?> master)
-				treater = master.getHelper().asType(IPContent.Multiblock.HYDROTREATER);
-		}
+		treater = masterOf(treater);
 		
 		IFluidTank[] tanks = treater.getState().getInternalTanks();
 		if(tanks != null && tanks.length > 0){
@@ -601,20 +586,15 @@ public class DebugRenderHandler{
 			}
 		}
 		
-		if(!(tank instanceof IMultiblockBEHelperMaster<OilTankLogic.State>)){
-			IMultiblockLevel level = tank.getContext().getLevel();
-			BlockEntity be = level.getRawLevel().getBlockEntity(tank.getContext().getLevel().getAbsoluteOrigin());
-			if(be instanceof IMultiblockBE<?> master)
-				tank = master.getHelper().asType(IPContent.Multiblock.OILTANK);
-		}
+		tank = masterOf(tank);
 		
 		if(port != null){
 			OilTankLogic.PortState portState = tank.getState().portConfig.get(port);
 			boolean isInput = portState == OilTankLogic.PortState.INPUT;
 			text.add(toText("Port: ")
-					.append(toText(port != null ? port.getSerializedName() : "None"))
+					.append(toText(port.getSerializedName()))
 					.append(toText(" " + portState.getSerializedName())
-							.withStyle(isInput ? ChatFormatting.AQUA : ChatFormatting.GOLD)));
+						.withStyle(isInput ? ChatFormatting.AQUA : ChatFormatting.GOLD)));
 		}
 		
 		FluidStack fs = tank.getState().tank.getFluid();
@@ -622,22 +602,24 @@ public class DebugRenderHandler{
 	}
 	
 	private static void derrick(List<Component> text, IMultiblockBEHelper<DerrickLogic.State> derrick){
-		if(!(derrick instanceof IMultiblockBEHelperMaster<DerrickLogic.State>)){
-			IMultiblockLevel level = derrick.getContext().getLevel();
-			BlockEntity be = level.getRawLevel().getBlockEntity(derrick.getContext().getLevel().getAbsoluteOrigin());
-			if(be instanceof IMultiblockBE<?> master)
-				derrick = master.getHelper().asType(IPContent.Multiblock.DERRICK);
-		}
+		derrick = masterOf(derrick);
 		
 		IFluidTank tanks = derrick.getState().tank;
 		FluidStack fs = tanks.getFluid();
 		text.add(toText("Tank : " + (fs.getAmount() + "/" + tanks.getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-		/*if(tanks != null && tanks.length > 0){
-			for(int i = 0;i < tanks.length;i++){
-				FluidStack fs = tanks[i].getFluid();
-				text.add(toText("Tank " + i + ": " + (fs.getAmount() + "/" + tanks[i].getCapacity() + "mB " + (fs.isEmpty() ? "" : "(" + fs.getDisplayName().getString() + ")"))));
-			}
-		}*/
+	}
+	
+	private static <State extends IMultiblockState, H extends IMultiblockBEHelper<State>> H masterOf(H helper){
+		if(!(helper instanceof IMultiblockBEHelperMaster<?>)){
+			IMultiblockLevel mbLevel = helper.getContext().getLevel();
+			BlockPos masterPos = mbLevel.toAbsolute(helper.getMultiblock().masterPosInMB());
+			
+			BlockEntity be = mbLevel.getRawLevel().getBlockEntity(masterPos);
+			if(be instanceof MultiblockBlockEntityMaster<?> master)
+				return (H) master.getHelper();
+		}
+		
+		return helper;
 	}
 	
 	static MutableComponent toText(String string){
