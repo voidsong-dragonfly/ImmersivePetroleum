@@ -71,10 +71,9 @@ public class ModelLubricantPipes{
 				origin.addOrReplaceChild("p6", singleCube(0, -1, -1, 18, 2, 2), PartPose.offsetAndRotation(52, 16, -1, 0, 0, (float) Math.toRadians(90)));
 				origin.addOrReplaceChild("p7", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(53, 15, -1, 0, (float) Math.toRadians(270), 0));
 				origin.addOrReplaceChild("p8", singleCube(-1, -1, 0, 7, 2, 2), PartPose.offsetAndRotation(53, 33, 1, 0, (float) Math.toRadians(270), 0));
-				origin.addOrReplaceChild("p9", singleCube(48, 39, 39, 3, 2, 2), PartPose.ZERO);
-				origin.addOrReplaceChild("p10", singleCube(-1, -1, 0, 2, 2, 2), PartPose.offsetAndRotation(75, 9, 1, 0, (float) Math.toRadians(270), 0));
-				origin.addOrReplaceChild("p11", singleCube(73, 8, 2, 16, 2, 2), PartPose.ZERO);
-				origin.addOrReplaceChild("p12", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(89, 9, 5, 0, (float) Math.toRadians(270), 0));
+				origin.addOrReplaceChild("p9", singleCube(-1, -1, 0, 2, 2, 2), PartPose.offsetAndRotation(75, 9, 1, 0, (float) Math.toRadians(270), 0));
+				origin.addOrReplaceChild("p10", singleCube(73, 8, 2, 16, 2, 2), PartPose.ZERO);
+				origin.addOrReplaceChild("p11", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(89, 9, 5, 0, (float) Math.toRadians(270), 0));
 				
 			}else{
 				PartDefinition origin = meshDefinition.getRoot().addOrReplaceChild("origin", singleCube(51, 8, 40, 20, 2, 2), PartPose.ZERO);
@@ -87,10 +86,9 @@ public class ModelLubricantPipes{
 				origin.addOrReplaceChild("p6", singleCube(0, -1, -1, 18, 2, 2), PartPose.offsetAndRotation(52, 16, 49, 0, 0, (float) Math.toRadians(90)));
 				origin.addOrReplaceChild("p7", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(53, 15, 47, 0, (float) Math.toRadians(270), 0));
 				origin.addOrReplaceChild("p8", singleCube(-1, -1, 0, 7, 2, 2), PartPose.offsetAndRotation(53, 33, 42, 0, (float) Math.toRadians(270), 0));
-				origin.addOrReplaceChild("p9", singleCube(48, 39, 39, 3, 2, 2), PartPose.ZERO);
-				origin.addOrReplaceChild("p10", singleCube(-1, -1, 0, 2, 2, 2), PartPose.offsetAndRotation(75, 9, 47, 0, (float) Math.toRadians(270), 0));
-				origin.addOrReplaceChild("p11", singleCube(73, 8, 44, 16, 2, 2), PartPose.ZERO);
-				origin.addOrReplaceChild("p12", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(89, 9, 41, 0, (float) Math.toRadians(270), 0));
+				origin.addOrReplaceChild("p9", singleCube(-1, -1, 0, 2, 2, 2), PartPose.offsetAndRotation(75, 9, 47, 0, (float) Math.toRadians(270), 0));
+				origin.addOrReplaceChild("p10", singleCube(73, 8, 44, 16, 2, 2), PartPose.ZERO);
+				origin.addOrReplaceChild("p11", singleCube(-1, -1, 0, 4, 2, 2), PartPose.offsetAndRotation(89, 9, 41, 0, (float) Math.toRadians(270), 0));
 			}
 			
 			this.origin = LayerDefinition.create(meshDefinition, 16, 16).bakeRoot().getChild("origin");
