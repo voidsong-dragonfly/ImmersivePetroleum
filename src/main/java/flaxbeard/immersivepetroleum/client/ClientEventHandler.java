@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.client;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.ItemOverlayUtils;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
@@ -15,34 +14,20 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
-import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -53,7 +38,6 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -65,84 +49,16 @@ import java.util.Locale;
 
 public class ClientEventHandler{
 	
+	private static LubricatorGhostRenderer lubricatorGhostRenderer;
+	
 	@SubscribeEvent
 	public void renderLevelStage(RenderLevelStageEvent event){
 		if(event.getStage() == Stage.AFTER_TRIPWIRE_BLOCKS){
-			renderAutoLubricatorGhost(event);
+			if(lubricatorGhostRenderer == null)
+				lubricatorGhostRenderer = new LubricatorGhostRenderer(Minecraft.getInstance());
+			
+			lubricatorGhostRenderer.render(event.getPoseStack());
 		}
-	}
-	
-	private static void renderAutoLubricatorGhost(RenderLevelStageEvent event){
-		PoseStack matrix = event.getPoseStack();
-		Minecraft mc = Minecraft.getInstance();
-		
-		matrix.pushPose();
-		{
-			if(mc.player != null){
-				ItemStack mainItem = mc.player.getMainHandItem();
-				ItemStack secondItem = mc.player.getOffhandItem();
-				
-				boolean main = (!mainItem.isEmpty()) && mainItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
-				boolean off = (!secondItem.isEmpty()) && secondItem.getItem() == IPContent.Blocks.AUTO_LUBRICATOR.get().asItem();
-				
-				if(main || off){
-					BlockRenderDispatcher blockDispatcher = Minecraft.getInstance().getBlockRenderer();
-					MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-					
-					// Anti-Jiggle when moving
-					Vec3 renderView = MCUtil.getGameRenderer().getMainCamera().getPosition();
-					matrix.translate(-renderView.x, -renderView.y, -renderView.z);
-					
-					// TODO ! EXTREMELY IMPORTANT !
-					/*
-						This is in dire need for optimization
-						NEEDS filtering for already checked multiblocks somehow
-					 */
-					final Level level = mc.player.level();
-					final BlockPos base = mc.player.blockPosition();
-					final RenderType renderType = RenderType.translucent();
-					int x, y, z;
-					for(x = -16;x <= 16;x++){
-						for(z = -16;z <= 16;z++){
-							for(y = -16;y <= 16;y++){
-								BlockPos pos = base.offset(x, y, z);
-								BlockEntity te = level.getBlockEntity(pos);
-								
-								if(te instanceof IMultiblockBE<?> multiblockBE){
-									ILubricationHandler handler = LubricatedHandler.getHandlerForTile(multiblockBE.getHelper());
-									
-									if(handler != null){
-										ILubricationHandler.GhostInfo ghost = handler.getGhostBlockPosition(level, multiblockBE.getHelper());
-										
-										if(ghost != null){
-											BlockState targetState = level.getBlockState(ghost.position());
-											
-											if(targetState.is(BlockTags.REPLACEABLE) && level.getBlockState(ghost.position().above()).is(BlockTags.REPLACEABLE)){
-												VertexConsumer vBuilder = buffer.getBuffer(renderType);
-												
-												matrix.pushPose();
-												{
-													matrix.translate(ghost.position().getX(), ghost.position().getY(), ghost.position().getZ());
-													
-													BlockState state = IPContent.Blocks.AUTO_LUBRICATOR.get().defaultBlockState().setValue(AutoLubricatorBlock.FACING, ghost.facing());
-													BakedModel model = blockDispatcher.getBlockModel(state);
-													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, renderType);
-													
-												}
-												matrix.popPose();
-												
-												buffer.endBatch();
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		matrix.popPose();
 	}
 	
 	@SubscribeEvent

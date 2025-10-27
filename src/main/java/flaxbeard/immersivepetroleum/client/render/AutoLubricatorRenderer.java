@@ -1,6 +1,9 @@
 package flaxbeard.immersivepetroleum.client.render;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.client.utils.GuiHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -12,6 +15,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,17 +33,17 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	@SuppressWarnings("unchecked, rawtypes")
-	public void render(@Nonnull AutoLubricatorTileEntity te, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
-		if(te.isSlave)
+	public void render(@Nonnull AutoLubricatorTileEntity lubricator, float partialTicks, @Nonnull PoseStack transform, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
+		if(lubricator.isSlave)
 			return;
 		
-		FluidStack fs = te.tank.getFluid();
-		float level = 0;
+		FluidStack fs = lubricator.tank.getFluid();
+		float fluidLevel = 0;
 		if(!fs.isEmpty()){
-			level = fs.getAmount() / (float) te.tank.getCapacity();
+			fluidLevel = fs.getAmount() / (float) lubricator.tank.getCapacity();
 		}
 		
-		if(level > 0){
+		if(fluidLevel > 0){
 			float height = 16;
 			
 			transform.pushPose();
@@ -50,7 +54,7 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 				
 				VertexConsumer builder = bufferIn.getBuffer(RenderType.solid());
 				
-				float h = height * level;
+				float h = height * fluidLevel;
 				GuiHelper.drawRepeatedFluidSprite(builder, transform, fs, 0, 0, 8, h);
 				transform.mulPose(Axis.YP.rotationDegrees(90));
 				transform.translate(-7.98, 0, 0);
@@ -72,17 +76,33 @@ public class AutoLubricatorRenderer implements BlockEntityRenderer<AutoLubricato
 		
 		transform.pushPose();
 		{
-			BlockPos target = te.getBlockPos().relative(te.getFacing());
-			if(te.getLevel().getBlockEntity(target) instanceof IMultiblockBE<?> tile){
+			final Level level = lubricator.getLevel();
+			BlockPos target = lubricator.getBlockPos().relative(lubricator.getFacing());
+			
+			if(level.getBlockEntity(target) instanceof IMultiblockBE<?> tile){
 				ILubricationHandler handler = LubricatedHandler.getHandlerForTile(tile.getHelper());
-				if(handler != null){
-					BlockEntity master = handler.isPlacedCorrectly(te.getLevel(), te, te.getFacing());
-					if(master instanceof IMultiblockBE<?> newTile){
-						handler.renderPipes(te, newTile.getHelper(), transform, bufferIn, combinedLightIn, combinedOverlayIn);
-					}
+				
+				if(handler != null && handler.isPlacedCorrectly(level, lubricator.getBlockPos(), lubricator.getFacing())){
+					IMultiblockBEHelperMaster<?> mbMaster = getMBMaster(level, tile.getHelper());
+					
+					if(mbMaster != null)
+						handler.renderPipes(lubricator, mbMaster, transform, bufferIn, combinedLightIn, combinedOverlayIn);
 				}
 			}
 		}
 		transform.popPose();
+	}
+	
+	private static IMultiblockBEHelperMaster<?> getMBMaster(Level level, IMultiblockBEHelper<?> helper){
+		if(!(helper instanceof IMultiblockBEHelperMaster<?>) && helper.getContext() != null){
+			BlockPos masterPos = helper.getContext().getLevel().toAbsolute(helper.getMultiblock().masterPosInMB());
+			BlockEntity be = level.getBlockEntity(masterPos);
+			
+			if(be instanceof MultiblockBlockEntityMaster<?> master){
+				return master.getHelper();
+			}
+		}
+		
+		return null;
 	}
 }

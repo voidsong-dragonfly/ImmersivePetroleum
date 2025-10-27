@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -43,43 +44,25 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class LubricatedHandler{
-	public interface ILubricationHandler<E extends IMultiblockBEHelper<B>, B extends IMultiblockState>{
-		GhostInfo getGhostBlockPosition(Level world, E mbte);
-		
+	
+	public interface ILubricationHandler<E extends IMultiblockBEHelperMaster<B>, B extends IMultiblockState>{
 		Vec3i getStructureDimensions();
 		
-		boolean isMachineEnabled(Level world, E mbte);
+		/** Was the AutoLubricator placed at the correct location? */
+		boolean isPlacedCorrectly(Level world, BlockPos lubricatorPosition, Direction lubricatorFacing);
 		
-		BlockEntity isPlacedCorrectly(Level world, AutoLubricatorTileEntity lubricator, Direction direction);
+		GhostInfo getGhostBlockPosition(Level world, E mbte);
+		
+		boolean isMachineEnabled(Level world, E mbte);
 		
 		void lubricateClient(ClientLevel world, Fluid lubricant, int ticks, E mbte);
 		
 		void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, E mbte);
 		
-		void spawnLubricantParticles(ClientLevel world, AutoLubricatorTileEntity lubricator, Direction direction, E mbte);
+		void spawnLubricantParticles(ClientLevel world, BlockPos lubricatorPosition, Direction direction, E mbte);
 		
 		@OnlyIn(Dist.CLIENT)
 		void renderPipes(AutoLubricatorTileEntity lubricator, E mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay);
-		
-		@Nullable
-		default MultiblockBlockEntityMaster<?> getMultiblockMaster(Level world, BlockPos pos){
-			BlockEntity te = world.getBlockEntity(pos);
-			
-			if(te instanceof IMultiblockBE<?> mbBE){
-				IMultiblockBEHelper<?> helper = mbBE.getHelper();
-				
-				if(!(helper instanceof IMultiblockBEHelperMaster<?>) && helper.getContext() != null){
-					BlockPos masterPos = helper.getContext().getLevel().toAbsolute(helper.getMultiblock().masterPosInMB());
-					BlockEntity be = world.getBlockEntity(masterPos);
-					
-					if(be instanceof MultiblockBlockEntityMaster<?> master){
-						return master;
-					}
-				}
-			}
-			
-			return null;
-		}
 		
 		record GhostInfo(BlockPos position, Direction facing){}
 	}
@@ -88,17 +71,15 @@ public class LubricatedHandler{
 	
 	public static <T extends IMultiblockLogic<B>, B extends IMultiblockState> void registerLubricatedTile(Class<T> tileClass, Supplier<ILubricationHandler<?, B>> handler){
 		ILubricationHandler<?, B> instance = handler.get();
-		lubricationHandlers.put(tileClass, instance);
+		lubricationHandlers.put(tileClass, handler.get());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends IMultiblockBEHelper<B>, B extends IMultiblockState> ILubricationHandler<T, B> getHandlerForTile(T te){
+	public static <T extends IMultiblockBEHelper<?>> ILubricationHandler<?, ?> getHandlerForTile(T te){
 		if(te != null){
-			final IMultiblockLogic<B> logic = te.getMultiblock().logic();
+			final IMultiblockLogic<?> logic = te.getMultiblock().logic();
 			
-			ILubricationHandler<?, ?> handler = lubricationHandlers.get(logic.getClass());
-			if(handler != null)
-				return (ILubricationHandler<T, B>) handler;
+			return lubricationHandlers.get(logic.getClass());
 		}
 		
 		return null;

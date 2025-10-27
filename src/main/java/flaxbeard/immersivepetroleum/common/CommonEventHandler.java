@@ -1,6 +1,8 @@
 package flaxbeard.immersivepetroleum.common;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
@@ -145,37 +147,40 @@ public class CommonEventHandler{
 		Set<LubricatedTileInfo> toRemove = new HashSet<>();
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){
 			if(info.world == world.dimension() && world.isAreaLoaded(info.pos, 0)){
-				BlockEntity te = world.getBlockEntity(info.pos);
-				if(te instanceof IMultiblockBEHelper<?> helper){
-					ILubricationHandler lubeHandler = LubricatedHandler.getHandlerForTile(helper);
+				BlockEntity blockEntity = world.getBlockEntity(info.pos);
+				
+				if(blockEntity instanceof IMultiblockBE<?> multiblockBE){
+					final IMultiblockBEHelperMaster<?> masterHelper = Utils.getMultiblockMasterHelper(world, multiblockBE.getHelper());
+					
+					ILubricationHandler lubeHandler = LubricatedHandler.getHandlerForTile(masterHelper);
 					if(lubeHandler != null){
-						if(lubeHandler.isMachineEnabled(world, helper)){
+						
+						if(lubeHandler.isMachineEnabled(world, masterHelper)){
 							if(world.isClientSide){
-								lubeHandler.lubricateClient((ClientLevel) world, info.lubricant, info.ticks, helper);
+								lubeHandler.lubricateClient((ClientLevel) world, info.lubricant, info.ticks, masterHelper);
 							}else{
-								lubeHandler.lubricateServer((ServerLevel) world, info.lubricant, info.ticks, helper);
+								lubeHandler.lubricateServer((ServerLevel) world, info.lubricant, info.ticks, masterHelper);
 							}
 						}
 						
-						if(world.isClientSide){
-							if(te instanceof IMultiblockBE<?> part){
+						if(world.isClientSide && multiblockBE.getHelper().getContext() != null){
+							Vec3i size = lubeHandler.getStructureDimensions();
+							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
+							
+							IMultiblockLevel mbLevel = multiblockBE.getHelper().getContext().getLevel();
+							for(int i = 0;i < numBlocks;i++){
+								BlockPos pos = mbLevel.toAbsolute(BlockPos.containing(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
 								
-								Vec3i size = lubeHandler.getStructureDimensions();
-								int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
-								for(int i = 0;i < numBlocks;i++){
-									BlockPos pos = part.getHelper().getContext().getLevel().toAbsolute(BlockPos.containing(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
-									
-									if(world.getBlockState(pos).getBlock() != Blocks.AIR && world.getBlockEntity(pos) instanceof IMultiblockBE<?> part2 && part2.getHelper().getContext().getState() == part.getHelper().getContext().getState()){
-										for(Direction facing:Direction.Plane.HORIZONTAL){
-											if(world.random.nextInt(30) == 0){
-												Vec3i direction = facing.getNormal();
-												
-												float x = (pos.getX() + .5f) + (direction.getX() * .65f);
-												float y = pos.getY() + 1;
-												float z = (pos.getZ() + .5f) + (direction.getZ() * .65f);
-												
-												world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, 0, 0, 0);
-											}
+								if(world.getBlockState(pos).getBlock() != Blocks.AIR && world.getBlockEntity(pos) instanceof IMultiblockBE<?> part2 && part2.getHelper().getContext().getState() == multiblockBE.getHelper().getContext().getState()){
+									for(Direction facing:Direction.Plane.HORIZONTAL){
+										if(world.random.nextInt(30) == 0){
+											Vec3i direction = facing.getNormal();
+											
+											float x = (pos.getX() + .5f) + (direction.getX() * .65f);
+											float y = pos.getY() + 1;
+											float z = (pos.getZ() + .5f) + (direction.getZ() * .65f);
+											
+											world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, 0, 0, 0);
 										}
 									}
 								}

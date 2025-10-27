@@ -1,7 +1,8 @@
 package flaxbeard.immersivepetroleum.common.lubehandlers;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.BucketWheelLogic;
@@ -14,6 +15,7 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -24,82 +26,93 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class ExcavatorLubricationHandler implements ILubricationHandler<IMultiblockBEHelper<ExcavatorLogic.State>, ExcavatorLogic.State>{
-	private static final Vec3i size = new Vec3i(3, 6, 3);
+public class ExcavatorLubricationHandler implements ILubricationHandler<IMultiblockBEHelperMaster<ExcavatorLogic.State>, ExcavatorLogic.State>{
+	private static final Vec3i SIZE = new Vec3i(3, 6, 3);
+	private static final BlockPos RELATIVE_GHOST_POS = new BlockPos(3, 0, 1);
 	
 	@Override
 	public Vec3i getStructureDimensions(){
-		return size;
+		return SIZE;
 	}
 	
 	@Override
-	public boolean isMachineEnabled(Level world, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
-		BlockPos wheelPos = mbte.getContext().getLevel().toAbsolute(ExcavatorLogic.WHEEL_CENTER);
-		BlockEntity center = world.getBlockEntity(wheelPos);
+	public boolean isPlacedCorrectly(Level world, BlockPos lubricatorPosition, Direction lubricatorFacing){
+		final BlockPos target = lubricatorPosition.relative(lubricatorFacing);
 		
-		if(center instanceof MultiblockBlockEntityMaster<?> wheel){
-			@SuppressWarnings("unchecked")
-			MultiblockBlockEntityMaster<BucketWheelLogic.State> wheelBE = (MultiblockBlockEntityMaster<BucketWheelLogic.State>) wheel;
-			return wheelBE.getHelper().getState().active;
+		if(world.getBlockEntity(target) instanceof IMultiblockBE<?> mb && mb.getHelper().getContext() != null){
+			IMultiblockLevel level = mb.getHelper().getContext().getLevel();
+			
+			if(level.toRelative(lubricatorPosition).equals(RELATIVE_GHOST_POS)){
+				MultiblockOrientation orientation = level.getOrientation();
+				Direction dir = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
+				
+				return dir == lubricatorFacing;
+			}
 		}
+		
 		return false;
 	}
 	
 	@Override
-	public BlockEntity isPlacedCorrectly(Level world, AutoLubricatorTileEntity lubricator, Direction facing){
-		final BlockPos target = lubricator.getBlockPos().relative(facing);
+	public GhostInfo getGhostBlockPosition(Level world, IMultiblockBEHelperMaster<ExcavatorLogic.State> mbte){
+		IMultiblockLevel level = mbte.getContext().getLevel();
 		
-		MultiblockBlockEntityMaster<?> mbMaster = getMultiblockMaster(world, target);
-		if(mbMaster != null){
-			MultiblockOrientation orientation = mbMaster.getHelper().getContext().getLevel().getOrientation();
-			Direction dir = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
-			
-			if(dir == facing){
-				return mbMaster;
-			}
-		}
+		BlockPos position = level.toAbsolute(RELATIVE_GHOST_POS);
 		
-		return null;
+		MultiblockOrientation orientation = level.getOrientation();
+		Direction facing = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
+		
+		return new GhostInfo(position, facing);
 	}
 	
 	@Override
-	public void lubricateClient(ClientLevel world, Fluid lubricant, int ticks, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
+	public boolean isMachineEnabled(Level world, IMultiblockBEHelperMaster<ExcavatorLogic.State> mbte){
+		MultiblockBlockEntityMaster<BucketWheelLogic.State> wheelMaster = getWheelMaster(world, mbte);
+		
+		return wheelMaster != null && wheelMaster.getHelper().getState().active;
+	}
+	
+	@Override
+	public void lubricateClient(ClientLevel world, Fluid lubricant, int ticks, IMultiblockBEHelperMaster<ExcavatorLogic.State> mbte){
+		MultiblockBlockEntityMaster<BucketWheelLogic.State> wheelMaster = getWheelMaster(world, mbte);
+		if(wheelMaster == null)
+			return;
+		
+		wheelMaster.getHelper().getState().rotation += (float) (IEServerConfig.MACHINES.excavator_speed.get() / 4D);
+		wheelMaster.getHelper().getState().rotation %= 360; // just a precaution
+	}
+	
+	@Override
+	public void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, IMultiblockBEHelperMaster<ExcavatorLogic.State> mbte){
+		MultiblockBlockEntityMaster<BucketWheelLogic.State> wheelMaster = getWheelMaster(world, mbte);
+		if(wheelMaster == null)
+			return;
+		
+		if(ticks % 4 == 0){
+			wheelMaster.getHelper().tickServer();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Nullable
+	private MultiblockBlockEntityMaster<BucketWheelLogic.State> getWheelMaster(Level world, IMultiblockBEHelperMaster<ExcavatorLogic.State> mbte){
 		BlockPos wheelPos = mbte.getContext().getLevel().toAbsolute(ExcavatorLogic.WHEEL_CENTER);
 		BlockEntity center = world.getBlockEntity(wheelPos);
 		
-		if(center instanceof MultiblockBlockEntityMaster<?> wheel){
-			@SuppressWarnings("unchecked")
-			MultiblockBlockEntityMaster<BucketWheelLogic.State> wheelBE = (MultiblockBlockEntityMaster<BucketWheelLogic.State>) wheel;
-			wheelBE.getHelper().getState().rotation += IEServerConfig.MACHINES.excavator_speed.get() / 4F;
-		}
+		return center instanceof MultiblockBlockEntityMaster<?> wheel ? (MultiblockBlockEntityMaster<BucketWheelLogic.State>) wheel : null;
 	}
 	
 	@Override
-	public void lubricateServer(ServerLevel world, Fluid lubricant, int ticks, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
-		BlockPos wheelPos = mbte.getContext().getLevel().toAbsolute(ExcavatorLogic.WHEEL_CENTER);
-		BlockEntity center = world.getBlockEntity(wheelPos);
-		
-		if(center instanceof MultiblockBlockEntityMaster<?> wheel){
-			@SuppressWarnings("unchecked")
-			MultiblockBlockEntityMaster<BucketWheelLogic.State> wheelBE = (MultiblockBlockEntityMaster<BucketWheelLogic.State>) wheel;
-			
-			if(ticks % 4 == 0){
-				wheelBE.getHelper().tickServer();
-			}
-		}
-	}
-	
-	@Override
-	public void spawnLubricantParticles(ClientLevel world, AutoLubricatorTileEntity lubricator, Direction facing, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
+	public void spawnLubricantParticles(ClientLevel world, BlockPos lubricatorPosition, Direction facing, IMultiblockBEHelperMaster<ExcavatorLogic.State> mbte){
 		boolean mirrored = mbte.getContext().getLevel().getOrientation().mirrored();
 		Direction f = mirrored ? facing : facing.getOpposite();
 		
@@ -121,9 +134,9 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 		if(!flip)
 			zO = -zO + 1;
 		
-		float x = lubricator.getBlockPos().getX() + (f.getAxis() == Axis.X ? xO : zO);
-		float y = lubricator.getBlockPos().getY() + yO;
-		float z = lubricator.getBlockPos().getZ() + (f.getAxis() == Axis.X ? zO : xO);
+		float x = lubricatorPosition.getX() + (f.getAxis() == Axis.X ? xO : zO);
+		float y = lubricatorPosition.getY() + yO;
+		float z = lubricatorPosition.getZ() + (f.getAxis() == Axis.X ? zO : xO);
 		
 		for(int i = 0;i < 3;i++){
 			float r1 = (world.random.nextFloat() - .5F) * 2F;
@@ -134,31 +147,13 @@ public class ExcavatorLubricationHandler implements ILubricationHandler<IMultibl
 		}
 	}
 	
-	@Override
-	public GhostInfo getGhostBlockPosition(Level world, IMultiblockBEHelper<ExcavatorLogic.State> mbte){
-		if(mbte.getContext() == null)
-			return null;
-		
-		IMultiblockLevel level = mbte.getContext().getLevel();
-		
-		BlockPos position = level.toAbsolute(new BlockPos(3, 0, 1));
-		
-		MultiblockOrientation orientation = level.getOrientation();
-		Direction facing = orientation.mirrored() ? orientation.front().getClockWise() : orientation.front().getCounterClockWise();
-		
-		return new GhostInfo(position, facing);
-	}
-	
 	private static final ResourceLocation TEXTURE = ResourceUtils.ip("textures/models/lube_pipe.png");
 	private static Supplier<IPModel> pipes_normal;
 	private static Supplier<IPModel> pipes_mirrored;
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderPipes(AutoLubricatorTileEntity lubricator, IMultiblockBEHelper<ExcavatorLogic.State> mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
-		if(mbte.getContext() == null)
-			return;
-		
+	public void renderPipes(AutoLubricatorTileEntity lubricator, IMultiblockBEHelperMaster<ExcavatorLogic.State> mbte, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
 		final MultiblockOrientation orientation = mbte.getContext().getLevel().getOrientation();
 		final boolean mirrored = orientation.mirrored();
 		final Direction rotation = orientation.front();

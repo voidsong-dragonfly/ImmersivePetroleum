@@ -1,5 +1,9 @@
 package flaxbeard.immersivepetroleum.common.util;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.PlayerAdvancements;
@@ -12,14 +16,16 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
+import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
 /**
  * General purpose Utilities
- * 
+ *
  * @author TwistedGate
  */
 public class Utils{
@@ -94,6 +100,21 @@ public class Utils{
 	
 	public static boolean hasKey(ItemStack stack, String key, int tagId){
 		return stack.hasTag() && stack.getTag().contains(key, tagId);
+	}
+	
+	@Nullable
+	public static IMultiblockBEHelperMaster<?> getMultiblockMasterHelper(Level level, IMultiblockBEHelper<?> helper){
+		if(helper instanceof IMultiblockBEHelperMaster<?> masterHelper)
+			return masterHelper;
+		
+		if(helper.getContext() == null)
+			return null;
+		
+		BlockPos masterPos = helper.getContext().getLevel().toAbsolute(helper.getMultiblock().masterPosInMB());
+		BlockEntity be = level.getBlockEntity(masterPos);
+		
+		return be instanceof MultiblockBlockEntityMaster<?> master ? master.getHelper() : null;
+		
 	}
 	
 	private Utils(){
