@@ -48,6 +48,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -61,7 +62,7 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	@Override
-	protected void buildRecipes(Consumer<FinishedRecipe> out){
+	protected void buildRecipes(@Nonnull Consumer<FinishedRecipe> out){
 		this.out = out;
 		
 		itemRecipes();
@@ -193,12 +194,12 @@ public class IPRecipes extends RecipeProvider{
 			.addItemWithChance(new ItemStack(IEItems.Ingredients.DUST_SULFUR, 5), 1.0)
 			.build(out, rl("hydrotreater/sulfur_recovery"));
 		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.PETROLEUM_GAS.get(), 2000), 256000, 500)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.PETROLEUM_GAS.get(), 2000), 192000, 300)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.naphtha, 1500))
 			.addSecondaryInputFluid(FluidTags.WATER, 500)
 			.build(out, rl("hydrotreater/naphtha_cracking"));
 		
-		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 2000), 256000, 500)
+		HighPressureRefineryRecipeBuilder.builder(new FluidStack(IPContent.Fluids.DIESEL_SULFUR.get(), 2000), 256000, 400)
 			.addInputFluid(new FluidTagInput(IPTags.Fluids.lubricant, 2000))
 			.addSecondaryInputFluid(FluidTags.WATER, 500)
 			.addItemWithChance(new ItemStack(IPContent.Items.PARAFFIN_WAX.get(), 2), 1.0)
