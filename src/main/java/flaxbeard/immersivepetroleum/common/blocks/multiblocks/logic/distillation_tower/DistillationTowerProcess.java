@@ -74,4 +74,10 @@ public class DistillationTowerProcess extends MultiblockProcessInMachine<Distill
 			rawLevel.addFreshEntity(ei);
 		}
 	}
+	
+	@Override
+	protected boolean canOutputItem(ProcessContext.ProcessContextInMachine<DistillationTowerRecipe> context, ItemStack output) {
+		// We return true here because we can always output items, they are just thrown on the ground when not stored
+		return true;
+	}
 }
