@@ -8,7 +8,7 @@
   ],
   "energy": 1024,
   "input": {
-    "amount": 50,
+    "amount": 60,
     "tag": "forge:crude_oil"
   },
   "results": [

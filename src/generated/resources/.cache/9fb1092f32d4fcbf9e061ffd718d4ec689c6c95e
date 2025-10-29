@@ -1,4 +1,4 @@
-// 1.20.1	2025-10-27T15:11:06.837091828	Recipes
+// 1.20.1	2025-10-28T22:08:36.90503763	Recipes
 64e54e7d08fb19b20aa9f6dbb2d3278eee730f66 data/immersivepetroleum/advancements/recipes/misc/asphalt.json
 96249170c1722625f94f3110e7a16c6694f7df61 data/immersivepetroleum/advancements/recipes/misc/asphalt2.json
 add8f32879af55b1a2c874ae65776eb4b9d71a0e data/immersivepetroleum/advancements/recipes/misc/asphalt_slab.json
@@ -58,7 +58,7 @@ fad1a4c8184bd7584627643628fa55e8b1138fd9 data/immersivepetroleum/recipes/coking/
 fc2cdebc62a1138d162cec8216143a07599e88da data/immersivepetroleum/recipes/cut_copper_slab_paraffin_waxed.json
 6c5444d3b9c4a6b55d3ac3e4211d37b9b5718929 data/immersivepetroleum/recipes/cut_copper_stairs_paraffin_waxed.json
 c54861427e63e3883f72c0b4071f9937856f99d4 data/immersivepetroleum/recipes/distillationtower/kerosene.json
-d835b6a17e85243fd38dcc5c88ea297b63be12ea data/immersivepetroleum/recipes/distillationtower/oil.json
+581b34dd059d576c5f617ac577fe41a943b778bb data/immersivepetroleum/recipes/distillationtower/oil.json
 4b8bbd19d33702b6125fd21cfed82f647ade7cbf data/immersivepetroleum/recipes/ersatz_leather.json
 3e693ea10fbc63594b5f9e762045324923f2b7a7 data/immersivepetroleum/recipes/exposed_copper_paraffin_waxed.json
 399cd10265922bea9f2f2e6325c6c412ae4d9a67 data/immersivepetroleum/recipes/exposed_cut_copper_paraffin_waxed.json
