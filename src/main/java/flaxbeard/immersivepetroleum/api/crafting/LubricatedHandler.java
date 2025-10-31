@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.api.crafting;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
@@ -28,7 +27,6 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.HitResult;
@@ -36,7 +34,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -135,22 +132,21 @@ public class LubricatedHandler{
 	
 	public static List<LubricatedTileInfo> lubricatedTiles = new ArrayList<>();
 	
-	public static boolean lubricateTile(BlockEntity tile, Fluid lubricant, int ticks){
-		return lubricateTile(tile, lubricant, ticks, false, -1);
+	public static boolean lubricateTile(Level level, BlockPos pos, Fluid lubricant, int ticks){
+		return lubricateTile(level, pos, lubricant, ticks, false, -1);
 	}
 	
-	public static boolean lubricateTile(BlockEntity tile, Fluid lubricant, int ticks, boolean additive, int cap){
-		if(!(tile instanceof IMultiblockBE<?> mb))
+	public static boolean lubricateTile(Level level, BlockPos pos, Fluid lubricant, int ticks, boolean additive, int cap){
+		MultiblockBlockEntityMaster<?> mbMasterBE = Utils.getMultiblockMasterBE(level, pos);
+		if(mbMasterBE == null)
 			return false;
 		
-		IMultiblockBEHelperMaster<?> masterHelper = Utils.getMultiblockMasterHelper(tile.getLevel(), mb.getHelper());
-		
-		if(getHandlerForTile(masterHelper) == null)
+		if(getHandlerForTile(mbMasterBE.getHelper()) == null)
 			return false;
 		
-		BlockPos pos = tile.getBlockPos();
+		pos = mbMasterBE.getBlockPos();
 		
-		ResourceKey<Level> key = tile.getLevel().dimension();
+		ResourceKey<Level> key = level.dimension();
 		for(LubricatedTileInfo info: lubricatedTiles){
 			if(info.pos.equals(pos) && info.world == key){
 				if(info.ticks >= ticks){
@@ -171,11 +167,10 @@ public class LubricatedHandler{
 			}
 		}
 		
-		LubricatedTileInfo lti = new LubricatedTileInfo(tile.getLevel().dimension(), tile.getBlockPos(), lubricant, ticks);
+		LubricatedTileInfo lti = new LubricatedTileInfo(level.dimension(), pos, lubricant, ticks);
 		lubricatedTiles.add(lti);
 		
 		return true;
-		
 	}
 	
 	public static class LubricantEffect extends ChemthrowerHandler.ChemthrowerEffect{
@@ -203,13 +198,13 @@ public class LubricatedHandler{
 		}
 		
 		@Override
-		public void applyToBlock(Level world, HitResult mop, Player shooter, ItemStack thrower, Fluid fluid){
+		public void applyToBlock(Level level, HitResult hit, Player shooter, ItemStack thrower, Fluid fluid){
 			if(!LubricantHandler.isValidLube(fluid))
 				return;
 			
 			int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
 			
-			LubricatedHandler.lubricateTile(world.getBlockEntity(BlockPos.containing(mop.getLocation())), fluid, amount, true, 1200); // 1 Minute
+			LubricatedHandler.lubricateTile(level, BlockPos.containing(hit.getLocation()), fluid, amount, true, 1200); // 1 Minute
 		}
 	}
 }

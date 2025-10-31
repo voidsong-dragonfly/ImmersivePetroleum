@@ -101,14 +101,14 @@ public class OilCanItem extends IPItemBase{
 			}
 			
 			return FluidUtil.getFluidHandler(stack)
-				.map(handler -> tryLubricateMachine(te, player, handler))
+				.map(handler -> tryLubricateMachine(level, pos, player, handler))
 				.orElse(InteractionResult.PASS);
 		}
 		
 		return InteractionResult.PASS;
 	}
 	
-	private InteractionResult tryLubricateMachine(BlockEntity te, Player player, @NotNull IFluidHandlerItem handler){
+	private InteractionResult tryLubricateMachine(Level level, BlockPos pos, Player player, @NotNull IFluidHandlerItem handler){
 		if(!(handler instanceof FluidHandlerItemStack can))
 			return InteractionResult.PASS;
 		
@@ -117,7 +117,7 @@ public class OilCanItem extends IPItemBase{
 		if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
 			int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
 			
-			if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(te, fs.getFluid(), 600)){ // 30 Seconds
+			if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(level, pos, fs.getFluid(), 600)){ // 30 Seconds
 				player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
 				
 				if(!player.isCreative())
