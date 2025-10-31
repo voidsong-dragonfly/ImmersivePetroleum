@@ -212,15 +212,6 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 		return nameCache.get(multiblock.getClass());
 	}
 	
-	/*
-	@Override
-	public void fillItemCategory(@Nonnull CreativeModeTab group, @Nonnull NonNullList<ItemStack> items){
-		if(this.allowedIn(group)){
-			items.add(new ItemStack(this, 1));
-		}
-	}
-	*/
-	
 	@Override
 	@Nonnull
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, @Nonnull InteractionHand hand){
@@ -828,20 +819,20 @@ public class ProjectorItem extends IPItemBase implements IUpgradeableTool{
 	
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt){
-		if(!stack.isEmpty()){
-			final ResourceLocation key = ForgeRegistries.ITEMS.getKey(this);
-			return new IPItemStackHandler(0){
-				private final LazyOptional<ShaderWrapper_Item> shaders = CapabilityUtils.constantOptional(new ShaderWrapper_Item(key, stack));
-				
-				@Override
-				public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing){
-					if(capability == CapabilityShader.SHADER_CAPABILITY){
-						return shaders.cast();
-					}
-					return super.getCapability(capability, facing);
+		if(stack.isEmpty())
+			return null;
+		
+		final ResourceLocation key = ForgeRegistries.ITEMS.getKey(this);
+		return new IPItemStackHandler(0){
+			private final LazyOptional<ShaderWrapper_Item> shaders = CapabilityUtils.constantOptional(new ShaderWrapper_Item(key, stack));
+			
+			@Override
+			public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing){
+				if(capability == CapabilityShader.SHADER_CAPABILITY){
+					return shaders.cast();
 				}
-			};
-		}
-		return null;
+				return super.getCapability(capability, facing);
+			}
+		};
 	}
 }

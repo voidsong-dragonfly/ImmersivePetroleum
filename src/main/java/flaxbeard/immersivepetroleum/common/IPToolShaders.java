@@ -18,8 +18,10 @@ import java.util.List;
 public class IPToolShaders{
 	
 	public static void preInit(){
+		//@formatter:off
 		final String warnings = "Do not touch the operational end of the device.\n" +
 								"Do not look directly at the operational end of the device.";
+		//@formatter:on
 		
 		addProjectorShader("blue", Rarity.COMMON, 0xFF007FFF, 0xFF000000, 0xFFFFFFFF, false, true, (primary, secondary, background, layers) -> {
 			layers.add(new ShaderLayer(ResourceUtils.ip("projectors/shaders/projector_portal"), -1));
@@ -51,7 +53,7 @@ public class IPToolShaders{
 		});
 	}
 	
-	public static ShaderRegistryEntry addProjectorShader(String name, Rarity rarity, int colorPrimary, int colorSecondary, int colorBackground, boolean loot, boolean bags, LayerAdder<Integer, Integer, Integer, List<ShaderLayer>> extraLayers){
+	private static ShaderRegistryEntry addProjectorShader(String name, Rarity rarity, int colorPrimary, int colorSecondary, int colorBackground, boolean loot, boolean bags, LayerAdder<Integer, Integer, Integer, List<ShaderLayer>> extraLayers){
 		ResourceLocation rlName = ResourceUtils.ip(name);
 		
 		ShaderRegistry.registerShader_Item(rlName, rarity, colorBackground, colorPrimary, colorSecondary);
@@ -60,21 +62,23 @@ public class IPToolShaders{
 		extraLayers.accept(colorPrimary, colorSecondary, colorBackground, list);
 		list.add(new ShaderLayer(ResourceUtils.ip("projectors/shaders/projector_uncolored"), -1));
 		
-		ShaderCaseProjector shader = new ShaderCaseProjector(list);
+		ShaderCaseProjector shader = new ShaderCaseProjector(list.toArray(ShaderLayer[]::new));
 		return registerCase(rlName, shader, rarity, colorPrimary, colorSecondary, colorBackground, loot, bags);
 	}
 	
 	private static <S extends ShaderCase> ShaderRegistryEntry registerCase(ResourceLocation name, S shader, Rarity rarity, int colorPrimary, int colorSecondary, int colorBackground, boolean loot, boolean bags){
 		ShaderRegistry.registerShaderCase(name, shader, rarity);
 		
-		for(IShaderRegistryMethod<?> method:ShaderRegistry.shaderRegistrationMethods){
+		for(IShaderRegistryMethod<?> method: ShaderRegistry.shaderRegistrationMethods){
 			method.apply(name, "0", rarity, colorBackground, colorPrimary, colorSecondary, 0xFFFFFFFF, null, 0xFFFFFFFF);
 		}
 		
+		//@formatter:off
 		return ShaderRegistry.shaderRegistry.get(name)
-				.setCrateLoot(loot)
-				.setBagLoot(bags)
-				.setReplicationCost(() -> new IngredientWithSize(Ingredient.of(ShaderRegistry.defaultReplicationCost), 10 - ShaderRegistry.rarityWeightMap.get(rarity)));
+			.setCrateLoot(loot)
+			.setBagLoot(bags)
+			.setReplicationCost(() -> new IngredientWithSize(Ingredient.of(ShaderRegistry.defaultReplicationCost), 10 - ShaderRegistry.rarityWeightMap.get(rarity)));
+		//@formatter:on
 	}
 	
 	@FunctionalInterface
