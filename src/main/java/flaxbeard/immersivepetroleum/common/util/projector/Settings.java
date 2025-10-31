@@ -64,7 +64,7 @@ public class Settings{
 			
 			if(settingsNbt.contains(KEY_MULTIBLOCK, Tag.TAG_STRING)){
 				String str = settingsNbt.getString("multiblock");
-				this.multiblock = MultiblockHandler.getByUniqueName(new ResourceLocation(str));
+				this.multiblock = MultiblockHandler.getByUniqueName(ResourceLocation.parse(str));
 			}
 			
 			if(settingsNbt.contains(KEY_POSITION, Tag.TAG_COMPOUND)){

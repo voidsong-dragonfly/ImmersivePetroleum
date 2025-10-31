@@ -151,6 +151,6 @@ public class IPBlockLoot extends BlockLootSubProvider{
 	}
 	
 	private ResourceLocation toTableLoc(ResourceLocation in){
-		return new ResourceLocation(in.getNamespace(), "blocks/" + in.getPath());
+		return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "blocks/" + in.getPath());
 	}
 }

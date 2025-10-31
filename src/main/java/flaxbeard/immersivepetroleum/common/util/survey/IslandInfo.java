@@ -33,7 +33,7 @@ public class IslandInfo implements ISurveyInfo{
 		
 		if(tag.contains("fluid")){
 			try{
-				ResourceLocation fluidRL = new ResourceLocation(tag.getString("fluid"));
+				ResourceLocation fluidRL = ResourceLocation.parse(tag.getString("fluid"));
 				
 				Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidRL);
 				if(fluid != null){

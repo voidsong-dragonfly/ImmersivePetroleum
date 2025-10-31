@@ -19,7 +19,7 @@ public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 	@Override
 	public ReservoirType readFromJson(ResourceLocation recipeId, JsonObject json, IContext context){
 		String name = GsonHelper.getAsString(json, "name");
-		ResourceLocation fluid = new ResourceLocation(GsonHelper.getAsString(json, "fluid"));
+		ResourceLocation fluid = ResourceLocation.parse(GsonHelper.getAsString(json, "fluid"));
 		int min = GsonHelper.getAsInt(json, "fluidminimum");
 		int max = GsonHelper.getAsInt(json, "fluidcapacity");
 		int trace = GsonHelper.getAsInt(json, "fluidtrace");
@@ -40,7 +40,7 @@ public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 				JsonArray array = GsonHelper.getAsJsonArray(dimensions, "list");
 				
 				List<ResourceLocation> list = new ArrayList<>();
-				array.forEach(rl -> list.add(new ResourceLocation(rl.getAsString())));
+				array.forEach(rl -> list.add(ResourceLocation.parse(rl.getAsString())));
 				reservoir.setDimensions(isBlacklist, list);
 			}
 		}
@@ -54,7 +54,7 @@ public class ReservoirSerializer extends IERecipeSerializer<ReservoirType>{
 				JsonArray array = GsonHelper.getAsJsonArray(biomes, "list");
 				
 				List<ResourceLocation> list = new ArrayList<>();
-				array.forEach(rl -> list.add(new ResourceLocation(rl.getAsString())));
+				array.forEach(rl -> list.add(ResourceLocation.parse(rl.getAsString())));
 				reservoir.setBiomes(isBlacklist, list);
 			}
 		}

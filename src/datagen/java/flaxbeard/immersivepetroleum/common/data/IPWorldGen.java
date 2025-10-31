@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common.data;
 import com.mojang.serialization.Lifecycle;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
@@ -36,9 +37,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public class IPWorldGen{
-	private static final ResourceKey<ConfiguredFeature<?, ?>> RESERVOIR_CONFIGURED = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(ImmersivePetroleum.MODID, "reservoir"));
-	private static final ResourceKey<PlacedFeature> RESERVOIR_PLACED = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(ImmersivePetroleum.MODID, "reservoir"));
-	private static final ResourceKey<BiomeModifier> RESERVOIR_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(ImmersivePetroleum.MODID, "reservoir"));
+	private static final ResourceKey<ConfiguredFeature<?, ?>> RESERVOIR_CONFIGURED = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceUtils.ip("reservoir"));
+	private static final ResourceKey<PlacedFeature> RESERVOIR_PLACED = ResourceKey.create(Registries.PLACED_FEATURE, ResourceUtils.ip("reservoir"));
+	private static final ResourceKey<BiomeModifier> RESERVOIR_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceUtils.ip("reservoir"));
 	
 	public static List<DataProvider> makeProviders(PackOutput output, CompletableFuture<HolderLookup.Provider> vanillaRegistries){
 		final RegistrySetBuilder builder = new RegistrySetBuilder();

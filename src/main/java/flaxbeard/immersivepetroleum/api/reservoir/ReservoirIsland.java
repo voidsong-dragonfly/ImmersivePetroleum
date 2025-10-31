@@ -304,7 +304,7 @@ public class ReservoirIsland{
 	
 	public static ReservoirIsland readFromNBT(CompoundTag nbt){
 		try{
-			ReservoirType reservoir = ReservoirType.map.get(new ResourceLocation(nbt.getString("reservoir")));
+			ReservoirType reservoir = ReservoirType.map.get(ResourceLocation.parse(nbt.getString("reservoir")));
 			if(reservoir != null){
 				long amount = ((long) nbt.getInt("amount")) & MAX_AMOUNT;
 				long capacity = ((long) nbt.getInt("capacity")) & MAX_AMOUNT;

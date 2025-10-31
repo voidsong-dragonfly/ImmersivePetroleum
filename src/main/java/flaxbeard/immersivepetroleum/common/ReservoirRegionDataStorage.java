@@ -268,7 +268,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 				synchronized(this.reservoirlist){
 					for(int i = 0;i < reservoirs.size();i++){
 						CompoundTag dim = reservoirs.getCompound(i);
-						ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
+						ResourceLocation rl = ResourceLocation.parse(dim.getString("dimension"));
 						ResourceKey<Level> dimType = ResourceKey.create(Registries.DIMENSION, rl);
 						ListTag islands = dim.getList("islands", Tag.TAG_COMPOUND);
 						

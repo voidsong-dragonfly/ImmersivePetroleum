@@ -260,7 +260,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		if(fluidName == null || fluidName.isEmpty() || amount == 0)
 			return FluidStack.EMPTY;
 		
-		Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluidName));
+		Fluid fluid = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(fluidName));
 		if(fluid == null)
 			return FluidStack.EMPTY;
 		

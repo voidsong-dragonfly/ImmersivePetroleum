@@ -572,7 +572,7 @@ public class DerrickLogic implements IMultiblockLogic<State>, IServerTickableCom
 			this.clientFlow = nbt.getInt("spillflow");
 			
 			try{
-				this.fluidSpilled = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillingfluid")));
+				this.fluidSpilled = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(nbt.getString("spillingfluid")));
 			}catch(ResourceLocationException rle){
 				this.fluidSpilled = Fluids.EMPTY;
 			}

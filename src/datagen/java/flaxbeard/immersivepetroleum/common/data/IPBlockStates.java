@@ -277,7 +277,7 @@ public class IPBlockStates extends BlockStateProvider{
 		final String filePath = "structures/"+name.getPath()+".nbt";
 		int slash = filePath.indexOf('/');
 		String prefix = filePath.substring(0, slash);
-		ResourceLocation shortLoc = new ResourceLocation(
+		ResourceLocation shortLoc = ResourceLocation.fromNamespaceAndPath(
 				name.getNamespace(),
 				filePath.substring(slash+1)
 		);

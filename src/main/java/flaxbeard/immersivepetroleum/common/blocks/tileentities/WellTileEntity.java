@@ -78,7 +78,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 		this.selfDestructTimer = nbt.getInt("selfdestructtimer");
 		
 		try{
-			this.spillFType = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillftype")));
+			this.spillFType = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(nbt.getString("spillftype")));
 		}catch(ResourceLocationException rle){
 			this.spillFType = Fluids.EMPTY;
 		}

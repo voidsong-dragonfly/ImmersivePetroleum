@@ -103,11 +103,11 @@ public class LubricatedHandler{
 			String name = tag.getString("world");
 			String lubricantName = tag.getString("lubricant");
 			
-			this.world = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name));
+			this.world = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(name));
 			this.pos = new BlockPos(x, y, z);
 			this.ticks = ticks;
 			
-			this.lubricant = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(lubricantName));
+			this.lubricant = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(lubricantName));
 			if(this.lubricant == null){
 				this.lubricant = Fluids.EMPTY;
 			}
