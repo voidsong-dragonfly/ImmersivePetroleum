@@ -1,7 +1,11 @@
 package flaxbeard.immersivepetroleum.common.items;
 
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricantHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.common.util.Utils;
@@ -29,11 +33,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -72,41 +79,52 @@ public class OilCanItem extends IPItemBase{
 	@Override
 	@Nonnull
 	public InteractionResult useOn(UseOnContext context){
+		if(context.getPlayer() == null)
+			return InteractionResult.PASS;
+		
+		Level level = context.getLevel();
+		if(level.isClientSide)
+			return InteractionResult.PASS;
+		
 		ItemStack stack = context.getItemInHand();
 		Player player = context.getPlayer();
 		InteractionHand hand = context.getHand();
-		Level world = context.getLevel();
 		BlockPos pos = context.getClickedPos();
 		
-		if(!world.isClientSide){
-			BlockEntity tileEntity = world.getBlockEntity(pos);
-			if(tileEntity != null){
-				IFluidHandler cap = tileEntity.getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null);
+		BlockEntity te = level.getBlockEntity(pos);
+		if(te != null){
+			LazyOptional<IFluidHandler> capability = te.getCapability(ForgeCapabilities.FLUID_HANDLER);
+			
+			if(capability.isPresent()){
+				capability.ifPresent(handler -> FluidUtil.interactWithFluidHandler(player, hand, handler));
+				return InteractionResult.SUCCESS;
+			}
+			
+			return FluidUtil.getFluidHandler(stack)
+				.map(handler -> tryLubricateMachine(te, player, handler))
+				.orElse(InteractionResult.PASS);
+		}
+		
+		return InteractionResult.PASS;
+	}
+	
+	private InteractionResult tryLubricateMachine(BlockEntity te, Player player, @NotNull IFluidHandlerItem handler){
+		if(!(handler instanceof FluidHandlerItemStack can))
+			return InteractionResult.PASS;
+		
+		FluidStack fs = can.getFluid();
+		
+		if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
+			int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
+			
+			if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(te, fs.getFluid(), 600)){ // 30 Seconds
+				player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
 				
-				if(cap != null && FluidUtil.interactWithFluidHandler(player, hand, cap))
-					return InteractionResult.SUCCESS;
+				if(!player.isCreative())
+					can.drain(amountNeeded, FluidAction.EXECUTE);
 				
-				InteractionResult ret = FluidUtil.getFluidHandler(stack).map(handler -> {
-					if(handler instanceof FluidHandlerItemStack can){
-						FluidStack fs = can.getFluid();
-						
-						if(!fs.isEmpty() && LubricantHandler.isValidLube(fs.getFluid())){
-							int amountNeeded = (LubricantHandler.getLubeAmount(fs.getFluid()) * 5 * 20);
-							if(fs.getAmount() >= amountNeeded && LubricatedHandler.lubricateTile(world.getBlockEntity(pos), fs.getFluid(), 600)){ // 30 Seconds
-								player.playSound(SoundEvents.BUCKET_EMPTY, 1F, 1F);
-								if(!player.isCreative()){
-									can.drain(amountNeeded, FluidAction.EXECUTE);
-								}
-								Utils.unlockIPAdvancement(player, "main/oil_can");
-								return InteractionResult.SUCCESS;
-							}
-						}
-					}
-					
-					return InteractionResult.PASS;
-				}).orElse(InteractionResult.PASS);
-				
-				return ret;
+				Utils.unlockIPAdvancement(player, "main/oil_can");
+				return InteractionResult.SUCCESS;
 			}
 		}
 		

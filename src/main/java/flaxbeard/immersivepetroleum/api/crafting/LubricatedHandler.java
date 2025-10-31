@@ -140,86 +140,76 @@ public class LubricatedHandler{
 	}
 	
 	public static boolean lubricateTile(BlockEntity tile, Fluid lubricant, int ticks, boolean additive, int cap){
-		if(!(tile instanceof IMultiblockBEHelperMaster<?> master))
+		if(!(tile instanceof IMultiblockBE<?> mb))
 			return false;
 		
-		// ------------------------------------------------------------------------------------------------
+		IMultiblockBEHelperMaster<?> masterHelper = Utils.getMultiblockMasterHelper(tile.getLevel(), mb.getHelper());
 		
-		// TODO 19.10.2025 - No idea why this is here anymore.
-		/* 
-		boolean debugDisabled = true;
-		if(debugDisabled)
+		if(getHandlerForTile(masterHelper) == null)
 			return false;
-		if(tile instanceof MultiblockPartBlockEntity<?> mpte && mpte.offsetToMaster != BlockPos.ZERO){
-			tile = mpte.master();
-		}
-		*/
 		
-		if(getHandlerForTile(master) != null){
-			BlockPos pos = tile.getBlockPos();
-			
-			ResourceKey<Level> key = tile.getLevel().dimension();
-			for(LubricatedTileInfo info: lubricatedTiles){
-				if(info.pos.equals(pos) && info.world == key){
-					if(info.ticks >= ticks){
-						if(additive){
-							if(cap == -1){
-								info.ticks += ticks;
-							}else{
-								info.ticks = Math.min(cap, info.ticks + ticks);
-							}
-							return true;
+		BlockPos pos = tile.getBlockPos();
+		
+		ResourceKey<Level> key = tile.getLevel().dimension();
+		for(LubricatedTileInfo info: lubricatedTiles){
+			if(info.pos.equals(pos) && info.world == key){
+				if(info.ticks >= ticks){
+					if(additive){
+						if(cap == -1){
+							info.ticks += ticks;
 						}else{
-							return false;
+							info.ticks = Math.min(cap, info.ticks + ticks);
 						}
+						return true;
+					}else{
+						return false;
 					}
-					
-					info.ticks = ticks;
-					return true;
 				}
+				
+				info.ticks = ticks;
+				return true;
 			}
-			
-			LubricatedTileInfo lti = new LubricatedTileInfo(tile.getLevel().dimension(), tile.getBlockPos(), lubricant, ticks);
-			lubricatedTiles.add(lti);
-			
-			return true;
 		}
 		
-		return false;
+		LubricatedTileInfo lti = new LubricatedTileInfo(tile.getLevel().dimension(), tile.getBlockPos(), lubricant, ticks);
+		lubricatedTiles.add(lti);
+		
+		return true;
+		
 	}
 	
 	public static class LubricantEffect extends ChemthrowerHandler.ChemthrowerEffect{
 		@Override
 		public void applyToEntity(LivingEntity target, Player shooter, ItemStack thrower, Fluid fluid){
-			if(target instanceof IronGolem){
-				if(LubricantHandler.isValidLube(fluid)){
-					int ticks = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
-					
-					MobEffectInstance activeSpeed = target.getEffect(MobEffects.MOVEMENT_SPEED);
-					int ticksSpeed = ticks;
-					if(activeSpeed != null && activeSpeed.getAmplifier() <= 1){
-						ticksSpeed = Math.min(activeSpeed.getDuration() + ticks, 1200); // 1 Minute
-					}
-					
-					MobEffectInstance activeStrength = target.getEffect(MobEffects.DAMAGE_BOOST);
-					int ticksStrength = ticks;
-					if(activeStrength != null && activeStrength.getAmplifier() <= 1){
-						ticksStrength = Math.min(activeStrength.getDuration() + ticks, 1200); // 1 Minute
-					}
-					
-					target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, ticksSpeed, 1));
-					target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, ticksStrength, 1));
-				}
+			if(!(target instanceof IronGolem) && !LubricantHandler.isValidLube(fluid))
+				return;
+			
+			int ticks = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
+			
+			MobEffectInstance activeSpeed = target.getEffect(MobEffects.MOVEMENT_SPEED);
+			int ticksSpeed = ticks;
+			if(activeSpeed != null && activeSpeed.getAmplifier() <= 1){
+				ticksSpeed = Math.min(activeSpeed.getDuration() + ticks, 1200); // 1 Minute
 			}
 			
+			MobEffectInstance activeStrength = target.getEffect(MobEffects.DAMAGE_BOOST);
+			int ticksStrength = ticks;
+			if(activeStrength != null && activeStrength.getAmplifier() <= 1){
+				ticksStrength = Math.min(activeStrength.getDuration() + ticks, 1200); // 1 Minute
+			}
+			
+			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, ticksSpeed, 1));
+			target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, ticksStrength, 1));
 		}
 		
 		@Override
 		public void applyToBlock(Level world, HitResult mop, Player shooter, ItemStack thrower, Fluid fluid){
-			if(LubricantHandler.isValidLube(fluid)){
-				int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
-				LubricatedHandler.lubricateTile(world.getBlockEntity(BlockPos.containing(mop.getLocation())), fluid, amount, true, 1200); // 1 Minute
-			}
+			if(!LubricantHandler.isValidLube(fluid))
+				return;
+			
+			int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
+			
+			LubricatedHandler.lubricateTile(world.getBlockEntity(BlockPos.containing(mop.getLocation())), fluid, amount, true, 1200); // 1 Minute
 		}
 	}
 }
