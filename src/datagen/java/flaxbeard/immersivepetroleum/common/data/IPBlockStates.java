@@ -92,8 +92,7 @@ public class IPBlockStates extends BlockStateProvider{
 			Block well = IPContent.Blocks.WELL.get();
 			
 			ModelFile wellModel = models()
-					.cubeTop(RegistryUtils.getRegistryNameOf(well).toString(), mcLoc("block/bedrock"), modLoc("block/well_top_oil"))
-					.renderType("cutout");
+				.cubeAll(RegistryUtils.getRegistryNameOf(well).toString(), mcLoc("block/bedrock"));
 			getVariantBuilder(well).partialState()
 				.setModels(new ConfiguredModel(wellModel));
 		}
