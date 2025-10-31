@@ -14,7 +14,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -43,8 +42,6 @@ import java.util.function.Supplier;
 public class LubricatedHandler{
 	
 	public interface ILubricationHandler<E extends IMultiblockBEHelperMaster<B>, B extends IMultiblockState>{
-		Vec3i getStructureDimensions();
-		
 		/** Was the AutoLubricator placed at the correct location? */
 		boolean isPlacedCorrectly(Level world, BlockPos lubricatorPosition, Direction lubricatorFacing);
 		

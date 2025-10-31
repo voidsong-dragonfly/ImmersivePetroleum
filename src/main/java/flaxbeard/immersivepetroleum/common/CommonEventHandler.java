@@ -164,23 +164,51 @@ public class CommonEventHandler{
 						}
 						
 						if(world.isClientSide && multiblockBE.getHelper().getContext() != null){
-							Vec3i size = lubeHandler.getStructureDimensions();
-							int numBlocks = (int) (size.getX() * size.getY() * size.getZ() * 0.25F);
+							IMultiblockBEHelper<?> helper = multiblockBE.getHelper();
+							IMultiblockLevel mbLevel = helper.getContext().getLevel();
+							Vec3i size = helper.getMultiblock().getSize().apply(world);
 							
-							IMultiblockLevel mbLevel = multiblockBE.getHelper().getContext().getLevel();
-							for(int i = 0;i < numBlocks;i++){
-								BlockPos pos = mbLevel.toAbsolute(BlockPos.containing(size.getX() * random.nextFloat(), size.getY() * random.nextFloat(), size.getZ() * random.nextFloat()));
-								
-								if(world.getBlockState(pos).getBlock() != Blocks.AIR && world.getBlockEntity(pos) instanceof IMultiblockBE<?> part2 && part2.getHelper().getContext().getState() == multiblockBE.getHelper().getContext().getState()){
-									for(Direction facing:Direction.Plane.HORIZONTAL){
-										if(world.random.nextInt(30) == 0){
-											Vec3i direction = facing.getNormal();
+							for(int y = 0;y < size.getY();y++){
+								for(int z = 0;z < size.getZ();z++){
+									for(int x = 0;x < size.getX();x++){
+										if(random.nextFloat() >= 0.1F)
+											continue;
+										
+										BlockPos pos = mbLevel.toAbsolute(new BlockPos(x, y, z));
+										if(world.getBlockEntity(pos) instanceof IMultiblockBE<?> mb && mb.getHelper().getContext().getState() == helper.getContext().getState()){
+											Direction randomDir = Direction.Plane.HORIZONTAL.getRandomDirection(world.random);
 											
-											float x = (pos.getX() + .5f) + (direction.getX() * .65f);
-											float y = pos.getY() + 1;
-											float z = (pos.getZ() + .5f) + (direction.getZ() * .65f);
+											if(!world.isEmptyBlock(pos.relative(randomDir)))
+												continue;
 											
-											world.addParticle(ParticleTypes.FALLING_HONEY, x, y, z, 0, 0, 0);
+											float px = pos.getX();
+											float py = pos.getY();
+											float pz = pos.getZ();
+											
+											switch(randomDir){
+												case NORTH -> {
+													px += random.nextFloat();
+													py += random.nextFloat();
+													pz -= 0.0625F;
+												}
+												case EAST -> {
+													px += 1.0625F;
+													py += random.nextFloat();
+													pz += random.nextFloat();
+												}
+												case SOUTH -> {
+													px += random.nextFloat();
+													py += random.nextFloat();
+													pz += 1.0625F;
+												}
+												case WEST -> {
+													px -= 0.0625F;
+													py += random.nextFloat();
+													pz += random.nextFloat();
+												}
+											}
+											
+											world.addParticle(ParticleTypes.FALLING_HONEY, px, py, pz, 0, 0, 0);
 										}
 									}
 								}

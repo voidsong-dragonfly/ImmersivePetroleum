@@ -30,13 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.function.Supplier;
 
 public class CrusherLubricationHandler implements ILubricationHandler<IMultiblockBEHelperMaster<CrusherLogic.State>, CrusherLogic.State>{
-	private static final Vec3i SIZE = new Vec3i(3, 3, 5);
 	private static final BlockPos RELATIVE_GHOST_POS = new BlockPos(2, 0, -1);
-	
-	@Override
-	public Vec3i getStructureDimensions(){
-		return SIZE;
-	}
 	
 	@Override
 	public boolean isPlacedCorrectly(Level world, BlockPos lubricatorPosition, Direction lubricatorFacing){

@@ -30,13 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.function.Supplier;
 
 public class PumpjackLubricationHandler implements ILubricationHandler<IMultiblockBEHelperMaster<PumpjackLogic.State>, PumpjackLogic.State>{
-	private static final Vec3i SIZE = new Vec3i(4, 6, 3);
 	private static final BlockPos RELATIVE_GHOST_POS = new BlockPos(3, 0, 4);
-	
-	@Override
-	public Vec3i getStructureDimensions(){
-		return SIZE;
-	}
 	
 	@Override
 	public boolean isPlacedCorrectly(Level world, BlockPos lubricatorPosition, Direction lubricatorFacing){

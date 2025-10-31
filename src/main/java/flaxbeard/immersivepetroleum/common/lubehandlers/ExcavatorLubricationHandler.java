@@ -15,7 +15,6 @@ import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.model.ModelLubricantPipes;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
-import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -36,13 +35,7 @@ import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class ExcavatorLubricationHandler implements ILubricationHandler<IMultiblockBEHelperMaster<ExcavatorLogic.State>, ExcavatorLogic.State>{
-	private static final Vec3i SIZE = new Vec3i(3, 6, 3);
 	private static final BlockPos RELATIVE_GHOST_POS = new BlockPos(3, 0, 1);
-	
-	@Override
-	public Vec3i getStructureDimensions(){
-		return SIZE;
-	}
 	
 	@Override
 	public boolean isPlacedCorrectly(Level world, BlockPos lubricatorPosition, Direction lubricatorFacing){
