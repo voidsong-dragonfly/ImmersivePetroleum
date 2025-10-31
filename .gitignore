@@ -13,10 +13,6 @@
 hs_err_pid*
 .gradle/
 build/
-src/main/java/cofh/api/energy/IEnergyConnection.java
-src/main/java/cofh/api/energy/IEnergyHandler.java
-src/main/java/cofh/api/energy/IEnergyProvider.java
-src/main/java/cofh/api/energy/IEnergyReceiver.java
 .idea/
 *.iml
 *.ipr
@@ -33,5 +29,3 @@ libs/
 *.classpath
 .settings/
 logs/
-src/main/java/flaxbeard/immersivepetroleum/common/items/ItemEmptySampleMap.java
-src/main/java/flaxbeard/immersivepetroleum/common/items/ItemSampleMap.java
