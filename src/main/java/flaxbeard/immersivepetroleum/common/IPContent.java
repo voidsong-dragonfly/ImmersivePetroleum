@@ -72,6 +72,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -220,7 +221,7 @@ public class IPContent{
 	}
 	
 	/** block/item/fluid population */
-	public static void modConstruction(){
+	public static void modConstruction(IEventBus eBus){
 		Fluids.forceClassLoad();
 		Blocks.forceClassLoad();
 		Items.forceClassLoad();

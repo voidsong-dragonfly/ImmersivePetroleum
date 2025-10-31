@@ -6,6 +6,7 @@ import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -19,8 +20,8 @@ public class IPRecipeTypes{
 	
 	public static final TypeWithClass<ReservoirType> RESERVOIR = makeType("reservoir", ReservoirType.class);
 	
-	public static void modConstruction(){
-		REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+	public static void modConstruction(IEventBus eBus){
+		REGISTER.register(eBus);
 	}
 	
 	private static <T extends Recipe<?>> TypeWithClass<T> makeType(String name, Class<T> type){

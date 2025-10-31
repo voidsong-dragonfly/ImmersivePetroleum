@@ -80,9 +80,9 @@ public class ImmersivePetroleum{
 		
 		IPRegisters.addRegistersToEventBus(eBus);
 		
-		IPContent.modConstruction();
-		IPLootFunctions.modConstruction();
-		IPRecipeTypes.modConstruction();
+		IPContent.modConstruction(eBus);
+		IPLootFunctions.modConstruction(eBus);
+		IPRecipeTypes.modConstruction(eBus);
 		
 		//MinecraftForge.EVENT_BUS.register(new IPWorldGen());
 		//IPWorldGen.init(eBus);
