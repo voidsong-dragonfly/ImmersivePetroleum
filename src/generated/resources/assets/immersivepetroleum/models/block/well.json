@@ -1,8 +1,6 @@
 {
-  "parent": "minecraft:block/cube_top",
-  "render_type": "minecraft:cutout",
+  "parent": "minecraft:block/cube_all",
   "textures": {
-    "side": "minecraft:block/bedrock",
-    "top": "immersivepetroleum:block/well_top_oil"
+    "all": "minecraft:block/bedrock"
   }
 }

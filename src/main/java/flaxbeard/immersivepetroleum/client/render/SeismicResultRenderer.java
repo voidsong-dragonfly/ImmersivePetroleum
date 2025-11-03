@@ -25,14 +25,6 @@ import org.joml.Matrix4f;
  */
 public class SeismicResultRenderer{
 	
-	@SubscribeEvent
-	public void renderHandEvent(RenderHandEvent event){
-		ItemStack stack = event.getItemStack();
-		if(stack.getItem().equals(IPContent.Items.SURVEYRESULT.get()) && stack.hasTag() && stack.getTagElement("surveyscan") != null){
-			event.setCanceled(true);
-		}
-	}
-	
 	static final Tesselator TESSELATOR = new Tesselator();
 	
 	private static final ResourceLocation OVERLAY = ResourceUtils.ip("textures/gui/seismicsurvey_overlay.png");

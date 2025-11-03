@@ -92,8 +92,7 @@ public class IPBlockStates extends BlockStateProvider{
 			Block well = IPContent.Blocks.WELL.get();
 			
 			ModelFile wellModel = models()
-					.cubeTop(RegistryUtils.getRegistryNameOf(well).toString(), mcLoc("block/bedrock"), modLoc("block/well_top_oil"))
-					.renderType("cutout");
+				.cubeAll(RegistryUtils.getRegistryNameOf(well).toString(), mcLoc("block/bedrock"));
 			getVariantBuilder(well).partialState()
 				.setModels(new ConfiguredModel(wellModel));
 		}
@@ -278,7 +277,7 @@ public class IPBlockStates extends BlockStateProvider{
 		final String filePath = "structures/"+name.getPath()+".nbt";
 		int slash = filePath.indexOf('/');
 		String prefix = filePath.substring(0, slash);
-		ResourceLocation shortLoc = new ResourceLocation(
+		ResourceLocation shortLoc = ResourceLocation.fromNamespaceAndPath(
 				name.getNamespace(),
 				filePath.substring(slash+1)
 		);

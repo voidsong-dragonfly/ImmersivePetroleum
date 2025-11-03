@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common;
 
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -9,90 +10,115 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.function.Function;
+
 public class ExternalModContent{
-	// Blocks
-	private static RegistryObject<Block> IE_REDSTONE_ENGINEERING_BLOCK;
-	
-	// Items
-	private static RegistryObject<Item> IE_ITEM_HAMMER;
-	private static RegistryObject<Item> IE_ITEM_PIPE;
-	private static RegistryObject<Item> IE_ITEM_BUCKSHOT;
-	private static RegistryObject<Item> IE_ITEM_EMPTY_SHELL;
-	
-	// Fluids
-	private static RegistryObject<Fluid> IE_FLUID_CONCRETE;
 	
 	public static void init(){
-		IE_REDSTONE_ENGINEERING_BLOCK = RegistryObject.create(ResourceUtils.ie("rs_engineering"), ForgeRegistries.BLOCKS);
+		IE.forceClassLoad();
+	}
+	
+	/**
+	 * ImmersiveEngineering
+	 */
+	public static class IE{
+		private static Loader loader = new Loader(ResourceUtils::ie);
 		
-		IE_ITEM_HAMMER = RegistryObject.create(ResourceUtils.ie("hammer"), ForgeRegistries.ITEMS);
-		IE_ITEM_PIPE = RegistryObject.create(ResourceUtils.ie("fluid_pipe"), ForgeRegistries.ITEMS);
-		IE_ITEM_BUCKSHOT = RegistryObject.create(ResourceUtils.ie("buckshot"), ForgeRegistries.ITEMS);
-		IE_ITEM_EMPTY_SHELL = RegistryObject.create(ResourceUtils.ie("empty_shell"), ForgeRegistries.ITEMS);
-		IE_FLUID_CONCRETE = RegistryObject.create(ResourceUtils.ie("concrete"), ForgeRegistries.FLUIDS);
+		private static RegistryObject<Block> BLOCK_REDSTONE_ENGINEERING = loader.block("rs_engineering");
+		private static RegistryObject<Item> ITEM_HAMMER = loader.item("hammer");
+		private static RegistryObject<Item> ITEM_PIPE = loader.item("fluid_pipe");
+		private static RegistryObject<Item> ITEM_BUCKSHOT = loader.item("buckshot");
+		private static RegistryObject<Item> ITEM_EMPTY_SHELL = loader.item("empty_shell");
+		private static RegistryObject<Fluid> FLUID_CONCRETE = loader.fluid("concrete");
+		
+		public static Fluid fluidConcrete(){
+			return FLUID_CONCRETE.get();
+		}
+		
+		public static FluidStack fluidConcrete(int amount){
+			return new FluidStack(FLUID_CONCRETE.get(), amount);
+		}
+		
+		public static Block blockRSEngineering(){
+			return BLOCK_REDSTONE_ENGINEERING.get();
+		}
+		
+		public static Item itemBuckshot(){
+			return ITEM_BUCKSHOT.get();
+		}
+		
+		public static Item itemEmptyShell(){
+			return ITEM_EMPTY_SHELL.get();
+		}
+		
+		public static Item itemPipe(){
+			return ITEM_PIPE.get();
+		}
+		
+		public static Item itemHammer(){
+			return ITEM_HAMMER.get();
+		}
+		
+		public static boolean isConcrete(FluidStack fluid){
+			return isConcrete(fluid.getFluid());
+		}
+		
+		public static boolean isConcrete(Fluid fluid){
+			return fluidConcrete().equals(fluid);
+		}
+		
+		public static boolean isRedstoneEngineering(Block block){
+			return blockRSEngineering().equals(block);
+		}
+		
+		public static boolean isBuckshot(ItemStack stack){
+			return isBuckshot(stack.getItem());
+		}
+		
+		public static boolean isBuckshot(Item item){
+			return itemBuckshot().equals(item);
+		}
+		
+		public static boolean isEmptyShell(ItemStack stack){
+			return isEmptyShell(stack.getItem());
+		}
+		
+		public static boolean isEmptyShell(Item item){
+			return itemEmptyShell().equals(item);
+		}
+		
+		public static boolean isPipe(ItemStack stack){
+			return isPipe(stack.getItem());
+		}
+		
+		public static boolean isPipe(Item item){
+			return itemPipe().equals(item);
+		}
+		
+		public static boolean isHammer(ItemStack stack){
+			return isHammer(stack.getItem());
+		}
+		
+		public static boolean isHammer(Item item){
+			return itemHammer().equals(item);
+		}
+		
+		private static void forceClassLoad(){
+		}
 	}
 	
-	public static Fluid getIEFluid_Concrete(){
-		return IE_FLUID_CONCRETE.get();
-	}
-	
-	public static FluidStack getIEFluid_Concrete(int amount){
-		return new FluidStack(IE_FLUID_CONCRETE.get(), amount);
-	}
-	
-	public static Block getIEBlock_RedstoneEngineering(){
-		return IE_REDSTONE_ENGINEERING_BLOCK.get();
-	}
-	
-	public static Item getIEItem_Buckshot(){
-		return IE_ITEM_BUCKSHOT.get();
-	}
-	
-	public static Item getIEItem_EmptyShell(){
-		return IE_ITEM_EMPTY_SHELL.get();
-	}
-	
-	public static Item getIEItem_Pipe(){
-		return IE_ITEM_PIPE.get();
-	}
-	
-	public static Item getIEItem_Hammer(){
-		return IE_ITEM_HAMMER.get();
-	}
-	
-	public static boolean isIEBlock_RedstoneEngineering(Block block){
-		return block.equals(getIEBlock_RedstoneEngineering());
-	}
-	
-	public static boolean isIEItem_Buckshot(ItemStack stack){
-		return isIEItem_Buckshot(stack.getItem());
-	}
-	
-	public static boolean isIEItem_Buckshot(Item item){
-		return item.equals(getIEItem_Buckshot());
-	}
-	
-	public static boolean isIEItem_EmptyShell(ItemStack stack){
-		return isIEItem_EmptyShell(stack.getItem());
-	}
-	
-	public static boolean isIEItem_EmptyShell(Item item){
-		return item.equals(getIEItem_EmptyShell());
-	}
-	
-	public static boolean isIEItem_Pipe(ItemStack stack){
-		return isIEItem_Pipe(stack.getItem());
-	}
-	
-	public static boolean isIEItem_Pipe(Item item){
-		return item.equals(getIEItem_Pipe());
-	}
-	
-	public static boolean isIEItem_Hammer(ItemStack stack){
-		return isIEItem_Hammer(stack.getItem());
-	}
-	
-	public static boolean isIEItem_Hammer(Item item){
-		return item.equals(getIEItem_Hammer());
+	/* Not really the best name for this, but better than nothing */
+	private record Loader(Function<String, ResourceLocation> modLoc){
+		public RegistryObject<Block> block(String name){
+			return RegistryObject.create(this.modLoc.apply(name), ForgeRegistries.BLOCKS);
+		}
+		
+		public RegistryObject<Item> item(String name){
+			return RegistryObject.create(this.modLoc.apply(name), ForgeRegistries.ITEMS);
+		}
+		
+		public RegistryObject<Fluid> fluid(String name){
+			return RegistryObject.create(this.modLoc.apply(name), ForgeRegistries.FLUIDS);
+		}
 	}
 }

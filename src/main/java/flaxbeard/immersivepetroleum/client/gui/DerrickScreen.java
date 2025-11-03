@@ -124,7 +124,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 						int concreteNeeded = (DerrickLogic.REQUIRED_CONCRETE_AMOUNT * (realPipeLength - well.wellPipeLength));
 						if(concreteNeeded > 0){
 							drawInfoText(guiGraphics, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(concreteNeeded) + "mB"), 0, TEXT_COLOUR_ERROR);
-							drawInfoText(guiGraphics, ExternalModContent.getIEFluid_Concrete(1).getDisplayName(), 1, TEXT_COLOUR_ERROR);
+							drawInfoText(guiGraphics, ExternalModContent.IE.fluidConcrete(1).getDisplayName(), 1, TEXT_COLOUR_ERROR);
 							return;
 						}
 						

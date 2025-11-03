@@ -101,12 +101,12 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 			boolean fire = false;
 			
 			if(!this.stack.isEmpty()){
-				if(ExternalModContent.isIEItem_Buckshot(this.stack)){
+				if(ExternalModContent.IE.isBuckshot(this.stack)){
 					fire = true;
 					
 					if(!world.isClientSide){
 						this.timer = DELAY;
-						this.stack = new ItemStack(ExternalModContent.getIEItem_EmptyShell());
+						this.stack = new ItemStack(ExternalModContent.IE.itemEmptyShell());
 						this.setChanged();
 					}
 					
@@ -157,7 +157,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 						world.addParticle(Math.random() < 0.5 ? ParticleTypes.SMOKE : ParticleTypes.LARGE_SMOKE, bX + xa, bY, bZ + za, hSpeed * xa, 0, hSpeed * za);
 					}
 				}else{
-					SoundEvent sound = ((BulletItem) ExternalModContent.getIEItem_Buckshot()).getType().getSound();
+					SoundEvent sound = ((BulletItem) ExternalModContent.IE.itemBuckshot()).getType().getSound();
 					if(sound == null){
 						sound = IESounds.revolverFire.get();
 					}
@@ -202,7 +202,7 @@ public class SeismicSurveyTileEntity extends IPTileEntityBase implements IPCommo
 			}
 			
 			return false;
-		}else if(ExternalModContent.isIEItem_Buckshot(held)){
+		}else if(ExternalModContent.IE.isBuckshot(held)){
 			if(this.stack.isEmpty()){
 				if(!world.isClientSide){
 					ItemStack copy = held.copy();

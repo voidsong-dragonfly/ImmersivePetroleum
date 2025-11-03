@@ -64,24 +64,25 @@ public class ImmersivePetroleum{
 	
 	public static final CommonProxy proxy = DistExecutor.safeRunForDist(bootstrapErrorToXCPInDev(() -> ClientProxy::new), bootstrapErrorToXCPInDev(() -> CommonProxy::new));
 	
-	public ImmersivePetroleum(){
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, IPServerConfig.ALL);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, IPClientConfig.ALL);
+	public ImmersivePetroleum(FMLJavaModLoadingContext modContext){
+		modContext.registerConfig(ModConfig.Type.SERVER, IPServerConfig.ALL);
+		modContext.registerConfig(ModConfig.Type.CLIENT, IPClientConfig.ALL);
 		
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
+		final IEventBus eBus = modContext.getModEventBus();
+		
+		eBus.addListener(this::setup);
+		eBus.addListener(this::loadComplete);
 		
 		MinecraftForge.EVENT_BUS.addListener(this::worldLoad);
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 		MinecraftForge.EVENT_BUS.addListener(this::registerCommand);
 		MinecraftForge.EVENT_BUS.addListener(this::addReloadListeners);
 		
-		IEventBus eBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IPRegisters.addRegistersToEventBus(eBus);
 		
-		IPContent.modConstruction();
-		IPLootFunctions.modConstruction();
-		IPRecipeTypes.modConstruction();
+		IPContent.modConstruction(eBus);
+		IPLootFunctions.modConstruction(eBus);
+		IPRecipeTypes.modConstruction(eBus);
 		
 		//MinecraftForge.EVENT_BUS.register(new IPWorldGen());
 		//IPWorldGen.init(eBus);

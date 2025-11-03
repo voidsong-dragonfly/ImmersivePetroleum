@@ -103,6 +103,26 @@ public class Utils{
 	}
 	
 	@Nullable
+	public static MultiblockBlockEntityMaster<?> getMultiblockMasterBE(Level level, BlockPos pos){
+		BlockEntity be = level.getBlockEntity(pos);
+		if(!(be instanceof IMultiblockBE<?> mb))
+			return null;
+		
+		if(be instanceof MultiblockBlockEntityMaster<?> master)
+			return master;
+		
+		if(mb.getHelper().getContext() == null)
+			return null;
+		
+		IMultiblockBEHelper<?> helper = mb.getHelper();
+		BlockPos masterPos = helper.getContext().getLevel().toAbsolute(helper.getMultiblock().masterPosInMB());
+		
+		be = level.getBlockEntity(masterPos);
+		
+		return be instanceof MultiblockBlockEntityMaster<?> master ? master : null;
+	}
+	
+	@Nullable
 	public static IMultiblockBEHelperMaster<?> getMultiblockMasterHelper(Level level, IMultiblockBEHelper<?> helper){
 		if(helper instanceof IMultiblockBEHelperMaster<?> masterHelper)
 			return masterHelper;

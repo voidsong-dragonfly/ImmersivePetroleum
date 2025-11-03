@@ -1,4 +1,4 @@
-// 1.20.1	2025-10-27T14:59:08.425282534	Block States: immersivepetroleum
+// 1.20.1	2025-10-31T15:36:14.5846758	Block States: immersivepetroleum
 c5a504b835d5dd48d81aa553e286f3de27e79e5f assets/immersivepetroleum/blockstates/asphalt.json
 4e012ab2a5f97cea777925d0f35c5c00a03045da assets/immersivepetroleum/blockstates/asphalt_slab.json
 c420aa910bd7ce8e451f1b600ae81915f6921487 assets/immersivepetroleum/blockstates/asphalt_stair.json
@@ -51,7 +51,7 @@ d4a80b24acc03bcc159f9e30c5f1c5dc5ad1b762 assets/immersivepetroleum/models/block/
 a46badc078bcc2f06154bebe2128d45176c2a765 assets/immersivepetroleum/models/block/petcoke_block.json
 51cf7c65df2b820386572d18c7df46fea47cc2c3 assets/immersivepetroleum/models/block/seismic_empty.json
 05cf2cb189b8f012df1eaa11c6693ec3392e5067 assets/immersivepetroleum/models/block/seismic_survey.json
-daaddbe8c85cfc43922387483cebbb04af23d164 assets/immersivepetroleum/models/block/well.json
+6fb36e99202827b44aaab9ec6bef5ad2c09e1179 assets/immersivepetroleum/models/block/well.json
 e4c7cbcc15e5832ebc85ef3589012e3ec6ef2a0a assets/immersivepetroleum/models/block/well_pipe.json
 3dcd9a53ace8af7bdde6bd66044daf93877f834a assets/immersivepetroleum/models/block/well_pipe_cracked.json
 032059a7bea7aafa566e73f7aeaa0e216cfdbf13 assets/immersivepetroleum/models/block/well_pipe_cracked_mirrored.json

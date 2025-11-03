@@ -37,7 +37,7 @@ public class FluidParticleData implements ParticleOptions{
 	
 	private final Fluid fluid;
 	public FluidParticleData(String name){
-		this(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(name)));
+		this(ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(name)));
 	}
 	
 	public FluidParticleData(Fluid fluid){

@@ -26,7 +26,7 @@ public class ConfigUtils{
 				int fluxPerTick = 0;
 				
 				try{
-					fluidRL = new ResourceLocation(split[0].trim());
+					fluidRL = ResourceLocation.parse(split[0].trim());
 				}catch(ResourceLocationException e){
 					throw new IllegalArgumentException(e);
 				}
@@ -74,7 +74,7 @@ public class ConfigUtils{
 				int mbPerTick = 0;
 				
 				try{
-					fluidRL = new ResourceLocation(split[0].trim());
+					fluidRL = ResourceLocation.parse(split[0].trim());
 				}catch(ResourceLocationException e){
 					throw new IllegalArgumentException(e);
 				}

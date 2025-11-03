@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.util.damageSources;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
+import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -11,7 +12,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.Level;
 
 public class IPDamageSources{
-	static final ResourceKey<DamageType> FLARESTACK = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(ImmersivePetroleum.MODID, "flarestack"));
+	static final ResourceKey<DamageType> FLARESTACK = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceUtils.ip("flarestack"));
 	
 	private static Holder<DamageType> type(RegistryAccess access, ResourceKey<DamageType> type){
 		return access.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type);

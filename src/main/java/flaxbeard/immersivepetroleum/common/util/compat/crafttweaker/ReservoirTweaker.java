@@ -105,7 +105,7 @@ public class ReservoirTweaker{
 			this.isDimBlacklist = blacklist;
 			for(String name:names){
 				try{
-					ResourceLocation rl = new ResourceLocation(name);
+					ResourceLocation rl = ResourceLocation.parse(name);
 					this.dimensions.add(rl);
 				}catch(ResourceLocationException e){
 					throw new IllegalArgumentException(e);
@@ -123,7 +123,7 @@ public class ReservoirTweaker{
 			this.isBioBlacklist = blacklist;
 			for(String name:names){
 				try{
-					ResourceLocation rl = new ResourceLocation(name);
+					ResourceLocation rl = ResourceLocation.parse(name);
 					this.biomes.add(rl);
 				}catch(ResourceLocationException e){
 					throw new IllegalArgumentException(e);

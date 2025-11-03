@@ -72,7 +72,7 @@ public class CokingChamber{
 		
 		if(nbt.contains("recipe", Tag.TAG_STRING)){
 			try{
-				this.recipe = CokerUnitRecipe.recipes.get(new ResourceLocation(nbt.getString("recipe")));
+				this.recipe = CokerUnitRecipe.recipes.get(ResourceLocation.parse(nbt.getString("recipe")));
 			}catch(ResourceLocationException e){
 				ImmersivePetroleum.log.error("Tried to load a coking recipe with an invalid name", e);
 			}

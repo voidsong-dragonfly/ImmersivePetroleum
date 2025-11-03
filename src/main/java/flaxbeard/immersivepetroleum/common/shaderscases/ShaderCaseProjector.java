@@ -5,16 +5,10 @@ import blusunrize.immersiveengineering.api.shader.ShaderLayer;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Collection;
-
 public class ShaderCaseProjector extends ShaderCase{
 	public static final ResourceLocation TYPE = ResourceUtils.ip("projector");
 	
 	public ShaderCaseProjector(ShaderLayer... layers){
-		super(layers);
-	}
-	
-	public ShaderCaseProjector(Collection<ShaderLayer> layers){
 		super(layers);
 	}
 	

@@ -87,11 +87,11 @@ public class ReservoirType extends IESerializableRecipe{
 	}
 	
 	public ReservoirType(CompoundTag nbt){
-		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, new ResourceLocation(nbt.getString("id")));
+		super(EMPTY_LAZY, IPRecipeTypes.RESERVOIR, ResourceLocation.parse(nbt.getString("id")));
 		
 		this.name = nbt.getString("name");
 		
-		this.fluidLocation = new ResourceLocation(nbt.getString("fluid"));
+		this.fluidLocation = ResourceLocation.parse(nbt.getString("fluid"));
 		this.fluid = ForgeRegistries.FLUIDS.getValue(this.fluidLocation);
 		
 		this.minSize = nbt.getInt("minSize");
@@ -184,7 +184,7 @@ public class ReservoirType extends IESerializableRecipe{
 		if(!nbtList.isEmpty()){
 			nbtList.forEach(tag -> {
 				if(tag instanceof StringTag){
-					set.add(new ResourceLocation(tag.getAsString()));
+					set.add(ResourceLocation.parse(tag.getAsString()));
 				}
 			});
 		}
@@ -226,7 +226,7 @@ public class ReservoirType extends IESerializableRecipe{
 				if(list.size() > 0){
 					list.forEach(t -> {
 						if(t instanceof StringTag){
-							set.add(new ResourceLocation(t.getAsString()));
+							set.add(ResourceLocation.parse(t.getAsString()));
 						}
 					});
 				}

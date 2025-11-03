@@ -190,7 +190,7 @@ public class OilTankLogic implements IMultiblockLogic<State>, IServerTickableCom
 	
 	@Override
 	public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient){
-		if(ExternalModContent.isIEItem_Hammer(player.getItemInHand(hand))){
+		if(ExternalModContent.IE.isHammer(player.getItemInHand(hand))){
 			if(hammering(ctx, posInMultiblock, isClient))
 				return InteractionResult.SUCCESS;
 		}

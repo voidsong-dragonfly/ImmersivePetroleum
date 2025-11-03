@@ -232,7 +232,7 @@ public class DerrickLogic implements IMultiblockLogic<State>, IServerTickableCom
 										state.drilling = true;
 									}
 								}else{
-									if(!state.tank.getFluid().isEmpty() && state.tank.getFluid().getFluid() == ExternalModContent.getIEFluid_Concrete()){
+									if(!state.tank.getFluid().isEmpty() && ExternalModContent.IE.isConcrete(state.tank.getFluid())){
 										// FIXME ! This happens every now and then, and i have not yet nailed down HOW this happens.
 										// Void excess concrete.
 										state.tank.drain(state.tank.getFluidAmount(), IFluidHandler.FluidAction.EXECUTE);
@@ -285,7 +285,7 @@ public class DerrickLogic implements IMultiblockLogic<State>, IServerTickableCom
 		}
 		
 		final Fluid inFluid = fs.getFluid();
-		final boolean isConcrete = inFluid == ExternalModContent.getIEFluid_Concrete();
+		final boolean isConcrete = inFluid == ExternalModContent.IE.fluidConcrete();
 		final boolean isWater = inFluid == Fluids.WATER;
 		
 		if(!isConcrete && !isWater)
@@ -572,7 +572,7 @@ public class DerrickLogic implements IMultiblockLogic<State>, IServerTickableCom
 			this.clientFlow = nbt.getInt("spillflow");
 			
 			try{
-				this.fluidSpilled = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(nbt.getString("spillingfluid")));
+				this.fluidSpilled = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(nbt.getString("spillingfluid")));
 			}catch(ResourceLocationException rle){
 				this.fluidSpilled = Fluids.EMPTY;
 			}

@@ -2,7 +2,6 @@ package flaxbeard.immersivepetroleum.api.crafting;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
@@ -15,7 +14,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -28,7 +26,6 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.HitResult;
@@ -36,7 +33,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +42,6 @@ import java.util.function.Supplier;
 public class LubricatedHandler{
 	
 	public interface ILubricationHandler<E extends IMultiblockBEHelperMaster<B>, B extends IMultiblockState>{
-		Vec3i getStructureDimensions();
-		
 		/** Was the AutoLubricator placed at the correct location? */
 		boolean isPlacedCorrectly(Level world, BlockPos lubricatorPosition, Direction lubricatorFacing);
 		
@@ -109,11 +103,11 @@ public class LubricatedHandler{
 			String name = tag.getString("world");
 			String lubricantName = tag.getString("lubricant");
 			
-			this.world = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name));
+			this.world = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(name));
 			this.pos = new BlockPos(x, y, z);
 			this.ticks = ticks;
 			
-			this.lubricant = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(lubricantName));
+			this.lubricant = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(lubricantName));
 			if(this.lubricant == null){
 				this.lubricant = Fluids.EMPTY;
 			}
@@ -135,91 +129,79 @@ public class LubricatedHandler{
 	
 	public static List<LubricatedTileInfo> lubricatedTiles = new ArrayList<>();
 	
-	public static boolean lubricateTile(BlockEntity tile, Fluid lubricant, int ticks){
-		return lubricateTile(tile, lubricant, ticks, false, -1);
+	public static boolean lubricateTile(Level level, BlockPos pos, Fluid lubricant, int ticks){
+		return lubricateTile(level, pos, lubricant, ticks, false, -1);
 	}
 	
-	public static boolean lubricateTile(BlockEntity tile, Fluid lubricant, int ticks, boolean additive, int cap){
-		if(!(tile instanceof IMultiblockBEHelperMaster<?> master))
+	public static boolean lubricateTile(Level level, BlockPos pos, Fluid lubricant, int ticks, boolean additive, int cap){
+		MultiblockBlockEntityMaster<?> mbMasterBE = Utils.getMultiblockMasterBE(level, pos);
+		if(mbMasterBE == null)
 			return false;
 		
-		// ------------------------------------------------------------------------------------------------
-		
-		// TODO 19.10.2025 - No idea why this is here anymore.
-		/* 
-		boolean debugDisabled = true;
-		if(debugDisabled)
+		if(getHandlerForTile(mbMasterBE.getHelper()) == null)
 			return false;
-		if(tile instanceof MultiblockPartBlockEntity<?> mpte && mpte.offsetToMaster != BlockPos.ZERO){
-			tile = mpte.master();
-		}
-		*/
 		
-		if(getHandlerForTile(master) != null){
-			BlockPos pos = tile.getBlockPos();
-			
-			ResourceKey<Level> key = tile.getLevel().dimension();
-			for(LubricatedTileInfo info: lubricatedTiles){
-				if(info.pos.equals(pos) && info.world == key){
-					if(info.ticks >= ticks){
-						if(additive){
-							if(cap == -1){
-								info.ticks += ticks;
-							}else{
-								info.ticks = Math.min(cap, info.ticks + ticks);
-							}
-							return true;
+		pos = mbMasterBE.getBlockPos();
+		
+		ResourceKey<Level> key = level.dimension();
+		for(LubricatedTileInfo info: lubricatedTiles){
+			if(info.pos.equals(pos) && info.world == key){
+				if(info.ticks >= ticks){
+					if(additive){
+						if(cap == -1){
+							info.ticks += ticks;
 						}else{
-							return false;
+							info.ticks = Math.min(cap, info.ticks + ticks);
 						}
+						return true;
+					}else{
+						return false;
 					}
-					
-					info.ticks = ticks;
-					return true;
 				}
+				
+				info.ticks = ticks;
+				return true;
 			}
-			
-			LubricatedTileInfo lti = new LubricatedTileInfo(tile.getLevel().dimension(), tile.getBlockPos(), lubricant, ticks);
-			lubricatedTiles.add(lti);
-			
-			return true;
 		}
 		
-		return false;
+		LubricatedTileInfo lti = new LubricatedTileInfo(level.dimension(), pos, lubricant, ticks);
+		lubricatedTiles.add(lti);
+		
+		return true;
 	}
 	
 	public static class LubricantEffect extends ChemthrowerHandler.ChemthrowerEffect{
 		@Override
 		public void applyToEntity(LivingEntity target, Player shooter, ItemStack thrower, Fluid fluid){
-			if(target instanceof IronGolem){
-				if(LubricantHandler.isValidLube(fluid)){
-					int ticks = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
-					
-					MobEffectInstance activeSpeed = target.getEffect(MobEffects.MOVEMENT_SPEED);
-					int ticksSpeed = ticks;
-					if(activeSpeed != null && activeSpeed.getAmplifier() <= 1){
-						ticksSpeed = Math.min(activeSpeed.getDuration() + ticks, 1200); // 1 Minute
-					}
-					
-					MobEffectInstance activeStrength = target.getEffect(MobEffects.DAMAGE_BOOST);
-					int ticksStrength = ticks;
-					if(activeStrength != null && activeStrength.getAmplifier() <= 1){
-						ticksStrength = Math.min(activeStrength.getDuration() + ticks, 1200); // 1 Minute
-					}
-					
-					target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, ticksSpeed, 1));
-					target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, ticksStrength, 1));
-				}
+			if(!(target instanceof IronGolem) && !LubricantHandler.isValidLube(fluid))
+				return;
+			
+			int ticks = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 4) / 3;
+			
+			MobEffectInstance activeSpeed = target.getEffect(MobEffects.MOVEMENT_SPEED);
+			int ticksSpeed = ticks;
+			if(activeSpeed != null && activeSpeed.getAmplifier() <= 1){
+				ticksSpeed = Math.min(activeSpeed.getDuration() + ticks, 1200); // 1 Minute
 			}
 			
+			MobEffectInstance activeStrength = target.getEffect(MobEffects.DAMAGE_BOOST);
+			int ticksStrength = ticks;
+			if(activeStrength != null && activeStrength.getAmplifier() <= 1){
+				ticksStrength = Math.min(activeStrength.getDuration() + ticks, 1200); // 1 Minute
+			}
+			
+			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, ticksSpeed, 1));
+			target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, ticksStrength, 1));
 		}
 		
 		@Override
-		public void applyToBlock(Level world, HitResult mop, Player shooter, ItemStack thrower, Fluid fluid){
-			if(LubricantHandler.isValidLube(fluid)){
-				int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
-				LubricatedHandler.lubricateTile(world.getBlockEntity(BlockPos.containing(mop.getLocation())), fluid, amount, true, 1200); // 1 Minute
-			}
+		public void applyToBlock(Level level, HitResult hit, Player shooter, ItemStack thrower, Fluid fluid){
+			if(!LubricantHandler.isValidLube(fluid))
+				return;
+			
+			int amount = (Math.max(1, IEServerConfig.TOOLS.chemthrower_consumption.get() / LubricantHandler.getLubeAmount(fluid)) * 2) / 3;
+			
+			LubricatedHandler.lubricateTile(level, BlockPos.containing(hit.getLocation()), fluid, amount, true, 1200); // 1 Minute
 		}
 	}
 }
